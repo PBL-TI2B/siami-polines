@@ -11,13 +11,13 @@
 <body class="antialiased bg-gray-50 dark:bg-gray-900">
     <div class="flex flex-col min-h-screen">
         <!-- Navbar -->
-        @include('components.navbar')
+        <x-navbar />
 
         <!-- Sidebar -->
-        @include('components.sidebar')
+        <x-sidebar />
 
         <!-- Main Content -->
-        <main class="p-4 md:ml-64 h-auto pt-24 bg-gray-50 dark:bg-gray-900">
+        <main class="p-4 md:ml-64 h-auto pt-22 bg-gray-50 dark:bg-gray-900">
             @yield('content')
         </main>
     </div>
