@@ -16,11 +16,15 @@
                     <a href="{{ $item['url'] }}"
                         class="inline-flex items-center text-sm font-medium text-gray-600 hover:text-sky-800 dark:text-gray-400 dark:hover:text-sky-200 transition-all duration-200">
                         @if ($index === 0)
-                            <x-heroicon-o-home class="w-4 h-4 mr-2 text-gray-600 dark:text-gray-400" />
+                            <span class="inline-flex items-center">
+                                <x-heroicon-o-home
+                                    class="w-4 h-4 mr-2 text-gray-600 hover:text-sky-800 dark:text-gray-400 dark:hover:text-sky-200 transition-all duration-200" />
+                                <span>{{ $item['label'] }}</span>
+                            </span>
                         @else
                             <x-heroicon-s-chevron-right class="w-4 h-4 text-gray-400 dark:text-gray-500 mr-1" />
+                            <span>{{ $item['label'] }}</span>
                         @endif
-                        {{ $item['label'] }}
                     </a>
                 </li>
             @endif

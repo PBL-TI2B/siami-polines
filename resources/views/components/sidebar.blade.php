@@ -14,16 +14,12 @@
             </li>
             <!-- Periode Audit -->
             <li>
-                <button type="button"
-                    class="flex items-center w-full p-3 text-sm text-gray-900 rounded-lg transition-all duration-200 hover:bg-sky-100 hover:scale-[1.02] hover:text-sky-800 dark:text-gray-200 dark:hover:bg-sky-900 dark:hover:text-white group {{ request()->routeIs('periode-audit.*') ? 'bg-sky-100 dark:bg-sky-900 text-sky-800' : '' }}"
-                    data-collapse-toggle="dropdown-periode-audit"
-                    aria-expanded="{{ request()->routeIs('periode-audit.*') ? 'true' : 'false' }}">
+                <a href="{{ route('periode-audit.index') }}"
+                    class="flex items-center p-3 text-sm text-gray-900 rounded-lg transition-all duration-200 hover:bg-sky-100 hover:scale-[1.02] hover:text-sky-800 dark:text-gray-200 dark:hover:bg-sky-900 dark:hover:text-white group {{ request()->routeIs('periode-audit') ? 'bg-sky-100 dark:bg-sky-900 text-sky-800' : '' }}">
                     <x-heroicon-o-calendar-days
-                        class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-sky-800 dark:group-hover:text-white {{ request()->routeIs('periode-audit.*') ? 'text-sky-800' : '' }}" />
-                    <span class="flex-1 ms-3 text-left whitespace-nowrap">Periode Audit</span>
-
-                </button>
-
+                        class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-sky-800 dark:group-hover:text-white {{ request()->routeIs('periode-audit') ? 'text-sky-800' : '' }}" />
+                    <span class="ms-3">Periode Audit</span>
+                </a>
             </li>
             <!-- Jadwal Audit -->
             <li>

@@ -15,7 +15,7 @@
         class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">{{ $label }}</label>
     @if ($type === 'text' && !$datepicker)
         <input type="text" id="{{ $id }}" name="{{ $name }}" value="{{ old($name, $value) }}"
-            class="bg-gray-50 dark:bg-gray-700 border {{ $errors->has($name) ? 'border-red-500' : 'border-gray-300 dark:border-gray-600' }} text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 transition-all duration-200"
+            class="bg-gray-50 dark:bg-gray-700 border {{ $errors->has($name) ? 'border-red-500' : 'border-gray-300 dark:border-gray-600' }} text-gray-900 dark:text-gray-200 dark:placeholder-gray-400 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 transition-all duration-200"
             placeholder="{{ $placeholder }}" {{ $required ? 'required' : '' }}
             {{ $maxlength ? "maxlength=$maxlength" : '' }}>
     @elseif($datepicker)
@@ -30,7 +30,7 @@
             <input id="{{ $id }}" name="{{ $name }}" datepicker datepicker-buttons
                 datepicker-autoselect-today datepicker-format="dd-mm-yyyy" type="text"
                 value="{{ old($name, $value) }}"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 transition-all duration-200"
                 placeholder="{{ $placeholder }}" {{ $required ? 'required' : '' }}>
         </div>
     @endif
