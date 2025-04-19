@@ -11,16 +11,17 @@
 <body class="antialiased bg-gray-50 dark:bg-gray-900">
     <div class="flex flex-col min-h-screen">
         <!-- Navbar -->
-        @include('admin.components.navbar')
+        @include('components.navbar')
 
         <!-- Sidebar -->
-        @include('admin.components.sidebar')
+        @include('components.sidebar')
 
         <!-- Main Content -->
         <main class="p-4 md:ml-64 h-auto pt-24 bg-gray-50 dark:bg-gray-900">
             @yield('content')
         </main>
     </div>
+
     @stack('scripts')
     <!-- <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script> -->
 </body>
