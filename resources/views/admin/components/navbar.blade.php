@@ -10,7 +10,8 @@
             </button>
             <a href="{{ route('dashboard') }}" class="flex items-center justify-between mr-4">
                 <img src="{{ asset('logo.png') }}" alt="Logo" class="w-8 h-8">
-                <span class="self-center text-2xl font-semibold whitespace-nowrap text-white dark:text-gray-200 ml-2">
+                <span
+                    class="self-center text-xl md:text-2xl font-semibold whitespace-nowrap text-white dark:text-gray-200 ml-2">
                     SiAMI Polines
                 </span>
             </a>
@@ -32,7 +33,7 @@
         <div class="flex items-center lg:order-2">
             <!-- Mobile Search Toggle -->
             <button type="button" data-drawer-target="sidebar" data-drawer-toggle="sidebar"
-                class="hidden md:block p-2 mr-1 text-sky-200 rounded-lg hover:text-sky-800 hover:bg-sky-100 focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-600 dark:text-sky-300 dark:hover:text-white dark:hover:bg-sky-700">
+                class="hidden p-2 mr-1 text-sky-200 rounded-lg hover:text-sky-800 hover:bg-sky-100 focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-600 dark:text-sky-300 dark:hover:text-white dark:hover:bg-sky-700">
                 <span class="sr-only">Buka pencarian</span>
                 <x-heroicon-o-magnifying-glass class="w-6 h-6" />
             </button>
