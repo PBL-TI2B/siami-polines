@@ -26,7 +26,7 @@ return new class extends Migration
             $table->foreign('user_id_1_auditee')->references('user_id')->on('users')->onDelete('cascade');
             $table->foreign('user_id_2_auditee')->references('user_id')->on('users')->onDelete('cascade');
             $table->foreign('unit_kerja_id')->references('unit_kerja_id')->on('unit_kerja')->onDelete('cascade');
-            $table->foreign('periode_id')->references('periode_id')->on('periodes')->onDelete('cascade');
+            $table->foreign('periode_id')->references('periode_id')->on('periode_audits')->onDelete('cascade');
         });
     }
 
