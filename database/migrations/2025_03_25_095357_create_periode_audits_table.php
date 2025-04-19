@@ -12,7 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('periode_audits', function (Blueprint $table) {
-            $table->id();
+            $table->id('periode_id');
+            $table->string('nama_periode');
+            $table->date('tanggal_mulai');
+            $table->date('tanggal_berakhir');
+            $table->enum('status', ['Sedang Berjalan', 'Berakhir'])->default('Sedang Berjalan');
             $table->timestamps();
         });
     }

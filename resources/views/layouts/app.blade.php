@@ -1,25 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    @vite('resources/css/app.css')
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <title>{{ config('app.name', 'SiAMI') }}</title>
+    <title>SiAMI Polines - @yield('title')</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-inter bg-neutral-50">
-    <!-- Sidebar -->
-    @include('layouts.partials.sidebar')
 
-    <!-- Main Content -->
-    <div class="ml-80">
-        <!-- Header -->
-        @include('layouts.partials.header')
+<body class="antialiased bg-gray-50 dark:bg-gray-900">
+    <div class="flex flex-col min-h-screen">
+        <!-- Navbar -->
+        @include('admin.components.navbar')
 
-        <!-- Page Content -->
-        <main class="p-8">
+        <!-- Sidebar -->
+        @include('admin.components.sidebar')
+
+        <!-- Main Content -->
+        <main class="p-4 md:ml-64 h-auto pt-24 bg-gray-50 dark:bg-gray-900">
             @yield('content')
         </main>
     </div>
+    @stack('scripts')
+    <!-- <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script> -->
 </body>
+
 </html>
