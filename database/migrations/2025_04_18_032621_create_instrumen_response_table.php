@@ -13,7 +13,14 @@ return new class extends Migration
     {
         Schema::create('instrumen_response', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->unsignedBigInteger('auditing_id');
+            $table->unsignedBigInteger('set_instrumen_unit_kerja_id');
+            $table->unsignedBigInteger('response_id');
+            $table->char('status_instrumen', 100);
+
+            $table->foreign('auditing_id')->references('auditing_id')->on('auditings')->onDelete('cascade');
+            $table->foreign('set_instrumen_unit_kerja_id')->references('set_instrumen_unit_kerja_id')->on('set_instrumen')->onDelete('cascade');
+            $table->foreign('response_id')->references('response_id')->on('responses')->onDelete('cascade');
         });
     }
 
