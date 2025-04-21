@@ -3,7 +3,7 @@
 @section('title', 'Edit Periode Audit')
 
 @section('content')
-    <div class="container mx-auto p-4 sm:px-6 lg:px-8">
+    <div class="container mx-auto py-4 px-4 sm:px-6 lg:px-8">
         <!-- Toast Notification -->
         @if (session('success'))
             <x-toast id="toast-success" type="success" :message="session('success')" />
@@ -50,7 +50,14 @@
                 </div>
 
                 <!-- Form Buttons -->
-                <x-admin.form-buttons submitLabel="Simpan Perubahan" :cancelRoute="route('periode-audit.index')" />
+                <div class="flex space-x-3">
+                    <x-button type="submit" color="sky" icon="heroicon-o-check">
+                        Simpan Perubahan
+                    </x-button>
+                    <x-button color="gray" icon="heroicon-o-x-mark" href="{{ route('periode-audit.index') }}">
+                        Batal
+                    </x-button>
+                </div>
             </form>
         </div>
     </div>

@@ -1,26 +1,40 @@
 @props([
-    'menuItems' => [
-        ['label' => 'Dashboard', 'route' => 'dashboard', 'icon' => 'heroicon-o-home'],
-        ['label' => 'Periode Audit', 'route' => 'periode-audit.index', 'icon' => 'heroicon-o-calendar-days'],
-        ['label' => 'Jadwal Audit', 'route' => 'jadwal-audit', 'icon' => 'heroicon-o-clock'],
-        ['label' => 'Daftar Tilik', 'route' => 'daftar-tilik', 'icon' => 'heroicon-o-check-circle'],
-        [
-            'label' => 'Data Unit',
-            'route' => 'data-unit.*',
-            'icon' => 'heroicon-o-building-office',
-            'dropdown' => true,
-            'subItems' => [
-                ['label' => 'Daftar UPT', 'route' => 'data-unit', 'icon' => 'heroicon-o-list-bullet'],
-                ['label' => 'Daftar Prodi', 'route' => 'data-unit', 'icon' => 'heroicon-o-list-bullet'],
-                ['label' => 'Daftar Jurusan', 'route' => 'data-unit', 'icon' => 'heroicon-o-list-bullet'],
-            ],
-        ],
-        ['label' => 'Data Instrumen', 'route' => 'data-instrumen', 'icon' => 'heroicon-o-clipboard-document'],
-        ['label' => 'Data User', 'route' => 'data-user', 'icon' => 'heroicon-o-users'],
-        ['label' => 'Laporan', 'route' => 'laporan', 'icon' => 'heroicon-o-document-text'],
-        ['label' => 'Logout', 'route' => 'logout', 'icon' => 'heroicon-o-arrow-left-on-rectangle'],
-    ],
+    'menuItems' => null, // Jika null, akan diambil dari database
 ])
+
+@php
+    if (!$menuItems) {
+        // Ambil menu dan sub-menu dari database
+        $menuItems = \App\Models\Menu::with('subMenus')
+            ->get()
+            ->map(function ($menu) {
+                $item = [
+                    'label' => $menu->nama_menu,
+                    'route' => $menu->route ?? 'dashboard', // Fallback ke dashboard jika route tidak ada
+                    'icon' => $menu->icon ?? 'heroicon-o-list-bullet', // Fallback ikon jika tidak ada
+                ];
+
+                if ($menu->subMenus->isNotEmpty()) {
+                    $item['dropdown'] = true;
+                    $item['subItems'] = $menu->subMenus
+                        ->map(function ($subMenu) {
+                            return [
+                                'label' => $subMenu->nama_sub_menu,
+                                'route' => $subMenu->route ?? 'dashboard',
+                                'routeParams' => $subMenu->route_params
+                                    ? json_decode($subMenu->route_params, true)
+                                    : [],
+                                'icon' => $subMenu->icon ?? 'heroicon-o-list-bullet',
+                            ];
+                        })
+                        ->toArray();
+                }
+
+                return $item;
+            })
+            ->toArray();
+    }
+@endphp
 
 <aside id="sidebar"
     class="fixed top-[64px] left-0 z-40 w-64 h-[calc(100vh-64px)] transition-transform -translate-x-full bg-white border-r border-gray-200 md:block md:translate-x-0 dark:bg-gray-800 dark:border-gray-700 shadow-lg"
@@ -29,7 +43,7 @@
         <ul class="space-y-1 font-medium">
             @foreach ($menuItems as $item)
                 @if (isset($item['dropdown']) && $item['dropdown'])
-                    <!-- Dropdown Menu (e.g., Data Unit) -->
+                    <!-- Dropdown Menu -->
                     <li>
                         <button type="button"
                             class="flex items-center w-full p-3 text-sm text-gray-900 rounded-lg transition-all duration-200 hover:bg-sky-100 hover:scale-[1.02] hover:text-sky-800 dark:text-gray-200 dark:hover:bg-sky-900 dark:hover:text-white group {{ request()->routeIs($item['route']) ? 'bg-sky-100 dark:bg-sky-900 text-sky-800' : '' }}"
@@ -45,7 +59,7 @@
                             class="{{ request()->routeIs($item['route']) ? '' : 'hidden' }} py-2 space-y-2">
                             @foreach ($item['subItems'] as $subItem)
                                 <li>
-                                    <a href="{{ route($subItem['route']) }}"
+                                    <a href="{{ route($subItem['route'], $subItem['routeParams'] ?? []) }}"
                                         class="flex items-center w-full p-2 text-gray-900 text-sm transition-all duration-200 rounded-lg pl-11 group hover:bg-sky-100 hover:scale-[1.02] hover:text-sky-800 dark:text-gray-200 dark:hover:bg-sky-900 dark:hover:text-white {{ request()->routeIs($subItem['route']) ? 'bg-sky-100 dark:bg-sky-900 text-sky-800' : '' }}">
                                         <x-dynamic-component :component="$subItem['icon']"
                                             class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-sky-800 dark:group-hover:text-white {{ request()->routeIs($subItem['route']) ? 'text-sky-800' : '' }}" />

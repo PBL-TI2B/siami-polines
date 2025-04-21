@@ -1,46 +1,74 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PeriodeAuditController;
+use App\Http\Controllers\JadwalAuditController;
+use App\Http\Controllers\DaftarTilikController;
+use App\Http\Controllers\UnitKerjaController;
+use App\Http\Controllers\DataInstrumenController;
+use App\Http\Controllers\DataUserController;
+use App\Http\Controllers\LaporanController;
+use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
+// Route untuk Dashboard
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+// Route untuk Admin dengan prefix 'admin'
+Route::prefix('admin')->group(function () {
+    // Periode Audit
+    Route::prefix('periode-audit')->group(function () {
+        Route::get('/', [PeriodeAuditController::class, 'index'])->name('periode-audit.index');
+        Route::get('/create', [PeriodeAuditController::class, 'create'])->name('periode-audit.create');
+        Route::post('/', [PeriodeAuditController::class, 'store'])->name('periode-audit.store');
+        Route::get('/{id}/edit', [PeriodeAuditController::class, 'edit'])->name('periode-audit.edit');
+        Route::put('/{id}', [PeriodeAuditController::class, 'update'])->name('periode-audit.update');
+        Route::delete('/{id}', [PeriodeAuditController::class, 'destroy'])->name('periode-audit.destroy');
+        Route::patch('/{id}/close', [PeriodeAuditController::class, 'close'])->name('periode-audit.close');
+    });
+
+    // Jadwal Audit
+    Route::prefix('jadwal-audit')->group(function () {
+        Route::get('/', [JadwalAuditController::class, 'index'])->name('jadwal-audit');
+
+    });
+
+    // Daftar Tilik
+    Route::prefix('daftar-tilik')->group(function () {
+        Route::get('/', [DaftarTilikController::class, 'index'])->name('daftar-tilik');
+
+    });
+
+    // Data Unit (Unit Kerja)
+    Route::prefix('unit-kerja')->group(function () {
+        Route::get('/{type?}', [UnitKerjaController::class, 'index'])->name('unit-kerja');
+        Route::get('/create', [UnitKerjaController::class, 'create'])->name('unit-kerja.create');
+        Route::post('/', [UnitKerjaController::class, 'store'])->name('unit-kerja.store');
+        Route::get('/{id}/edit', [UnitKerjaController::class, 'edit'])->name('unit-kerja.edit');
+        Route::put('/{id}', [UnitKerjaController::class, 'update'])->name('unit-kerja.update');
+        Route::delete('/{id}', [UnitKerjaController::class, 'destroy'])->name('unit-kerja.destroy');
+    });
+
+    // Data Instrumen
+    Route::prefix('data-instrumen')->group(function () {
+        Route::get('/{type?}', [DataInstrumenController::class, 'index'])->name('data-instrumen');
+
+    });
+
+    // Data User
+    Route::prefix('data-user')->group(function () {
+        Route::get('/', [DataUserController::class, 'index'])->name('data-user');
+
+    });
+
+    // Laporan
+    Route::prefix('laporan')->group(function () {
+        Route::get('/', [LaporanController::class, 'index'])->name('laporan');
+
+    });
 });
 
-Route::get('periode_audit', function () {
-    return view('period-audit2');
-});
-
-// Admin routes for Periode Audit
-Route::prefix('admin/periode-audit')
-// ->middleware(['auth', 'admin'])
-->group(function () {
-    Route::get('/', [PeriodeAuditController::class, 'index'])->name('periode-audit.index');
-    Route::post('/', [PeriodeAuditController::class, 'store'])->name('periode-audit.store');
-    Route::get('/{periode_id}/edit', [PeriodeAuditController::class, 'edit'])->name('periode-audit.edit');
-    Route::put('/{periode_id}', [PeriodeAuditController::class, 'update'])->name('periode-audit.update');
-    Route::delete('/{periode_id}', [PeriodeAuditController::class, 'destroy'])->name('periode-audit.destroy');
-    Route::patch('/{periode_id}/close', [PeriodeAuditController::class, 'close'])->name('periode-audit.close');
-});
-
-// Placeholder routes for other sidebar links (replace with actual controllers)
-Route::get('/dashboard', fn() => view('admin.dashboard'))->middleware('auth')->name('dashboard');
-Route::get('/data-unit', fn() => view('admin.data-unit'))->middleware('auth')->name('data-unit');
-Route::get('/admin/jadwal-audit', function () {
-    return view('jadwal-audit.index');
-})->name('jadwal-audit');
-
-Route::get('/admin/daftar-tilik', function () {
-    return view('daftar-tilik.index');
-})->name('daftar-tilik');
-
-Route::get('/logout', function () {
+// Route untuk Logout
+Route::post('/logout', function () {
+    // Logika logout (misalnya menggunakan Auth::logout())
     return redirect('/login');
 })->name('logout');
-Route::get('/data-instrumen', fn() => view('admin.data-instrumen'))->middleware('auth')->name('data-instrumen');
-Route::get('/data-user', fn() => view('admin.data-user'))->middleware('auth')->name('data-user');
-Route::get('/laporan', fn() => view('admin.laporan'))->middleware('auth')->name('laporan');
-Route::post('/logout', fn() => auth()->logout() && redirect('/login'))->name('logout');
-
-// // Authentication routes (ensure these are set up)
-// Auth::routes();

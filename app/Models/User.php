@@ -2,44 +2,47 @@
 
 namespace App\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class User extends Authenticatable
+class User extends Model
 {
-    use HasFactory, Notifiable;
-
     protected $table = 'users';
-
     protected $primaryKey = 'user_id';
+    protected $fillable = ['role_id', 'unit_kerja_id', 'email', 'password', 'nama', 'nip'];
 
-    protected $fillable = [
-        'email',
-        'password',
-        'nama',
-        'nip',
-        'role_id',
-        'unit_kerja_id',
-    ];
-
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
+    // Relasi: User berelasi ke Role
     public function role()
     {
         return $this->belongsTo(Role::class, 'role_id', 'role_id');
     }
 
+    // Relasi: User berelasi ke UnitKerja
     public function unitKerja()
     {
         return $this->belongsTo(UnitKerja::class, 'unit_kerja_id', 'unit_kerja_id');
     }
 
-    public function getAuthPassword()
+    // Relasi: User sebagai auditor pertama di Auditing
+    public function auditor1Auditings()
     {
-        return $this->password;
+        return $this->hasMany(Auditing::class, 'user_id_1_auditor', 'user_id');
+    }
+
+    // Relasi: User sebagai auditor kedua di Auditing
+    public function auditor2Auditings()
+    {
+        return $this->hasMany(Auditing::class, 'user_id_2_auditor', 'user_id');
+    }
+
+    // Relasi: User sebagai auditee pertama di Auditing
+    public function auditee1Auditings()
+    {
+        return $this->hasMany(Auditing::class, 'user_id_1_auditee', 'user_id');
+    }
+
+    // Relasi: User sebagai auditee kedua di Auditing
+    public function auditee2Auditings()
+    {
+        return $this->hasMany(Auditing::class, 'user_id_2_auditee', 'user_id');
     }
 }
