@@ -15,7 +15,7 @@ Sistem Informasi Audit Mutu Internal (SIAMI) Polines adalah aplikasi berbasis we
 1. **Klon Repositori**
 
     ```bash
-    git clone https://github.com/username/siami-polines.git
+    https://github.com/PBL-TI2B/siami-polines.git
     cd siami-polines
     ```
 
