@@ -64,7 +64,7 @@ class MenuSeeder extends Seeder
 
         $logout = Menu::create([
             'nama_menu' => 'Logout',
-            'route' => 'logout.index',
+            'route' => 'logout',
             'icon' => 'heroicon-o-arrow-left-on-rectangle',
         ]);
 
