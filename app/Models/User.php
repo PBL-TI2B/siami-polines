@@ -2,13 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
-class User extends Model
+class User extends Authenticatable
 {
+    use HasApiTokens, Notifiable;
     protected $table = 'users';
     protected $primaryKey = 'user_id';
     protected $fillable = ['role_id', 'unit_kerja_id', 'email', 'password', 'nama', 'nip'];
+    protected $hidden = ['password'];
+    public $timestamps = false;
 
     // Relasi: User berelasi ke Role
     public function role()
@@ -45,4 +50,5 @@ class User extends Model
     {
         return $this->hasMany(Auditing::class, 'user_id_2_auditee', 'user_id');
     }
+    
 }

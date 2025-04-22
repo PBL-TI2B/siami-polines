@@ -12,14 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id('user_id');
-            $table->unsignedBigInteger('role_id');
-            $table->unsignedBigInteger('unit_kerja_id');
-            $table->char('email',100);
-            $table->char('password',100);
-            $table->char('nama',100);
-            $table->char('nip',100);
-
+            $table->id('user_id');  // ID pengguna
+            $table->unsignedBigInteger('role_id');  // Relasi ke role
+            $table->unsignedBigInteger('unit_kerja_id');  // Relasi ke unit kerja
+            $table->string('email', 100)->unique();  // Email harus unik
+            $table->string('password');  // Password, tipe string lebih fleksibel
+            $table->string('nama', 100);  // Nama pengguna
+            $table->string('nip', 100)->unique();  // NIP harus unik
+    
+            // Menambahkan foreign key dengan aturan onDelete
             $table->foreign('role_id')->references('role_id')->on('roles')->onDelete('cascade');
             $table->foreign('unit_kerja_id')->references('unit_kerja_id')->on('unit_kerja')->onDelete('cascade');
         });

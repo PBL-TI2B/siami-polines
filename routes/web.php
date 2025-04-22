@@ -8,10 +8,18 @@ use App\Http\Controllers\UnitKerjaController;
 use App\Http\Controllers\DataInstrumenController;
 use App\Http\Controllers\DataUserController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
 
 // Route untuk Dashboard
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+//route untuk register
+Route::get('/register', [RegisterController::class, 'index'])->name('register');
+
+//route untuk login
+Route::get('/login', [LoginController::class, 'index'])->name('login');
 
 // Route untuk Admin dengan prefix 'admin'
 Route::prefix('admin')->group(function () {
@@ -65,6 +73,7 @@ Route::prefix('admin')->group(function () {
         Route::get('/', [LaporanController::class, 'index'])->name('laporan');
 
     });
+    
 });
 
 // Route untuk Logout

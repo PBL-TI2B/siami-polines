@@ -14,7 +14,7 @@ return new class extends Migration
             Schema::create('unit_kerja', function (Blueprint $table) {
                 $table->id('unit_kerja_id');
                 $table->char('nama_unit_kerja',100);
-                $table->integer('parent_id');
+                $table->integer('parent_id')->nullable();
                 $table->unsignedBigInteger('jenis_unit_id');
                 
                 $table->foreign('jenis_unit_id')->references('jenis_unit_id')->on('jenis_units')->onDelete('cascade');
