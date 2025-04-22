@@ -6,7 +6,7 @@
     <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
         <!-- Breadcrumb -->
         <x-breadcrumb :items="[
-            ['label' => 'Beranda', 'url' => route('dashboard')],
+            ['label' => 'Beranda', 'url' => route('dashboard.index')],
             ['label' => 'Data Unit', 'url' => route('unit-kerja')],
         ]" />
 

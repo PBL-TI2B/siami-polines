@@ -81,7 +81,7 @@ Di dalam file Blade (misalnya `unit-kerja/index.blade.php`):
 
 ```blade
 <x-breadcrumb :items="[
-    ['label' => 'Beranda', 'url' => route('dashboard')],
+    ['label' => 'Beranda', 'url' => route('dashboard.index')],
     ['label' => 'Data Unit', 'url' => route('unit-kerja')]
 ]" />
 ```

@@ -8,7 +8,7 @@
                 <x-heroicon-o-bars-3 class="w-6 h-6" />
                 <span class="sr-only">Buka sidebar</span>
             </button>
-            <a href="{{ route('dashboard') }}" class="flex items-center justify-between mr-4">
+            <a href="{{ route('dashboard.index') }}" class="flex items-center justify-between mr-4">
                 <img src="{{ asset('logo.png') }}" alt="Logo" class="w-8 h-8">
                 <span
                     class="self-center text-xl md:text-2xl font-semibold whitespace-nowrap text-white dark:text-gray-200 ml-2">

@@ -19,7 +19,7 @@
 
         <!-- Breadcrumb -->
         <x-breadcrumb :items="[
-            ['label' => 'Dashboard', 'url' => route('dashboard')],
+            ['label' => 'Dashboard', 'url' => route('dashboard.index')],
             ['label' => 'Periode Audit', 'url' => route('periode-audit.index')],
             ['label' => 'Daftar Periode'],
         ]" />
