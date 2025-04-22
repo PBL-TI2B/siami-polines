@@ -4,17 +4,16 @@ namespace Database\Seeders;
 
 use App\Models\Role;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class RoleSeeder extends Seeder
 {
-    public function run()
-    {
-        Role::query()->delete();
-
-        Role::create(['nama_role' => 'Admin']);
-        Role::create(['nama_role' => 'Admin Unit']);
-        Role::create(['nama_role' => 'Auditor']);
-        Role::create(['nama_role' => 'Auditee']);
-        Role::create(['nama_role' => 'Kepala PMPP']);
+    public function run():void{
+        DB::table('roles')->insert([
+            ['role_id' => 1, 'nama_role' => 'Admin'],
+            ['role_id' => 2, 'nama_role' => 'Auditor'],
+            ['role_id' => 3, 'nama_role' => 'Auditee'],
+            ['role_id' => 4, 'nama_role' => 'Kepala'],
+        ]);
     }
 }
