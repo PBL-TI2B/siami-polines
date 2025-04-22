@@ -7,7 +7,7 @@
         <!-- Breadcrumb -->
         <x-breadcrumb :items="[
             ['label' => 'Dashboard', 'url' => route('dashboard.index')],
-            ['label' => 'Data User', 'url' => route('data-user')],
+            ['label' => 'Data User', 'url' => route('data-user.index')],
         ]" />
 
         <!-- Heading -->

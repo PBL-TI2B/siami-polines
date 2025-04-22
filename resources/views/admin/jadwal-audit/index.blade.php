@@ -7,7 +7,7 @@
         <!-- Breadcrumb -->
         <x-breadcrumb :items="[
             ['label' => 'Dashboard', 'url' => route('dashboard.index')],
-            ['label' => 'Jadwal Audit', 'url' => route('jadwal-audit')],
+            ['label' => 'Jadwal Audit', 'url' => route('jadwal-audit.index')],
         ]" />
 
         <!-- Heading -->

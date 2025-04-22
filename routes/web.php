@@ -42,16 +42,17 @@ Route::prefix('admin')->group(function () {
 
     // Jadwal Audit
     Route::prefix('jadwal-audit')->group(function () {
-        Route::get('/', [JadwalAuditController::class, 'index'])->name('jadwal-audit');
+        Route::get('/', [JadwalAuditController::class, 'index'])->name('jadwal-audit.index');
     });
 
     // Daftar Tilik
     Route::prefix('daftar-tilik')->group(function () {
-        Route::get('/', [DaftarTilikController::class, 'index'])->name('daftar-tilik');
+        Route::get('/', [DaftarTilikController::class, 'index'])->name('daftar-tilik.index');
     });
 
     // Data Unit (Unit Kerja)
     Route::prefix('unit-kerja')->group(function () {
+        Route::get('/', [UnitKerjaController::class, 'index'])->name('unit-kerja.index');
         Route::get('/{type?}', [UnitKerjaController::class, 'index'])->name('unit-kerja');
         Route::get('/create', [UnitKerjaController::class, 'create'])->name('unit-kerja.create');
         Route::post('/', [UnitKerjaController::class, 'store'])->name('unit-kerja.store');
@@ -62,22 +63,22 @@ Route::prefix('admin')->group(function () {
 
     // Data Instrumen
     Route::prefix('data-instrumen')->group(function () {
-        Route::get('/{type?}', [DataInstrumenController::class, 'index'])->name('data-instrumen');
+        Route::get('/{type?}', [DataInstrumenController::class, 'index'])->name('data-instrumen.index');
     });
 
     // Data User
     Route::prefix('data-user')->group(function () {
-        Route::get('/', [DataUserController::class, 'index'])->name('data-user');
+        Route::get('/', [DataUserController::class, 'index'])->name('data-user.index');
     });
 
     // Laporan
     Route::prefix('laporan')->group(function () {
-        Route::get('/', [LaporanController::class, 'index'])->name('laporan');
+        Route::get('/', [LaporanController::class, 'index'])->name('laporan.index');
     });
 });
 
 // Route untuk Logout
-Route::post('/logout', function () {
+Route::get('/logout', function () {
     // Logika logout (misalnya menggunakan Auth::logout())
     return redirect('/login');
 })->name('logout');
