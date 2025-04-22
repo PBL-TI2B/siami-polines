@@ -8,13 +8,13 @@
 </head>
 <body class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-400 to-purple-500 relative">
   <!-- Background semi-transparent -->
-  <div class="absolute inset-0 bg-cover bg-center opacity-30" style="background-image: url('your-background-image.jpg'); z-index: 0;"></div>
+  <div class="absolute inset-0 bg-cover bg-center opacity-30" style="background-image: url('/images/bg_login.png'); z-index: 0;"></div>
 
   <!-- Register Card -->
   <div class="relative z-10 bg-white/90 rounded-lg border-2 border-purple-500 p-8 w-full max-w-md shadow-lg text-center">
     <!-- Logo -->
     <div class="flex justify-center mb-4">
-      <img src="your-logo.png" alt="Logo" class="h-14">
+      <img src="/images/Logo-Polines.png" alt="Logo" class="h-14">
     </div>
 
     <!-- Title -->
@@ -42,7 +42,7 @@
     </form>
 
     <!-- Link ke login -->
-    <p class="mt-4 text-sm">Sudah punya akun? <a href="login.html" style="color: blue;">Masuk sekarang</a></p>
+    <p class="mt-4 text-sm">Sudah punya akun? <a href="/login" style="color: blue;">Masuk sekarang</a></p>
   </div>
 
   <!-- Script -->

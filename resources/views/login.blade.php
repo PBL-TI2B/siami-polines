@@ -8,13 +8,13 @@
 </head>
 <body class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-400 to-purple-500 relative">
   <!-- Background semi-transparent card -->
-  <div class="absolute inset-0 bg-cover bg-center opacity-30" style="background-image: url('your-background-image.jpg'); z-index: 0;"></div>
+  <div class="absolute inset-0 bg-cover bg-center opacity-30" style="background-image: url('/images/bg_login.png'); z-index: 0;"></div>
 
   <!-- Login Card -->
   <div class="relative z-10 bg-white/90 rounded-lg border-2 border-purple-500 p-8 w-full max-w-md shadow-lg text-center">
     <!-- Logo -->
     <div class="flex justify-center mb-4">
-      <img src="your-logo.png" alt="Logo" class="h-14">
+      <img src="/images/Logo-Polines.png" alt="Logo" class="h-14">
     </div>
     
     <!-- Title -->
@@ -36,3 +36,58 @@
   </div>
 </body>
 </html>
+{{-- script --}}
+<script>
+  const form = document.querySelector('form');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const email = form.querySelector('input[type="email"]').value;
+    const password = form.querySelector('input[type="password"]').value;
+
+    try {
+      const response = await fetch('http://localhost:8000/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert("Login berhasil!");
+
+        // Simpan token jika perlu
+        localStorage.setItem('token', result.token);
+
+        // Ambil role_id
+        const roleId = result.user.role_id;
+
+        // Arahkan ke dashboard sesuai role
+        switch (roleId) {
+          case 1:
+            window.location.href = '/admin/dashboard';
+            break;
+          case 2:
+            window.location.href = '/auditor/dashboard';
+            break;
+          case 3:
+            window.location.href = '/auditee/dashboard';
+            break;
+          case 4:
+            window.location.href = '/kepala/dashboard';
+            break;
+          default:
+            alert("Role tidak dikenali.");
+        }
+      } else {
+        alert("Login gagal: " + result.message);
+      }
+    } catch (err) {
+      alert("Gagal terhubung ke server: " + err.message);
+    }
+  });
+</script>
