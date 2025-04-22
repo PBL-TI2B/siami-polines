@@ -8,21 +8,16 @@ use App\Http\Controllers\UnitKerjaController;
 use App\Http\Controllers\DataInstrumenController;
 use App\Http\Controllers\DataUserController;
 use App\Http\Controllers\LaporanController;
-use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
 
 // Route untuk Dashboard
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-//route untuk register
-Route::get('/register', [RegisterController::class, 'index'])->name('register');
-
-//route untuk login
-Route::get('/login', [LoginController::class, 'index'])->name('login');
 
 // Route untuk Admin dengan prefix 'admin'
 Route::prefix('admin')->group(function () {
+    Route::prefix('dashboard')->group(function () {
+        Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
+    });
+
     // Periode Audit
     Route::prefix('periode-audit')->group(function () {
         Route::get('/', [PeriodeAuditController::class, 'index'])->name('periode-audit.index');
@@ -37,13 +32,11 @@ Route::prefix('admin')->group(function () {
     // Jadwal Audit
     Route::prefix('jadwal-audit')->group(function () {
         Route::get('/', [JadwalAuditController::class, 'index'])->name('jadwal-audit');
-
     });
 
     // Daftar Tilik
     Route::prefix('daftar-tilik')->group(function () {
         Route::get('/', [DaftarTilikController::class, 'index'])->name('daftar-tilik');
-
     });
 
     // Data Unit (Unit Kerja)
@@ -59,21 +52,17 @@ Route::prefix('admin')->group(function () {
     // Data Instrumen
     Route::prefix('data-instrumen')->group(function () {
         Route::get('/{type?}', [DataInstrumenController::class, 'index'])->name('data-instrumen');
-
     });
 
     // Data User
     Route::prefix('data-user')->group(function () {
         Route::get('/', [DataUserController::class, 'index'])->name('data-user');
-
     });
 
     // Laporan
     Route::prefix('laporan')->group(function () {
         Route::get('/', [LaporanController::class, 'index'])->name('laporan');
-
     });
-    
 });
 
 // Route untuk Logout

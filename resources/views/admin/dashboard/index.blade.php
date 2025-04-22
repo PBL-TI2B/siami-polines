@@ -32,46 +32,46 @@
             <div>
 
 
-            <div class="w-full max-w-md p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:p-8 dark:bg-gray-800 dark:border-gray-700">
-    <div class="flex items-center justify-between mb-4 gap-2">
-        <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">Form yang belum diisi</h5>
-        <a href="#" class="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500">
-            View all
-        </a>
-   </div>
-   <div class="flow-root">
-        <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
-            <li class="py-3 sm:py-4">
-                <div class="flex items-center">
-                    <div class="flex-1 min-w-0 ms-4">
-                        <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                        Form 1
-                        </p>
+                <div class="w-full max-w-md p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:p-8 dark:bg-gray-800 dark:border-gray-700">
+                    <div class="flex items-center justify-between mb-4 gap-2">
+                        <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">Form yang belum diisi</h5>
+                        <a href="#" class="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500">
+                            View all
+                        </a>
+                    </div>
+                    <div class="flow-root">
+                        <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
+                            <li class="py-3 sm:py-4">
+                                <div class="flex items-center">
+                                    <div class="flex-1 min-w-0 ms-4">
+                                        <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                            Form 1
+                                        </p>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="py-3 sm:py-4">
+                                <div class="flex items-center">
+                                    <div class="flex-1 min-w-0 ms-4">
+                                        <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                            Form 2
+                                        </p>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="py-3 sm:py-4">
+                                <div class="flex items-center">
+                                    <div class="flex-1 min-w-0 ms-4">
+                                        <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                            Form 3
+                                        </p>
+                                    </div>
+                                </div>
+                            </li>
+
+                        </ul>
                     </div>
                 </div>
-            </li>
-            <li class="py-3 sm:py-4">
-                <div class="flex items-center">
-                    <div class="flex-1 min-w-0 ms-4">
-                        <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                        Form 2
-                        </p>
-                    </div>
-                </div>
-            </li>
-            <li class="py-3 sm:py-4">
-                <div class="flex items-center">
-                    <div class="flex-1 min-w-0 ms-4">
-                        <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                        Form 3
-                        </p>
-                    </div>
-                </div>
-            </li>
-           
-        </ul>
-   </div>
-</div>
 
             </div>
         </div>
@@ -92,84 +92,25 @@
                         <input type="text" id="table-search" class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for items">
                     </div>
                 </div>
-                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                        <tr>
-                            <th scope="col" class="px-6 py-3">
-                                No
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Nama
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Email
-                            </th>
-                            <!-- <th scope="col" class="px-6 py-3">
-                    Price
-                </th> -->
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
-                            <td class="px-6 py-4">
-                                1
-                            </td>
-                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                John Doe
-                            </th>
-                            <td class="px-6 py-4">
-                                johndoe123@gmail.com
-                            </td>
-                        </tr>
-                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
-                            <td class="px-6 py-4">
-                                2
-                            </td>
-                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                Jane Doe
-                            </th>
-                            <td class="px-6 py-4">
-                                janedoe456@gmail.com
-                            </td>
-                        </tr>
-                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
-                            <td class="px-6 py-4">
-                                3
-                            </td>
-                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                Lionel Messi
-                            </th>
-                            <td class="px-6 py-4">
-                                goat10@gmail.com
-                            </td>
-                        </tr>
-                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
-                            <td class="px-6 py-4">
-                                4
-                            </td>
-                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                Cristiano ronaldo
-                            </th>
-                            <td class="px-6 py-4">
-                                cristiano7@gmail.com
-                            </td>
-                        </tr>
-                        <tr class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600">
-                            <td class="px-6 py-4">
-                                5
-                            </td>
-                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                Neymar Jr
-                            </th>
-                            <td class="px-6 py-4">
-                                neymar11@gmail.com
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <x-table :headers="['No', 'Nama', 'Email']" :data="$users" :route="route('dashboard.index')">
+                    @foreach ($users as $index => $user)
+                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                        <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">
+                            {{ $index + 1 }}
+                        </td>
+                        <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            {{ $user['name'] }}
+                        </td>
+                        <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">
+                            {{ $user['email'] }}
+                        </td>
+                    </tr>
+                    @endforeach
+                </x-table>
             </div>
 
         </div>
     </div>
 </div>
+
 @endsection
