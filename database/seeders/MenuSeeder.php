@@ -16,7 +16,7 @@ class MenuSeeder extends Seeder
 
         $dashboard = Menu::create([
             'nama_menu' => 'Dashboard',
-            'route' => 'dashboard',
+            'route' => 'dashboard.index',
             'icon' => 'heroicon-o-home',
         ]);
 
@@ -28,43 +28,43 @@ class MenuSeeder extends Seeder
 
         $jadwalAudit = Menu::create([
             'nama_menu' => 'Jadwal Audit',
-            'route' => 'jadwal-audit',
+            'route' => 'jadwal-audit.index',
             'icon' => 'heroicon-o-clock',
         ]);
 
         $daftarTilik = Menu::create([
             'nama_menu' => 'Daftar Tilik',
-            'route' => 'daftar-tilik',
+            'route' => 'daftar-tilik.index',
             'icon' => 'heroicon-o-check-circle',
         ]);
 
         $dataUnit = Menu::create([
             'nama_menu' => 'Data Unit',
-            'route' => 'unit-kerja',
+            'route' => 'unit-kerja.index',
             'icon' => 'heroicon-o-building-office',
         ]);
 
         $dataInstrumen = Menu::create([
             'nama_menu' => 'Data Instrumen',
-            'route' => 'data-instrumen',
+            'route' => 'data-instrumen.index',
             'icon' => 'heroicon-o-clipboard-document',
         ]);
 
         $dataUser = Menu::create([
             'nama_menu' => 'Data User',
-            'route' => 'data-user',
+            'route' => 'data-user.index',
             'icon' => 'heroicon-o-users',
         ]);
 
         $laporan = Menu::create([
             'nama_menu' => 'Laporan',
-            'route' => 'laporan',
+            'route' => 'laporan.index',
             'icon' => 'heroicon-o-document-text',
         ]);
 
         $logout = Menu::create([
             'nama_menu' => 'Logout',
-            'route' => 'logout',
+            'route' => 'logout.index',
             'icon' => 'heroicon-o-arrow-left-on-rectangle',
         ]);
 
@@ -72,7 +72,7 @@ class MenuSeeder extends Seeder
         SubMenu::create([
             'nama_sub_menu' => 'Daftar UPT',
             'menu_id' => $dataUnit->menu_id,
-            'route' => 'unit-kerja',
+            'route' => 'unit-kerja.index',
             'icon' => 'heroicon-o-building-office',
             'route_params' => json_encode(['type' => 'upt']),
         ]);
@@ -80,7 +80,7 @@ class MenuSeeder extends Seeder
         SubMenu::create([
             'nama_sub_menu' => 'Daftar Prodi',
             'menu_id' => $dataUnit->menu_id,
-            'route' => 'unit-kerja',
+            'route' => 'unit-kerja.index',
             'icon' => 'heroicon-o-academic-cap',
             'route_params' => json_encode(['type' => 'prodi']),
         ]);
@@ -88,7 +88,7 @@ class MenuSeeder extends Seeder
         SubMenu::create([
             'nama_sub_menu' => 'Daftar Jurusan',
             'menu_id' => $dataUnit->menu_id,
-            'route' => 'unit-kerja',
+            'route' => 'unit-kerja.index',
             'icon' => 'heroicon-o-book-open',
             'route_params' => json_encode(['type' => 'jurusan']),
         ]);
@@ -97,7 +97,7 @@ class MenuSeeder extends Seeder
         SubMenu::create([
             'nama_sub_menu' => 'Instrumen UPT',
             'menu_id' => $dataInstrumen->menu_id,
-            'route' => 'data-instrumen',
+            'route' => 'data-instrumen.index',
             'icon' => 'heroicon-o-clipboard-document',
             'route_params' => json_encode(['type' => 'upt']),
         ]);
@@ -105,7 +105,7 @@ class MenuSeeder extends Seeder
         SubMenu::create([
             'nama_sub_menu' => 'Instrumen Prodi',
             'menu_id' => $dataInstrumen->menu_id,
-            'route' => 'data-instrumen',
+            'route' => 'data-instrumen.index',
             'icon' => 'heroicon-o-clipboard-document',
             'route_params' => json_encode(['type' => 'prodi']),
         ]);
@@ -113,7 +113,7 @@ class MenuSeeder extends Seeder
         SubMenu::create([
             'nama_sub_menu' => 'Instrumen Jurusan',
             'menu_id' => $dataInstrumen->menu_id,
-            'route' => 'data-instrumen',
+            'route' => 'data-instrumen.index',
             'icon' => 'heroicon-o-clipboard-document',
             'route_params' => json_encode(['type' => 'jurusan']),
         ]);
