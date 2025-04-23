@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\Api\PeriodeAuditController;
+use App\Http\Controllers\SasaranStrategisController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -15,6 +16,8 @@ Route::post('/register', [RegisterController::class, 'register']);
 
 // endpoint login /api/login
 Route::post('/login', [LoginController::class, 'login']);
+
+Route::post('/sasaran-strategis', [SasaranStrategisController::class, 'store']);
 
 Route::prefix('periode-audits')->group(function () {
     Route::get('/', [PeriodeAuditController::class, 'index']);
