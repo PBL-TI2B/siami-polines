@@ -43,6 +43,7 @@ Route::prefix('admin')->group(function () {
     // Jadwal Audit
     Route::prefix('jadwal-audit')->group(function () {
         Route::get('/', [JadwalAuditController::class, 'index'])->name('jadwal-audit.index');
+        Route::post('/create', [JadwalAuditController::class, 'makeJadwalAudit']);
     });
 
     // Daftar Tilik
