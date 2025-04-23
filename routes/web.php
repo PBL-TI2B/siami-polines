@@ -10,6 +10,7 @@ use App\Http\Controllers\DataUserController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Livewire\PeriodeAudit;
 use Illuminate\Support\Facades\Route;
 
 
@@ -29,16 +30,24 @@ Route::prefix('admin')->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
     });
 
-    // Periode Audit
-    Route::prefix('periode-audit')->group(function () {
-        Route::get('/', [PeriodeAuditController::class, 'index'])->name('periode-audit.index');
-        Route::get('/create', [PeriodeAuditController::class, 'create'])->name('periode-audit.create');
-        Route::post('/', [PeriodeAuditController::class, 'store'])->name('periode-audit.store');
-        Route::get('/{id}/edit', [PeriodeAuditController::class, 'edit'])->name('periode-audit.edit');
-        Route::put('/{id}', [PeriodeAuditController::class, 'update'])->name('periode-audit.update');
-        Route::delete('/{id}', [PeriodeAuditController::class, 'destroy'])->name('periode-audit.destroy');
-        Route::patch('/{id}/close', [PeriodeAuditController::class, 'close'])->name('periode-audit.close');
-    });
+    // Route::get('/periode-audit', PeriodeAudit::class)->name('periode-audit.index');
+
+    Route::get('/periode-audit', [PeriodeAuditController::class, 'index'])->name('periode-audit.index');
+    Route::get('/periode-audit/{periodeAudit}/edit', function ($periodeAudit) {
+        // Logika untuk edit view
+        return view('admin.periode-audit.edit', compact('periodeAudit'));
+    })->name('periode-audit.edit');
+
+    // // Periode Audit
+    // Route::prefix('periode-audit')->group(function () {
+    //     Route::get('/', [PeriodeAuditController::class, 'index'])->name('periode-audit.index');
+    //     Route::get('/create', [PeriodeAuditController::class, 'create'])->name('periode-audit.create');
+    //     Route::post('/', [PeriodeAuditController::class, 'store'])->name('periode-audit.store');
+    //     Route::get('/{id}/edit', [PeriodeAuditController::class, 'edit'])->name('admin.periode-audit.edit');
+    //     Route::put('/{id}', [PeriodeAuditController::class, 'update'])->name('periode-audit.update');
+    //     Route::delete('/{id}', [PeriodeAuditController::class, 'destroy'])->name('periode-audit.destroy');
+    //     Route::patch('/{id}/close', [PeriodeAuditController::class, 'close'])->name('periode-audit.close');
+    // });
 
     // Jadwal Audit
     Route::prefix('jadwal-audit')->group(function () {

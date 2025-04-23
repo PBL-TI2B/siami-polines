@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             JenisUnitSeeder::class,
             UnitKerjaSeeder::class,
+            PeriodeAuditSeeder::class,
         ]);
     }
 }
