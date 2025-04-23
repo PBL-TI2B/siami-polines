@@ -12,8 +12,53 @@
 
         <!-- Heading -->
         <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-200 mb-8">
-            Data Unit
+            Data UPT
         </h1>
+
+        <div
+            class="flex gap-2">
+            <x-button type="submit" color="sky" icon="heroicon-o-plus">
+                    Tambah Data
+                </x-button>
+            <x-button type="submit" color="sky" icon="heroicon-o-plus">
+                    Unduh Data
+                </x-button>
+            <x-button type="submit" color="yellow" icon="heroicon-o-plus">
+                    Import Data
+                </x-button>
+        </div>
+
+        <div>
+            <div class="w-[700px] overflow-x-auto shadow-md pt-6 sm:rounded-lg">
+                <x-table :headers="['No', 'Unit Kerja']" :data="$units" :route="route('unit-kerja.index')">
+                    @foreach ($units as $index => $unit)
+                    <tr class="bg-white dark:bg-gray-800 border-y border-gray-200 dark:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-200">
+                        <td class="px-4 py-4 sm:px-6 border-r border-gray-200 dark:border-gray-600">
+                            {{ $index + 1 }}
+                        </td>
+                        <td class="px-4 py-4 sm:px-6 border-r border-gray-200 dark:border-gray-600 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            {{ $unit->nama_unit_kerja}}
+                        </td>
+                    </tr>
+                    <x-table-row-actions :actions="[
+                        [
+                            'label' => 'Edit',
+                            'color' => 'sky',
+                            'icon' => 'heroicon-o-pencil',
+                            'href' => route('unit-kerja.edit', $unit->unit_kerja_id),
+                        ],
+                        [
+                            'label' => 'Hapus',
+                            'color' => 'red',
+                            'icon' => 'heroicon-o-trash',
+                            'modalId' => 'delete-unitKerja-modal-' . $unit->unit_kerja_id,
+                        ],
+                    ]" />
+                    @endforeach
+                </x-table>
+            </div>
+
+        </div>
 
 
     @endsection
