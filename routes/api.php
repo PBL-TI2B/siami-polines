@@ -17,8 +17,6 @@ Route::post('/register', [RegisterController::class, 'register']);
 // endpoint login /api/login
 Route::post('/login', [LoginController::class, 'login']);
 
-Route::post('/sasaran-strategis', [SasaranStrategisController::class, 'store']);
-
 Route::prefix('periode-audits')->group(function () {
     Route::get('/', [PeriodeAuditController::class, 'index']);
     Route::post('/', [PeriodeAuditController::class, 'store']);
@@ -29,3 +27,5 @@ Route::prefix('periode-audits')->group(function () {
     Route::put('/{id}/close', [PeriodeAuditController::class, 'close']);
     Route::delete('/{id}', [PeriodeAuditController::class, 'destroy']);
 });
+
+Route::post('/sasaran-strategis', [SasaranStrategisController::class, 'store']);
