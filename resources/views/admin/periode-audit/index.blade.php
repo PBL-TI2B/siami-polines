@@ -489,12 +489,11 @@
                                     <td class="px-4 py-4 sm:px-6 border-r border-gray-200 dark:border-gray-700">
                                         <div class="flex items-center space-x-2">
                                             ${periode.status !== 'Berakhir' ? `
-                                                                                                                                                <button onclick="openModal('close-modal', '/api/periode-audits/${periode.id}/close', '${periode.nama_periode.replace(/'/g, "\\'")}')"
-                                                                                                                                                        class="text-sm font-medium rounded-lg px-4 py-2 flex items-center transition-all duration-200 text-white bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:ring-yellow-300 dark:bg-yellow-500 dark:hover:bg-yellow-600 dark:focus:ring-yellow-600">
-                                                                                                                                                <x-heroicon-o-lock-closed class="w-4 h-4 mr-2" />
-                                                                                                                                                    Tutup
-                                                                                                                                                </button>
-                                                                                                                                            ` : ''}
+                                                                            <button onclick="openModal('close-modal', '/api/periode-audits/${periode.id}/close', '${periode.nama_periode.replace(/'/g, "\\'")}')" class="text-sm font-medium rounded-lg px-4 py-2 flex items-center transition-all duration-200 text-white bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:ring-yellow-300 dark:bg-yellow-500 dark:hover:bg-yellow-600 dark:focus:ring-yellow-600">
+                                                                                    <x-heroicon-o-lock-closed class="w-4 h-4 mr-2" />
+                                                                                        Tutup
+                                                                                    </button>
+                                                                            ` : ''}
                                             <a href="/admin/periode-audit/${periode.id}/edit"
                                                class="text-sm font-medium rounded-lg px-4 py-2 flex items-center transition-all duration-200 text-white bg-sky-800 hover:bg-sky-900 focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-600">
                                                 <x-heroicon-o-pencil class="w-4 h-4 mr-2" />
