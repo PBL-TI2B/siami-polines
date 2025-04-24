@@ -52,11 +52,11 @@
         </div>
     </div>
 
-    <x-table 
+    <x-table
     id="jadwalAuditTable"
-    :headers="['', 'No', 'Unit Kerja', 'Waktu Audit', 'Auditee', 'Auditee 2', 'Auditor 1', 'Auditor 2', 'Status','Aksi']" 
-    :data="$auditings" 
-    :perPage="$auditings->perPage()" 
+    :headers="['', 'No', 'Unit Kerja', 'Waktu Audit', 'Auditee', 'Auditee 2', 'Auditor 1', 'Auditor 2', 'Status','Aksi']"
+    :data="$auditings"
+    :perPage="$auditings->perPage()"
     :route="route('jadwal-audit.index')">
 
     @forelse ($auditings as $index => $auditing)
@@ -109,11 +109,11 @@
         </tr>
 
         <!-- Modal Hapus -->
-        <x-confirmation-modal 
+        <x-confirmation-modal
             id="delete-jadwal-modal-{{ $auditing->auditing_id }}"
             title="Konfirmasi Hapus Jadwal"
-            :action="route('jadwal-audit.destroy', $auditing->auditing_id)" 
-            method="DELETE" 
+            :action="route('jadwal-audit.destroy', $auditing->auditing_id)"
+            method="DELETE"
             type="delete"
             formClass="delete-modal-form"
             :itemName="$auditing->unitKerja->nama ?? 'Jadwal'"

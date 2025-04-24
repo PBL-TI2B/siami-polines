@@ -77,6 +77,12 @@ Route::prefix('admin')->group(function () {
     // Data User
     Route::prefix('data-user')->group(function () {
         Route::get('/', [DataUserController::class, 'index'])->name('data-user.index');
+        Route::get('/create', [DataUserController::class, 'create'])->name('data-user.create');
+        Route::post('/', [DataUserController::class, 'store'])->name('data-user.store');
+        Route::get('/{id}/edit', [DataUserController::class, 'edit'])->name('data-user.edit');
+        Route::put('/{id}', [DataUserController::class, 'update'])->name('data-user.update');
+        Route::delete('/{id}', [DataUserController::class, 'destroy'])->name('data-user.destroy');
+
     });
 
     // Laporan
