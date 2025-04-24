@@ -46,7 +46,11 @@ Route::prefix('admin')->group(function () {
     // Jadwal Audit
     Route::prefix('jadwal-audit')->group(function () {
         Route::get('/', [JadwalAuditController::class, 'index'])->name('jadwal-audit.index');
-        Route::post('/create', [JadwalAuditController::class, 'makeJadwalAudit']);
+        Route::get('/create', [JadwalAuditController::class, 'create'])->name('jadwal-audit.create'); // Route untuk halaman form
+        Route::post('/store', [JadwalAuditController::class, 'makeJadwalAudit'])->name('jadwal-audit.store'); // Route untuk menyimpan data
+        Route::delete('/{id}', [JadwalAuditController::class, 'destroy'])->name('jadwal-audit.destroy');
+        Route::post('/reset', [JadwalAuditController::class, 'reset'])->name('jadwal-audit.reset');
+        Route::get('/download', [JadwalAuditController::class, 'download'])->name('jadwal-audit.download');
     });
 
     // Daftar Tilik
@@ -73,6 +77,12 @@ Route::prefix('admin')->group(function () {
     // Data User
     Route::prefix('data-user')->group(function () {
         Route::get('/', [DataUserController::class, 'index'])->name('data-user.index');
+        Route::get('/create', [DataUserController::class, 'create'])->name('data-user.create');
+        Route::post('/', [DataUserController::class, 'store'])->name('data-user.store');
+        Route::get('/{id}/edit', [DataUserController::class, 'edit'])->name('data-user.edit');
+        Route::put('/{id}', [DataUserController::class, 'update'])->name('data-user.update');
+        Route::delete('/{id}', [DataUserController::class, 'destroy'])->name('data-user.destroy');
+
     });
 
     // Laporan
@@ -86,3 +96,16 @@ Route::get('/logout', function () {
     // Logika logout (misalnya menggunakan Auth::logout())
     return redirect('/login');
 })->name('logout');
+
+//route jadwal
+Route::get('jadwal-audit/create', [JadwalAuditController::class, 'create'])->name('jadwal-audit.create');
+
+Route::get('jadwal-audit/download', [JadwalAuditController::class, 'download'])->name('jadwal-audit.download');
+
+Route::post('jadwal-audit/reset', [JadwalAuditController::class, 'reset'])->name('jadwal-audit.reset');
+
+
+Route::get('jadwal-audit/{id}/edit', [JadwalAuditController::class, 'edit'])->name('jadwal-audit.edit');
+Route::put('/jadwal-audit/{id}', [JadwalAuditController::class, 'update'])->name('jadwal-audit.update');
+
+Route::delete('/jadwal-audit/{id}', [JadwalAuditController::class, 'destroy'])->name('jadwal-audit.destroy');
