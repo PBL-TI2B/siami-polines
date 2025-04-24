@@ -18,14 +18,14 @@
 
     <!-- Tombol Aksi -->
     <div class="flex flex-wrap items-center gap-2 mb-4">
-        <a href="{{ route('jadwal-audit.create') }}" class="bg-sky-800 text-white px-5 py-2.5 rounded hover:bg-blue-700 inline-flex items-center text-sm font-medium">
+        <a href="{{ route('jadwal-audit.create') }}" class="bg-sky-800 text-white px-5 py-2.5 rounded hover:bg-sky-900 inline-flex items-center text-sm font-medium">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
             </svg>
             Tambah Data
         </a>
 
-        <a href="{{ route('jadwal-audit.download') }}" class="bg-sky-800 text-white px-5 py-2.5 rounded hover:bg-indigo-700 inline-flex items-center text-sm font-medium">
+        <a href="{{ route('jadwal-audit.download') }}" class="bg-sky-800 text-white px-5 py-2.5 rounded hover:bg-sky-900 inline-flex items-center text-sm font-medium">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round"
                     d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4"/>
@@ -33,13 +33,16 @@
             Unduh Data
         </a>
 
-        <button class="bg-red-600 text-white px-5 py-2.5 rounded hover:bg-red-700 inline-flex items-center text-sm font-medium">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M4 4v6h6M20 20v-6h-6M4 14a8 8 0 0114-6.32M20 10a8 8 0 01-14 6.32"/>
-            </svg>
-            Reset Semua Jadwal
-        </button>
+        <form action="{{ route('jadwal-audit.reset') }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin mereset semua jadwal audit?')">
+    @csrf
+    <button type="submit" class="bg-red-600 text-white px-5 py-2.5 rounded hover:bg-red-700 inline-flex items-center text-sm font-medium">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                d="M4 4v6h6M20 20v-6h-6M4 14a8 8 0 0114-6.32M20 10a8 8 0 01-14 6.32"/>
+        </svg>
+        Reset Semua Jadwal
+    </button>
+</form>
 
         <div class="ml-auto">
             <select id="periodeFilter"
@@ -124,46 +127,10 @@
         </tr>
     @endforelse
 </x-table>
-
-
-    <!-- Table Placeholder
-    <div class="overflow-x-auto">
-        <table id="jadwalAuditTable" class="min-w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm">
-            <thead>
-                <tr>
-                    <th class="p-4 border-b border-gray-200 dark:border-gray-700 text-left">No</th>
-                    <th class="p-4 border-b border-gray-200 dark:border-gray-700 text-left">Unit Kerja</th>
-                    <th class="p-4 border-b border-gray-200 dark:border-gray-700 text-left">Waktu Audit</th>
-                    <th class="p-4 border-b border-gray-200 dark:border-gray-700 text-left">Auditee</th>
-                    <th class="p-4 border-b border-gray-200 dark:border-gray-700 text-left">Auditor</th>
-                    <th class="p-4 border-b border-gray-200 dark:border-gray-700 text-left">Status</th>
-                    <th class="p-4 border-b border-gray-200 dark:border-gray-700 text-left">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="p-4 border-b border-gray-200 dark:border-gray-700">1</td>
-                    <td class="p-4 border-b border-gray-200 dark:border-gray-700">Jurusan Teknik Elektro</td>
-                    <td class="p-4 border-b border-gray-200 dark:border-gray-700">12 Januari 2025</td>
-                    <td class="p-4 border-b border-gray-200 dark:border-gray-700">Budi</td>
-                    <td class="p-4 border-b border-gray-200 dark:border-gray-700">Ani</td>
-                    <td class="p-4 border-b border-gray-200 dark:border-gray-700">
-                        <span class="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300 px-2 py-1 rounded-full text-xs">Selesai</span>
-                    </td>
-                    <td class="p-4 border-b border-gray-200 dark:border-gray-700">
-                        <div class="flex gap-2">
-                            <button class="text-blue-600 hover:underline">Edit</button>
-                            <button class="text-red-600 hover:underline">Hapus</button>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div> -->
 @endsection
 
 @push('scripts')
+
 <script>
     // Placeholder JS
 </script>

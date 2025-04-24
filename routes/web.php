@@ -46,7 +46,11 @@ Route::prefix('admin')->group(function () {
     // Jadwal Audit
     Route::prefix('jadwal-audit')->group(function () {
         Route::get('/', [JadwalAuditController::class, 'index'])->name('jadwal-audit.index');
-        Route::post('/create', [JadwalAuditController::class, 'makeJadwalAudit']);
+        Route::get('/create', [JadwalAuditController::class, 'create'])->name('jadwal-audit.create'); // Route untuk halaman form
+        Route::post('/store', [JadwalAuditController::class, 'makeJadwalAudit'])->name('jadwal-audit.store'); // Route untuk menyimpan data
+        Route::delete('/{id}', [JadwalAuditController::class, 'destroy'])->name('jadwal-audit.destroy');
+        Route::post('/reset', [JadwalAuditController::class, 'reset'])->name('jadwal-audit.reset');
+        Route::get('/download', [JadwalAuditController::class, 'download'])->name('jadwal-audit.download');
     });
 
     // Daftar Tilik
@@ -87,15 +91,13 @@ Route::get('/logout', function () {
     return redirect('/login');
 })->name('logout');
 
-
-// Route Jadwal Audit
+//route jadwal
 Route::get('jadwal-audit/create', [JadwalAuditController::class, 'create'])->name('jadwal-audit.create');
 
 Route::get('jadwal-audit/download', [JadwalAuditController::class, 'download'])->name('jadwal-audit.download');
 
 Route::post('jadwal-audit/reset', [JadwalAuditController::class, 'reset'])->name('jadwal-audit.reset');
 
-Route::post('jadwal-audit/store', [JadwalAuditController::class, 'store'])->name('jadwal-audit.store');
 
 Route::get('jadwal-audit/{id}/edit', [JadwalAuditController::class, 'edit'])->name('jadwal-audit.edit');
 Route::put('/jadwal-audit/{id}', [JadwalAuditController::class, 'update'])->name('jadwal-audit.update');
