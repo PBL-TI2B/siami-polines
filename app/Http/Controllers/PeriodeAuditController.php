@@ -5,6 +5,33 @@ namespace App\Http\Controllers;
 use App\Models\PeriodeAudit;
 use Illuminate\Http\Request;
 
+
+// class PeriodeAuditController extends Controller
+// {
+//     public function index()
+//     {
+//         return view('admin.periode-audit.index');
+//     }
+
+//     public function edit(PeriodeAudit $periodeAudit)
+//     {
+//         return view('admin.periode-audit.edit', compact('periodeAudit'));
+//     }
+
+//     public function update(Request $request, PeriodeAudit $periodeAudit)
+//     {
+//         $validated = $request->validate([
+//             'nama_periode' => 'required|string|max:255',
+//             'tanggal_mulai' => 'required|date',
+//             'tanggal_berakhir' => 'required|date|after_or_equal:tanggal_mulai',
+//         ]);
+
+//         $periodeAudit->update($validated);
+
+//         return redirect()->route('periode-audit.index')->with('success', 'Periode audit berhasil diperbarui.');
+//     }
+// }
+
 class PeriodeAuditController extends Controller
 {
     public function index(Request $request)

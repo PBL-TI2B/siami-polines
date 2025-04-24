@@ -10,6 +10,7 @@ use App\Http\Controllers\DataUserController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Livewire\PeriodeAudit;
 use Illuminate\Support\Facades\Route;
 
 
@@ -28,6 +29,9 @@ Route::prefix('admin')->group(function () {
     Route::prefix('dashboard')->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
     });
+
+    // Route::get('/periode-audit', PeriodeAudit::class)->name('periode-audit.index');
+
 
     // Periode Audit
     Route::prefix('periode-audit')->group(function () {
