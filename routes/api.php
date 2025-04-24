@@ -2,8 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\LoginController;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\PeriodeAuditController;
 use App\Http\Controllers\SasaranStrategisController;
 
@@ -12,10 +11,10 @@ use App\Http\Controllers\SasaranStrategisController;
 // })->middleware('auth:sanctum');
 
 // enpdoint register /api/register
-Route::post('/register', [RegisterController::class, 'register']);
+// Route::post('/register', [RegisterController::class, 'register']);
 
 // endpoint login /api/login
-Route::post('/login', [LoginController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login']);
 
 Route::prefix('periode-audits')->group(function () {
     Route::get('/', [PeriodeAuditController::class, 'index']);

@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             UnitKerjaSeeder::class,
             PeriodeAuditSeeder::class,
             KriteriaSeeder::class,
+            UserSeeder::class,
         ]);
     }
 }
