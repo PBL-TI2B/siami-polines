@@ -24,5 +24,5 @@
     </div>
 
     <!-- Pagination -->
-    <x-pagination :data="$data" />
+    <x-pagination :data="$data->appends(['per_page' => request('per_page')])" />
 </div>

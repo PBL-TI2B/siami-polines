@@ -10,51 +10,53 @@ use Illuminate\Http\Request;
 
 class JadwalAuditController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('admin.jadwal-audit.index');
+        // Ambil jumlah entri dari query string, default ke 5
+        $entries = $request->get('per_page', 5);
+
+        $auditings = Auditing::with([
+            'auditor1', 'auditor2',
+            'auditee1', 'auditee2',
+            'unitKerja', 'periode'
+        ])->paginate($entries);
+        return view('admin.jadwal-audit.index', compact('auditings'));
     }
 
     public function getAllJadwalAudit() {
-        $jadwalAudit = Auditing::with('user', 'shop')->get();
-
+        $jadwalAudit = Auditing::with([
+            'auditor1', 'auditor2',
+            'auditee1', 'auditee2',
+            'unitKerja', 'periode'
+        ])->get();
+    
         return response()->json([
             'data' => $jadwalAudit
         ], 200);
     }
-
+    
     public function makeJadwalAudit(Request $request) {
-        $request ->validate([
-            'user_id_1_auditor' => 'required|string|exist:user,nama',
-            'user_id_2_auditor' => 'string|exist:user,nama',
-            'user_id_1_auditee' => 'required|string|exist:user,nama',
-            'user_id_2_auditee' => 'string|exist:user,nama',
-            'unit_kerja_id' => 'required|string|exist:unit_kerja,nama_unit_kerja',
-            'periode_id' => 'required|string|exist:periode,nama',
+        $request->validate([
+            'user_id_1_auditor' => 'required|exists:users,user_id',
+            'user_id_2_auditor' => 'nullable|exists:users,user_id',
+            'user_id_1_auditee' => 'required|exists:users,user_id',
+            'user_id_2_auditee' => 'nullable|exists:users,user_id',
+            'unit_kerja_id' => 'required|exists:unit_kerja,unit_kerja_id',
+            'periode_id' => 'required|exists:periode_audit,periode_id',
         ]);
-
-        $user_auditor1 = User::where('nama', $request->nama)->first();
-        $user_auditor2 = User::where('nama', $request->nama)->first();
-        $user_auditee1 = User::where('nama', $request->nama)->first();
-        $user_auditee2 = User::where('nama', $request->nama)->first();
-        $unit_kerja = UnitKerja::where('nama_unit', $request->nama_unit)->first();
-        $periode = PeriodeAudit::where('nama', $request->nama)->first();
-
-        if (!$user_auditor1 || !$user_auditee1 || !$unit_kerja || !$periode) {
-            return response()->json(['message'=>'data tidak ditemukan'], 404);
-        }
-
+    
         $audit = Auditing::create([
-            'user_id_1_auditor' => $user_auditor1->user_id,
-            'user_id_2_auditor' => $user_auditor2->user_id,
-            'user_id_1_auditee' => $user_auditee1->user_id,
-            'user_id_2_auditee' => $user_auditee2->user_id,
-            'unit_kerja_id' => $unit_kerja->id_unit_kerja,
-            'periode_id' => $periode->periode_id,
+            'user_id_1_auditor' => $request->user_id_1_auditor,
+            'user_id_2_auditor' => $request->user_id_2_auditor,
+            'user_id_1_auditee' => $request->user_id_1_auditee,
+            'user_id_2_auditee' => $request->user_id_2_auditee,
+            'unit_kerja_id' => $request->unit_kerja_id,
+            'periode_id' => $request->periode_id,
+            'status' => 'Menunggu',
         ]);
-
+    
         return response()->json([
-            'message'=> 'Data jadwal audit berhasil disimpan!',
+            'message' => 'Data jadwal audit berhasil disimpan!',
             'data' => $audit,
         ], 201);
     }
