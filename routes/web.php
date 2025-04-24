@@ -86,3 +86,18 @@ Route::get('/logout', function () {
     // Logika logout (misalnya menggunakan Auth::logout())
     return redirect('/login');
 })->name('logout');
+
+
+// Route Jadwal Audit
+Route::get('jadwal-audit/create', [JadwalAuditController::class, 'create'])->name('jadwal-audit.create');
+
+Route::get('jadwal-audit/download', [JadwalAuditController::class, 'download'])->name('jadwal-audit.download');
+
+Route::post('jadwal-audit/reset', [JadwalAuditController::class, 'reset'])->name('jadwal-audit.reset');
+
+Route::post('jadwal-audit/store', [JadwalAuditController::class, 'store'])->name('jadwal-audit.store');
+
+Route::get('jadwal-audit/{id}/edit', [JadwalAuditController::class, 'edit'])->name('jadwal-audit.edit');
+Route::put('/jadwal-audit/{id}', [JadwalAuditController::class, 'update'])->name('jadwal-audit.update');
+
+Route::delete('/jadwal-audit/{id}', [JadwalAuditController::class, 'destroy'])->name('jadwal-audit.destroy');
