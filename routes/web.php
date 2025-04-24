@@ -10,6 +10,7 @@ use App\Http\Controllers\DataUserController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Livewire\PeriodeAudit;
 use Illuminate\Support\Facades\Route;
 
 
@@ -29,6 +30,9 @@ Route::prefix('admin')->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
     });
 
+    // Route::get('/periode-audit', PeriodeAudit::class)->name('periode-audit.index');
+
+
     // Periode Audit
     Route::prefix('periode-audit')->group(function () {
         Route::get('/', [PeriodeAuditController::class, 'index'])->name('periode-audit.index');
@@ -43,6 +47,7 @@ Route::prefix('admin')->group(function () {
     // Jadwal Audit
     Route::prefix('jadwal-audit')->group(function () {
         Route::get('/', [JadwalAuditController::class, 'index'])->name('jadwal-audit.index');
+        Route::post('/create', [JadwalAuditController::class, 'makeJadwalAudit']);
     });
 
     // Daftar Tilik

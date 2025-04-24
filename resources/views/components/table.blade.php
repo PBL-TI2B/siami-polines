@@ -1,6 +1,6 @@
 @props(['headers', 'data', 'perPage' => 5, 'route'])
 
-<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
+<div class="rounded-2xl bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700">
     <!-- Table Controls -->
     <x-table-controls :route="$route" :perPage="$perPage" />
 
