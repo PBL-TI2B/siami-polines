@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('kriteria', function (Blueprint $table) {
             $table->id('kriteria_id');
-            $table->char('nama_kriteria', 100); // kolom char dengan panjang 100
+            $table->char('nama_kriteria', 100)->nullable(); // kolom char dengan panjang 100
         });
 
         Schema::create('deskripsi', function (Blueprint $table) {
