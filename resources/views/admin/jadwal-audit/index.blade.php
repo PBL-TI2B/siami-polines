@@ -18,14 +18,14 @@
 
     <!-- Tombol Aksi -->
     <div class="flex flex-wrap items-center gap-2 mb-4">
-        <a href="{{ route('jadwal-audit.create') }}" class="bg-blue-900 text-white px-5 py-2.5 rounded hover:bg-blue-700 inline-flex items-center text-sm font-medium">
+        <a href="{{ route('jadwal-audit.create') }}" class="bg-sky-800 text-white px-5 py-2.5 rounded hover:bg-blue-700 inline-flex items-center text-sm font-medium">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
             </svg>
             Tambah Data
         </a>
 
-        <a href="{{ route('jadwal-audit.download') }}" class="bg-blue-900 text-white px-5 py-2.5 rounded hover:bg-indigo-700 inline-flex items-center text-sm font-medium">
+        <a href="{{ route('jadwal-audit.download') }}" class="bg-sky-800 text-white px-5 py-2.5 rounded hover:bg-indigo-700 inline-flex items-center text-sm font-medium">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round"
                     d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4"/>
