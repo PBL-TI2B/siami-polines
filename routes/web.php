@@ -62,6 +62,9 @@ Route::prefix('admin')->group(function () {
     Route::prefix('unit-kerja')->group(function () {
         Route::get('/', [UnitKerjaController::class, 'index'])->name('unit-kerja.index');
         Route::get('/{type?}', [UnitKerjaController::class, 'index'])->name('unit-kerja');
+        Route::get('/upt', [UnitKerjaController::class, 'index'])->name('unit-kerja.upt');
+        Route::get('/prodi', [UnitKerjaController::class, 'index'])->name('unit-kerja.prodi');
+        Route::get('/jurusan', [UnitKerjaController::class, 'index'])->name('unit-kerja.jurusan');
         Route::get('/create', [UnitKerjaController::class, 'create'])->name('unit-kerja.create');
         Route::post('/', [UnitKerjaController::class, 'store'])->name('unit-kerja.store');
         Route::get('/{id}/edit', [UnitKerjaController::class, 'edit'])->name('unit-kerja.edit');

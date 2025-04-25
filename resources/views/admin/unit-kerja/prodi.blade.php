@@ -7,13 +7,13 @@
         <!-- Breadcrumb -->
         <x-breadcrumb :items="[
             ['label' => 'Beranda', 'url' => route('dashboard.index')],
-            ['label' => 'Data Unit', 'url' => ''],
-            ['label' => 'Daftar UPT'],
+            ['label' => 'Data Unit', 'url' => route('unit-kerja')],
+            ['label' => 'Daftar Prodi'],
         ]" />
 
         <!-- Heading -->
         <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-200 mb-8">
-            Data UPT
+            Data Prodi
         </h1>
 
         <div
@@ -30,7 +30,7 @@
         </div>
 
         <div class="pt-6">
-                <x-table :headers="['No', 'Unit Kerja', 'Aksi']" :data="$units" :route="route('unit-kerja.index')">
+                <x-table :headers="['No', 'Unit Kerja', 'Aksi']" :data="$units" :route="route('unit-kerja.prodi')">
                     @foreach ($units as $index => $unit)
                     <tr class="bg-white dark:bg-gray-800 border-y border-gray-200 dark:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-200">
                         <td class="px-4 py-4 sm:px-6 border-r border-gray-200 dark:border-gray-600">
