@@ -11,21 +11,31 @@ use Illuminate\Support\Facades\Log;
 
 class UnitKerjaController extends Controller
 {
-    public function index(Request $request, $type = null)
+    public function index(Request $request)
     {
         $perPage = $request->query('per_page', 5);
         $search = $request->query('search');
-        $paginatedUnits = UnitKerja::query()
-            ->when($search, fn($q) => $q->where('nama_periode', 'like', "%{$search}%"))
-            ->paginate($perPage);
+        $type = $request->query('type');
 
-        // // Ambil nama route saat ini
-        // $currentRoute = $request->route()->getName(); // contoh: unit-kerja.prodi
+        $typeMapping = [
+            'upt' => 1,
+            'jurusan' => 2,
+            'prodi' => 3,
+        ];
 
-        // // Pisahkan bagian terakhir setelah titik
-        // $type = explode('.', $currentRoute)[1] ?? null;
+        $jenisUnitId = $typeMapping[$type] ?? null;
 
-        Log::info('Nilai $type saat ini:', ['type' => $type]);
+        $query = UnitKerja::query();
+
+        if ($search) {
+            $query->where('nama_unit_kerja', 'like', "%{$search}%");
+        }
+
+        if ($jenisUnitId) {
+            $query->where('jenis_unit_id', $jenisUnitId);
+        }
+
+        $paginatedUnits = $query->paginate($perPage);
 
         return match ($type) {
             'upt' => view('admin.unit-kerja.index', ['units' => $paginatedUnits]),
@@ -49,6 +59,6 @@ class UnitKerjaController extends Controller
     {
         $unitKerja = UnitKerja::findOrFail($id);
         $unitKerja->delete();
-        return redirect()->route('unit-kerja.index')->with('success', 'Periode audit berhasil dihapus.');
+        return redirect()->route('unit-kerja', ['type' => 'upt'])->with('success', 'Periode audit berhasil dihapus.');
     }
 }

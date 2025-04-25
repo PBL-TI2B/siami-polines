@@ -8,7 +8,8 @@
         <x-breadcrumb :items="[
             ['label' => 'Beranda', 'url' => route('dashboard.index')],
             ['label' => 'Data Unit', 'url' => route('unit-kerja')],
-            ['label' => 'Daftar UPT', 'url' => route('unit-kerja.index')],
+            ['label' => 'Daftar UPT', 'url' => route('unit-kerja', ['type' => 'upt'])],
+            ['label' => 'Edit'],
         ]" />
 
         <!-- Heading -->
@@ -33,7 +34,7 @@
             <x-button type="submit" color="sky" icon="heroicon-o-plus">
                 Simpan
             </x-button>
-            <x-button color="gray" icon="heroicon-o-x-mark" href="{{ route('unit-kerja.index') }}">
+            <x-button color="gray" icon="heroicon-o-x-mark" href="{{ route('unit-kerja', ['type' => 'upt']) }}">
                 Batal
             </x-button>
         </div>
