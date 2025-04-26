@@ -89,6 +89,38 @@ class UnitKerjaController extends Controller
         return view('admin.unit-kerja.edit', compact('unitKerja', 'type'));
     }
 
+    public function update(Request $request, $id, $type = null)
+    {
+        // Validasi input dari form
+        $validated = $request->validate([
+            'nama_unit_kerja' => 'required|string|max:100',
+            'type' => 'nullable|string',
+        ]);
+
+        // Mapping jenis unit berdasarkan type
+        $typeMapping = [
+            'upt' => 1,
+            'jurusan' => 2,
+            'prodi' => 3,
+        ];
+
+        // Ambil ID jenis unit dari mapping
+        $jenisUnitId = $typeMapping[$validated['type']] ?? null;
+
+        // Cari unit kerja yang akan diupdate
+        $unitKerja = UnitKerja::findOrFail($id);
+
+        // Update data unit kerja
+        $unitKerja->update([
+            'nama_unit_kerja' => $request->input('nama_unit_kerja'),
+            'jenis_unit_id' => $jenisUnitId,
+        ]);
+
+        // Redirect ke halaman yang sesuai dengan tipe unit yang sudah diupdate
+        return redirect()->route('unit-kerja', ['type' => $validated['type']])
+            ->with('success', 'Unit Kerja berhasil diupdate!');
+    }
+
     public function destroy($id)
     {
         $unitKerja = UnitKerja::findOrFail($id);
