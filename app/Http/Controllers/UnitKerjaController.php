@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\JenisUnit;
 use App\Models\UnitKerja;
+use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -11,11 +12,60 @@ use Illuminate\Support\Facades\Log;
 
 class UnitKerjaController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, $type = null)
     {
         $perPage = $request->query('per_page', 5);
         $search = $request->query('search');
-        $type = $request->query('type');
+
+        // Mapping string type ke ID jenis unit
+        $typeMapping = [
+            'upt' => 1,
+            'jurusan' => 2,
+            'prodi' => 3,
+        ];
+
+        // Ambil ID jenis unit dari mapping
+        $jenisUnitId = $typeMapping[$type] ?? null;
+
+        // Query dasar
+        $query = UnitKerja::query();
+
+        // Filter pencarian
+        if ($search) {
+            $query->where('nama_unit_kerja', 'like', "%{$search}%");
+        }
+
+        // Filter berdasarkan jenis unit (jika ada)
+        if ($jenisUnitId) {
+            $query->where('jenis_unit_id', $jenisUnitId);
+        }
+
+        // Pagination
+        $paginatedUnits = $query->paginate($perPage);
+
+        // Pilih view berdasarkan type
+        switch ($type) {
+            case 'upt':
+                return view('admin.unit-kerja.index', ['units' => $paginatedUnits]);
+            case 'prodi':
+                return view('admin.unit-kerja.prodi', ['units' => $paginatedUnits]);
+            case 'jurusan':
+                return view('admin.unit-kerja.jurusan', ['units' => $paginatedUnits]);
+            default:
+                // Jika tidak ada type, tampilkan view default atau error
+                return view('admin.unit-kerja.index', ['units' => $paginatedUnits]);
+        }
+    }
+
+    public function create($type = null) {
+        return view('admin.unit-kerja.create', compact('type'));
+    }
+
+    public function store(Request $request) {
+        $validated = $request->validate([
+            'nama_unit_kerja' => 'required|string|max:100',
+            'type' => 'nullable|string',
+        ]);
 
         $typeMapping = [
             'upt' => 1,
@@ -23,36 +73,20 @@ class UnitKerjaController extends Controller
             'prodi' => 3,
         ];
 
-        $jenisUnitId = $typeMapping[$type] ?? null;
+        $jenis_unit_id = $typeMapping[$validated['type']];
 
-        $query = UnitKerja::query();
+        $unitKerja = new UnitKerja();
+        $unitKerja->nama_unit_kerja = $validated['nama_unit_kerja'];
+        $unitKerja->jenis_unit_id = $jenis_unit_id;
+        $unitKerja->save();
 
-        if ($search) {
-            $query->where('nama_unit_kerja', 'like', "%{$search}%");
-        }
-
-        if ($jenisUnitId) {
-            $query->where('jenis_unit_id', $jenisUnitId);
-        }
-
-        $paginatedUnits = $query->paginate($perPage);
-
-        return match ($type) {
-            'upt' => view('admin.unit-kerja.index', ['units' => $paginatedUnits]),
-            'prodi' => view('admin.unit-kerja.prodi', ['units' => $paginatedUnits]),
-            'jurusan' => view('admin.unit-kerja.jurusan', ['units' => $paginatedUnits]),
-            default => view('admin.unit-kerja.index', ['units' => $paginatedUnits]),
-        };      
+        return redirect()->route('unit-kerja', ['type' => $validated['type']])->with('success', 'Data unit kerja berhasil ditambahkan');
     }
 
-    public function create() {
-        return view('admin.unit-kerja.create');
-    }
-
-    public function edit($id)
+    public function edit($id, $type = null)
     {
         $unitKerja = UnitKerja::findOrFail($id);
-        return view('admin.unit-kerja.edit', compact('unitKerja'));
+        return view('admin.unit-kerja.edit', compact('unitKerja', 'type'));
     }
 
     public function destroy($id)

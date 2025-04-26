@@ -18,13 +18,13 @@
 
         <div
             class="flex gap-2">
-            <x-button href="{{ route('unit-kerja.create') }}" color="sky" icon="heroicon-o-plus" >
+            <x-button href="{{ route('unit-kerja.create', ['type' => 'jurusan']) }}" color="sky" icon="heroicon-o-plus" >
                     Tambah Data
                 </x-button>
-            <x-button type="submit" color="sky" icon="heroicon-o-plus">
+            <x-button type="submit" color="sky" icon="heroicon-o-document-arrow-down">
                     Unduh Data
                 </x-button>
-            <x-button type="submit" color="yellow" icon="heroicon-o-plus">
+            <x-button type="submit" color="yellow" icon="heroicon-o-document-arrow-up">
                     Import Data
                 </x-button>
         </div>
@@ -44,7 +44,7 @@
                             'label' => 'Edit',
                             'color' => 'sky',
                             'icon' => 'heroicon-o-pencil',
-                            'href' => route('unit-kerja.edit', $unit->unit_kerja_id),
+                            'href' => route('unit-kerja.edit', ['id' => $unit->unit_kerja_id, 'type' => 'jurusan']),
                         ],
                         [
                             'label' => 'Hapus',

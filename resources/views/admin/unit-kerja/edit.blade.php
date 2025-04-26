@@ -8,13 +8,13 @@
         <x-breadcrumb :items="[
             ['label' => 'Beranda', 'url' => route('dashboard.index')],
             ['label' => 'Data Unit', 'url' => route('unit-kerja')],
-            ['label' => 'Daftar UPT', 'url' => route('unit-kerja', ['type' => 'upt'])],
+            ['label' => 'Daftar ' . ucfirst($type), 'url' => route('unit-kerja', ['type' => $type])],
             ['label' => 'Edit'],
         ]" />
 
         <!-- Heading -->
         <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-200 mb-8">
-            Edit Data UPT
+            Edit Data {{ ucfirst($type) }}
         </h1>
 
         <div
@@ -34,7 +34,7 @@
             <x-button type="submit" color="sky" icon="heroicon-o-plus">
                 Simpan
             </x-button>
-            <x-button color="gray" icon="heroicon-o-x-mark" href="{{ route('unit-kerja', ['type' => 'upt']) }}">
+            <x-button color="gray" icon="heroicon-o-x-mark" href="{{ route('unit-kerja', ['type' => $type]) }}">
                 Batal
             </x-button>
         </div>
