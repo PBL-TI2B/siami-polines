@@ -85,6 +85,16 @@
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Sasaran Strategis</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Indikator Kinerja</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Aktivitas</th>
+                            <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Satuan</th>
+                            <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Target 25</th>
+                            <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Capaian 25</th>
+                            <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Keterangan</th>
+                            <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Sesuai</th>
+                            <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Lokasi Bukti Dukung</th>
+                            <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Tidak Sesuai (Minor)</th>
+                            <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Tidak Sesuai (Mayor)</th>
+                            <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">OFI (Saran Tindak Lanjut)</th>
+                            <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -93,12 +103,38 @@
                             <td class="px-4 py-3 sm:px-6">Meningkatnya kualitas lulusan pendidikan tinggi</td>
                             <td class="px-4 py-3 sm:px-6">Persentase Lulusan S1 dan D4/D3/D2 yang Berhasil Mendapat Pekerjaan, Melanjutkan Studi, atau Menjadi Wirausaha.</td>
                             <td class="px-4 py-3 sm:px-6">Peningkatan dan pengukuran kemampuan bahasa asing mahasiswa</td>
+                            <td class="px-4 py-3 sm:px-6">%</td>
+                            <td class="px-4 py-3 sm:px-6">80</td>
+                            <td class="px-4 py-3 sm:px-6">75</td>
+                            <td class="px-4 py-3 sm:px-6">Belum Tercapai</td>
+                            <td class="px-4 py-3 sm:px-6">Tidak Sesuai</td>
+                            <td class="px-4 py-3 sm:px-6">/bukti/laporan_mahasiswa_2023.pdf</td>
+                            <td class="px-4 py-3 sm:px-6">Perbaikan metode pengukuran</td>
+                            <td class="px-4 py-3 sm:px-6">-</td>
+                            <td class="px-4 py-3 sm:px-6">Revisi dokumen</td>
+                            <x-table-row-actions :actions="[
+                                ['label' => 'Edit', 'color' => 'sky', 'icon' => 'heroicon-o-pencil', 'href' => '#'],
+                                ['label' => 'Hapus', 'color' => 'red', 'icon' => 'heroicon-o-trash', 'href' => '#']
+                            ]" />
                         </tr>
                         <tr class="hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200">
                             <td class="px-4 py-3 sm:px-6">2</td>
                             <td class="px-4 py-3 sm:px-6">Meningkatnya tata kelola satuan kerja di lingkungan Ditjen Pendidikan Vokasi</td>
                             <td class="px-4 py-3 sm:px-6">Rata-rata Nilai Kinerja Anggaran atas pelaksanaan RKA-K/L Satker minimal 93</td>
                             <td class="px-4 py-3 sm:px-6">Tata Kelola: Peningkatan kuantitas layanan.</td>
+                            <td class="px-4 py-3 sm:px-6">Nilai</td>
+                            <td class="px-4 py-3 sm:px-6">93</td>
+                            <td class="px-4 py-3 sm:px-6">95</td>
+                            <td class="px-4 py-3 sm:px-6">Tercapai</td>
+                            <td class="px-4 py-3 sm:px-6">Sesuai</td>
+                            <td class="px-4 py-3 sm:px-6">/bukti/laporan_anggaran_2023.pdf</td>
+                            <td class="px-4 py-3 sm:px-6">-</td>
+                            <td class="px-4 py-3 sm:px-6">-</td>
+                            <td class="px-4 py-3 sm:px-6">Lanjutkan monitoring</td>
+                            <x-table-row-actions :actions="[
+                                ['label' => 'Edit', 'color' => 'sky', 'icon' => 'heroicon-o-pencil', 'href' => '#'],
+                                ['label' => 'Hapus', 'color' => 'red', 'icon' => 'heroicon-o-trash', 'href' => '#']
+                            ]" />
                         </tr>
                     </tbody>
                 </table>
