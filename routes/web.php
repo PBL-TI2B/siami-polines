@@ -62,16 +62,16 @@ Route::prefix('admin')->group(function () {
 
     // Data Unit (Unit Kerja)
     Route::prefix('unit-kerja')->group(function () {
-        Route::get('/', [UnitKerjaController::class, 'index'])->name('unit-kerja.index');
+        // Route::get('/', [UnitKerjaController::class, 'index'])->name('unit-kerja.index');
         Route::get('/create/{type?}', [UnitKerjaController::class, 'create'])->name('unit-kerja.create');
         Route::get('/{id}/edit/{type?}', [UnitKerjaController::class, 'edit'])->name('unit-kerja.edit');
         Route::post('/', [UnitKerjaController::class, 'store'])->name('unit-kerja.store');
         Route::put('/{id}', [UnitKerjaController::class, 'update'])->name('unit-kerja.update');
         Route::delete('/{id}', [UnitKerjaController::class, 'destroy'])->name('unit-kerja.destroy');
-        
+
         // TARUH PALING BAWAH
-        Route::get('/{type?}', [UnitKerjaController::class, 'index'])->name('unit-kerja');
-        
+        Route::get('/{type?}', [UnitKerjaController::class, 'index'])->name('unit-kerja.index');
+
         // Route::get('/', [UnitKerjaController::class, 'index'])->name('unit-kerja.index');
         // Route::get('/', [UnitKerjaController::class, 'index'])->name('unit-kerja.prodi');
         // Route::get('/', [UnitKerjaController::class, 'index'])->name('unit-kerja.jurusan');
@@ -89,7 +89,7 @@ Route::prefix('admin')->group(function () {
         // Route::post('/import', [InstrumenUptController::class, 'import'])->name('instrumen-upt.import');
         // Route::get('/export', [InstrumenUptController::class, 'export'])->name('instrumen-upt.export');
     });
-    
+
 
     // Data User
     Route::prefix('data-user')->group(function () {
