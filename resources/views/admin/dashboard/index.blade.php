@@ -1,102 +1,203 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard')
+@section('title', 'Dashboard Admin')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
-
-    <!-- Heading -->
-    <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-200 mb-8">
-        Dashboard
-    </h1>
-    <div class="flex md:flex-row flex-col gap-7">
-        <div class=" w-[700px] flex md:flex-col flex-row gap-5">
-            <div class="flex md:flex-row flex-col gap-5">
-                <a href="#" class="block max-w-sm p-6 bg-green-200 border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 ">
-                    <div class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                        </svg>
-                    </div>
-                    <p class="text-md text-gray-700 dark:text-gray-400">Audit Selesai</p>
-                    <p class="text-xl text-bold dark:text-gray-400"> 2 </p>
-                </a>
-                <a href="#" class="block max-w-sm p-6 bg-yellow-200 border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                    <div class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                        </svg>
-                    </div>
-                    <p class="text-md text-gray-700 dark:text-gray-400">Audit dalam Proses</p>
-                    <p class="text-xl text-bold dark:text-gray-400"> 3 </p>
-                </a>
+    <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-6 flex items-center justify-between">
+            <div>
+                <x-breadcrumb :items="[['label' => 'Dashboard', 'url' => route('dashboard.index')]]" />
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-200">Dashboard</h1>
+                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Periode Aktif:
+                    <span
+                        class="ml-1 inline-block rounded-full bg-sky-100 px-3 py-1 text-sm font-semibold text-sky-600 dark:bg-sky-800 dark:text-sky-400">
+                        2024/2025 - Semester Genap
+                    </span>
+                </p>
             </div>
-            <div class="w-full max-w-md p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:p-8 dark:bg-gray-800 dark:border-gray-700">
-                <div class="flex items-center justify-between mb-4 gap-2">
-                    <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">Form yang belum diisi</h5>
-                    <a href="#" class="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500">
-                        View all
-                    </a>
-                </div>
-                <div class="flow-root">
-                    <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
-                        <li class="py-3 sm:py-4">
-                            <div class="flex items-center">
-                                <div class="flex-1 min-w-0 ms-4">
-                                    <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                        Form 1
-                                    </p>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="py-3 sm:py-4">
-                            <div class="flex items-center">
-                                <div class="flex-1 min-w-0 ms-4">
-                                    <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                        Form 2
-                                    </p>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="py-3 sm:py-4">
-                            <div class="flex items-center">
-                                <div class="flex-1 min-w-0 ms-4">
-                                    <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                        Form 3
-                                    </p>
-                                </div>
-                            </div>
-                        </li>
+        </div>
 
-                    </ul>
+        <!-- Statistik Audit -->
+        <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <!-- Audit Aktif -->
+            <div
+                class="rounded-2xl border border-sky-200 bg-sky-100 p-6 shadow-sm hover:shadow-md dark:border-sky-600 dark:bg-sky-900">
+                <div class="flex items-center space-x-4">
+                    <div class="rounded-full bg-sky-400 p-3 text-white dark:bg-sky-600">
+                        <x-heroicon-o-clock class="text-white-600 dark:text-white-300 h-6 w-6" />
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-700 dark:text-gray-300">Audit Aktif</p>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white">3</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Audit Selesai -->
+            <div
+                class="rounded-2xl border border-green-200 bg-green-100 p-6 shadow-sm hover:shadow-md dark:border-green-600 dark:bg-green-900">
+                <div class="flex items-center space-x-4">
+                    <div class="rounded-full bg-green-500 p-3 text-white dark:bg-green-600">
+                        <x-heroicon-o-check-circle class="text-white-600 dark:text-white-300 h-6 w-6" />
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-700 dark:text-gray-300">Audit Selesai</p>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white">5</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Audit Tindak Lanjut -->
+            <div
+                class="rounded-2xl border border-yellow-200 bg-yellow-100 p-6 shadow-sm hover:shadow-md dark:border-yellow-600 dark:bg-yellow-900">
+                <div class="flex items-center space-x-4">
+                    <div class="rounded-full bg-yellow-500 p-3 text-white dark:bg-yellow-600">
+                        <x-heroicon-o-exclamation-circle class="text-white-600 dark:text-white-300 h-6 w-6" />
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-700 dark:text-gray-300">Tindak Lanjut</p>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white">2</p>
+                    </div>
                 </div>
             </div>
         </div>
-        <div>
-            <div class="w-[700px] overflow-x-auto shadow-md p-2 sm:rounded-lg">
-                <div class="flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4 px-2 py-2">
-                    <div class="">
-                        <!-- Dropdown menu -->
-                        <p class="text-xl font-bold">Daftar Auditee</p>
-                    </div>
-                </div>
-                <x-table :headers="['No', 'Nama', 'Email']" :data="$users" :route="route('dashboard.index')">
-                    @foreach ($users as $index => $user)
-                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                        <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">
-                            {{ $index + 1 }}
-                        </td>
-                        <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ $user['name'] }}
-                        </td>
-                        <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">
-                            {{ $user['email'] }}
-                        </td>
-                    </tr>
-                    @endforeach
-                </x-table>
-            </div>
 
+        <!-- Tabel Status AMI -->
+        <div class="mb-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+            <h3 class="mb-4 text-xl font-bold text-gray-900 dark:text-gray-200">Status Audit Mutu Internal</h3>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead class="bg-gray-50 dark:bg-gray-700">
+                        <tr>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
+                                No
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
+                                Nama Unit
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
+                                Status
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
+                                Aksi
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
+                        <tr>
+                            <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-200">1</td>
+                            <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-200">Unit A</td>
+                            <td class="px-6 py-4 text-sm">
+                                <span
+                                    class="inline-block rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-600 dark:bg-red-800 dark:text-red-400">
+                                    Belum Audit
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-sm">
+                                <x-button color="sky" icon="heroicon-o-eye">
+                                    Lihat
+                                </x-button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-200">2</td>
+                            <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-200">Unit B</td>
+                            <td class="px-6 py-4 text-sm">
+                                <span
+                                    class="inline-block rounded-full bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-600 dark:bg-yellow-800 dark:text-yellow-400">
+                                    Proses Audit
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-sm">
+                                <x-button color="sky" icon="heroicon-o-eye">
+                                    Lihat
+                                </x-button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-200">3</td>
+                            <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-200">Unit C</td>
+                            <td class="px-6 py-4 text-sm">
+                                <span
+                                    class="inline-block rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-600 dark:bg-green-800 dark:text-green-400">
+                                    Selesai Audit
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-sm">
+                                <x-button color="sky" icon="heroicon-o-eye">
+                                    Lihat
+                                </x-button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
+
+        <!-- Grafik Audit -->
+        <div class="mb-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+            <h3 class="mb-4 text-xl font-bold text-gray-900 dark:text-gray-200">Grafik Jumlah Audit per Periode</h3>
+            <canvas id="auditChart" class="h-64 w-full"></canvas>
+        </div>
+
+
     </div>
-</div>
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('auditChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['2023/1', '2023/2', '2024/1'],
+                datasets: [{
+                        label: 'Audit Aktif',
+                        data: [1, 2, 3],
+                        backgroundColor: 'rgba(14, 165, 233, 0.6)', // sky
+                        borderColor: 'rgba(14, 165, 233, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Audit Selesai',
+                        data: [2, 3, 4],
+                        backgroundColor: 'rgba(34, 197, 94, 0.6)', // green
+                        borderColor: 'rgba(34, 197, 94, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Tindak Lanjut',
+                        data: [1, 1, 2],
+                        backgroundColor: 'rgba(253, 224, 71, 0.6)', // yellow
+                        borderColor: 'rgba(253, 224, 71, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Jumlah Audit'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                }
+            }
+        });
+    </script>
+
 
 @endsection
