@@ -128,3 +128,14 @@ Route::get('jadwal-audit/{id}/edit', [JadwalAuditController::class, 'edit'])->na
 Route::put('/jadwal-audit/{id}', [JadwalAuditController::class, 'update'])->name('jadwal-audit.update');
 
 Route::delete('/jadwal-audit/{id}', [JadwalAuditController::class, 'destroy'])->name('jadwal-audit.destroy');
+
+Route::prefix('auditor')->group(function () {
+    Route::get('/dashboard', function () {return view('auditor.dashboard.index');})->name('auditor.dashboard.index');
+    Route::get('/daftar-tilik', function () {return view('auditor.daftar-tilik.index');})->name('auditor.daftar-tilik.index');
+    Route::get('/assesmen-lapangan', function () {return view('auditor.assesmen-lapangan.index');})->name('auditor.assesmen-lapangan.index');
+    Route::get('/data-instrumen', function () {return view('auditor.data-instrumen.index');})->name('auditor.data-instrumen.index');
+    Route::get('/laporan', function () {return view('auditor.laporan.index');})->name('auditor.laporan.index');
+    Route::get('/ptpp', function () {return view('auditor.ptpp.index');})->name('auditor.ptpp.index');
+});
+
+
