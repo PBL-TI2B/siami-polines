@@ -97,7 +97,7 @@ Route::prefix('admin')->group(function () {
         Route::get('/{id}/edit', [DataUserController::class, 'edit'])->name('data-user.edit');
         Route::put('/{id}', [DataUserController::class, 'update'])->name('data-user.update');
         Route::delete('/{id}', [DataUserController::class, 'destroy'])->name('data-user.destroy');
-
+        Route::delete('data-user/bulk-delete', [DataUserController::class, 'bulkDelete'])->name('data-user.bulk-delete');
     });
 
     // Laporan
