@@ -78,7 +78,16 @@ Route::prefix('admin')->group(function () {
     // Data Instrumen
     Route::prefix('data-instrumen')->group(function () {
         Route::get('/{type?}', [DataInstrumenController::class, 'index'])->name('data-instrumen.index');
+        Route::get('/', [InstrumenUptController::class, 'index'])->name('instrumen-upt.index');
+        Route::get('/create', [InstrumenUptController::class, 'create'])->name('instrumen-upt.create');
+        Route::post('/', [InstrumenUptController::class, 'store'])->name('instrumen-upt.store');
+        Route::get('/{id}/edit', [InstrumenUptController::class, 'edit'])->name('instrumen-upt.edit');
+        Route::put('/{id}', [InstrumenUptController::class, 'update'])->name('instrumen-upt.update');
+        Route::delete('/{id}', [InstrumenUptController::class, 'destroy'])->name('instrumen-upt.destroy');
+        Route::post('/import', [InstrumenUptController::class, 'import'])->name('instrumen-upt.import');
+        Route::get('/export', [InstrumenUptController::class, 'export'])->name('instrumen-upt.export');
     });
+    
 
     // Data User
     Route::prefix('data-user')->group(function () {
