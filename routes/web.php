@@ -8,7 +8,7 @@ use App\Http\Controllers\UnitKerjaController;
 use App\Http\Controllers\DataInstrumenController;
 use App\Http\Controllers\DataUserController;
 use App\Http\Controllers\LaporanController;
-use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\AuthController;
 use App\Http\Livewire\PeriodeAudit;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +22,8 @@ Route::get('/', function () {
 
 // route login
 Route::get('/login', [AuthController::class, 'index'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login');
+
 
 // Route untuk Admin dengan prefix 'admin'
 Route::prefix('admin')->group(function () {
@@ -75,17 +77,17 @@ Route::prefix('admin')->group(function () {
         // Route::get('/', [UnitKerjaController::class, 'index'])->name('unit-kerja.jurusan');
     });
 
-    // Data Instrumen
+    // // Data Instrumen
     Route::prefix('data-instrumen')->group(function () {
         Route::get('/{type?}', [DataInstrumenController::class, 'index'])->name('data-instrumen.index');
-        Route::get('/', [InstrumenUptController::class, 'index'])->name('instrumen-upt.index');
-        Route::get('/create', [InstrumenUptController::class, 'create'])->name('instrumen-upt.create');
-        Route::post('/', [InstrumenUptController::class, 'store'])->name('instrumen-upt.store');
-        Route::get('/{id}/edit', [InstrumenUptController::class, 'edit'])->name('instrumen-upt.edit');
-        Route::put('/{id}', [InstrumenUptController::class, 'update'])->name('instrumen-upt.update');
-        Route::delete('/{id}', [InstrumenUptController::class, 'destroy'])->name('instrumen-upt.destroy');
-        Route::post('/import', [InstrumenUptController::class, 'import'])->name('instrumen-upt.import');
-        Route::get('/export', [InstrumenUptController::class, 'export'])->name('instrumen-upt.export');
+        // Route::get('/', [InstrumenUptController::class, 'index'])->name('instrumen-upt.index');
+        // Route::get('/create', [InstrumenUptController::class, 'create'])->name('instrumen-upt.create');
+        // Route::post('/', [InstrumenUptController::class, 'store'])->name('instrumen-upt.store');
+        // Route::get('/{id}/edit', [InstrumenUptController::class, 'edit'])->name('instrumen-upt.edit');
+        // Route::put('/{id}', [InstrumenUptController::class, 'update'])->name('instrumen-upt.update');
+        // Route::delete('/{id}', [InstrumenUptController::class, 'destroy'])->name('instrumen-upt.destroy');
+        // Route::post('/import', [InstrumenUptController::class, 'import'])->name('instrumen-upt.import');
+        // Route::get('/export', [InstrumenUptController::class, 'export'])->name('instrumen-upt.export');
     });
     
 
