@@ -141,11 +141,16 @@
                             Akun</a>
                     </li>
                 </ul>
-                <ul class="py-1 text-sky-200 dark:text-sky-300" aria-labelledby="dropdown">
+                <ul>
                     <li>
-                        <a href="#"
-                            class="block py-2 px-4 text-sm hover:bg-sky-100 hover:text-sky-800 dark:hover:bg-sky-700 dark:hover:text-sky-200">Keluar</a>
-                    </li>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit"
+                                class="w-full text-left block py-2 px-4 text-sm text-sky-200 hover:bg-sky-100 hover:text-sky-800 dark:hover:bg-sky-700 dark:hover:text-sky-200">
+                                Keluar
+                            </button>
+                        </form>
+                    </li>                    
                 </ul>
             </div>
         </div>

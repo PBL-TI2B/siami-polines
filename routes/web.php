@@ -23,6 +23,8 @@ Route::get('/', function () {
 // route login
 Route::get('/login', [AuthController::class, 'index'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
+// Logout
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
 // Route untuk Admin dengan prefix 'admin'
