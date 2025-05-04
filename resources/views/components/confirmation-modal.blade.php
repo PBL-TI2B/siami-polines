@@ -40,16 +40,6 @@
 
             <!-- Modal Body -->
             <div class="p-4 md:p-5">
-                <p class="text-sm text-gray-900 dark:text-gray-200 mb-4">
-                    Untuk {{ $type === 'delete' ? 'menghapus' : ($type === 'cancel' ? 'membatalkan' : 'menutup') }} data
-                    ini, harap masukkan nama:
-                </p>
-                @if ($itemName)
-                    <input type="text" name="confirm_name" id="confirm_name_{{ $id }}"
-                        class="bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 mb-4 transition-all duration-200"
-                        placeholder="Masukkan nama" required>
-                @endif
-
                 <div class="p-3 mb-4 bg-yellow-50 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300 rounded-lg">
                     <p class="text-sm">
                         <span class="font-semibold">Perhatian:</span>

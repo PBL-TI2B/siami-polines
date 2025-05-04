@@ -18,11 +18,36 @@ class JadwalAuditController extends Controller
         // Ambil jumlah entri dari query string, default ke 10
         $entries = $request->get('per_page', 10);
 
+        // Ambil kata kunci pencarian
+        $search = $request->get('search', '');
+
+        // query data dengan pencarian
         $auditings = Auditing::with([
             'auditor1', 'auditor2',
             'auditee1', 'auditee2',
             'unitKerja', 'periode'
-        ])->paginate($entries);
+        ])
+        -> when($search, function ($query, $search) {
+            $query->whereHas('unitKerja', function ($q) use ($search) {
+                $q->where('nama_unit_kerja', 'like', "%{$search}%");
+            })
+            ->orWhereHas('auditor1', function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%");
+            })
+            ->orWhereHas('auditor2', function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%");
+            })
+            ->orWhereHas('auditee1', function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%");
+            })
+            ->orWhereHas('auditee2', function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%");
+            })
+            ->orWhereHas('periode', function ($q) use ($search) {
+                $q->where('tanggal_mulai', 'like', "%{$search}%");
+            });
+        })
+        ->paginate($entries);
         return view('admin.jadwal-audit.index', compact('auditings'));
     }
 
@@ -40,11 +65,7 @@ class JadwalAuditController extends Controller
 
     public function create()
 {
-    $unitKerja = UnitKerja::all(); // Ambil semua data unit kerja
-    $users = User::all(); // Ambil semua data pengguna
-    $periode = PeriodeAudit::all(); // Ambil semua data periode audit
-
-    return view('admin.jadwal-audit.create', compact('unitKerja', 'users', 'periode'));
+    return view('admin.jadwal-audit.create');
 }
 
 public function makeJadwalAudit(Request $request)
@@ -92,12 +113,15 @@ public function destroy($id)
     return redirect()->route('jadwal-audit.index')->with('success', 'Jadwal audit berhasil dihapus.');
 }
 
-public function reset()
+public function reset(Request $request)
 {
-    // Hapus semua data jadwal audit
-    Auditing::query()->delete();
+    $request->validate([
+        'reset_confirmation' => 'required|in:RESET',
+    ]);
 
-    // Redirect atau kembalikan respons JSON
+    // Hapus semua data jadwal audit
+    JadwalAudit::truncate();
+
     return redirect()->route('jadwal-audit.index')->with('success', 'Semua jadwal audit berhasil direset.');
 }
 
@@ -122,6 +146,36 @@ public function download()
     });
 
     return Excel::download(new \App\Exports\JadwalAuditExport($data), 'jadwal_audit.xlsx');
+}
+
+public function edit($id) {
+    //dd($id); // Debugging line to check the ID
+    // Cari data jadwal audit berdasarkan ID
+    $audit = Auditing::with(['auditor1', 'auditor2', 'auditee1', 'auditee2', 'unitKerja', 'periode'])->findOrFail($id);
+
+    // Tampilkan halaman edit dengan data yang ditemukan
+    return view('admin.jadwal-audit.edit', compact('audit'));
+}
+
+public function update(Request $request, $id) {
+    // Validate the incoming request data
+    $validatedData = $request->validate([
+        'unit_kerja_id' => 'required|exists:unit_kerjas,id',
+        'waktu_audit' => 'required|date',
+        'user_id_1_auditee' => 'nullable|exists:users,id',
+        'user_id_1_auditor' => 'nullable|exists:users,id',
+        'user_id_2_auditee' => 'nullable|exists:users,id',
+        'user_id_2_auditor' => 'nullable|exists:users,id',
+    ]);
+
+     // Find the audit record by ID
+     $audit = Audit::findOrFail($id);
+
+     // Update the audit record with validated data
+     $audit->update($validatedData);
+ 
+     // Redirect back with a success message
+     return redirect()->route('jadwal-audit.index')->with('success', 'Jadwal Audit berhasil diperbarui.');
 }
     
     // public function makeJadwalAudit(Request $request) {

@@ -33,16 +33,25 @@
             Unduh Data
         </a>
 
-        <form action="{{ route('jadwal-audit.reset') }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin mereset semua jadwal audit?')">
-    @csrf
-    <button type="submit" class="bg-red-600 text-white px-5 py-2.5 rounded hover:bg-red-700 inline-flex items-center text-sm font-medium">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round"
-                d="M4 4v6h6M20 20v-6h-6M4 14a8 8 0 0114-6.32M20 10a8 8 0 01-14 6.32"/>
-        </svg>
-        Reset Semua Jadwal
-    </button>
-</form>
+       <!-- Tombol Reset Semua Jadwal -->
+<button type="button"
+    class="bg-red-600 text-white px-5 py-2.5 rounded hover:bg-red-700 inline-flex items-center text-sm font-medium"
+    data-modal-target="reset-jadwal-modal"
+    data-modal-toggle="reset-jadwal-modal">
+    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round"
+            d="M4 4v6h6M20 20v-6h-6M4 14a8 8 0 0114-6.32M20 10a8 8 0 01-14 6.32"/>
+    </svg>
+    Reset Semua Jadwal
+</button>
+
+<!-- Modal Reset Semua Jadwal -->
+<x-reset-jadwal-modal
+    id="reset-jadwal-modal"
+    :action="route('jadwal-audit.reset')"
+    warningMessage="Reset ini akan menghapus seluruh data jadwal audit yang telah dibuat."
+/>
+
 
         <div class="ml-auto">
             <select id="periodeFilter"
@@ -116,7 +125,6 @@
             method="DELETE"
             type="delete"
             formClass="delete-modal-form"
-            :itemName="$auditing->unitKerja->nama ?? 'Jadwal'"
             :warningMessage="'Menghapus jadwal ini akan menghapus seluruh data audit yang terkait.'"
         />
     @empty
