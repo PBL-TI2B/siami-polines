@@ -26,25 +26,12 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 // Logout
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-
 // Route untuk Admin dengan prefix 'admin'
 Route::prefix('admin')->group(function () {
     Route::prefix('dashboard')->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
     });
-
-Route::prefix('auditor')->group(function () {
-    Route::get('/dashboard', function () {return view('auditor.dashboard.index');})->name('auditor.dashboard.index');
-    Route::get('/daftar-tilik', function () {return view('auditor.daftar-tilik.index');})->name('auditor.daftar-tilik.index');
-    Route::get('/assesmen-lapangan', function () {return view('auditor.assesmen-lapangan.index');})->name('auditor.assesmen-lapangan.index');
-    Route::get('/data-instrumen', function () {return view('auditor.data-instrumen.index');})->name('auditor.data-instrumen.index');
-    Route::get('/data-instrumen/prodi', [DataInstrumenController::class, 'auditorinsprodi'])->name('auditor.data-instrumen.prodi');
-    Route::get('/laporan', function () {return view('auditor.laporan.index');})->name('auditor.laporan.index');
-    Route::get('/ptpp', function () {return view('auditor.ptpp.index');})->name('auditor.ptpp.index');
-});
-
-    // Route::get('/periode-audit', PeriodeAudit::class)->name('periode-audit.index');
-
+ // Route::get('/periode-audit', PeriodeAudit::class)->name('periode-audit.index');
 
     // Periode Audit
     Route::prefix('periode-audit')->group(function () {
@@ -120,11 +107,15 @@ Route::prefix('auditor')->group(function () {
     });
 });
 
-// Route untuk Logout
-Route::get('/logout', function () {
-    // Logika logout (misalnya menggunakan Auth::logout())
-    return redirect('/login');
-})->name('logout');
+Route::prefix('auditor')->group(function () {
+    Route::get('/dashboard', function () {return view('auditor.dashboard.index');})->name('auditor.dashboard.index');
+    Route::get('/daftar-tilik', function () {return view('auditor.daftar-tilik.index');})->name('auditor.daftar-tilik.index');
+    Route::get('/assesmen-lapangan', function () {return view('auditor.assesmen-lapangan.index');})->name('auditor.assesmen-lapangan.index');
+    Route::get('/data-instrumen', function () {return view('auditor.data-instrumen.index');})->name('auditor.data-instrumen.index');
+    Route::get('/data-instrumen/prodi', [DataInstrumenController::class, 'auditorinsprodi'])->name('auditor.data-instrumen.prodi');
+    Route::get('/laporan', function () {return view('auditor.laporan.index');})->name('auditor.laporan.index');
+    Route::get('/ptpp', function () {return view('auditor.ptpp.index');})->name('auditor.ptpp.index');
+});
 
 //route jadwal
 Route::get('jadwal-audit/create', [JadwalAuditController::class, 'create'])->name('jadwal-audit.create');
