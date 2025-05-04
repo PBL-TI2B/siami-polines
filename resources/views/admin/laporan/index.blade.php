@@ -17,11 +17,15 @@
 
         <!-- Filter dan Search -->
         <div class="flex justify-between items-center mb-4">
-            <div class="flex items-center gap-2">
-                <label for="periode" class="font-medium text-gray-700 dark:text-gray-300">Pilih Periode AMI</label>
-                <input type="date" id="periode" name="periode" class="border rounded px-3 py-1.5" />
+            <div class="ml-auto">
+                <select id="periodeFilter"
+                    class="border border-gray-300 rounded-md px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none">
+                    <option value="">Pilih Periode AMI</option>
+                    <option value="2024">2024</option>
+                    <option value="2025">2025</option>
+                </select>
             </div>
-            <input type="text" placeholder="Search" class="border rounded px-3 py-1.5 w-64" />
+            <input type="text" placeholder="Search" class="border rounded px-3 py-1.5 w-64 ml-4" />
         </div>
 
         <!-- Tabel -->
