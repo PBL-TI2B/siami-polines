@@ -1,4 +1,4 @@
-<!-- resources/views/data-user/index.blade.php -->
+<!-- resources/views/admin/data-user/index.blade.php -->
 @extends('layouts.app')
 
 @section('title', 'Daftar User')
@@ -17,7 +17,7 @@
             Daftar User
         </h1>
 
-        <!-- Tambah Data Button -->
+        <!-- Tambah Data and Bulk Delete Buttons -->
         <div class="flex flex-wrap mb-4 gap-2">
             <x-button href="{{ route('data-user.create') }}" color="sky" icon="heroicon-o-plus">
                 Tambah Data
@@ -29,7 +29,7 @@
 
         <!-- Table Section -->
         <x-table
-            :headers="['', 'No', 'Nama', 'NIP', 'Email', 'Role']"
+            :headers="['', 'No', 'Nama', 'NIP', 'Email', 'Role', 'Aksi']"
             :data="$users"
             :perPage="request('entries', 10)"
             :route="route('data-user.index')"
@@ -37,51 +37,54 @@
             @forelse ($users ?? [] as $index => $user)
                 <tr class="bg-white dark:bg-gray-800 border-y border-gray-200 dark:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-200">
                     <td class="w-4 p-4 border-r border-gray-200 dark:border-gray-700">
-                        <input type="checkbox" name="selected_users[]" value="{{ $user['id'] }}" class="w-4 h-4 text-sky-800 bg-gray-100 dark:bg-gray-600 border-gray-200 dark:border-gray-500 rounded focus:ring-sky-500 dark:focus:ring-sky-600 user-checkbox">
+                        <input type="checkbox" name="selected_users[]" value="{{ $user->id }}" class="w-4 h-4 text-sky-800 bg-gray-100 dark:bg-gray-600 border-gray-200 dark:border-gray-500 rounded focus:ring-sky-500 dark:focus:ring-sky-600 user-checkbox">
                     </td>
                     <td class="px-4 py-4 sm:px-6 border-r border-gray-200 dark:border-gray-700">
                         {{ $users->firstItem() + $index }}
                     </td>
                     <td class="px-4 py-4 sm:px-6 text-gray-900 dark:text-gray-200 border-r border-gray-200 dark:border-gray-700 flex items-center">
-                        <img src="{{ $user['photo'] ?? 'https://via.placeholder.com/40' }}" alt="Avatar" class="h-8 w-8 rounded-full mr-2">
-                        {{ $user['name'] }}
+                        <img src="{{ $user->photo ? Storage::url($user->photo) : 'https://via.placeholder.com/40' }}" alt="Avatar" class="h-8 w-8 rounded-full mr-2">
+                        {{ $user->name }}
                     </td>
                     <td class="px-4 py-4 sm:px-6 text-gray-900 dark:text-gray-200 border-r border-gray-200 dark:border-gray-700">
-                        {{ $user['nip'] }}
+                        {{ $user->nip }}
                     </td>
                     <td class="px-4 py-4 sm:px-6 text-gray-900 dark:text-gray-200 border-r border-gray-200 dark:border-gray-700">
-                        {{ $user['email'] }}
+                        {{ $user->email }}
                     </td>
                     <td class="px-4 py-4 sm:px-6 text-gray-900 dark:text-gray-200 border-r border-gray-200 dark:border-gray-700">
-                        {{ $user['role'] }}
+                        {{ $user->role['nama_role'] ?? 'N/A' }}
                     </td>
                         <x-table-row-actions :actions="[
                             [
                                 'label' => 'Edit',
                                 'color' => 'sky',
                                 'icon' => 'heroicon-o-pencil',
-                                'href' => route('data-user.edit', $user['id']),
+                                'href' => $user->id ? route('data-user.edit', $user->id) : 'javascript:void(0)',
                             ],
                             [
                                 'label' => 'Hapus',
                                 'color' => 'red',
                                 'icon' => 'heroicon-o-trash',
-                                'modalId' => 'delete-user-modal-' . $user['id'],
+                                'modalId' => 'delete-user-modal-' . ($user->id ?? 'invalid'),
                             ],
                         ]" />
-                    
+                        @if (!$user->id)
+                            <span class="text-red-500 text-xs">Missing user ID: {{ json_encode($user->toArray()) }}</span>
+                        @endif
                 </tr>
-                <!-- Delete Confirmation Modal -->
-                <x-confirmation-modal
-                    id="delete-user-modal-{{ $user['id'] }}"
-                    title="Konfirmasi Hapus Data"
-                    :action="route('data-user.destroy', $user['id'])"
-                    method="DELETE"
-                    type="delete"
-                    formClass="delete-modal-form"
-                    :itemName="$user['name']"
-                    :warningMessage="'Menghapus user ini akan menghapus seluruh data terkait user tersebut.'"
-                />
+                @if ($user->id)
+                    <x-confirmation-modal
+                        id="delete-user-modal-{{ $user->id }}"
+                        title="Konfirmasi Hapus Data"
+                        :action="route('data-user.destroy', $user->id)"
+                        method="DELETE"
+                        type="delete"
+                        formClass="delete-modal-form"
+                        :itemName="$user->name"
+                        :warningMessage="'Menghapus user ini akan menghapus seluruh data terkait user tersebut.'"
+                    />
+                @endif
             @empty
                 <tr>
                     <td colspan="7" class="px-4 py-4 sm:px-6 text-center text-gray-500 dark:text-gray-400">
@@ -95,9 +98,6 @@
         <form id="bulk-delete-form" action="{{ route('data-user.bulk-delete') }}" method="POST">
             @csrf
             @method('DELETE')
-            @foreach ($users as $user)
-                <input type="hidden" name="selected_users[]" value="{{ $user['id'] }}" class="user-checkbox" style="display: none;">
-            @endforeach
         </form>
 
         <!-- JavaScript for Select All Checkboxes -->
@@ -105,6 +105,29 @@
             document.getElementById('select-all').addEventListener('change', function () {
                 document.querySelectorAll('.user-checkbox').forEach(checkbox => {
                     checkbox.checked = this.checked;
+                    const form = document.getElementById('bulk-delete-form');
+                    form.innerHTML = '@csrf @method("DELETE")';
+                    document.querySelectorAll('.user-checkbox:checked').forEach(checkbox => {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'selected_users[]';
+                        input.value = checkbox.value;
+                        form.appendChild(input);
+                    });
+                });
+            });
+
+            document.querySelectorAll('.user-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function () {
+                    const form = document.getElementById('bulk-delete-form');
+                    form.innerHTML = '@csrf @method("DELETE")';
+                    document.querySelectorAll('.user-checkbox:checked').forEach(checkbox => {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'selected_users[]';
+                        input.value = checkbox.value;
+                        form.appendChild(input);
+                    });
                 });
             });
         </script>
