@@ -118,9 +118,15 @@ public function reset(Request $request)
     $request->validate([
         'reset_confirmation' => 'required|in:RESET',
     ]);
+    
+   // Nonaktifkan foreign key checks
+   \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
-    // Hapus semua data jadwal audit
-    JadwalAudit::truncate();
+   // Hapus semua data jadwal audit
+   Auditing::truncate();
+
+   // Aktifkan kembali foreign key checks
+   \DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
     return redirect()->route('jadwal-audit.index')->with('success', 'Semua jadwal audit berhasil direset.');
 }
