@@ -17,6 +17,7 @@
     </div>
     <div class="relative w-full sm:w-auto">
         <form action="{{ $route }}" method="GET">
+            <input type="hidden" name="per_page" value="{{ request('per_page', $perPage) }}">
             <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <x-heroicon-o-magnifying-glass class="w-4 h-4 text-gray-500 dark:text-gray-400" />
             </div>

@@ -16,8 +16,7 @@
             Tambah Jadwal Audit
         </h1>
 
-        <form action="{{ route('jadwal-audit.store') }}" method="POST"
-            class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-6 space-y-6">
+        <form id="jadwalForm" class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-6 space-y-6">
             @csrf
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -28,9 +27,6 @@
                     <select id="unit_kerja" name="unit_kerja_id"
                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:text-white">
                         <option value="">Pilih Unit Kerja</option>
-                        @foreach ($unitKerja as $unit)
-                            <option value="{{ $unit->unit_kerja_id }}">{{ $unit->nama_unit_kerja }}</option>
-                        @endforeach
                     </select>
                 </div>
 
@@ -42,18 +38,6 @@
                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:text-white">
                 </div>
 
-                <!-- Periode AMI -->
-                {{-- <div>
-                    <label for="periode_ami" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Periode
-                        AMI</label>
-                    <select name="periode_id" class="form-control" required>
-                        <option value="">-- Pilih Periode --</option>
-                        @foreach ($periode as $p)
-                            <option value="{{ $p->periode_id }}">{{ $p->nama_periode }}</option>
-                        @endforeach
-                    </select>
-                </div> --}}
-
                 <!-- Auditee 1 -->
                 <div>
                     <label for="auditee_1" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Auditee
@@ -61,9 +45,6 @@
                     <select id="auditee_1" name="user_id_1_auditee"
                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:text-white">
                         <option value="">Pilih Auditee 1</option>
-                        @foreach ($users as $user)
-                            <option value="{{ $user->user_id }}">{{ $user->nama }}</option>
-                        @endforeach
                     </select>
                 </div>
 
@@ -74,9 +55,6 @@
                     <select id="auditor_1" name="user_id_1_auditor"
                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:text-white">
                         <option value="">Pilih Auditor 1</option>
-                        @foreach ($users as $user)
-                            <option value="{{ $user->user_id }}">{{ $user->nama }}</option>
-                        @endforeach
                     </select>
                 </div>
 
@@ -87,9 +65,6 @@
                     <select id="auditee_2" name="user_id_2_auditee"
                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:text-white">
                         <option value="">Pilih Auditee 2</option>
-                        @foreach ($users as $user)
-                            <option value="{{ $user->user_id }}">{{ $user->nama }}</option>
-                        @endforeach
                     </select>
                 </div>
 
@@ -100,9 +75,6 @@
                     <select id="auditor_2" name="user_id_2_auditor"
                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:text-white">
                         <option value="">Pilih Auditor 2</option>
-                        @foreach ($users as $user)
-                            <option value="{{ $user->user_id }}">{{ $user->nama }}</option>
-                        @endforeach
                     </select>
                 </div>
             </div>
@@ -117,3 +89,78 @@
         </form>
     </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Fetch Unit Kerja
+        fetch('http://localhost:5000/api/unit-kerja') // Perbarui URL API
+            .then(response => response.json())
+            .then(data => {
+                const unitKerjaSelect = document.getElementById('unit_kerja');
+                data.forEach(unit => {
+                    const option = document.createElement('option');
+                    option.value = unit.nama_unit_kerja;
+                    option.textContent = unit.nama_unit_kerja;
+                    unitKerjaSelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching unit kerja:', error); // Debug jika ada error
+            });
+
+        // Fetch Users (Auditee & Auditor)
+        fetch('http://localhost:5000/api/users') // Perbarui URL API
+            .then(response => response.json())
+            .then(data => {
+                const selects = ['auditee_1', 'auditee_2', 'auditor_1', 'auditor_2'];
+                selects.forEach(id => {
+                    const select = document.getElementById(id);
+                    data.forEach(user => {
+                        const option = document.createElement('option');
+                        option.value = user.nama;
+                        option.textContent = user.nama;
+                        select.appendChild(option.cloneNode(true));
+                    });
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching users:', error); // Debug jika ada error
+            });
+
+        // Submit form
+        document.getElementById('jadwalForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = {
+                auditor_1: document.getElementById('auditor_1').value,
+                auditor_2: document.getElementById('auditor_2').value,
+                auditee_1: document.getElementById('auditee_1').value,
+                auditee_2: document.getElementById('auditee_2').value,
+                unit_kerja: document.getElementById('unit_kerja').value,
+                jadwal_audit: document.getElementById('waktu_audit').value,
+            };
+
+            fetch('http://localhost:5000/api/penjadwalan', { // Perbarui URL API
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Gagal menyimpan data jadwal audit');
+                return response.json();
+            })
+            .then(data => {
+                alert('Jadwal audit berhasil ditambahkan!');
+                document.getElementById('jadwalForm').reset();
+            })
+            .catch(error => {
+                alert('Terjadi kesalahan: ' + error.message);
+            });
+        });
+    });
+</script>
+@endpush

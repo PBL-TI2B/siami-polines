@@ -52,6 +52,8 @@ Route::prefix('admin')->group(function () {
         Route::delete('/{id}', [JadwalAuditController::class, 'destroy'])->name('jadwal-audit.destroy');
         Route::post('/reset', [JadwalAuditController::class, 'reset'])->name('jadwal-audit.reset');
         Route::get('/download', [JadwalAuditController::class, 'download'])->name('jadwal-audit.download');
+        Route::get('/{id}/edit', [JadwalAuditController::class, 'edit'])->name('jadwal-audit.edit');
+        Route::put('/{id}', [JadwalAuditController::class, 'update'])->name('jadwal-audit.update');
     });
 
     // Daftar Tilik
@@ -117,15 +119,3 @@ Route::prefix('auditor')->group(function () {
     Route::get('/ptpp', function () {return view('auditor.ptpp.index');})->name('auditor.ptpp.index');
 });
 
-//route jadwal
-Route::get('jadwal-audit/create', [JadwalAuditController::class, 'create'])->name('jadwal-audit.create');
-
-Route::get('jadwal-audit/download', [JadwalAuditController::class, 'download'])->name('jadwal-audit.download');
-
-Route::post('jadwal-audit/reset', [JadwalAuditController::class, 'reset'])->name('jadwal-audit.reset');
-
-
-Route::get('jadwal-audit/{id}/edit', [JadwalAuditController::class, 'edit'])->name('jadwal-audit.edit');
-Route::put('/jadwal-audit/{id}', [JadwalAuditController::class, 'update'])->name('jadwal-audit.update');
-
-Route::delete('/jadwal-audit/{id}', [JadwalAuditController::class, 'destroy'])->name('jadwal-audit.destroy');
