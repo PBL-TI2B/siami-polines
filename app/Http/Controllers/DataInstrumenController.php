@@ -15,4 +15,8 @@ class DataInstrumenController extends Controller
     {
         return view('auditor.data-instrumen.instrumenprodi');
     }
+    public function auditorinsjurusan()
+    {
+        return view('auditor.data-instrumen.instrumenjurusan');
+    }
 }

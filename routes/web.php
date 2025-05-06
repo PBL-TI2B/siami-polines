@@ -117,5 +117,7 @@ Route::prefix('auditor')->group(function () {
     Route::get('/data-instrumen/prodi', [DataInstrumenController::class, 'auditorinsprodi'])->name('auditor.data-instrumen.prodi');
     Route::get('/laporan', function () {return view('auditor.laporan.index');})->name('auditor.laporan.index');
     Route::get('/ptpp', function () {return view('auditor.ptpp.index');})->name('auditor.ptpp.index');
+
+    Route::get('/data-instrumen/jurusan', [DataInstrumenController::class, 'auditorinsjurusan'])->name('auditor.data-instrumen.jurusan');
 });
 
