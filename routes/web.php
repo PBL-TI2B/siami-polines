@@ -114,6 +114,7 @@ Route::prefix('auditor')->group(function () {
     Route::get('/daftar-tilik', [DaftarTilikController::class, 'auditortilik'])->name('auditor.daftar.tilik');
     Route::get('/assesmen-lapangan', function () {return view('auditor.assesmen-lapangan.index');})->name('auditor.assesmen-lapangan.index');
     Route::get('/data-instrumen', function () {return view('auditor.data-instrumen.index');})->name('auditor.data-instrumen.index');
+    Route::get('/data-instrumen/upt', [DataInstrumenController::class, 'auditorInsUpt'])->name('auditor.data-instrumen.upt');
     Route::get('/data-instrumen/prodi', [DataInstrumenController::class, 'auditorinsprodi'])->name('auditor.data-instrumen.prodi');
     Route::get('/laporan', function () {return view('auditor.laporan.index');})->name('auditor.laporan.index');
     Route::get('/ptpp', function () {return view('auditor.ptpp.index');})->name('auditor.ptpp.index');
