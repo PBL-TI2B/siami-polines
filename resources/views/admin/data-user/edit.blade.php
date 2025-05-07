@@ -18,7 +18,7 @@
 
         <!-- Form -->
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <form action="{{ route('data-user.update', $user['id']) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('data-user.update', $user['user_id']) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -47,7 +47,7 @@
                         <!-- Nama -->
                         <div class="mb-4">
                             <label for="nama" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Nama</label>
-                            <input type="text" id="nama" name="name" value="{{ old('name', $user['name']) }}" placeholder="Masukkan nama anda" class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:ring-sky-500 focus:border-sky-500">
+                            <input type="text" id="nama" name="name" value="{{ old('name', $user['nama']) }}" placeholder="Masukkan nama anda" class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:ring-sky-500 focus:border-sky-500">
                         </div>
 
                         <!-- Email -->
