@@ -87,55 +87,18 @@
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Aktivitas</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Satuan</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Target 25</th>
-                            <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Capaian 25</th>
+                            <!-- <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Capaian 25</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Keterangan</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Sesuai</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Lokasi Bukti Dukung</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Tidak Sesuai (Minor)</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Tidak Sesuai (Mayor)</th>
-                            <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">OFI (Saran Tindak Lanjut)</th>
+                            <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">OFI (Saran Tindak Lanjut)</th> -->
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                        <tr class="hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200">
-                            <td class="px-4 py-3 sm:px-6">1</td>
-                            <td class="px-4 py-3 sm:px-6">Meningkatnya kualitas lulusan pendidikan tinggi</td>
-                            <td class="px-4 py-3 sm:px-6">Persentase Lulusan S1 dan D4/D3/D2 yang Berhasil Mendapat Pekerjaan, Melanjutkan Studi, atau Menjadi Wirausaha.</td>
-                            <td class="px-4 py-3 sm:px-6">Peningkatan dan pengukuran kemampuan bahasa asing mahasiswa</td>
-                            <td class="px-4 py-3 sm:px-6">%</td>
-                            <td class="px-4 py-3 sm:px-6">80</td>
-                            <td class="px-4 py-3 sm:px-6">75</td>
-                            <td class="px-4 py-3 sm:px-6">Belum Tercapai</td>
-                            <td class="px-4 py-3 sm:px-6">Tidak Sesuai</td>
-                            <td class="px-4 py-3 sm:px-6">/bukti/laporan_mahasiswa_2023.pdf</td>
-                            <td class="px-4 py-3 sm:px-6">Perbaikan metode pengukuran</td>
-                            <td class="px-4 py-3 sm:px-6">-</td>
-                            <td class="px-4 py-3 sm:px-6">Revisi dokumen</td>
-                            <x-table-row-actions :actions="[
-                                ['label' => 'Edit', 'color' => 'sky', 'icon' => 'heroicon-o-pencil', 'href' => '#'],
-                                ['label' => 'Hapus', 'color' => 'red', 'icon' => 'heroicon-o-trash', 'href' => '#']
-                            ]" />
-                        </tr>
-                        <tr class="hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200">
-                            <td class="px-4 py-3 sm:px-6">2</td>
-                            <td class="px-4 py-3 sm:px-6">Meningkatnya tata kelola satuan kerja di lingkungan Ditjen Pendidikan Vokasi</td>
-                            <td class="px-4 py-3 sm:px-6">Rata-rata Nilai Kinerja Anggaran atas pelaksanaan RKA-K/L Satker minimal 93</td>
-                            <td class="px-4 py-3 sm:px-6">Tata Kelola: Peningkatan kuantitas layanan.</td>
-                            <td class="px-4 py-3 sm:px-6">Nilai</td>
-                            <td class="px-4 py-3 sm:px-6">93</td>
-                            <td class="px-4 py-3 sm:px-6">95</td>
-                            <td class="px-4 py-3 sm:px-6">Tercapai</td>
-                            <td class="px-4 py-3 sm:px-6">Sesuai</td>
-                            <td class="px-4 py-3 sm:px-6">/bukti/laporan_anggaran_2023.pdf</td>
-                            <td class="px-4 py-3 sm:px-6">-</td>
-                            <td class="px-4 py-3 sm:px-6">-</td>
-                            <td class="px-4 py-3 sm:px-6">Lanjutkan monitoring</td>
-                            <x-table-row-actions :actions="[
-                                ['label' => 'Edit', 'color' => 'sky', 'icon' => 'heroicon-o-pencil', 'href' => '#'],
-                                ['label' => 'Hapus', 'color' => 'red', 'icon' => 'heroicon-o-trash', 'href' => '#']
-                            ]" />
-                        </tr>
+                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700" id="instrumen-table-body">
+                        <!-- Data akan diisi oleh JavaScript -->
                     </tbody>
                 </table>
             </div>
@@ -174,4 +137,96 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    fetch('http://127.0.0.1:5000/api/data-instrumen')
+        .then(response => response.json())
+        .then(data => {
+            const tableBody = document.getElementById('instrumen-table-body');
+            let rowNumber = 1;
+            let currentSasaranId = null;
+            let rowspanCounts = {}; // Untuk menyimpan jumlah baris per sasaran
+
+            // Hitung jumlah baris per sasaran strategis
+            data.forEach(sasaran => {
+                let count = 0;
+                sasaran.indikator_kinerja.forEach(indikator => {
+                    count += indikator.aktivitas.length;
+                });
+                rowspanCounts[sasaran.sasaran_strategis_id] = count;
+            });
+
+            // Loop melalui setiap sasaran strategis
+            data.forEach(sasaran => {
+                let isFirstRowForSasaran = true;
+                let sasaranRowspan = rowspanCounts[sasaran.sasaran_strategis_id];
+                
+                // Loop melalui setiap indikator kinerja
+                sasaran.indikator_kinerja.forEach(indikator => {
+                    let isFirstRowForIndikator = true;
+                    let indikatorRowspan = indikator.aktivitas.length;
+                    
+                    // Loop melalui setiap aktivitas
+                    indikator.aktivitas.forEach((aktivitas, index) => {
+                        const row = document.createElement('tr');
+                        row.className = 'hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200';
+                        
+                        // Nomor hanya ditampilkan di baris pertama sasaran
+                        const noCell = isFirstRowForSasaran ? 
+                            `<td rowspan="${sasaranRowspan}" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${rowNumber}</td>` : 
+                            '';
+                            
+                        // Sasaran strategis hanya ditampilkan di baris pertama sasaran
+                        const sasaranCell = isFirstRowForSasaran ? 
+                            `<td rowspan="${sasaranRowspan}" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${sasaran.nama_sasaran}</td>` : 
+                            '';
+                            
+                        // Indikator kinerja hanya ditampilkan di baris pertama indikator
+                        const indikatorCell = isFirstRowForIndikator ? 
+                            `<td rowspan="${indikatorRowspan}" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${indikator.isi_indikator_kinerja}</td>` : 
+                            '';
+                        
+                        row.innerHTML = `
+                            ${noCell}
+                            ${sasaranCell}
+                            ${indikatorCell}
+                            <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${aktivitas.nama_aktivitas}</td>
+                            <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${aktivitas.satuan}</td>
+                            <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${aktivitas.target}</td>
+                            <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">
+                                <div class="flex items-center gap-2">
+                                    <a href="#" class="text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-200 transition-colors duration-200">
+                                        <x-heroicon-o-pencil class="w-5 h-5" />
+                                    </a>
+                                    <a href="#" class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 transition-colors duration-200">
+                                        <x-heroicon-o-trash class="w-5 h-5" />
+                                    </a>
+                                </div>
+                            </td>
+                        `;
+                        
+                        tableBody.appendChild(row);
+                        
+                        isFirstRowForSasaran = false;
+                        isFirstRowForIndikator = false;
+                    });
+                });
+                
+                rowNumber++;
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+            const tableBody = document.getElementById('instrumen-table-body');
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="14" class="px-4 py-3 sm:px-6 text-center text-red-500">
+                        Gagal memuat data. Silakan coba lagi.
+                    </td>
+                </tr>
+            `;
+        });
+});
+    </script>
 @endsection
