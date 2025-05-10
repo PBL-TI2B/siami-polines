@@ -6,9 +6,9 @@
     <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
         <!-- Breadcrumb -->
         <x-breadcrumb :items="[
-            ['label' => 'Beranda', 'url' => route('dashboard.index')],
-            ['label' => 'Data Unit', 'url' => route('unit-kerja.index')],
-            ['label' => 'Daftar ' . ucfirst($type), 'url' => route('unit-kerja.index', ['type' => $type])],
+            ['label' => 'Beranda', 'url' => route('admin.dashboard.index')],
+            ['label' => 'Data Unit', 'url' => route('admin.unit-kerja.index')],
+            ['label' => 'Daftar ' . ucfirst($type), 'url' => route('admin.unit-kerja.index', ['type' => $type])],
             ['label' => 'Edit'],
         ]" />
 
@@ -35,7 +35,7 @@
                         Simpan
                     </x-button>
                     <x-button color="gray" icon="heroicon-o-x-mark"
-                        href="{{ route('unit-kerja.index', ['type' => $type]) }}">
+                        href="{{ route('admin.unit-kerja.index', ['type' => $type]) }}">
                         Batal
                     </x-button>
                 </div>

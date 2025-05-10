@@ -75,7 +75,7 @@ class DataUserController extends Controller
             'role_id' => $role->role_id,
         ]);
 
-        return redirect()->route('data-user.index')->with('success', 'User berhasil ditambahkan');
+        return redirect()->route('admin.data-user.index')->with('success', 'User berhasil ditambahkan');
     }
 
     public function edit($id)
@@ -123,7 +123,7 @@ class DataUserController extends Controller
             'role_id' => $role->role_id,
         ]);
 
-        return redirect()->route('data-user.index')->with('success', 'User berhasil diperbarui');
+        return redirect()->route('admin.data-user.index')->with('success', 'User berhasil diperbarui');
     }
 
     public function destroy($id)
@@ -136,7 +136,7 @@ class DataUserController extends Controller
 
         $user->delete();
 
-        return redirect()->route('data-user.index')->with('success', 'User berhasil dihapus');
+        return redirect()->route('admin.data-user.index')->with('success', 'User berhasil dihapus');
     }
 
     public function bulkDelete(Request $request)
@@ -151,9 +151,9 @@ class DataUserController extends Controller
                 }
                 $user->delete();
             }
-            return redirect()->route('data-user.index')->with('success', 'Users berhasil dihapus');
+            return redirect()->route('admin.data-user.index')->with('success', 'Users berhasil dihapus');
         }
 
-        return redirect()->route('data-user.index')->with('error', 'Tidak ada user yang dipilih.');
+        return redirect()->route('admin.data-user.index')->with('error', 'Tidak ada user yang dipilih.');
     }
 }

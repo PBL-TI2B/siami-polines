@@ -3,23 +3,23 @@
 @section('title', 'Jadwal Audit')
 
 @section('content')
-    <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
         <!-- Breadcrumb -->
         <x-breadcrumb :items="[
-            ['label' => 'Dashboard', 'url' => route('dashboard.index')],
-            ['label' => 'Jadwal Audit', 'url' => route('jadwal-audit.index')],
+            ['label' => 'Dashboard', 'url' => route('admin.dashboard.index')],
+            ['label' => 'Jadwal Audit', 'url' => route('admin.jadwal-audit.index')],
             ['label' => 'Tambah Jadwal Audit', 'url' => route('jadwal-audit.create')],
         ]" />
 
         <!-- Heading -->
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-200 mb-8">
+        <h1 class="mb-8 text-3xl font-bold text-gray-900 dark:text-gray-200">
             Tambah Jadwal Audit
         </h1>
 
-        <form id="jadwalForm" class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-6 space-y-6">
+        <form id="jadwalForm" class="space-y-6 rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
             @csrf
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <!-- Unit Kerja -->
                 <div>
                     <label for="unit_kerja" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Unit
@@ -81,86 +81,86 @@
 
             <!-- Tombol -->
             <div class="flex justify-end space-x-3">
-                <a href="{{ route('jadwal-audit.index') }}"
-                    class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-white rounded-md shadow hover:bg-gray-300">Batal</a>
+                <a href="{{ route('admin.jadwal-audit.index') }}"
+                    class="rounded-md bg-gray-200 px-4 py-2 text-gray-800 shadow hover:bg-gray-300 dark:bg-gray-600 dark:text-white">Batal</a>
                 <button type="submit"
-                    class="px-4 py-2 bg-sky-800 text-white rounded-md shadow hover:bg-sky-700">Simpan</button>
+                    class="rounded-md bg-sky-800 px-4 py-2 text-white shadow hover:bg-sky-700">Simpan</button>
             </div>
         </form>
     </div>
 @endsection
 
 @push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Fetch Unit Kerja
-        fetch('http://localhost:5000/api/unit-kerja') // Perbarui URL API
-            .then(response => response.json())
-            .then(data => {
-                const unitKerjaSelect = document.getElementById('unit_kerja');
-                data.forEach(unit => {
-                    const option = document.createElement('option');
-                    option.value = unit.nama_unit_kerja;
-                    option.textContent = unit.nama_unit_kerja;
-                    unitKerjaSelect.appendChild(option);
-                });
-            })
-            .catch(error => {
-                console.error('Error fetching unit kerja:', error); // Debug jika ada error
-            });
-
-        // Fetch Users (Auditee & Auditor)
-        fetch('http://localhost:5000/api/users') // Perbarui URL API
-            .then(response => response.json())
-            .then(data => {
-                const selects = ['auditee_1', 'auditee_2', 'auditor_1', 'auditor_2'];
-                selects.forEach(id => {
-                    const select = document.getElementById(id);
-                    data.forEach(user => {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fetch Unit Kerja
+            fetch('http://localhost:5000/api/unit-kerja') // Perbarui URL API
+                .then(response => response.json())
+                .then(data => {
+                    const unitKerjaSelect = document.getElementById('unit_kerja');
+                    data.forEach(unit => {
                         const option = document.createElement('option');
-                        option.value = user.nama;
-                        option.textContent = user.nama;
-                        select.appendChild(option.cloneNode(true));
+                        option.value = unit.nama_unit_kerja;
+                        option.textContent = unit.nama_unit_kerja;
+                        unitKerjaSelect.appendChild(option);
                     });
+                })
+                .catch(error => {
+                    console.error('Error fetching unit kerja:', error); // Debug jika ada error
                 });
-            })
-            .catch(error => {
-                console.error('Error fetching users:', error); // Debug jika ada error
-            });
 
-        // Submit form
-        document.getElementById('jadwalForm').addEventListener('submit', function (e) {
-            e.preventDefault();
+            // Fetch Users (Auditee & Auditor)
+            fetch('http://localhost:5000/api/users') // Perbarui URL API
+                .then(response => response.json())
+                .then(data => {
+                    const selects = ['auditee_1', 'auditee_2', 'auditor_1', 'auditor_2'];
+                    selects.forEach(id => {
+                        const select = document.getElementById(id);
+                        data.forEach(user => {
+                            const option = document.createElement('option');
+                            option.value = user.nama;
+                            option.textContent = user.nama;
+                            select.appendChild(option.cloneNode(true));
+                        });
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching users:', error); // Debug jika ada error
+                });
 
-            const formData = {
-                auditor_1: document.getElementById('auditor_1').value,
-                auditor_2: document.getElementById('auditor_2').value,
-                auditee_1: document.getElementById('auditee_1').value,
-                auditee_2: document.getElementById('auditee_2').value,
-                unit_kerja: document.getElementById('unit_kerja').value,
-                jadwal_audit: document.getElementById('waktu_audit').value,
-            };
+            // Submit form
+            document.getElementById('jadwalForm').addEventListener('submit', function(e) {
+                e.preventDefault();
 
-            fetch('http://localhost:5000/api/penjadwalan', { // Perbarui URL API
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            })
-            .then(response => {
-                if (!response.ok) throw new Error('Gagal menyimpan data jadwal audit');
-                return response.json();
-            })
-            .then(data => {
-                alert('Jadwal audit berhasil ditambahkan!');
-                document.getElementById('jadwalForm').reset();
-            })
-            .catch(error => {
-                alert('Terjadi kesalahan: ' + error.message);
+                const formData = {
+                    auditor_1: document.getElementById('auditor_1').value,
+                    auditor_2: document.getElementById('auditor_2').value,
+                    auditee_1: document.getElementById('auditee_1').value,
+                    auditee_2: document.getElementById('auditee_2').value,
+                    unit_kerja: document.getElementById('unit_kerja').value,
+                    jadwal_audit: document.getElementById('waktu_audit').value,
+                };
+
+                fetch('http://localhost:5000/api/penjadwalan', { // Perbarui URL API
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Gagal menyimpan data jadwal audit');
+                        return response.json();
+                    })
+                    .then(data => {
+                        alert('Jadwal audit berhasil ditambahkan!');
+                        document.getElementById('jadwalForm').reset();
+                    })
+                    .catch(error => {
+                        alert('Terjadi kesalahan: ' + error.message);
+                    });
             });
         });
-    });
-</script>
+    </script>
 @endpush

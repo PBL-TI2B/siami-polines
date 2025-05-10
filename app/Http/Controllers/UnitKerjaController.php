@@ -80,7 +80,7 @@ class UnitKerjaController extends Controller
         $unitKerja->jenis_unit_id = $jenis_unit_id;
         $unitKerja->save();
 
-        return redirect()->route('unit-kerja.index', ['type' => $validated['type']])->with('success', 'Data unit kerja berhasil ditambahkan');
+        return redirect()->route('admin.unit-kerja.index', ['type' => $validated['type']])->with('success', 'Data unit kerja berhasil ditambahkan');
     }
 
     public function edit($id, $type = null)
@@ -117,7 +117,7 @@ class UnitKerjaController extends Controller
         ]);
 
         // Redirect ke halaman yang sesuai dengan tipe unit yang sudah diupdate
-        return redirect()->route('unit-kerja.index', ['type' => $validated['type']])
+        return redirect()->route('admin.unit-kerja.index', ['type' => $validated['type']])
             ->with('success', 'Unit Kerja berhasil diupdate!');
     }
 
@@ -125,6 +125,6 @@ class UnitKerjaController extends Controller
     {
         $unitKerja = UnitKerja::findOrFail($id);
         $unitKerja->delete();
-        return redirect()->route('unit-kerja.index', ['type' => 'upt'])->with('success', 'Periode audit berhasil dihapus.');
+        return redirect()->route('admin.unit-kerja.index', ['type' => 'upt'])->with('success', 'Periode audit berhasil dihapus.');
     }
 }

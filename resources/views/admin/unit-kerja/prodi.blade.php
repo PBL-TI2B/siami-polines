@@ -6,8 +6,8 @@
     <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
         <!-- Breadcrumb -->
         <x-breadcrumb :items="[
-            ['label' => 'Beranda', 'url' => route('dashboard.index')],
-            ['label' => 'Data Unit', 'url' => route('unit-kerja.index')],
+            ['label' => 'Beranda', 'url' => route('admin.dashboard.index')],
+            ['label' => 'Data Unit', 'url' => route('admin.unit-kerja.index')],
             ['label' => 'Daftar Prodi'],
         ]" />
 
@@ -29,7 +29,7 @@
         </div>
 
         <div class="pt-6">
-            <x-table :headers="['No', 'Unit Kerja', 'Aksi']" :data="$units" :route="route('unit-kerja.index', ['type' => 'prodi'])">
+            <x-table :headers="['No', 'Unit Kerja', 'Aksi']" :data="$units" :route="route('admin.unit-kerja.index', ['type' => 'prodi'])">
                 @foreach ($units as $index => $unit)
                     <tr
                         class="border-y border-gray-200 bg-white transition-all duration-200 hover:bg-gray-50 dark:border-gray-500 dark:bg-gray-800 dark:hover:bg-gray-600">

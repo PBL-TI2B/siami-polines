@@ -3,7 +3,7 @@
 @section('title', 'Periode Audit')
 
 @section('content')
-    <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
         <!-- Toast Notification -->
         @if (session('success'))
             <x-toast id="toast-success" type="success" :message="session('success')" />
@@ -19,27 +19,27 @@
 
         <!-- Breadcrumb -->
         <x-breadcrumb :items="[
-            ['label' => 'Dashboard', 'url' => route('dashboard.index')],
-            ['label' => 'Periode Audit', 'url' => route('periode-audit.index')],
+            ['label' => 'Dashboard', 'url' => route('admin.dashboard.index')],
+            ['label' => 'Periode Audit', 'url' => route('admin.periode-audit.index')],
             ['label' => 'Daftar Periode'],
         ]" />
 
         <!-- Heading -->
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-200 mb-8">
+        <h1 class="mb-8 text-3xl font-bold text-gray-900 dark:text-gray-200">
             Periode Audit
         </h1>
 
         <!-- Form Section -->
         <div
-            class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm mb-8 border border-gray-200 dark:border-gray-700 transition-all duration-200">
+            class="mb-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all duration-200 dark:border-gray-700 dark:bg-gray-800">
             <form action="{{ route('periode-audit.store') }}" method="POST" id="periode-audit-form">
                 @csrf
-                <div class="grid gap-6 mb-6 grid-cols-1">
+                <div class="mb-6 grid grid-cols-1 gap-6">
                     <!-- Nama Periode -->
                     <x-form-input id="nama_periode" name="nama_periode" label="Nama Periode AMI"
                         placeholder="Masukkan nama periode" :required="true" maxlength="255" />
                 </div>
-                <div class="grid gap-6 mb-6 grid-cols-1 md:grid-cols-2">
+                <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
                     <!-- Tanggal Mulai -->
                     <x-form-input id="tanggal_mulai" name="tanggal_mulai" label="Tanggal Mulai"
                         placeholder="Pilih tanggal mulai" :required="true" :datepicker="true" />
@@ -54,23 +54,23 @@
         </div>
 
         <!-- Table Section -->
-        <x-table :headers="['', 'No', 'Nama Periode AMI', 'Tanggal Mulai', 'Tanggal Berakhir', 'Status', 'Aksi']" :data="$periodeAudits" :perPage="5" :route="route('periode-audit.index')">
+        <x-table :headers="['', 'No', 'Nama Periode AMI', 'Tanggal Mulai', 'Tanggal Berakhir', 'Status', 'Aksi']" :data="$periodeAudits" :perPage="5" :route="route('admin.periode-audit.index')">
             @forelse ($periodeAudits ?? [] as $index => $periode)
                 <tr
-                    class="bg-white dark:bg-gray-800 border-y border-gray-200 dark:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-200">
-                    <td class="w-4 p-4 border-r border-gray-200 dark:border-gray-700">
+                    class="border-y border-gray-200 bg-white transition-all duration-200 hover:bg-gray-50 dark:border-gray-500 dark:bg-gray-800 dark:hover:bg-gray-600">
+                    <td class="w-4 border-r border-gray-200 p-4 dark:border-gray-700">
                         <input type="checkbox"
-                            class="w-4 h-4 text-sky-800 bg-gray-100 dark:bg-gray-600 border-gray-200 dark:border-gray-500 rounded focus:ring-sky-500 dark:focus:ring-sky-600">
+                            class="h-4 w-4 rounded border-gray-200 bg-gray-100 text-sky-800 focus:ring-sky-500 dark:border-gray-500 dark:bg-gray-600 dark:focus:ring-sky-600">
                     </td>
-                    <td class="px-4 py-4 sm:px-6 border-r border-gray-200 dark:border-gray-700">
+                    <td class="border-r border-gray-200 px-4 py-4 sm:px-6 dark:border-gray-700">
                         {{ $periodeAudits->firstItem() + $index }}
                     </td>
                     <td
-                        class="px-4 py-4 sm:px-6 text-gray-900 dark:text-gray-200 border-r border-gray-200 dark:border-gray-700">
+                        class="border-r border-gray-200 px-4 py-4 text-gray-900 sm:px-6 dark:border-gray-700 dark:text-gray-200">
                         {{ $periode->nama_periode ?? 'N/A' }}
                     </td>
                     <td
-                        class="px-4 py-4 sm:px-6 text-gray-900 dark:text-gray-200 border-r border-gray-200 dark:border-gray-700">
+                        class="border-r border-gray-200 px-4 py-4 text-gray-900 sm:px-6 dark:border-gray-700 dark:text-gray-200">
                         @if ($periode->tanggal_mulai)
                             {{ $periode->tanggal_mulai->format('d F Y') }}
                         @else
@@ -78,16 +78,16 @@
                         @endif
                     </td>
                     <td
-                        class="px-4 py-4 sm:px-6 text-gray-900 dark:text-gray-200 border-r border-gray-200 dark:border-gray-700">
+                        class="border-r border-gray-200 px-4 py-4 text-gray-900 sm:px-6 dark:border-gray-700 dark:text-gray-200">
                         @if ($periode->tanggal_berakhir)
                             {{ $periode->tanggal_berakhir->format('d F Y') }}
                         @else
                             N/A
                         @endif
                     </td>
-                    <td class="px-4 py-4 sm:px-6 border-r border-gray-200 dark:border-gray-700">
+                    <td class="border-r border-gray-200 px-4 py-4 sm:px-6 dark:border-gray-700">
                         <span
-                            class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $periode->status == 'Berakhir' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300' : 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-300' }}">
+                            class="{{ $periode->status == 'Berakhir' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300' : 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-300' }} inline-flex rounded-full px-2 py-1 text-xs font-semibold leading-5">
                             {{ $periode->status ?? 'Tidak Diketahui' }}
                         </span>
                     </td>
@@ -126,7 +126,7 @@
                     :warningMessage="'Menghapus periode ini akan menghapus seluruh riwayat pelaksanaan AMI pada periode tanggal tersebut.'" />
             @empty
                 <tr>
-                    <td colspan="7" class="px-4 py-4 sm:px-6 text-center text-gray-500 dark:text-gray-400">
+                    <td colspan="7" class="px-4 py-4 text-center text-gray-500 sm:px-6 dark:text-gray-400">
                         Tidak ada data periode audit.
                     </td>
                 </tr>
