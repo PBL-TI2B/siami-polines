@@ -59,16 +59,35 @@
     // Fungsi helper untuk memeriksa apakah route dan parameter path cocok
     function isRouteActive($route, $routeParams = [])
     {
+        $currentRoute = request()->route()->getName();
+        $currentParams = request()->route()->parameters();
+
+        // Khusus untuk auditor.data-instrumen.index dengan parameter type
+        if ($route === 'auditor.data-instrumen.index' && isset($routeParams['type'])) {
+            $type = $routeParams['type'];
+            $targetRoute = "auditor.data-instrumen.{$type}";
+
+            if ($currentRoute === $targetRoute) {
+                Log::info('Route aktif berdasarkan type', [
+                    'route' => $route,
+                    'type' => $type,
+                    'targetRoute' => $targetRoute,
+                    'currentRoute' => $currentRoute,
+                ]);
+                return true;
+            }
+        }
+
+        // Logika default untuk rute lainnya
         if (!request()->routeIs($route)) {
-            \Log::debug('Route tidak aktif', [
+            Log::debug('Route tidak aktif', [
                 'route' => $route,
-                'current' => request()->route()->getName() ?? 'undefined',
+                'current' => $currentRoute ?? 'undefined',
             ]);
             return false;
         }
 
-        $currentParams = request()->route()->parameters();
-        \Log::debug('Memeriksa parameter route', [
+        Log::debug('Memeriksa parameter route', [
             'route' => $route,
             'routeParams' => $routeParams,
             'currentParams' => $currentParams,
@@ -76,7 +95,7 @@
 
         foreach ($routeParams as $key => $value) {
             if (!isset($currentParams[$key]) || (string) $currentParams[$key] !== (string) $value) {
-                \Log::debug('Parameter tidak cocok', [
+                Log::debug('Parameter tidak cocok', [
                     'key' => $key,
                     'expected' => $value,
                     'actual' => $currentParams[$key] ?? 'unset',
@@ -97,7 +116,7 @@
 
         foreach ($item['subItems'] as $subItem) {
             if (isRouteActive($subItem['route'], $subItem['routeParams'])) {
-                \Log::info('Dropdown terbuka', [
+                Log::info('Dropdown terbuka', [
                     'menu' => $item['label'],
                     'subItem' => $subItem['label'],
                     'route' => $subItem['route'],
@@ -107,7 +126,7 @@
             }
         }
 
-        \Log::debug('Dropdown tidak terbuka', ['menu' => $item['label']]);
+        Log::debug('Dropdown tidak terbuka', ['menu' => $item['label']]);
         return false;
     }
 @endphp
