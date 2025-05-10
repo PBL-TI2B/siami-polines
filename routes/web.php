@@ -6,6 +6,7 @@ use App\Http\Controllers\JadwalAuditController;
 use App\Http\Controllers\DaftarTilikController;
 use App\Http\Controllers\UnitKerjaController;
 use App\Http\Controllers\DataInstrumenController;
+use App\Http\Controllers\DataInstrumenControllerAuditor;
 use App\Http\Controllers\DataUserController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\AuthController;
@@ -27,15 +28,15 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Route untuk Admin dengan prefix 'admin'
-Route::prefix('admin')->group(function () {
+Route::prefix('admin')->middleware('auth.ami:admin')->group(function () {
     Route::prefix('dashboard')->group(function () {
-        Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
+        Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard.index');
     });
- // Route::get('/periode-audit', PeriodeAudit::class)->name('periode-audit.index');
+ // Route::get('/periode-audit', PeriodeAudit::class)->name('admin.periode-audit.index');
 
     // Periode Audit
     Route::prefix('periode-audit')->group(function () {
-        Route::get('/', [PeriodeAuditController::class, 'index'])->name('periode-audit.index');
+        Route::get('/', [PeriodeAuditController::class, 'index'])->name('admin.periode-audit.index');
         Route::get('/create', [PeriodeAuditController::class, 'create'])->name('periode-audit.create');
         Route::post('/', [PeriodeAuditController::class, 'store'])->name('periode-audit.store');
         Route::get('/{id}/edit', [PeriodeAuditController::class, 'edit'])->name('periode-audit.edit');
@@ -46,7 +47,7 @@ Route::prefix('admin')->group(function () {
 
     // Jadwal Audit
     Route::prefix('jadwal-audit')->group(function () {
-        Route::get('/', [JadwalAuditController::class, 'index'])->name('jadwal-audit.index');
+        Route::get('/', [JadwalAuditController::class, 'index'])->name('admin.jadwal-audit.index');
         Route::get('/create', [JadwalAuditController::class, 'create'])->name('jadwal-audit.create'); // Route untuk halaman form
         Route::post('/store', [JadwalAuditController::class, 'makeJadwalAudit'])->name('jadwal-audit.store'); // Route untuk menyimpan data
         Route::delete('/{id}', [JadwalAuditController::class, 'destroy'])->name('jadwal-audit.destroy');
@@ -58,29 +59,23 @@ Route::prefix('admin')->group(function () {
 
     // Daftar Tilik
     Route::prefix('daftar-tilik')->group(function () {
-        Route::get('/', [DaftarTilikController::class, 'index'])->name('daftar-tilik.index');
+        Route::get('/', [DaftarTilikController::class, 'index'])->name('admin.daftar-tilik.index');
     });
 
     // Data Unit (Unit Kerja)
     Route::prefix('unit-kerja')->group(function () {
-        // Route::get('/', [UnitKerjaController::class, 'index'])->name('unit-kerja.index');
+        // Route::get('/', [UnitKerjaController::class, 'index'])->name('admin.unit-kerja.index');
         Route::get('/create/{type?}', [UnitKerjaController::class, 'create'])->name('unit-kerja.create');
         Route::get('/{id}/edit/{type?}', [UnitKerjaController::class, 'edit'])->name('unit-kerja.edit');
         Route::post('/', [UnitKerjaController::class, 'store'])->name('unit-kerja.store');
         Route::put('/{id}', [UnitKerjaController::class, 'update'])->name('unit-kerja.update');
         Route::delete('/{id}', [UnitKerjaController::class, 'destroy'])->name('unit-kerja.destroy');
-
-        // TARUH PALING BAWAH
-        Route::get('/{type?}', [UnitKerjaController::class, 'index'])->name('unit-kerja.index');
-
-        // Route::get('/', [UnitKerjaController::class, 'index'])->name('unit-kerja.index');
-        // Route::get('/', [UnitKerjaController::class, 'index'])->name('unit-kerja.prodi');
-        // Route::get('/', [UnitKerjaController::class, 'index'])->name('unit-kerja.jurusan');
+        Route::get('/{type?}', [UnitKerjaController::class, 'index'])->name('admin.unit-kerja.index');
     });
 
     // // Data Instrumen
     Route::prefix('data-instrumen')->group(function () {
-        Route::get('/{type?}', [DataInstrumenController::class, 'index'])->name('data-instrumen.index');
+        Route::get('/{type?}', [DataInstrumenController::class, 'index'])->name('admin.data-instrumen.index');
         // Route::get('/', [InstrumenUptController::class, 'index'])->name('instrumen-upt.index');
         // Route::get('/create', [InstrumenUptController::class, 'create'])->name('instrumen-upt.create');
         // Route::post('/', [InstrumenUptController::class, 'store'])->name('instrumen-upt.store');
@@ -94,7 +89,7 @@ Route::prefix('admin')->group(function () {
 
     // Data User
     Route::prefix('data-user')->group(function () {
-        Route::get('/', [DataUserController::class, 'index'])->name('data-user.index');
+        Route::get('/', [DataUserController::class, 'index'])->name('admin.data-user.index');
         Route::get('/create', [DataUserController::class, 'create'])->name('data-user.create');
         Route::post('/', [DataUserController::class, 'store'])->name('data-user.store');
         Route::get('/{id}/edit', [DataUserController::class, 'edit'])->name('data-user.edit');
@@ -105,20 +100,33 @@ Route::prefix('admin')->group(function () {
 
     // Laporan
     Route::prefix('laporan')->group(function () {
-        Route::get('/', [LaporanController::class, 'index'])->name('laporan.index');
+        Route::get('/', [LaporanController::class, 'index'])->name('admin.laporan.index');
     });
 });
 
-Route::prefix('auditor')->group(function () {
-    Route::get('/dashboard', function () {return view('auditor.dashboard.index');})->name('auditor.dashboard.index');
-    Route::get('/daftar-tilik', [DaftarTilikController::class, 'auditortilik'])->name('auditor.daftar.tilik');
-    Route::get('/assesmen-lapangan', function () {return view('auditor.assesmen-lapangan.index');})->name('auditor.assesmen-lapangan.index');
-    Route::get('/data-instrumen', function () {return view('auditor.data-instrumen.index');})->name('auditor.data-instrumen.index');
-    Route::get('/data-instrumen/upt', [DataInstrumenController::class, 'auditorInsUpt'])->name('auditor.data-instrumen.upt');
-    Route::get('/data-instrumen/prodi', [DataInstrumenController::class, 'auditorinsprodi'])->name('auditor.data-instrumen.prodi');
-    Route::get('/laporan', function () {return view('auditor.laporan.index');})->name('auditor.laporan.index');
-    Route::get('/ptpp', function () {return view('auditor.ptpp.index');})->name('auditor.ptpp.index');
+Route::prefix('auditor')->middleware('auth.ami:auditor')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('auditor.dashboard.index');
+    })->name('auditor.dashboard.index');
 
-    Route::get('/data-instrumen/jurusan', [DataInstrumenController::class, 'auditorinsjurusan'])->name('auditor.data-instrumen.jurusan');
+    Route::get('/daftar-tilik', [DaftarTilikController::class, 'auditortilik'])->name('auditor.daftar-tilik.index');
+
+    Route::get('/assesmen-lapangan', function () {
+        return view('auditor.assesmen-lapangan.index');
+    })->name('auditor.assesmen-lapangan.index');
+
+    // Rute untuk data-instrumen
+    Route::get('/data-instrumen', [DataInstrumenControllerAuditor::class, 'index'])->name('auditor.data-instrumen.index');
+    Route::get('/data-instrumen/upt', [DataInstrumenControllerAuditor::class, 'auditorInsUpt'])->name('auditor.data-instrumen.upt');
+    Route::get('/data-instrumen/prodi', [DataInstrumenControllerAuditor::class, 'auditorinsprodi'])->name('auditor.data-instrumen.prodi');
+    Route::get('/data-instrumen/jurusan', [DataInstrumenControllerAuditor::class, 'auditorinsjurusan'])->name('auditor.data-instrumen.jurusan');
+
+    Route::get('/laporan', function () {
+        return view('auditor.laporan.index');
+    })->name('auditor.laporan.index');
+
+    Route::get('/ptpp', function () {
+        return view('auditor.ptpp.index');
+    })->name('auditor.ptpp.index');
 });
 

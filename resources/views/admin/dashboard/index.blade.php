@@ -7,7 +7,7 @@
         <!-- Header -->
         <div class="mb-6 flex items-center justify-between">
             <div>
-                <x-breadcrumb :items="[['label' => 'Dashboard', 'url' => route('dashboard.index')]]" />
+                <x-breadcrumb :items="[['label' => 'Dashboard', 'url' => route('admin.dashboard.index')]]" />
                 <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-200">Dashboard</h1>
                 <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Periode Aktif:
                     <span

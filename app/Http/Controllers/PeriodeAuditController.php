@@ -28,7 +28,7 @@ use Illuminate\Http\Request;
 
 //         $periodeAudit->update($validated);
 
-//         return redirect()->route('periode-audit.index')->with('success', 'Periode audit berhasil diperbarui.');
+//         return redirect()->route('admin.periode-audit.index')->with('success', 'Periode audit berhasil diperbarui.');
 //     }
 // }
 
@@ -59,7 +59,7 @@ class PeriodeAuditController extends Controller
             'status' => 'Sedang Berjalan',
         ]);
 
-        return redirect()->route('periode-audit.index')->with('success', 'Periode audit berhasil ditambahkan.');
+        return redirect()->route('admin.periode-audit.index')->with('success', 'Periode audit berhasil ditambahkan.');
     }
 
     public function edit($id)
@@ -83,20 +83,20 @@ class PeriodeAuditController extends Controller
             'tanggal_berakhir' => \Carbon\Carbon::createFromFormat('d-m-Y', $request->tanggal_berakhir),
         ]);
 
-        return redirect()->route('periode-audit.index')->with('success', 'Periode audit berhasil diperbarui.');
+        return redirect()->route('admin.periode-audit.index')->with('success', 'Periode audit berhasil diperbarui.');
     }
 
     public function destroy($id)
     {
         $periodeAudit = PeriodeAudit::findOrFail($id);
         $periodeAudit->delete();
-        return redirect()->route('periode-audit.index')->with('success', 'Periode audit berhasil dihapus.');
+        return redirect()->route('admin.periode-audit.index')->with('success', 'Periode audit berhasil dihapus.');
     }
 
     public function close(Request $request, $id)
     {
         $periodeAudit = PeriodeAudit::findOrFail($id);
         $periodeAudit->update(['status' => 'Berakhir']);
-        return redirect()->route('periode-audit.index')->with('success', 'Periode audit berhasil ditutup.');
+        return redirect()->route('admin.periode-audit.index')->with('success', 'Periode audit berhasil ditutup.');
     }
 }

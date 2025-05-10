@@ -57,7 +57,7 @@ class JadwalAuditController extends Controller
             'auditee1', 'auditee2',
             'unitKerja', 'periode'
         ])->get();
-    
+
         return response()->json([
             'data' => $jadwalAudit
         ], 200);
@@ -110,7 +110,7 @@ public function destroy($id)
     $audit->delete();
 
     // Redirect atau kembalikan respons JSON
-    return redirect()->route('jadwal-audit.index')->with('success', 'Jadwal audit berhasil dihapus.');
+    return redirect()->route('admin.jadwal-audit.index')->with('success', 'Jadwal audit berhasil dihapus.');
 }
 
 public function reset(Request $request)
@@ -118,7 +118,7 @@ public function reset(Request $request)
     $request->validate([
         'reset_confirmation' => 'required|in:RESET',
     ]);
-    
+
    // Nonaktifkan foreign key checks
    \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
@@ -128,7 +128,7 @@ public function reset(Request $request)
    // Aktifkan kembali foreign key checks
    \DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-    return redirect()->route('jadwal-audit.index')->with('success', 'Semua jadwal audit berhasil direset.');
+    return redirect()->route('admin.jadwal-audit.index')->with('success', 'Semua jadwal audit berhasil direset.');
 }
 
 public function download()
@@ -179,11 +179,11 @@ public function update(Request $request, $id) {
 
      // Update the audit record with validated data
      $audit->update($validatedData);
- 
+
      // Redirect back with a success message
-     return redirect()->route('jadwal-audit.index')->with('success', 'Jadwal Audit berhasil diperbarui.');
+     return redirect()->route('admin.jadwal-audit.index')->with('success', 'Jadwal Audit berhasil diperbarui.');
 }
-    
+
     // public function makeJadwalAudit(Request $request) {
     //     $request->validate([
     //         'user_id_1_auditor' => 'required|exists:users,user_id',
@@ -193,7 +193,7 @@ public function update(Request $request, $id) {
     //         'unit_kerja_id' => 'required|exists:unit_kerja,unit_kerja_id',
     //         'periode_id' => 'required|exists:periode_audit,periode_id',
     //     ]);
-    
+
     //     $audit = Auditing::create([
     //         'user_id_1_auditor' => $request->user_id_1_auditor,
     //         'user_id_2_auditor' => $request->user_id_2_auditor,
@@ -203,7 +203,7 @@ public function update(Request $request, $id) {
     //         'periode_id' => $request->periode_id,
     //         'status' => 'Menunggu',
     //     ]);
-    
+
     //     return response()->json([
     //         'message' => 'Data jadwal audit berhasil disimpan!',
     //         'data' => $audit,
