@@ -86,16 +86,15 @@ Route::prefix('admin')->middleware('auth.ami:admin')->group(function () {
         // Route::get('/export', [InstrumenUptController::class, 'export'])->name('instrumen-upt.export');
     });
 
-
     // Data User
     Route::prefix('data-user')->group(function () {
         Route::get('/', [DataUserController::class, 'index'])->name('admin.data-user.index');
-        Route::get('/create', [DataUserController::class, 'create'])->name('data-user.create');
-        Route::post('/', [DataUserController::class, 'store'])->name('data-user.store');
-        Route::get('/{id}/edit', [DataUserController::class, 'edit'])->name('data-user.edit');
-        Route::put('/{id}', [DataUserController::class, 'update'])->name('data-user.update');
-        Route::delete('/{id}', [DataUserController::class, 'destroy'])->name('data-user.destroy');
-        Route::delete('data-user/bulk-delete', [DataUserController::class, 'bulkDelete'])->name('data-user.bulk-delete');
+        Route::get('/create', [DataUserController::class, 'create'])->name('admin.data-user.create');
+        Route::post('/', [DataUserController::class, 'store'])->name('admin.data-user.store');
+        Route::get('/{id}/edit', [DataUserController::class, 'edit'])->name('admin.data-user.edit');
+        Route::put('/{id}', [DataUserController::class, 'update'])->name('admin.data-user.update');
+        Route::delete('/{id}', [DataUserController::class, 'destroy'])->name('admin.data-user.destroy');
+        Route::delete('/bulk-delete', [DataUserController::class, 'bulkDelete'])->name('admin.data-user.bulk-delete');
     });
 
     // Laporan

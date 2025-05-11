@@ -12,60 +12,65 @@
         ]" />
 
         <!-- Heading -->
-        <h1 class="mb-4 text-3xl font-bold text-gray-900 dark:text-gray-200">
-            Daftar User
+        <h1 class="mb-6 text-3xl font-bold text-gray-900 dark:text-gray-200">
+            Tambah User
         </h1>
+
+        <!-- Pesan Error atau Sukses -->
+        @if (session('error'))
+            <div class="mb-4 rounded-md bg-red-100 p-4 text-red-700">
+                {{ session('error') }}
+            </div>
+        @endif
+        @if (session('success'))
+            <div class="mb-4 rounded-md bg-green-100 p-4 text-green-700">
+                {{ session('success') }}
+            </div>
+        @endif
 
         <!-- Form -->
         <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-            <form id="user-form" enctype="multipart/form-data">
+            <form action="{{ route('admin.data-user.store') }}" method="POST" class="space-y-6">
                 @csrf
-
-                <!-- Upload Foto -->
-                <div class="mb-6">
-                    <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">Upload Foto</label>
-                    <div class="flex items-center">
-                        <div class="mr-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-200">
-                            <img id="preview-image" class="hidden h-16 w-16 rounded-full object-cover" src="#"
-                                alt="Preview">
-                            <svg id="default-icon" class="h-8 w-8 text-gray-400" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                            </svg>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <label for="file-upload"
-                                class="inline-flex cursor-pointer items-center rounded-lg bg-gray-800 px-4 py-2 text-sm font-medium text-white hover:bg-gray-900">
-                                Pilih File
-                            </label>
-                            <input id="file-upload" name="foto" type="file" class="hidden" accept="image/*">
-                            <p id="file-name" class="text-sm text-gray-500 dark:text-gray-400">Tidak ada file yang dipilih
-                            </p>
-                        </div>
-                    </div>
-                    <p id="foto-error" class="mt-1 hidden text-sm text-red-500"></p>
-                </div>
 
                 <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <!-- Kolom Kiri -->
                     <div>
                         <!-- Nama -->
                         <div class="mb-4">
-                            <label for="nama"
-                                class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">Nama</label>
-                            <input type="text" id="nama" name="nama" placeholder="Masukkan nama anda"
+                            <label for="nama" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">Nama</label>
+                            <input type="text" id="nama" name="nama" value="{{ old('nama') }}"
+                                placeholder="Masukkan nama anda"
                                 class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-sky-500 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
-                            <p id="nama-error" class="mt-1 hidden text-sm text-red-500"></p>
+                            @error('nama')
+                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <!-- Email -->
                         <div class="mb-4">
-                            <label for="email"
-                                class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">Email</label>
-                            <input type="email" id="email" name="email" placeholder="Masukkan email anda"
+                            <label for="email" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">Email</label>
+                            <input type="email" id="email" name="email" value="{{ old('email') }}"
+                                placeholder="Masukkan email anda"
                                 class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-sky-500 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
-                            <p id="email-error" class="mt-1 hidden text-sm text-red-500"></p>
+                            @error('email')
+                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Unit Kerja -->
+                        <div class="mb-6">
+                            <label for="unit_kerja_id" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">Unit Kerja</label>
+                            <select name="unit_kerja_id" id="unit_kerja_id"
+                                class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-sky-500 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                                <option value="">Pilih Unit Kerja</option>
+                                @foreach (\App\Models\UnitKerja::all() as $unit)
+                                    <option value="{{ $unit->unit_kerja_id }}">{{ $unit->nama_unit_kerja }}</option>
+                                @endforeach
+                            </select>
+                            @error('unit_kerja_id')
+                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
 
@@ -73,18 +78,20 @@
                     <div>
                         <!-- NIP -->
                         <div class="mb-4">
-                            <label for="nip"
-                                class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">NIP</label>
-                            <input type="text" id="nip" name="nip" placeholder="NIP"
+                            <label for="nip" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">NIP</label>
+                            <input type="text" id="nip" name="nip" value="{{ old('nip') }}"
+                                placeholder="NIP"
                                 class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-sky-500 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
-                            <p id="nip-error" class="mt-1 hidden text-sm text-red-500"></p>
+                            @error('nip')
+                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <!-- Password -->
                         <div class="relative mb-4">
-                            <label for="password"
-                                class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">Password</label>
-                            <input type="password" id="password" name="password" placeholder="********"
+                            <label for="password" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">Password</label>
+                            <input type="password" id="password" name="password"
+                                placeholder="********"
                                 class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-sky-500 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
                             <button type="button" id="toggle-password"
                                 class="absolute inset-y-0 right-0 mt-6 flex items-center pr-3">
@@ -103,44 +110,33 @@
                                     </path>
                                 </svg>
                             </button>
-                            <p id="password-error" class="mt-1 hidden text-sm text-red-500"></p>
+                            @error('password')
+                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <!-- Role -->
+                        <div class="mb-6">
+                            <label for="roles" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">Role</label>
+                            <select name="roles" id="roles"
+                                class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-sky-500 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                                <option value="">Pilih Role</option>
+                                @foreach ($roles as $role)
+                                    <option value="{{ $role->nama_role }}" {{ old('roles') == $role->nama_role ? 'selected' : '' }}>
+                                        {{ $role->nama_role }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('roles')
+                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
                 </div>
 
-                <!-- Unit Kerja -->
-                <div class="mb-6">
-                    <label for="unit_kerja_id"
-                        class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">Unit Kerja</label>
-                    <select name="unit_kerja_id" id="unit_kerja_id"
-                        class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-sky-500 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
-                        <option value="">Pilih Unit Kerja</option>
-                        @foreach (\App\Models\UnitKerja::all() as $unit)
-                            <option value="{{ $unit->id ?? $unit->nama_unit_kerja }}">{{ $unit->nama_unit_kerja }}</option>
-                        @endforeach
-                    </select>
-                    <p id="unit_kerja_id-error" class="mt-1 hidden text-sm text-red-500"></p>
-                </div>
-
-                <!-- Role -->
-                <div class="mb-6">
-                    <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">Role</label>
-                    <div class="flex flex-wrap gap-4">
-                        @foreach (['Admin', 'Admin Unit', 'Auditor', 'Auditee', 'Kepala PMPP'] as $role)
-                            <label class="inline-flex items-center">
-                                <input type="checkbox" name="roles[]" value="{{ $role }}"
-                                    class="h-4 w-4 rounded border-gray-200 bg-gray-100 text-sky-800 focus:ring-sky-500 dark:border-gray-500 dark:bg-gray-600 dark:focus:ring-sky-600">
-                                <span class="ml-2 text-sm text-gray-700 dark:text-gray-200">{{ $role }}</span>
-                            </label>
-                        @endforeach
-                    </div>
-                    <p id="roles-error" class="mt-1 hidden text-sm text-red-500"></p>
-                </div>
-
                 <!-- Buttons -->
                 <div class="flex space-x-3">
-                    <x-button type="submit" color="sky" icon="heroicon-o-check" id="submit-button">
-                        Simpan Perubahan
+                    <x-button type="submit" color="sky" icon="heroicon-o-check">
+                        Simpan
                     </x-button>
                     <x-button color="gray" icon="heroicon-o-x-mark" href="{{ route('admin.data-user.index') }}">
                         Batal
@@ -150,10 +146,9 @@
         </div>
     </div>
 
-    <!-- JavaScript -->
+    <!-- JavaScript untuk Toggle Password -->
     <script>
-        // Toggle Password Visibility
-        document.getElementById('toggle-password').addEventListener('click', function() {
+        document.getElementById('toggle-password').addEventListener('click', function () {
             const passwordInput = document.getElementById('password');
             const eyeOpen = document.getElementById('eye-open');
             const eyeClosed = document.getElementById('eye-closed');
@@ -166,102 +161,6 @@
                 passwordInput.type = 'password';
                 eyeOpen.classList.add('hidden');
                 eyeClosed.classList.remove('hidden');
-            }
-        });
-
-        // Image Preview
-        document.getElementById('file-upload').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            const previewImage = document.getElementById('preview-image');
-            const defaultIcon = document.getElementById('default-icon');
-            const fileName = document.getElementById('file-name');
-
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    previewImage.src = e.target.result;
-                    previewImage.classList.remove('hidden');
-                    defaultIcon.classList.add('hidden');
-                    fileName.textContent = file.name;
-                };
-                reader.readAsDataURL(file);
-            } else {
-                previewImage.classList.add('hidden');
-                defaultIcon.classList.remove('hidden');
-                fileName.textContent = 'Tidak ada file yang dipilih';
-            }
-        });
-
-        // Form Submission
-        document.getElementById('user-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-
-            // Reset error messages
-            document.querySelectorAll('[id$="-error"]').forEach(el => {
-                el.classList.add('hidden');
-                el.textContent = '';
-            });
-            document.querySelectorAll('input, select').forEach(el => {
-                el.classList.remove('border-red-500');
-            });
-
-            const form = e.target;
-            const formData = new FormData(form);
-            const roles = Array.from(form.querySelectorAll('input[name="roles[]"]:checked')).map(input => input
-                .value);
-
-            // Append roles to FormData
-            formData.delete('roles[]');
-            roles.forEach(role => formData.append('roles[]', role));
-
-            const submitButton = document.getElementById('submit-button');
-            const originalButtonText = submitButton.textContent;
-            submitButton.disabled = true;
-            submitButton.textContent = 'Menyimpan...';
-
-            try {
-                const response = await fetch('/api/users', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
-                    },
-                    body: formData,
-                });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                    alert(result.message);
-                    window.location.href = '{{ route('admin.data-user.index') }}';
-                } else {
-                    const errors = result.errors || {
-                        message: result.message || 'Gagal membuat user'
-                    };
-                    if (errors.message) {
-                        alert('Kesalahan: ' + errors.message);
-                    } else {
-                        for (const [field, messages] of Object.entries(errors)) {
-                            const errorElement = document.getElementById(`${field}-error`);
-                            const inputElement = form.querySelector(`[name="${field}"]`) || form.querySelector(
-                                `[name="${field}[]"]`);
-                            if (errorElement && inputElement) {
-                                errorElement.textContent = messages.join(', ');
-                                errorElement.classList.remove('hidden');
-                                inputElement.classList.add('border-red-500');
-                            } else if (field === 'roles') {
-                                const rolesError = document.getElementById('roles-error');
-                                rolesError.textContent = messages.join(', ');
-                                rolesError.classList.remove('hidden');
-                            }
-                        }
-                    }
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Terjadi kesalahan saat mengirim formulir.');
-            } finally {
-                submitButton.disabled = false;
-                submitButton.textContent = originalButtonText;
             }
         });
     </script>
