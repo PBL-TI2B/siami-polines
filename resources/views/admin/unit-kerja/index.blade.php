@@ -38,20 +38,20 @@
                         </td>
                         <td
                             class="whitespace-nowrap border-r border-gray-200 px-4 py-4 font-medium text-gray-900 sm:px-6 dark:border-gray-600 dark:text-white">
-                            {{ $unit->nama_unit_kerja }}
+                            {{ $unit['nama_unit_kerja'] }}
                         </td>
                         <x-table-row-actions :actions="[
                             [
                                 'label' => 'Edit',
                                 'color' => 'sky',
                                 'icon' => 'heroicon-o-pencil',
-                                'href' => route('unit-kerja.edit', ['id' => $unit->unit_kerja_id, 'type' => 'upt']),
+                                'href' => route('unit-kerja.edit', ['id' => $unit['unit_kerja_id'], 'type' => 'upt']),
                             ],
                             [
                                 'label' => 'Hapus',
                                 'color' => 'red',
                                 'icon' => 'heroicon-o-trash',
-                                'modalId' => 'delete-unitKerja-modal-' . $unit->unit_kerja_id,
+                                'modalId' => 'delete-unitKerja-modal-' . $unit['unit_kerja_id'],
                             ],
                         ]" />
                     </tr>

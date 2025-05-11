@@ -8,6 +8,7 @@ use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class UnitKerjaController extends Controller
@@ -16,6 +17,7 @@ class UnitKerjaController extends Controller
     {
         $perPage = $request->query('per_page', 5);
         $search = $request->query('search');
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
 
         // Mapping string type ke ID jenis unit
         $typeMapping = [
@@ -27,21 +29,37 @@ class UnitKerjaController extends Controller
         // Ambil ID jenis unit dari mapping
         $jenisUnitId = $typeMapping[$type] ?? null;
 
-        // Query dasar
-        $query = UnitKerja::query();
+        $url = "http://127.0.0.1:5000/api/unit-kerja/$type";
 
-        // Filter pencarian
-        if ($search) {
-            $query->where('nama_unit_kerja', 'like', "%{$search}%");
+        $response = Http::get($url, [
+            'jenis_unit_id' => $jenisUnitId,
+            'search' => $search,
+        ]);
+
+        if (!$response->successful()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data dari API',
+                'error' => $response->body(),
+            ], $response->status());
         }
 
-        // Filter berdasarkan jenis unit (jika ada)
-        if ($jenisUnitId) {
-            $query->where('jenis_unit_id', $jenisUnitId);
-        }
+        $json = $response->json();
+        $unitsArray = $json['data'] ?? [];
 
-        // Pagination
-        $paginatedUnits = $query->paginate($perPage);
+        // Konversi ke koleksi
+        $collection = collect($unitsArray);
+
+        // Manual pagination
+        $sliced = $collection->slice(($currentPage - 1) * $perPage, $perPage)->values();
+
+        $paginatedUnits = new LengthAwarePaginator(
+            $sliced,
+            $collection->count(),
+            $perPage,
+            $currentPage,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
 
         // Pilih view berdasarkan type
         switch ($type) {
@@ -64,6 +82,7 @@ class UnitKerjaController extends Controller
     public function store(Request $request) {
         $validated = $request->validate([
             'nama_unit_kerja' => 'required|string|max:100',
+            'jurusan' => 'nullable|string',
             'type' => 'nullable|string',
         ]);
 
@@ -75,12 +94,27 @@ class UnitKerjaController extends Controller
 
         $jenis_unit_id = $typeMapping[$validated['type']];
 
-        $unitKerja = new UnitKerja();
-        $unitKerja->nama_unit_kerja = $validated['nama_unit_kerja'];
-        $unitKerja->jenis_unit_id = $jenis_unit_id;
-        $unitKerja->save();
+        $url = "http://127.0.0.1:5000/api/unit-kerja/{$validated['type']}";
 
-        return redirect()->route('admin.unit-kerja.index', ['type' => $validated['type']])->with('success', 'Data unit kerja berhasil ditambahkan');
+        $payload = [
+            'nama_unit_kerja' => $validated['nama_unit_kerja'],
+            'jenis_unit_kerja' => $jenis_unit_id,
+        ];
+
+        if ($validated['type'] === 'prodi') {
+            $payload['jurusan'] = $validated['jurusan'];
+        }
+
+        $response = Http::post($url, $payload);
+
+        if (!$response->successful()) {
+            // Bisa pilih log error, tampilkan notifikasi, dll.
+            return redirect()->back()->with('error', 'Gagal mengirim data ke API.');
+        }
+
+        return redirect()
+            ->route('admin.unit-kerja.index', ['type' => $validated['type']])
+            ->with('success', 'Data unit kerja berhasil ditambahkan dan dikirim ke API');
     }
 
     public function edit($id, $type = null)
@@ -94,6 +128,7 @@ class UnitKerjaController extends Controller
         // Validasi input dari form
         $validated = $request->validate([
             'nama_unit_kerja' => 'required|string|max:100',
+            'jurusan' => 'nullable|string',
             'type' => 'nullable|string',
         ]);
 
@@ -106,17 +141,32 @@ class UnitKerjaController extends Controller
 
         // Ambil ID jenis unit dari mapping
         $jenisUnitId = $typeMapping[$validated['type']] ?? null;
+        $jurusan = $request->input('jurusan', null);
 
         // Cari unit kerja yang akan diupdate
         $unitKerja = UnitKerja::findOrFail($id);
 
         // Update data unit kerja
-        $unitKerja->update([
+        $updateData = [
             'nama_unit_kerja' => $request->input('nama_unit_kerja'),
             'jenis_unit_id' => $jenisUnitId,
-        ]);
+        ];
+
+        if ($validated['type'] === 'prodi') {
+            $updateData['jurusan'] = $jurusan;
+        }
+
+        // $unitKerja->update($updateData);
+
+        $url = "http://127.0.0.1:5000/api/unit-kerja/$id";
+        $response = Http::put($url, $updateData);
 
         // Redirect ke halaman yang sesuai dengan tipe unit yang sudah diupdate
+        if (!$response->successful()) {
+            return redirect()->back()->with('error', 'Gagal mengirim data ke API.');
+        }
+
+        // Redirect ke halaman yang sesuai setelah update
         return redirect()->route('admin.unit-kerja.index', ['type' => $validated['type']])
             ->with('success', 'Unit Kerja berhasil diupdate!');
     }

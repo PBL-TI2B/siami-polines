@@ -26,6 +26,10 @@
                     <!-- Nama Periode -->
                     <x-form-input id="nama_unit_kerja" name="nama_unit_kerja" label="Nama Unit Kerja AMI"
                         placeholder="Masukkan nama Unit" :required="true" maxlength="255" />
+                    @if ($type === 'prodi')
+                        <x-form-input id="jurusan" name="jurusan" label="Jurusan" 
+                            placeholder="Masukkan nama jurusan prodi" :required="true" maxlength="255" />
+                    @endif
                 </div>
                 <div class="mt-3 flex gap-3">
                     <x-button type="submit" color="sky" icon="heroicon-o-plus">
