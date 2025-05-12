@@ -7,8 +7,8 @@
         <!-- Breadcrumb -->
         <x-breadcrumb :items="[
             ['label' => 'Dashboard', 'url' => route('admin.dashboard.index')],
-            ['label' => 'Jadwal Audit', 'url' => route('admin.jadwal-audit.index')],
-            ['label' => 'Tambah Jadwal Audit', 'url' => route('jadwal-audit.create')],
+            ['label' => 'Jadwal Audit', 'url' => route('admin.ploting-ami.index')],
+            ['label' => 'Tambah Jadwal Audit', 'url' => route('ploting-ami.create')],
         ]" />
 
         <!-- Heading -->
@@ -81,7 +81,7 @@
 
             <!-- Tombol -->
             <div class="flex justify-end space-x-3">
-                <a href="{{ route('admin.jadwal-audit.index') }}"
+                <a href="{{ route('admin.ploting-ami.index') }}"
                     class="rounded-md bg-gray-200 px-4 py-2 text-gray-800 shadow hover:bg-gray-300 dark:bg-gray-600 dark:text-white">Batal</a>
                 <button type="submit"
                     class="rounded-md bg-sky-800 px-4 py-2 text-white shadow hover:bg-sky-700">Simpan</button>

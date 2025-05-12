@@ -7,8 +7,8 @@
         <!-- Breadcrumb -->
         <x-breadcrumb :items="[
             ['label' => 'Dashboard', 'url' => route('admin.dashboard.index')],
-            ['label' => 'Jadwal Audit', 'url' => route('admin.jadwal-audit.index')],
-            ['label' => 'Edit Jadwal Audit', 'url' => route('jadwal-audit.edit', $audit->auditing_id)],
+            ['label' => 'Jadwal Audit', 'url' => route('admin.ploting-ami.index')],
+            ['label' => 'Edit Jadwal Audit', 'url' => route('ploting-ami.edit', $audit->auditing_id)],
         ]" />
 
         <!-- Heading -->
@@ -16,7 +16,7 @@
             Edit Jadwal Audit
         </h1>
 
-        <form id="editJadwalForm" action="{{ route('jadwal-audit.update', $audit->auditing_id) }}" method="POST"
+        <form id="editJadwalForm" action="{{ route('admin.ploting-ami.update', $audit->auditing_id) }}" method="POST"
             class="space-y-6 rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
             @csrf
             @method('PUT')
@@ -84,7 +84,7 @@
 
             <!-- Tombol -->
             <div class="flex justify-end space-x-3">
-                <a href="{{ route('admin.jadwal-audit.index') }}"
+                <a href="{{ route('admin.ploting-ami.index') }}"
                     class="rounded-md bg-gray-200 px-4 py-2 text-gray-800 shadow hover:bg-gray-300 dark:bg-gray-600 dark:text-white">Batal</a>
                 <button type="submit"
                     class="rounded-md bg-sky-800 px-4 py-2 text-white shadow hover:bg-sky-700">Simpan</button>

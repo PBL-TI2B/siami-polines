@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PeriodeAuditController;
-use App\Http\Controllers\JadwalAuditController;
+use App\Http\Controllers\PlotingAMIController;
 use App\Http\Controllers\DaftarTilikController;
 use App\Http\Controllers\UnitKerjaController;
 use App\Http\Controllers\DataInstrumenController;
@@ -47,15 +47,15 @@ Route::prefix('admin')->middleware('auth.ami:admin')->group(function () {
 
 
     // Jadwal Audit
-    Route::prefix('jadwal-audit')->group(function () {
-        Route::get('/', [JadwalAuditController::class, 'index'])->name('admin.jadwal-audit.index');
-        Route::get('/create', [JadwalAuditController::class, 'create'])->name('jadwal-audit.create'); // Route untuk halaman form
-        Route::post('/store', [JadwalAuditController::class, 'makeJadwalAudit'])->name('jadwal-audit.store'); // Route untuk menyimpan data
-        Route::delete('/{id}', [JadwalAuditController::class, 'destroy'])->name('jadwal-audit.destroy');
-        Route::post('/reset', [JadwalAuditController::class, 'reset'])->name('jadwal-audit.reset');
-        Route::get('/download', [JadwalAuditController::class, 'download'])->name('jadwal-audit.download');
-        Route::get('/{id}/edit', [JadwalAuditController::class, 'edit'])->name('jadwal-audit.edit');
-        Route::put('/{id}', [JadwalAuditController::class, 'update'])->name('jadwal-audit.update');
+    Route::prefix('ploting-ami')->group(function () {
+        Route::get('/', [PlotingAMIController::class, 'index'])->name('admin.ploting-ami.index');
+        Route::get('/create', [PlotingAMIController::class, 'create'])->name('admin.ploting-ami.create'); // Route untuk halaman form
+        Route::post('/store', [PlotingAMIController::class, 'makeJadwalAudit'])->name('admin.ploting-ami.store'); // Route untuk menyimpan data
+        Route::delete('/{id}', [PlotingAMIController::class, 'destroy'])->name('admin.ploting-ami.destroy');
+        Route::post('/reset', [PlotingAMIController::class, 'reset'])->name('admin.ploting-ami.reset');
+        Route::get('/download', [PlotingAMIController::class, 'download'])->name('admin.ploting-ami.download');
+        Route::get('/{id}/edit', [PlotingAMIController::class, 'edit'])->name('admin.ploting-ami.edit');
+        Route::put('/{id}', [PlotingAMIController::class, 'update'])->name('admin.ploting-ami.update');
     });
 
     // Daftar Tilik
@@ -128,5 +128,21 @@ Route::prefix('auditor')->middleware('auth.ami:auditor')->group(function () {
     Route::get('/ptpp', function () {
         return view('auditor.ptpp.index');
     })->name('auditor.ptpp.index');
+});
+
+Route::prefix('auditee')->middleware('auth.ami:auditee')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('auditee.dashboard.index');
+    })->name('auditee.dashboard.index');
+
+    ROute::get('/pengisian-form-AMI', function () {
+        return view('auditee.pengisian-form-ami.index');
+    })->name('auditee.pengisian-form-ami.index');
+    Route::get('/tindak-lanjut-perbaikan', function () {
+        return view('auditee.tindak-lanjut-perbaikan.index');
+    })->name('auditee.tindak-lanjut-perbaikan.index');
+    Route::get('/riwayat-audit', function () {
+        return view('auditee.riwayat-audit.index');
+    })->name('auditee.riwayat-audit.index');
 });
 

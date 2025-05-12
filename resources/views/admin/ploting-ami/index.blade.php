@@ -1,21 +1,21 @@
 @extends('layouts.app')
 
-@section('title', 'Jadwal Audit')
+@section('title', 'Ploting AMI')
 
 @section('content')
     <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
 
         <!-- Breadcrumb -->
-        <x-breadcrumb :items="[['label' => 'Dashboard', 'url' => '#'], ['label' => 'Jadwal Audit', 'url' => '#']]" />
+        <x-breadcrumb :items="[['label' => 'Dashboard', 'url' => '#'], ['label' => 'Ploting AMI', 'url' => '#']]" />
 
         <!-- Heading -->
         <h1 class="mb-8 text-3xl font-bold text-gray-900 dark:text-gray-200">
-            Jadwal Audit
+            Ploting AMI
         </h1>
 
         <!-- Tombol Aksi -->
         <div class="mb-4 flex flex-wrap items-center gap-2">
-            <a href="{{ route('jadwal-audit.create') }}"
+            <a href="{{ route('admin.ploting-ami.create') }}"
                 class="inline-flex items-center rounded bg-sky-800 px-5 py-2.5 text-sm font-medium text-white hover:bg-sky-900">
                 <svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
@@ -23,7 +23,7 @@
                 Tambah Data
             </a>
 
-            <a href="{{ route('jadwal-audit.download') }}"
+            <a href="{{ route('admin.ploting-ami.download') }}"
                 class="inline-flex items-center rounded bg-sky-800 px-5 py-2.5 text-sm font-medium text-white hover:bg-sky-900">
                 <svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -40,11 +40,11 @@
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="M4 4v6h6M20 20v-6h-6M4 14a8 8 0 0114-6.32M20 10a8 8 0 01-14 6.32" />
                 </svg>
-                Reset Semua Jadwal
+                Reset Semua Ploting
             </button>
 
             <!-- Modal Reset Semua Jadwal -->
-            <x-reset-jadwal-modal id="reset-jadwal-modal" :action="route('jadwal-audit.reset')"
+            <x-reset-jadwal-modal id="reset-jadwal-modal" :action="route('admin.ploting-ami.reset')"
                 warningMessage="Reset ini akan menghapus seluruh data jadwal audit yang telah dibuat." />
 
 
@@ -67,7 +67,7 @@
             'Auditor 2',
             'Status',
             'Aksi',
-        ]" :data="$auditings" :perPage="$auditings->perPage()" :route="route('admin.jadwal-audit.index')">
+        ]" :data="$auditings" :perPage="$auditings->perPage()" :route="route('admin.ploting-ami.index')">
 
             @forelse ($auditings as $index => $auditing)
                 <tr
@@ -108,7 +108,7 @@
                             'label' => 'Edit',
                             'color' => 'sky',
                             'icon' => 'heroicon-o-pencil',
-                            'href' => route('jadwal-audit.edit', $auditing->auditing_id),
+                            'href' => route('admin.ploting-ami.edit', $auditing->auditing_id),
                         ],
                         [
                             'label' => 'Hapus',
@@ -121,11 +121,11 @@
 
                 <!-- Modal Hapus -->
                 <x-confirmation-modal id="delete-jadwal-modal-{{ $auditing->auditing_id }}" title="Konfirmasi Hapus Jadwal"
-                    :action="route('jadwal-audit.destroy', $auditing->auditing_id)" method="DELETE" type="delete" formClass="delete-modal-form" :warningMessage="'Menghapus jadwal ini akan menghapus seluruh data audit yang terkait.'" />
+                    :action="route('admin.ploting-ami.destroy', $auditing->auditing_id)" method="DELETE" type="delete" formClass="delete-modal-form" :warningMessage="'Menghapus jadwal ini akan menghapus seluruh data audit yang terkait.'" />
             @empty
                 <tr>
                     <td colspan="10" class="py-4 text-center text-gray-500">
-                        Tidak ada data jadwal audit.
+                        Tidak ada data audit.
                     </td>
                 </tr>
             @endforelse

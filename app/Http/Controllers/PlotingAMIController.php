@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 
 
-class JadwalAuditController extends Controller
+class PlotingAMIController extends Controller
 {
     public function index(Request $request)
     {
@@ -48,7 +48,7 @@ class JadwalAuditController extends Controller
             });
         })
         ->paginate($entries);
-        return view('admin.jadwal-audit.index', compact('auditings'));
+        return view('admin.ploting-ami.index', compact('auditings'));
     }
 
     public function getAllJadwalAudit() {
@@ -65,7 +65,7 @@ class JadwalAuditController extends Controller
 
     public function create()
 {
-    return view('admin.jadwal-audit.create');
+    return view('admin.ploting-ami.create');
 }
 
 public function makeJadwalAudit(Request $request)
@@ -110,7 +110,7 @@ public function destroy($id)
     $audit->delete();
 
     // Redirect atau kembalikan respons JSON
-    return redirect()->route('admin.jadwal-audit.index')->with('success', 'Jadwal audit berhasil dihapus.');
+    return redirect()->route('admin.ploting-ami.index')->with('success', 'Jadwal audit berhasil dihapus.');
 }
 
 public function reset(Request $request)
@@ -128,7 +128,7 @@ public function reset(Request $request)
    // Aktifkan kembali foreign key checks
    \DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-    return redirect()->route('admin.jadwal-audit.index')->with('success', 'Semua jadwal audit berhasil direset.');
+    return redirect()->route('admin.ploting-ami.index')->with('success', 'Semua jadwal audit berhasil direset.');
 }
 
 public function download()
@@ -160,7 +160,7 @@ public function edit($id) {
     $audit = Auditing::with(['auditor1', 'auditor2', 'auditee1', 'auditee2', 'unitKerja', 'periode'])->findOrFail($id);
 
     // Tampilkan halaman edit dengan data yang ditemukan
-    return view('admin.jadwal-audit.edit', compact('audit'));
+    return view('admin.ploting-ami.edit', compact('audit'));
 }
 
 public function update(Request $request, $id) {
@@ -181,7 +181,7 @@ public function update(Request $request, $id) {
      $audit->update($validatedData);
 
      // Redirect back with a success message
-     return redirect()->route('admin.jadwal-audit.index')->with('success', 'Jadwal Audit berhasil diperbarui.');
+     return redirect()->route('admin.ploting-ami.index')->with('success', 'Jadwal Audit berhasil diperbarui.');
 }
 
     // public function makeJadwalAudit(Request $request) {
