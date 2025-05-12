@@ -23,7 +23,7 @@ Route::get('/', function () {
 
 // route login
 Route::get('/login', [AuthController::class, 'index'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 // Logout
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -37,13 +37,14 @@ Route::prefix('admin')->middleware('auth.ami:admin')->group(function () {
     // Periode Audit
     Route::prefix('periode-audit')->group(function () {
         Route::get('/', [PeriodeAuditController::class, 'index'])->name('admin.periode-audit.index');
-        Route::get('/create', [PeriodeAuditController::class, 'create'])->name('periode-audit.create');
-        Route::post('/', [PeriodeAuditController::class, 'store'])->name('periode-audit.store');
-        Route::get('/{id}/edit', [PeriodeAuditController::class, 'edit'])->name('periode-audit.edit');
-        Route::put('/{id}', [PeriodeAuditController::class, 'update'])->name('periode-audit.update');
-        Route::delete('/{id}', [PeriodeAuditController::class, 'destroy'])->name('periode-audit.destroy');
-        Route::patch('/{id}/close', [PeriodeAuditController::class, 'close'])->name('periode-audit.close');
+        Route::get('/create', [PeriodeAuditController::class, 'create'])->name('admin.periode-audit.create');
+        Route::post('/', [PeriodeAuditController::class, 'open'])->name('admin.periode-audit.open');
+        Route::get('/{id}/edit', [PeriodeAuditController::class, 'edit'])->name('admin.periode-audit.edit');
+        Route::put('/{id}', [PeriodeAuditController::class, 'update'])->name('admin.periode-audit.update');
+        Route::delete('/{id}', [PeriodeAuditController::class, 'destroy'])->name('admin.periode-audit.destroy');
+        Route::put('/{id}/close', [PeriodeAuditController::class, 'close'])->name('admin.periode-audit.close');
     });
+
 
     // Jadwal Audit
     Route::prefix('jadwal-audit')->group(function () {

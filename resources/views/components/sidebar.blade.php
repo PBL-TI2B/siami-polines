@@ -42,7 +42,7 @@
                 ]);
             }
         } catch (\Exception $e) {
-            $error = 'Terjadi kesalahan saat mengambil menu sidebar: ' . $e->getMessage();
+            $error = 'Terjadi kesalahan saat mengambil menu sidebar';
             Log::error('Gagal mengambil menu sidebar: Kesalahan tak terduga', [
                 'role_id' => $roleId ?? 'unknown',
                 'error' => $e->getMessage(),
