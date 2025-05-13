@@ -3,6 +3,7 @@
 @section('title', 'Daftar Titik')
 
 @section('content')
+<<<<<<< HEAD
 <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
     <!-- Breadcrumb -->
     <nav class="text-sm text-gray-600 dark:text-gray-400 mb-4">
@@ -16,6 +17,18 @@
     <!-- Heading -->
     <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8">
             Daftar Periksa
+=======
+    <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+        <!-- Breadcrumb -->
+        <x-breadcrumb :items="[
+            ['label' => 'Dashboard', 'url' => route('admin.dashboard.index')],
+            ['label' => 'Daftar Tilik', 'url' => route('admin.daftar-tilik.index')],
+        ]" />
+
+        <!-- Heading -->
+        <h1 class="mb-8 text-3xl font-bold text-gray-900 dark:text-gray-200">
+            Daftar Tilik
+>>>>>>> 6a343e20cd295adc421add8c76f2de7c0fba8979
         </h1>
 
     <!-- Action Buttons -->

@@ -62,12 +62,6 @@ class MenuSeeder extends Seeder
             'icon' => 'heroicon-o-document-text',
         ]);
 
-        $logout = Menu::create([
-            'nama_menu' => 'Logout',
-            'route' => 'logout',
-            'icon' => 'heroicon-o-arrow-left-on-rectangle',
-        ]);
-
         // Submenu untuk Data Unit
         SubMenu::create([
             'nama_sub_menu' => 'Daftar UPT',
