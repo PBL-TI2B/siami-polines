@@ -59,6 +59,10 @@
                             ],
                         ]" />
                     </tr>
+
+                    <x-confirmation-modal id="delete-unitKerja-modal-{{ $unit['unit_kerja_id'] }}" title="Konfirmasi Hapus Data"
+                        :action="route('unit-kerja.destroy', $unit['unit_kerja_id'])" method="DELETE" type="delete" formClass="delete-modal-form"
+                        :itemName="$unit['nama_unit_kerja'] ?? 'unit_kerja'" :warningMessage="'Apakah kamu yakin ingin menghapus unit-kerja ini??.'" />
                 @endforeach
             </x-table>
         </div>
