@@ -97,74 +97,8 @@
                                 Rencana Perbaikan & Tindak Lanjut'25</th>
 
                     </thead>
-                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                        <tr class="transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700">
-                            <td class="px-4 py-3 sm:px-6">1</td>
-                            <td class="px-4 py-3 sm:px-6">1</td>
-                            <td class="px-4 py-3 sm:px-6">Apakah visi yang mencerminkan visi perguruan tinggi dan memayungi
-                                visi keilmuan terkait keunikan program studi serta didukung data implementasi yang konsisten
-                            </td>
-                            <td class="px-4 py-3 sm:px-6">
-                                <li>LAM Emba</li>
-                                <li>LAM Infokom</li>
-                                <li>LAM Teknik</li>
-                            </td>
-                        </tr>
-                        <tr class="transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700">
-                            <td class="px-4 py-3 sm:px-6">2</td>
-                            <td class="px-4 py-3 sm:px-6">1</td>
-                            <td class="px-4 py-3 sm:px-6">Apakah misi, tujuan, dan strategi yang searah dan strategi
-                                perguruan tinggi serta mendukung pengembangan program studi dengan data implementasi yang
-                                konsisten </td>
-                            <td class="px-4 py-3 sm:px-6">
-                                <li>LAM Emba</li>
-                                <li>LAM Infokom</li>
-                                <li>LAM Teknik</li>
-                            </td>
-                        </tr>
-                        <tr class="transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700">
-                            <td class="px-4 py-3 sm:px-6">3</td>
-                            <td class="px-4 py-3 sm:px-6">2</td>
-                            <td class="px-4 py-3 sm:px-6">
-                                <li>1. Apakah sudah ada struktur organisasi yg jelas untuk UPPS ?</li>
-                                <li>2. Apakah sudah ada tupoksi yang jelas dari Unit Pengelola Program Studi?</li>
-                                <li>3. Apakah sudah ada pedoman ataupun kode etik bagi UPPS ?</li>
-                            </td>
-                            <td class="px-4 py-3 sm:px-6">Unit Pengelola Program Studi mendeskripsikan proses, struktur dan
-                                tradisi dalam menjalankan tugas dan menggunakan wewenangnya untuk mengemban misi, mewujudkan
-                                visi dan mencapai tujuan serta sasaran strategisnya yang didukung perilaku etis dan
-                                berintegritas para pengelola, tenaga kependidikan, mahasiswa dan mitra Unit Pengelola
-                                Program Studi.</td>
-                            <td class="px-4 py-3 sm:px-6">Statuta dan SOTK SK UPPS dan Tupoksi</td>
-                        </tr>
-                        <tr class="transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700">
-                            <td class="px-4 py-3 sm:px-6">4</td>
-                            <td class="px-4 py-3 sm:px-6">2</td>
-                            <td class="px-4 py-3 sm:px-6">
-                                <li>1. Apakah sudah ada pedoman jelas pembuatan laporan kinerja UPPS?</li>
-                                <li>2. Apakah kinerja UPPS memenuhi kriteria 5 pilar sistim tata pamong?</li>
-                            </td>
-                            <td class="px-4 py-3 sm:px-6">Unit Pengelola Program Studi mendeskripsikan peran, tanggung
-                                jawab, wewenang dan proses pengambilan keputusan untuk pencapaian efektivitas organisasi
-                                berdasarkan visi, misi, tujuan dan strategi serta menggunakan lima pilar sistem tata pamong,
-                                yang mencakup: kredibel, transparan, akuntabel, bertanggung jawab dan adil.</td>
-                            <td class="px-4 py-3 sm:px-6">Lakin UPPS</td>
-                        </tr>
-                        <tr class="transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700">
-                            <td class="px-4 py-3 sm:px-6">5</td>
-                            <td class="px-4 py-3 sm:px-6">2</td>
-                            <td class="px-4 py-3 sm:px-6">
-                                <li>1. Bagaimanakah program kerja UPPS ?</li>
-                                <li>2. Apakah ada tindak lanjut dari hasil survey kepuasan pelanggan?</li>
-                                <li>3. Apakah Unit Pengelola Program Studi secara periodik melakukan survey kepuasan
-                                    pelanggan?</li>
-                            </td>
-                            <td class="px-4 py-3 sm:px-6">Unit Pengelola Program Studi mendeskripsikan peran, tanggung
-                                jawab, wewenang dan proses pengambilan keputusan untuk pencapaian efektivitas organisasi
-                                berdasarkan visi, misi, tujuan dan strategi serta menggunakan lima pilar sistem tata pamong,
-                                yang mencakup: kredibel, transparan, akuntabel, bertanggung jawab dan adil.</td>
-                            <td class="px-4 py-3 sm:px-6">Renop UPPS</td>
-                        </tr>
+                    <tbody id="tilik-table-body" class="divide-y divide-gray-200 dark:divide-gray-700">
+                        <!-- Baris data akan ditambahkan via JavaScript -->
                     </tbody>
                 </table>
             </div>
@@ -208,5 +142,42 @@
             </div>
         </div>
     </div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    fetch('http://127.0.0.1:5000/api/tilik')
+        .then(response => response.json())
+        .then(result => {
+            if (result.success && Array.isArray(result.data)) {
+                const tbody = document.getElementById('tilik-table-body');
+                tbody.innerHTML = ''; // clear existing rows if any
 
+                result.data.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    row.className = "transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700";
+
+                    row.innerHTML = `
+                        <td class="px-4 py-3 sm:px-6">${index + 1}</td>
+                        <td class="px-4 py-3 sm:px-6">${item.tilik_id}</td>
+                        <td class="px-4 py-3 sm:px-6">${item.pertanyaan}</td>
+                        <td class="px-4 py-3 sm:px-6">${item.indikator ?? '-'}</td>
+                        <td class="px-4 py-3 sm:px-6">${item.sumber_data ?? '-'}</td>
+                        <td class="px-4 py-3 sm:px-6">${item.metode_perhitungan ?? '-'}</td>
+                        <td class="px-4 py-3 sm:px-6">${item.target ?? '-'}</td>
+                        <td class="px-4 py-3 sm:px-6">-</td>
+                        <td class="px-4 py-3 sm:px-6">-</td>
+                        <td class="px-4 py-3 sm:px-6">-</td>
+                        <td class="px-4 py-3 sm:px-6">-</td>
+                        <td class="px-4 py-3 sm:px-6">-</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } else {
+                console.error("Gagal mendapatkan data tilik.");
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching tilik data:", error);
+        });
+});
+</script>
 @endsection
