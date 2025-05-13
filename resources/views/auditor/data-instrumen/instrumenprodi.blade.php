@@ -48,9 +48,7 @@
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-200 border-t border-b border-gray-200 dark:border-gray-600">
                         <tr>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">No</th>
-                            <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">No. Butir Strandar</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Standar</th>
-                            <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">No. Kode AMI</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Deskripsi Area Audit-Sub Butir Standar</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Pemeriksaan Pada Unsur</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Ketersediaan Standar dan Dokumen (Ada/Tidak)</th>
@@ -60,60 +58,10 @@
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Daya Saing Nasional</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Daya Saing Internasional</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Keterangan</th>
-                            <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Aksi</th>
+                            {{-- <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Aksi</th> --}}
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                        <tr class="hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200">
-                            <td class="px-4 py-3 sm:px-6">1</td>
-                            <td class="px-4 py-3 sm:px-6">S2, D4, D3</td>
-                            <td class="px-4 py-3 sm:px-6">CRITERIA 1: Visi, Misi, Tujuan dan Strategi</td>
-                            <td class="px-4 py-3 sm:px-6">Tata pamong</td>
-                            <td class="px-4 py-3 sm:px-6">Kesesuaian Visi, Misi, Tujuan dan Strategi (VMTS) Unit Pengelola Program Studi (UPPS) terhadap VMTS Perguruan tinggi (PT) dan Visi keilmuan Program Studi (PS) yang dikelolanya.</td>
-                            <td class="px-4 py-3 sm:px-6">
-                                <li>Renstra Polines</li>
-                                <li>Renstra Jurusan/Prodi</li>
-                                <li>Renop Jurusan /prodi</li>
-                                <li>Dokumen Visi Keilmuan (Keunikan Prodi)</li>
-                                <li>Dokumen  Implemenntasi</li>
-                            </td>
-                            <td class="px-4 py-3 sm:px-6">-</td>
-                            <td class="px-4 py-3 sm:px-6">-</td>
-                            <td class="px-4 py-3 sm:px-6">-</td>
-                            <td class="px-4 py-3 sm:px-6">-</td>
-                            <td class="px-4 py-3 sm:px-6">-</td>
-                            <td class="px-4 py-3 sm:px-6">-</td>
-                            <td class="px-4 py-3 sm:px-6">-</td>
-                            <x-table-row-actions :actions="[
-                                ['label' => 'Edit', 'color' => 'sky', 'icon' => 'heroicon-o-pencil', 'href' => '#'],
-                                ['label' => 'Hapus', 'color' => 'red', 'icon' => 'heroicon-o-trash', 'href' => '#']
-                            ]" />
-                        </tr>
-                        <tr class="hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200">
-                            <td class="px-4 py-3 sm:px-6">1</td>
-                            <td class="px-4 py-3 sm:px-6">S2, D4, D3</td>
-                            <td class="px-4 py-3 sm:px-6">CRITERIA 1: Visi, Misi, Tujuan dan Strategi</td>
-                            <td class="px-4 py-3 sm:px-6">Tata pamong</td>
-                            <td class="px-4 py-3 sm:px-6">Kesesuaian Visi, Misi, Tujuan dan Strategi (VMTS) Unit Pengelola Program Studi (UPPS) terhadap VMTS Perguruan tinggi (PT) dan Visi keilmuan Program Studi (PS) yang dikelolanya.</td>
-                            <td class="px-4 py-3 sm:px-6">
-                                <li>Renstra Polines</li>
-                                <li>Renstra Jurusan/Prodi</li>
-                                <li>Renop Jurusan /prodi</li>
-                                <li>Dokumen Visi Keilmuan (Keunikan Prodi)</li>
-                                <li>Dokumen  Implemenntasi</li>
-                            </td>
-                            <td class="px-4 py-3 sm:px-6">-</td>
-                            <td class="px-4 py-3 sm:px-6">-</td>
-                            <td class="px-4 py-3 sm:px-6">-</td>
-                            <td class="px-4 py-3 sm:px-6">-</td>
-                            <td class="px-4 py-3 sm:px-6">-</td>
-                            <td class="px-4 py-3 sm:px-6">-</td>
-                            <td class="px-4 py-3 sm:px-6">-</td>
-                            <x-table-row-actions :actions="[
-                                ['label' => 'Edit', 'color' => 'sky', 'icon' => 'heroicon-o-pencil', 'href' => '#'],
-                                ['label' => 'Hapus', 'color' => 'red', 'icon' => 'heroicon-o-trash', 'href' => '#']
-                            ]" />
-                        </tr>
+                    <tbody id="instrumen-table-body" class="divide-y divide-gray-200 dark:divide-gray-700">
                     </tbody>
                 </table>
             </div>
@@ -152,4 +100,104 @@
             </div>
         </div>
     </div>
-    @endsection
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    fetch('http://127.0.0.1:5000/api/set-instrumen') // Ganti URL jika perlu
+        .then(response => response.json())
+        .then(result => {
+            const data = result.data;
+            const tableBody = document.getElementById('instrumen-table-body');
+
+            let index = 1;
+
+            const grouped = {};
+            const rowspanStandar = {};
+
+            data.forEach(item => {
+                const standar = item.unsur.deskripsi.kriteria.nama_kriteria;
+                const deskripsi = item.unsur.deskripsi.isi_deskripsi;
+                const unsur = item.unsur.isi_unsur;
+
+                if (!grouped[standar]) {
+                    grouped[standar] = {};
+                    rowspanStandar[standar] = 0;
+                }
+
+                if (!grouped[standar][deskripsi]) {
+                    grouped[standar][deskripsi] = {};
+                }
+
+                if (!grouped[standar][deskripsi][unsur]) {
+                    grouped[standar][deskripsi][unsur] = [];
+                }
+
+                grouped[standar][deskripsi][unsur].push(item);
+                rowspanStandar[standar]++;
+            });
+
+            for (const standar in grouped) {
+                let standarDisplayed = false;
+
+                const totalRowsForStandar = Object.values(grouped[standar])
+                    .map(desc => Object.values(desc).reduce((sum, arr) => sum + arr.length, 0))
+                    .reduce((a, b) => a + b, 0);
+
+                for (const deskripsi in grouped[standar]) {
+                    let deskripsiDisplayed = false;
+
+                    const totalRowsForDeskripsi = Object.values(grouped[standar][deskripsi])
+                        .reduce((sum, arr) => sum + arr.length, 0);
+
+                    for (const unsur in grouped[standar][deskripsi]) {
+                        let unsurDisplayed = false;
+                        const items = grouped[standar][deskripsi][unsur];
+                        const totalRowsForUnsur = items.length;
+
+                        items.forEach(item => {
+                            const row = document.createElement('tr');
+                            let html = `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600">${index++}</td>`;
+
+                            if (!standarDisplayed) {
+                                html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600" rowspan="${totalRowsForStandar}">${standar}</td>`;
+                                standarDisplayed = true;
+                            }
+
+                            if (!deskripsiDisplayed) {
+                                html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600" rowspan="${totalRowsForDeskripsi}">${deskripsi}</td>`;
+                                deskripsiDisplayed = true;
+                            }
+
+                            if (!unsurDisplayed) {
+                                html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600" rowspan="${totalRowsForUnsur}">${unsur}</td>`;
+                                unsurDisplayed = true;
+                            }
+
+                            // Kolom lain (kosong diisi "-")
+                            for (let i = 0; i < 7; i++) {
+                                html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">-</td>`;
+                            }
+
+                            // Kolom aksi
+                            // html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">-</td>`;
+
+                            row.innerHTML = html;
+                            tableBody.appendChild(row);
+                        });
+                    }
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Gagal mengambil data:', error);
+            const tableBody = document.getElementById('instrumen-table-body');
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="12" class="px-4 py-3 sm:px-6 text-center text-red-500">
+                        Gagal memuat data. Silakan coba lagi.
+                    </td>
+                </tr>
+            `;
+        });
+});
+</script>
+@endsection
