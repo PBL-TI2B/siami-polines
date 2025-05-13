@@ -78,10 +78,12 @@ Route::prefix('admin')->middleware('auth.ami:admin')->group(function () {
     Route::prefix('data-instrumen')->group(function () {
         Route::get('/', [DataInstrumenController::class, 'index'])->name('admin.data-instrumen.index');
         Route::get('/create/{type?}', [DataInstrumenController::class, 'store'])->name('admin.data-instrumen.tambah');
-        Route::get('/edit/{type?}', [DataInstrumenController::class, 'edit'])->name('admin.data-instrumen.edit');
+        Route::get('/{sasaran_strategis_id}/edit', [DataInstrumenController::class, 'edit'])->name('admin.data-instrumen.edit');
+        //Route::get('/edit/{type?}', [DataInstrumenController::class, 'edit'])->name('admin.data-instrumen.edit');
         Route::get('/upt', [DataInstrumenController::class, 'upt'])->name('admin.data-instrumen.instrumenupt');
         Route::get('/prodi', [DataInstrumenController::class, 'prodi'])->name('admin.data-instrumen.instrumenprodi');
         Route::get('/jurusan', [DataInstrumenController::class, 'jurusan'])->name('admin.data-instrumen.instrumenjurusan');
+        Route::get('/export', [DataInstrumenController::class, 'export'])->name('admin.data-instrumen.export');
     });
 
     // Data User

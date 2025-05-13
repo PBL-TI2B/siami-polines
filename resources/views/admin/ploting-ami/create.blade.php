@@ -8,7 +8,7 @@
         <x-breadcrumb :items="[
             ['label' => 'Dashboard', 'url' => route('admin.dashboard.index')],
             ['label' => 'Jadwal Audit', 'url' => route('admin.ploting-ami.index')],
-            ['label' => 'Tambah Jadwal Audit', 'url' => route('ploting-ami.create')],
+            ['label' => 'Tambah Jadwal Audit', 'url' => route('admin.ploting-ami.create')],
         ]" />
 
         <!-- Heading -->

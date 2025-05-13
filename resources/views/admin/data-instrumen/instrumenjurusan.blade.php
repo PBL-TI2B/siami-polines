@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Instrumen UPT')
+@section('title', 'Instrumen Jurusan')
 
 @section('content')
     <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
@@ -19,13 +19,11 @@
         <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
             <!-- Action Buttons -->
             <div class="flex flex-wrap gap-2">
-                <x-button href="#" color="sky" icon="heroicon-o-plus" class="shadow-md hover:shadow-lg transition-all">
+                <x-button href="{{ route('admin.data-instrumen.tambah') }}" color="sky" icon="heroicon-o-plus" class="shadow-md hover:shadow-lg transition-all">
                     Tambah Instrumen
                 </x-button>
-                <x-button href="#" color="sky" icon="heroicon-o-pencil" class="shadow-md hover:shadow-lg transition-all">
-                    Edit Instrumen
-                </x-button>
-                <x-button href="#" color="sky" icon="heroicon-o-document-arrow-down" class="shadow-md hover:shadow-lg transition-all">
+
+                <x-button href="{{ route('admin.data-instrumen.export') }}" color="sky" icon="heroicon-o-document-arrow-down" class="shadow-md hover:shadow-lg transition-all">
                     Unduh Data
                 </x-button>
                 <x-button href="#" color="yellow" icon="heroicon-o-document-arrow-up" class="shadow-md hover:shadow-lg transition-all">
@@ -190,7 +188,7 @@
                     const aksiCell = isFirstRowForSasaran ? 
                         `<td rowspan="${sasaranRowspan}" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">
                             <div class="flex items-center gap-2">
-                                <a href="#" class="text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-200 transition-colors duration-200">
+                                <a href="/admin/data-instrumen/${sasaran.sasaran_strategis_id}/edit" class="text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-200 transition-colors duration-200">
                                     <x-heroicon-o-pencil class="w-5 h-5" />
                                 </a>
                                 <a href="#" class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 transition-colors duration-200">

@@ -22,10 +22,8 @@
                 <x-button href="{{ route('admin.data-instrumen.tambah') }}" color="sky" icon="heroicon-o-plus" class="shadow-md hover:shadow-lg transition-all">
                     Tambah Instrumen
                 </x-button>
-                <x-button href="{{ route('admin.data-instrumen.edit') }}" color="sky" icon="heroicon-o-pencil" class="shadow-md hover:shadow-lg transition-all">
-                    Edit Instrumen
-                </x-button>
-                <x-button href="#" color="sky" icon="heroicon-o-document-arrow-down" class="shadow-md hover:shadow-lg transition-all">
+
+                <x-button href="{{ route('admin.data-instrumen.export') }}" color="sky" icon="heroicon-o-document-arrow-down" class="shadow-md hover:shadow-lg transition-all">
                     Unduh Data
                 </x-button>
                 <x-button href="#" color="yellow" icon="heroicon-o-document-arrow-up" class="shadow-md hover:shadow-lg transition-all">
@@ -141,92 +139,95 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
     fetch('http://127.0.0.1:5000/api/data-instrumen')
-        .then(response => response.json())
-        .then(data => {
-            const tableBody = document.getElementById('instrumen-table-body');
-            let rowNumber = 1;
-            let currentSasaranId = null;
-            let rowspanCounts = {}; // Untuk menyimpan jumlah baris per sasaran
+    .then(response => response.json())
+    .then(data => {
+        const tableBody = document.getElementById('instrumen-table-body');
+        let rowNumber = 1;
+        let rowspanCounts = {}; // Menyimpan jumlah baris per sasaran
 
-            // Hitung jumlah baris per sasaran strategis
-            data.forEach(sasaran => {
-                let count = 0;
-                sasaran.indikator_kinerja.forEach(indikator => {
-                    count += indikator.aktivitas.length;
-                });
-                rowspanCounts[sasaran.sasaran_strategis_id] = count;
+        // Hitung jumlah baris per sasaran strategis
+        data.forEach(sasaran => {
+            let count = 0;
+            sasaran.indikator_kinerja.forEach(indikator => {
+                count += indikator.aktivitas.length;
             });
-
-            // Loop melalui setiap sasaran strategis
-            data.forEach(sasaran => {
-                let isFirstRowForSasaran = true;
-                let sasaranRowspan = rowspanCounts[sasaran.sasaran_strategis_id];
-                
-                // Loop melalui setiap indikator kinerja
-                sasaran.indikator_kinerja.forEach(indikator => {
-                    let isFirstRowForIndikator = true;
-                    let indikatorRowspan = indikator.aktivitas.length;
-                    
-                    // Loop melalui setiap aktivitas
-                    indikator.aktivitas.forEach((aktivitas, index) => {
-                        const row = document.createElement('tr');
-                        row.className = 'hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200';
-                        
-                        // Nomor hanya ditampilkan di baris pertama sasaran
-                        const noCell = isFirstRowForSasaran ? 
-                            `<td rowspan="${sasaranRowspan}" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${rowNumber}</td>` : 
-                            '';
-                            
-                        // Sasaran strategis hanya ditampilkan di baris pertama sasaran
-                        const sasaranCell = isFirstRowForSasaran ? 
-                            `<td rowspan="${sasaranRowspan}" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${sasaran.nama_sasaran}</td>` : 
-                            '';
-                            
-                        // Indikator kinerja hanya ditampilkan di baris pertama indikator
-                        const indikatorCell = isFirstRowForIndikator ? 
-                            `<td rowspan="${indikatorRowspan}" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${indikator.isi_indikator_kinerja}</td>` : 
-                            '';
-                        
-                        row.innerHTML = `
-                            ${noCell}
-                            ${sasaranCell}
-                            ${indikatorCell}
-                            <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${aktivitas.nama_aktivitas}</td>
-                            <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${aktivitas.satuan}</td>
-                            <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${aktivitas.target}</td>
-                            <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">
-                                <div class="flex items-center gap-2">
-                                    <a href="#" class="text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-200 transition-colors duration-200">
-                                        <x-heroicon-o-pencil class="w-5 h-5" />
-                                    </a>
-                                    <a href="#" class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 transition-colors duration-200">
-                                        <x-heroicon-o-trash class="w-5 h-5" />
-                                    </a>
-                                </div>
-                            </td>
-                        `;
-                        
-                        tableBody.appendChild(row);
-                        
-                        isFirstRowForSasaran = false;
-                        isFirstRowForIndikator = false;
-                    });
-                });
-                
-                rowNumber++;
-            });
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-            const tableBody = document.getElementById('instrumen-table-body');
-            tableBody.innerHTML = `
-                <tr>
-                    <td colspan="14" class="px-4 py-3 sm:px-6 text-center text-red-500">
-                        Gagal memuat data. Silakan coba lagi.
-                    </td>
-                </tr>
-            `;
+            rowspanCounts[sasaran.sasaran_strategis_id] = count;
         });
+
+        // Loop melalui setiap sasaran strategis
+        data.forEach(sasaran => {
+            let isFirstRowForSasaran = true;
+            let sasaranRowspan = rowspanCounts[sasaran.sasaran_strategis_id];
+
+            // Loop melalui setiap indikator kinerja
+            sasaran.indikator_kinerja.forEach(indikator => {
+                let isFirstRowForIndikator = true;
+                let indikatorRowspan = indikator.aktivitas.length;
+
+                // Loop melalui setiap aktivitas
+                indikator.aktivitas.forEach((aktivitas, index) => {
+                    const row = document.createElement('tr');
+                    row.className = 'hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200';
+
+                    // Nomor hanya ditampilkan di baris pertama sasaran
+                    const noCell = isFirstRowForSasaran ? 
+                        `<td rowspan="${sasaranRowspan}" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${rowNumber}</td>` : 
+                        '';
+
+                    // Sasaran strategis hanya ditampilkan di baris pertama sasaran
+                    const sasaranCell = isFirstRowForSasaran ? 
+                        `<td rowspan="${sasaranRowspan}" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${sasaran.nama_sasaran}</td>` : 
+                        '';
+
+                    // Indikator kinerja hanya ditampilkan di baris pertama indikator
+                    const indikatorCell = isFirstRowForIndikator ? 
+                        `<td rowspan="${indikatorRowspan}" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${indikator.isi_indikator_kinerja}</td>` : 
+                        '';
+
+                    // Aksi hanya ditampilkan di baris pertama sasaran
+                    const aksiCell = isFirstRowForSasaran ? 
+                        `<td rowspan="${sasaranRowspan}" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">
+                            <div class="flex items-center gap-2">
+                                <a href="/admin/data-instrumen/${sasaran.sasaran_strategis_id}/edit" class="text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-200 transition-colors duration-200">
+                                    <x-heroicon-o-pencil class="w-5 h-5" />
+                                </a>
+                                <a href="#" class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 transition-colors duration-200">
+                                    <x-heroicon-o-trash class="w-5 h-5" />
+                                </a>
+                            </div>
+                        </td>` : '';
+
+                    row.innerHTML = `
+                        ${noCell}
+                        ${sasaranCell}
+                        ${indikatorCell}
+                        <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${aktivitas.nama_aktivitas}</td>
+                        <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${aktivitas.satuan}</td>
+                        <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${aktivitas.target}</td>
+                        ${aksiCell}
+                    `;
+
+                    tableBody.appendChild(row);
+
+                    isFirstRowForSasaran = false;
+                    isFirstRowForIndikator = false;
+                });
+            });
+
+            rowNumber++;
+        });
+    })
+    .catch(error => {
+        console.error('Error fetching data:', error);
+        const tableBody = document.getElementById('instrumen-table-body');
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="14" class="px-4 py-3 sm:px-6 text-center text-red-500">
+                    Gagal memuat data. Silakan coba lagi.
+                </td>
+            </tr>
+        `;
+    });
 });
     </script>
 @endsection
