@@ -7,7 +7,7 @@
         <!-- Breadcrumb -->
         <x-breadcrumb :items="[
             ['label' => 'Dashboard', 'url' => route('auditor.dashboard.index')],
-            ['label' => 'Daftar Tilik', 'url' => route('admin.daftar-tilik.index')],
+            ['label' => 'Daftar Tilik', 'url' => route('auditor.daftar-tilik.index')],
         ]" />
 
         <!-- Heading -->
@@ -16,9 +16,10 @@
         </h1>
 
         <div class="mb-6 flex gap-2">
-            <x-button href="{{ route('unit-kerja.create', ['type' => 'upt']) }}" color="sky" icon="heroicon-o-plus">
+            <x-button href="{{ route('auditor.daftar-tilik.create') }}" color="sky" icon="heroicon-o-plus">
                 Tambah Pertanyaan
             </x-button>
+
             <x-button href="{{ route('unit-kerja.create', ['type' => 'upt']) }}" color="sky" icon="heroicon-o-plus">
                 Edit Pertanyaan
             </x-button>

@@ -11,7 +11,7 @@ use App\Models\UnitKerja;
 
 class DataUserController extends Controller
 {
-    private const API_BASE_URL = 'http://127.0.0.1:5000/api/data-user'; 
+    private const API_BASE_URL = 'http://127.0.0.1:5000/api/data-user';
 
     public function index(Request $request)
     {

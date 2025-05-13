@@ -100,6 +100,10 @@ Route::prefix('admin')->middleware('auth.ami:admin')->group(function () {
     // Laporan
     Route::prefix('laporan')->group(function () {
         Route::get('/', [LaporanController::class, 'index'])->name('admin.laporan.index');
+        Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+        Route::get('/laporan/{laporan}', [LaporanController::class, 'show'])->name('laporan.show');
+        Route::get('/laporan/{laporan}/download', [LaporanController::class, 'download'])->name('laporan.download');
+        Route::delete('/laporan/{laporan}', [LaporanController::class, 'destroy'])->name('laporan.destroy');
     });
 });
 
@@ -108,7 +112,12 @@ Route::prefix('auditor')->middleware('auth.ami:auditor')->group(function () {
         return view('auditor.dashboard.index');
     })->name('auditor.dashboard.index');
 
+    Route::resource('daftar-tilik', DaftarTilikController::class)->only(['index', 'create', 'store']);
+
     Route::get('/daftar-tilik', [DaftarTilikController::class, 'auditortilik'])->name('auditor.daftar-tilik.index');
+    #coba ini
+    Route::get('/daftar-tilik/create', [DaftarTilikController::class, 'create'])->name('auditor.daftar-tilik.create'); 
+    Route::post('/daftar-tilik', [DaftarTilikController::class, 'store'])->name('auditor.daftar-tilik.store');
 
     Route::get('/assesmen-lapangan', function () {
         return view('auditor.assesmen-lapangan.index');
@@ -117,8 +126,8 @@ Route::prefix('auditor')->middleware('auth.ami:auditor')->group(function () {
     // Rute untuk data-instrumen
     Route::get('/data-instrumen', [DataInstrumenControllerAuditor::class, 'index'])->name('auditor.data-instrumen.index');
     Route::get('/data-instrumen/upt', [DataInstrumenControllerAuditor::class, 'auditorInsUpt'])->name('auditor.data-instrumen.upt');
-    Route::get('/data-instrumen/prodi', [DataInstrumenControllerAuditor::class, 'auditorinsprodi'])->name('auditor.data-instrumen.instrumenprodi');
-    Route::get('/data-instrumen/jurusan', [DataInstrumenControllerAuditor::class, 'auditorinsjurusan'])->name('auditor.data-instrumen.instrumenjurusan');
+    Route::get('/data-instrumen/prodi', [DataInstrumenControllerAuditor::class, 'auditorinsprodi'])->name('auditor.data-instrumen.prodi');
+    Route::get('/data-instrumen/jurusan', [DataInstrumenControllerAuditor::class, 'auditorinsjurusan'])->name('auditor.data-instrumen.jurusan');
 
     Route::get('/laporan', function () {
         return view('auditor.laporan.index');
@@ -128,6 +137,7 @@ Route::prefix('auditor')->middleware('auth.ami:auditor')->group(function () {
         return view('auditor.ptpp.index');
     })->name('auditor.ptpp.index');
 });
+
 
 Route::prefix('auditee')->middleware('auth.ami:auditee')->group(function () {
     Route::get('/dashboard', function () {

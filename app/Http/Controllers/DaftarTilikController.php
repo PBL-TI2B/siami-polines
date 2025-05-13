@@ -14,5 +14,15 @@ class DaftarTilikController extends Controller
     {
         return view('auditor.daftar-tilik.index');
     }
+    public function create()
+    {
+        return view('auditor.daftar-tilik.create'); // Pastikan file ini ada
+    }
+    public function store(Request $request)
+    {
+        // Validasi dan simpan ke database
+    }
+
+
 }
 
