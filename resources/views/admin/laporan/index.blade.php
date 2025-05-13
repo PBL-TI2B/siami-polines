@@ -11,182 +11,139 @@
         ['label' => 'Laporan', 'url' => route('admin.laporan.index')],
     ]" />
 
+    <!-- Heading -->
+    <h1 class="mb-8 text-3xl font-bold text-gray-900 dark:text-gray-200">
+        Laporan
+    </h1>
 
-<!-- Heading -->
-<h1 class="mb-8 text-3xl font-bold text-gray-900 dark:text-gray-200">
-    Laporan
-</h1>
+    <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+        <!-- Filter controls -->
+         
 
-<div class="bg-white rounded-lg shadow-sm overflow-hidden">
-    <!-- Filter controls -->
-    <div class="p-4 flex justify-between items-center border-b">
-        <div class="flex items-center space-x-2">
-            <span class="text-sm text-gray-600">Show</span>
-            <select class="form-select rounded-md border-gray-300 text-sm">
-                <option value="10" selected>10</option>
-                <option value="25">25</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-            </select>
-            <span class="text-sm text-gray-600">entries</span>
-        </div>
-
-        <div class="flex items-center">
-            <div class="mr-4">
-                <select class="form-select rounded-md border-gray-300 text-sm">
-                    <option value="">Pilih Periode Ami</option>
-                    <option value="2024">2024</option>
-                    <option value="2025">2025</option>
-                </select>
-            </div>
-            <div class="relative">
-                <input type="text" placeholder="Search" class="form-input rounded-md border-gray-300 pl-10 text-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-            </div>
-        </div>
-    </div>
-
-     <!-- Table and Pagination -->
-    <div class="bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 rounded-2xl">
-    <!-- Table -->
-    <div class="overflow-x-auto">
-        <table class="min-w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-200 border-t border-b border-gray-200 dark:border-gray-600">
-                <tr>
-                    <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">
-                        <div class="flex items-center">
-                            <input type="checkbox" class="rounded border-gray-300 text-blue-600">
-                        </div>
-                    </th>
-                    <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">
-                        No
-                    </th>
-                    <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">
-                        Nama Unit
-                    </th>
-                    <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">
-                        Tanggal Mulai
-                    </th>
-                    <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">
-                        Tanggal Berakhir
-                    </th>
-                    <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">
-                        Status AMI
-                    </th>
-                    <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">
-                        Aksi
-                    </th>
-                </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <input type="checkbox" class="rounded border-gray-300 text-blue-600">
+        <x-table id="laporanTable" :headers="[
+            '',
+            'No',
+            'Nama Unit',
+            'Tanggal Mulai',
+            'Tanggal Berakhir',
+            'Status AMI',
+            'Aksi',
+        ]" :data="$laporan" :perPage="$laporan->perPage()" :route="route('admin.laporan.index')">
+            @forelse ($laporan as $index => $item)
+                <tr class="bg-white transition-all duration-200 hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-600">
+                    <td class="border border-gray-200 px-4 py-4 dark:border-gray-600">
+                        <input type="checkbox" class="h-4 w-4 rounded border-gray-200 bg-gray-100 text-sky-800" data-id="{{ $item->id }}">
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        1
+                    <td class="border border-gray-200 px-4 py-4 dark:border-gray-600">
+                        {{ $laporan->firstItem() + $index }}
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        Teknik Elektro
+                    <td class="border border-gray-200 px-4 py-4 dark:border-gray-600 text-gray-900 dark:text-gray-200">
+                        {{ $item->nama_unit ?? 'N/A' }}
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        1 Januari 2024
+                    <td class="border border-gray-200 px-4 py-4 dark:border-gray-600 text-gray-900 dark:text-gray-200">
+                        {{ $item->tanggal_mulai ? \Carbon\Carbon::parse($item->tanggal_mulai)->format('d F Y') : 'N/A' }}
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        1 Mei 2024
+                    <td class="border border-gray-200 px-4 py-4 dark:border-gray-600 text-gray-900 dark:text-gray-200">
+                        {{ $item->tanggal_berakhir ? \Carbon\Carbon::parse($item->tanggal_berakhir)->format('d F Y') : 'N/A' }}
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="px-2 py-1 text-xs rounded-md bg-green-100 text-green-800">
+                    <td class="border border-gray-200 px-4 py-4 dark:border-gray-600">
+                        @if($item->status == 'Berakhir')
+                        <span class="inline-flex rounded-full px-2 py-1 text-xs font-semibold bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
                             Berakhir
                         </span>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        <div class="flex space-x-2">
-                            <button class="px-3 py-1 text-xs text-white bg-blue-600 rounded-md flex items-center justify-center">
-                                @svg('heroicon-o-eye', 'h-4 w-4 mr-1')
-                                Lihat
-                            </button>
-                            <button class="px-3 py-1 text-xs text-white bg-yellow-500 rounded-md flex items-center justify-center">
-                                 @svg('heroicon-o-arrow-down-tray', 'h-4 w-4 mr-1')
-                                 Unduh
-                            </button>
-                            <button class="px-3 py-1 text-xs text-white bg-red-500 rounded-md flex items-center justify-center">
-                                @svg('heroicon-o-trash', 'h-4 w-4 mr-1')
-                                Hapus
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <input type="checkbox" class="rounded border-gray-300 text-blue-600">
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        2
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        Teknologi Rekayasa Komputer
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        4 Januari 2025
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        5 Mei 2025
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="px-2 py-1 text-xs rounded-md bg-blue-100 text-blue-800">
-                            Sedang Berjalan
+                        @else
+                        <span class="inline-flex rounded-full px-2 py-1 text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+                            {{ $item->status ?? 'Sedang Berjalan' }}
                         </span>
+                        @endif
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        <div class="flex space-x-2">
-                            <button class="px-3 py-1 text-xs text-white bg-blue-600 rounded-md flex items-center justify-center">
-                                @svg('heroicon-o-eye', 'h-4 w-4 mr-1')
-                                Lihat
-                            </button>
-                            <button class="px-3 py-1 text-xs text-white bg-yellow-500 rounded-md flex items-center justify-center">
-                                @svg('heroicon-o-arrow-down-tray', 'h-4 w-4 mr-1')
-                                Unduh
-                            </button>
-                            <button class="px-3 py-1 text-xs text-white bg-red-500 rounded-md flex items-center justify-center">
-                                @svg('heroicon-o-trash', 'h-4 w-4 mr-1')
-                                Hapus
-                            </button>
-                        </div>
+                    <td class="border border-gray-200 px-4 py-4 dark:border-gray-600">
+                        <x-table-row-actions :actions="[
+                            [
+                                'label' => 'Lihat',
+                                'color' => 'blue',
+                                'icon' => 'heroicon-o-eye',
+                                'href' => route('admin.laporan.show', $item->id),
+                            ],
+                            [
+                                'label' => 'Unduh',
+                                'color' => 'yellow',
+                                'icon' => 'heroicon-o-arrow-down-tray',
+                                'href' => route('admin.laporan.download', $item->id),
+                            ],
+                            [
+                                'label' => 'Hapus',
+                                'color' => 'red',
+                                'icon' => 'heroicon-o-trash',
+                                'modalId' => 'delete-laporan-modal-' . $item->id,
+                            ],
+                        ]" />
                     </td>
                 </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Pagination -->
-    <div class="px-6 py-4 bg-white border-t border-gray-200">
-        <div class="flex items-center justify-between">
-            <div class="text-sm text-gray-700">
-                Showing 1 to 5 of 5 results
-            </div>
-        </div>
+                <x-confirmation-modal 
+                    id="delete-laporan-modal-{{ $item->id }}" 
+                    title="Konfirmasi Hapus Laporan" 
+                    :action="route('admin.laporan.destroy', $item->id)" 
+                    method="DELETE" 
+                    type="delete" 
+                    formClass="delete-modal-form"
+                    :itemName="$item->nama_unit ?? 'Laporan'" 
+                    :warningMessage="'Menghapus laporan ini akan menghapus seluruh data terkait laporan tersebut.'" />
+            @empty
+                <tr>
+                    <td colspan="7" class="border border-gray-200 px-4 py-4 text-center text-gray-500 dark:border-gray-600 dark:text-gray-400">
+                        Tidak ada data laporan.
+                    </td>
+                </tr>
+            @endforelse
+        </x-table>
     </div>
 </div>
 
-
-</div>
-@endsection
+@endsection {{-- ✅ hanya satu @endsection ini --}}
 
 @push('styles')
-
 <style>
-    /* Additional custom styles if needed */
+    /* Tambahkan style tambahan di sini jika dibutuhkan */
 </style>
-
 @endpush
 
 @push('scripts')
-
 <script>
-    // Additional scripts if needed
-</script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectAllCheckbox = document.querySelector('thead input[type="checkbox"]');
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('.row-checkbox');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+            });
+        }
 
+        const periodSelect = document.getElementById('periodeFilter');
+        if (periodSelect) {
+            periodSelect.addEventListener('change', function() {
+                const currentUrl = new URL(window.location.href);
+                if (this.value) {
+                    currentUrl.searchParams.set('periode', this.value);
+                } else {
+                    currentUrl.searchParams.delete('periode');
+                }
+                window.location.href = currentUrl.toString();
+            });
+        }
+
+        document.querySelectorAll('[data-modal-target]').forEach(trigger => {
+            trigger.addEventListener('click', function() {
+                const modalId = this.getAttribute('data-modal-target');
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.classList.remove('hidden');
+                }
+            });
+        });
+    });
+</script>
 @endpush
+

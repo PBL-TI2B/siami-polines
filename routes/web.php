@@ -98,6 +98,10 @@ Route::prefix('admin')->middleware('auth.ami:admin')->group(function () {
     // Laporan
     Route::prefix('laporan')->group(function () {
         Route::get('/', [LaporanController::class, 'index'])->name('admin.laporan.index');
+        Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+        Route::get('/laporan/{laporan}', [LaporanController::class, 'show'])->name('laporan.show');
+        Route::get('/laporan/{laporan}/download', [LaporanController::class, 'download'])->name('laporan.download');
+        Route::delete('/laporan/{laporan}', [LaporanController::class, 'destroy'])->name('laporan.destroy');
     });
 });
 
