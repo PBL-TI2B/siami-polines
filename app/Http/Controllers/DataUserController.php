@@ -5,14 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\Role;
 use App\Models\UnitKerja;
 
 class DataUserController extends Controller
 {
-    private const API_BASE_URL = 'http://127.0.0.1:5000/api/data-user';
+    private const API_BASE_URL = 'http://127.0.0.1:5000/api/data-user'; 
 
     public function index(Request $request)
     {
@@ -36,7 +35,7 @@ class DataUserController extends Controller
 
         $json = $response->json();
         $usersArray = $json['data'] ?? [];
-        $total = $json['total'] ?? count($usersArray); // asumsi API mengembalikan total
+        $total = $json['total'] ?? count($usersArray);
 
         $users = new LengthAwarePaginator(
             $usersArray,
@@ -73,7 +72,7 @@ class DataUserController extends Controller
             'nama' => $validated['nama'],
             'email' => $validated['email'],
             'nip' => $validated['nip'],
-            'password' => Hash::make($validated['password']),
+            'password' => $validated['password'], // Kirim plain text password
             'unit_kerja_id' => $validated['unit_kerja_id'],
             'role_id' => $role->role_id,
         ];
@@ -81,8 +80,9 @@ class DataUserController extends Controller
         $response = Http::post(self::API_BASE_URL, $payload);
 
         if (!$response->successful()) {
+            $errorMessage = $response->json()['message'] ?? 'Gagal menambahkan user ke API.';
             Log::error('Failed to store user', ['response' => $response->body()]);
-            return redirect()->back()->with('error', 'Gagal menambahkan user ke API.');
+            return redirect()->back()->with('error', $errorMessage);
         }
 
         return redirect()->route('admin.data-user.index')->with('success', 'User berhasil ditambahkan');
@@ -121,6 +121,9 @@ class DataUserController extends Controller
             return redirect()->route('admin.data-user.index')->with('error', 'User tidak ditemukan.');
         }
 
+        // Petakan nama_role dari role.nama_role untuk kompatibilitas dengan edit.blade.php
+        $user['nama_role'] = $user['role']['nama_role'] ?? '';
+
         $roles = Role::all();
         return view('admin.data-user.edit', compact('user', 'roles'));
     }
@@ -147,14 +150,15 @@ class DataUserController extends Controller
         ];
 
         if (!empty($validated['password'])) {
-            $payload['password'] = Hash::make($validated['password']);
+            $payload['password'] = $validated['password']; // Kirim plain text password
         }
 
         $response = Http::put(self::API_BASE_URL . "/{$id}", $payload);
 
         if (!$response->successful()) {
+            $errorMessage = $response->json()['message'] ?? 'Gagal memperbarui user di API.';
             Log::error('Failed to update user', ['id' => $id, 'response' => $response->body()]);
-            return redirect()->back()->with('error', 'Gagal memperbarui user di API.');
+            return redirect()->back()->with('error', $errorMessage);
         }
 
         return redirect()->route('admin.data-user.index')->with('success', 'User berhasil diperbarui');
@@ -165,28 +169,11 @@ class DataUserController extends Controller
         $response = Http::delete(self::API_BASE_URL . "/{$id}");
 
         if (!$response->successful()) {
+            $errorMessage = $response->json()['message'] ?? 'Gagal menghapus user dari API.';
             Log::error('Failed to delete user', ['id' => $id, 'response' => $response->body()]);
-            return redirect()->route('admin.data-user.index')->with('error', 'Gagal menghapus user dari API.');
+            return redirect()->route('admin.data-user.index')->with('error', $errorMessage);
         }
 
         return redirect()->route('admin.data-user.index')->with('success', 'User berhasil dihapus');
-    }
-
-    public function bulkDelete(Request $request)
-    {
-        $ids = $request->input('selected_users', []);
-
-        if (empty($ids)) {
-            return redirect()->route('admin.data-user.index')->with('error', 'Tidak ada user yang dipilih.');
-        }
-
-        $response = Http::post(self::API_BASE_URL . '/bulk-destroy', ['ids' => $ids]);
-
-        if (!$response->successful()) {
-            Log::error('Failed to bulk delete users', ['response' => $response->body()]);
-            return redirect()->route('admin.data-user.index')->with('error', 'Gagal menghapus user dari API.');
-        }
-
-        return redirect()->route('admin.data-user.index')->with('success', 'Users berhasil dihapus');
     }
 }
