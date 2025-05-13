@@ -7,7 +7,7 @@
         <!-- Breadcrumb -->
         <x-breadcrumb :items="[
             ['label' => 'Dashboard', 'url' => route('auditor.dashboard.index')],
-            ['label' => 'Data Instrumen Jurusan', 'url' => route('auditor.data-instrumen.jurusan')],
+            ['label' => 'Data Instrumen Jurusan', 'url' => route('auditor.data-instrumen.instrumenjurusan')],
         ]" />
 
         <!-- Heading -->
