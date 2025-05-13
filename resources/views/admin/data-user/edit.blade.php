@@ -126,7 +126,8 @@
                                 class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-sky-500 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
                                 <option value="">Pilih Role</option>
                                 @foreach ($roles as $role)
-                                    <option value="{{ $role->nama_role }}" {{ old('roles') == $role->nama_role ? 'selected' : '' }}>
+                                    <option value="{{ $role->nama_role }}"
+                                        {{ old('roles', $user['nama_role'] ?? '') == $role->nama_role ? 'selected' : '' }}>
                                         {{ $role->nama_role }}
                                     </option>
                                 @endforeach
