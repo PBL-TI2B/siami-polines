@@ -121,7 +121,7 @@
             <x-button type="submit" color="sky" icon="heroicon-o-check">
                 Simpan
             </x-button>
-            <x-button color="gray" icon="heroicon-o-x-mark" href="{{ route('admin.periode-audit.index') }}">
+            <x-button color="gray" icon="heroicon-o-x-mark" href="{{ route('auditor.ptpp.index') }}">
                 Batal
             </x-button>
         </div>
