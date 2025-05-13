@@ -76,15 +76,12 @@ Route::prefix('admin')->middleware('auth.ami:admin')->group(function () {
 
     // // Data Instrumen
     Route::prefix('data-instrumen')->group(function () {
-        Route::get('/{type?}', [DataInstrumenController::class, 'index'])->name('admin.data-instrumen.index');
-        // Route::get('/', [InstrumenUptController::class, 'index'])->name('instrumen-upt.index');
-        // Route::get('/create', [InstrumenUptController::class, 'create'])->name('instrumen-upt.create');
-        // Route::post('/', [InstrumenUptController::class, 'store'])->name('instrumen-upt.store');
-        // Route::get('/{id}/edit', [InstrumenUptController::class, 'edit'])->name('instrumen-upt.edit');
-        // Route::put('/{id}', [InstrumenUptController::class, 'update'])->name('instrumen-upt.update');
-        // Route::delete('/{id}', [InstrumenUptController::class, 'destroy'])->name('instrumen-upt.destroy');
-        // Route::post('/import', [InstrumenUptController::class, 'import'])->name('instrumen-upt.import');
-        // Route::get('/export', [InstrumenUptController::class, 'export'])->name('instrumen-upt.export');
+        Route::get('/', [DataInstrumenController::class, 'index'])->name('admin.data-instrumen.index');
+        Route::get('/create/{type?}', [DataInstrumenController::class, 'store'])->name('admin.data-instrumen.tambah');
+        Route::get('/edit/{type?}', [DataInstrumenController::class, 'edit'])->name('admin.data-instrumen.edit');
+        Route::get('/upt', [DataInstrumenController::class, 'upt'])->name('admin.data-instrumen.instrumenupt');
+        Route::get('/prodi', [DataInstrumenController::class, 'prodi'])->name('admin.data-instrumen.instrumenprodi');
+        Route::get('/jurusan', [DataInstrumenController::class, 'jurusan'])->name('admin.data-instrumen.instrumenjurusan');
     });
 
     // Data User
@@ -118,8 +115,8 @@ Route::prefix('auditor')->middleware('auth.ami:auditor')->group(function () {
     // Rute untuk data-instrumen
     Route::get('/data-instrumen', [DataInstrumenControllerAuditor::class, 'index'])->name('auditor.data-instrumen.index');
     Route::get('/data-instrumen/upt', [DataInstrumenControllerAuditor::class, 'auditorInsUpt'])->name('auditor.data-instrumen.upt');
-    Route::get('/data-instrumen/prodi', [DataInstrumenControllerAuditor::class, 'auditorinsprodi'])->name('auditor.data-instrumen.prodi');
-    Route::get('/data-instrumen/jurusan', [DataInstrumenControllerAuditor::class, 'auditorinsjurusan'])->name('auditor.data-instrumen.jurusan');
+    Route::get('/data-instrumen/prodi', [DataInstrumenControllerAuditor::class, 'auditorinsprodi'])->name('auditor.data-instrumen.instrumenprodi');
+    Route::get('/data-instrumen/jurusan', [DataInstrumenControllerAuditor::class, 'auditorinsjurusan'])->name('auditor.data-instrumen.instrumenjurusan');
 
     Route::get('/laporan', function () {
         return view('auditor.laporan.index');
