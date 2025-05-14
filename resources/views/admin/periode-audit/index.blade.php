@@ -71,7 +71,7 @@
                     <td
                         class="border-r border-gray-200 px-4 py-4 text-gray-900 sm:px-6 dark:border-gray-700 dark:text-gray-200">
                         @if ($periode['tanggal_mulai'])
-                            {{ \Carbon\Carbon::parse($periode['tanggal_mulai'])->format('d F Y') }}
+                            {{ \Carbon\Carbon::parse($periode['tanggal_mulai'])->locale('id')->translatedFormat('d F Y') }}
                         @else
                             N/A
                         @endif
@@ -79,14 +79,14 @@
                     <td
                         class="border-r border-gray-200 px-4 py-4 text-gray-900 sm:px-6 dark:border-gray-700 dark:text-gray-200">
                         @if ($periode['tanggal_berakhir'])
-                            {{ \Carbon\Carbon::parse($periode['tanggal_berakhir'])->format('d F Y') }}
+                            {{ \Carbon\Carbon::parse($periode['tanggal_berakhir'])->locale('id')->translatedFormat('d F Y') }}
                         @else
                             N/A
                         @endif
                     </td>
                     <td class="border-r border-gray-200 px-4 py-4 sm:px-6 dark:border-gray-700">
                         <span
-                            class="{{ $periode['status'] == 'Berakhir' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300' : 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-300' }} inline-flex rounded-full px-2 py-1 text-xs font-semibold leading-5">
+                            class="{{ $periode['status'] == 'Berakhir' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300' : 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-300' }} inline-flex rounded-full px-2 py-1 text-center text-xs font-semibold leading-5">
                             {{ $periode['status'] ?? 'Tidak Diketahui' }}
                         </span>
                     </td>

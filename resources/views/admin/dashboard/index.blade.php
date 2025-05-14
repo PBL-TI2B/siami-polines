@@ -94,7 +94,7 @@
                             <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-200">Unit A</td>
                             <td class="px-6 py-4 text-sm">
                                 <span
-                                    class="inline-block rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-600 dark:bg-red-800 dark:text-red-400">
+                                    class="inline-block rounded-full bg-red-100 px-3 py-1 text-center text-xs font-semibold text-red-600 dark:bg-red-800 dark:text-red-400">
                                     Belum Audit
                                 </span>
                             </td>
@@ -109,7 +109,7 @@
                             <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-200">Unit B</td>
                             <td class="px-6 py-4 text-sm">
                                 <span
-                                    class="inline-block rounded-full bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-600 dark:bg-yellow-800 dark:text-yellow-400">
+                                    class="inline-block rounded-full bg-yellow-100 px-3 py-1 text-center text-xs font-semibold text-yellow-600 dark:bg-yellow-800 dark:text-yellow-400">
                                     Proses Audit
                                 </span>
                             </td>
@@ -124,7 +124,7 @@
                             <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-200">Unit C</td>
                             <td class="px-6 py-4 text-sm">
                                 <span
-                                    class="inline-block rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-600 dark:bg-green-800 dark:text-green-400">
+                                    class="inline-block rounded-full bg-green-100 px-3 py-1 text-center text-xs font-semibold text-green-600 dark:bg-green-800 dark:text-green-400">
                                     Selesai Audit
                                 </span>
                             </td>

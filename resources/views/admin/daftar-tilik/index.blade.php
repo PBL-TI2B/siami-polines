@@ -3,20 +3,6 @@
 @section('title', 'Daftar Titik')
 
 @section('content')
-
-<div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
-    <!-- Breadcrumb -->
-    <nav class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-        <ol class="list-reset flex">
-            <li><a href="{{ route('dashboard.index') }}" class="text-blue-600 hover:underline dark:text-blue-400">Dashboard</a></li>
-            <li class="mx-2">/</li>
-            <li class="text-gray-800 dark:text-gray-200">Daftar Tilik</li>
-        </ol>
-    </nav>
-
-    <!-- Heading -->
-    <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8">
-            Daftar Periksa
     <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
         <!-- Breadcrumb -->
         <x-breadcrumb :items="[
@@ -29,177 +15,198 @@
             Daftar Tilik
         </h1>
 
-    <!-- Action Buttons -->
-    <div class="flex flex-wrap gap-2 mb-4">
-        <button onclick="openModal('add')" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded dark:bg-blue-700 dark:hover:bg-blue-800">
-            ➕ Tambah Pertanyaan
-        </button>
-        <button onclick="openModal('edit')" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded dark:bg-yellow-600 dark:hover:bg-yellow-700">
-            📝 Edit Pertanyaan
-        </button>
-        <button onclick="downloadData()" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded dark:bg-blue-600 dark:hover:bg-blue-700">
-            ⬇️ Unduh Data
-        </button>
-        <button onclick="importData()" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded dark:bg-yellow-600 dark:hover:bg-yellow-700">
-            ⬆️ Import Data
-        </button>
-    </div>
-
-    <!-- Filter & Search -->
-    <div class="flex flex-wrap items-center justify-between mb-4 gap-2">
-        <div class="flex gap-2">
-            <select class="border border-gray-300 rounded px-2 py-1 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
-                <option>Pilih Unit</option>
-            </select>
-            <select class="border border-gray-300 rounded px-2 py-1 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
-                <option>Pilih Periode Ami</option>
-            </select>
+        <!-- Action Buttons -->
+        <div class="mb-4 flex flex-wrap gap-2">
+            <button onclick="openModal('add')"
+                class="rounded bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800">
+                ➕ Tambah Pertanyaan
+            </button>
+            <button onclick="openModal('edit')"
+                class="rounded bg-yellow-500 px-4 py-2 font-semibold text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700">
+                📝 Edit Pertanyaan
+            </button>
+            <button onclick="downloadData()"
+                class="rounded bg-blue-500 px-4 py-2 font-semibold text-white hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700">
+                ⬇️ Unduh Data
+            </button>
+            <button onclick="importData()"
+                class="rounded bg-yellow-500 px-4 py-2 font-semibold text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700">
+                ⬆️ Import Data
+            </button>
         </div>
-        <input type="text" placeholder="Search" class="border border-gray-300 rounded px-3 py-1 w-64 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200" />
-    </div>
 
-    <!-- Kriteria Container -->
-    <div id="kriteria-container" class="border border-blue-500 rounded p-4 bg-white shadow dark:bg-gray-800 dark:border-gray-600">
-        <!-- Konten akan dimuat via JavaScript -->
-    </div>
-
-    <!-- Pagination -->
-    <div class="flex justify-end gap-2 mt-4">
-        <button onclick="showPrevious()" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-1 px-3 rounded dark:bg-yellow-600 dark:hover:bg-yellow-700">
-            Previous
-        </button>
-        <button onclick="showNext()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded dark:bg-blue-700 dark:hover:bg-blue-800">
-            Next
-        </button>
-    </div>
-
-   <!-- Modal -->
-<div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-    <div class="bg-white p-6 rounded-lg w-full max-w-2xl dark:bg-gray-800">
-        <h3 class="text-xl font-bold mb-4 dark:text-white" id="modalTitle"></h3>
-        <div class="grid grid-cols-2 gap-4 text-sm text-gray-700 dark:text-gray-100">
-            <input id="field0" class="border p-2 rounded dark:bg-gray-700" placeholder="Daftar Pertanyaan" />
-            <input id="field1" class="border p-2 rounded dark:bg-gray-700" placeholder="Indikator Kinerja Renstra & LKPS" />
-            <input id="field2" class="border p-2 rounded dark:bg-gray-700" placeholder="Sumber Bukti/Bukti" />
-            <input id="field3" class="border p-2 rounded dark:bg-gray-700" placeholder="Metode Perhitungan" />
-            <input id="field4" class="border p-2 rounded dark:bg-gray-700" placeholder="Target" />
-            <input id="field5" class="border p-2 rounded dark:bg-gray-700" placeholder="Realisasi" />
-            <input id="field6" class="border p-2 rounded dark:bg-gray-700" placeholder="Standar Nasional / POLINES" />
-            <input id="field7" class="border p-2 rounded dark:bg-gray-700" placeholder="Uraian Isian" />
-            <input id="field8" class="border p-2 rounded dark:bg-gray-700" placeholder="Akar Penyebab" />
-            <input id="field9" class="border p-2 rounded dark:bg-gray-700" placeholder="Akar Penunjang" />
-            <input id="field10" class="border p-2 rounded dark:bg-gray-700" placeholder="Rencana Perbaikan & Tindak Lanjut '25" />
+        <!-- Filter & Search -->
+        <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex gap-2">
+                <select
+                    class="rounded border border-gray-300 px-2 py-1 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                    <option>Pilih Unit</option>
+                </select>
+                <select
+                    class="rounded border border-gray-300 px-2 py-1 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                    <option>Pilih Periode Ami</option>
+                </select>
+            </div>
+            <input type="text" placeholder="Search"
+                class="w-64 rounded border border-gray-300 px-3 py-1 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200" />
         </div>
-        <div class="flex justify-end mt-4 gap-2">
-            <button onclick="closeModal()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">Tutup</button>
-            <button onclick="saveQuestion()" id="saveButton" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Simpan</button>
+
+        <!-- Kriteria Container -->
+        <div id="kriteria-container"
+            class="rounded border border-blue-500 bg-white p-4 shadow dark:border-gray-600 dark:bg-gray-800">
+            <!-- Konten akan dimuat via JavaScript -->
         </div>
-    </div>
-</div>
-<script>
-    let editingRowIndex = null;
 
-    function openModal(mode) {
-        document.getElementById('modal').classList.remove('hidden');
-        document.getElementById('modalTitle').innerText = mode === 'add' ? 'Tambah Pertanyaan' : 'Edit Pertanyaan';
-        document.getElementById('saveButton').innerText = mode === 'add' ? 'Tambah' : 'Update';
-        editingRowIndex = mode === 'edit' ? getSelectedRowIndex() : null;
+        <!-- Pagination -->
+        <div class="mt-4 flex justify-end gap-2">
+            <button onclick="showPrevious()"
+                class="rounded bg-yellow-500 px-3 py-1 font-semibold text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700">
+                Previous
+            </button>
+            <button onclick="showNext()"
+                class="rounded bg-blue-600 px-3 py-1 font-semibold text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800">
+                Next
+            </button>
+        </div>
 
-        // Kosongkan form atau isi data jika mode edit
-        for (let i = 0; i <= 10; i++) {
-            document.getElementById('field' + i).value = editingRowIndex !== null ? 
-                document.querySelector(`#tableBody tr:nth-child(${editingRowIndex + 1}) td:nth-child(${i + 2})`).innerText : '';
-        }
-    }
+        <!-- Modal -->
+        <div id="modal" class="fixed inset-0 z-50 flex hidden items-center justify-center bg-black bg-opacity-50">
+            <div class="w-full max-w-2xl rounded-lg bg-white p-6 dark:bg-gray-800">
+                <h3 class="mb-4 text-xl font-bold dark:text-white" id="modalTitle"></h3>
+                <div class="grid grid-cols-2 gap-4 text-sm text-gray-700 dark:text-gray-100">
+                    <input id="field0" class="rounded border p-2 dark:bg-gray-700" placeholder="Daftar Pertanyaan" />
+                    <input id="field1" class="rounded border p-2 dark:bg-gray-700"
+                        placeholder="Indikator Kinerja Renstra & LKPS" />
+                    <input id="field2" class="rounded border p-2 dark:bg-gray-700" placeholder="Sumber Bukti/Bukti" />
+                    <input id="field3" class="rounded border p-2 dark:bg-gray-700" placeholder="Metode Perhitungan" />
+                    <input id="field4" class="rounded border p-2 dark:bg-gray-700" placeholder="Target" />
+                    <input id="field5" class="rounded border p-2 dark:bg-gray-700" placeholder="Realisasi" />
+                    <input id="field6" class="rounded border p-2 dark:bg-gray-700"
+                        placeholder="Standar Nasional / POLINES" />
+                    <input id="field7" class="rounded border p-2 dark:bg-gray-700" placeholder="Uraian Isian" />
+                    <input id="field8" class="rounded border p-2 dark:bg-gray-700" placeholder="Akar Penyebab" />
+                    <input id="field9" class="rounded border p-2 dark:bg-gray-700" placeholder="Akar Penunjang" />
+                    <input id="field10" class="rounded border p-2 dark:bg-gray-700"
+                        placeholder="Rencana Perbaikan & Tindak Lanjut '25" />
+                </div>
+                <div class="mt-4 flex justify-end gap-2">
+                    <button onclick="closeModal()"
+                        class="rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600">Tutup</button>
+                    <button onclick="saveQuestion()" id="saveButton"
+                        class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Simpan</button>
+                </div>
+            </div>
+        </div>
+        <script>
+            let editingRowIndex = null;
 
-    function closeModal() {
-        document.getElementById('modal').classList.add('hidden');
-    }
+            function openModal(mode) {
+                document.getElementById('modal').classList.remove('hidden');
+                document.getElementById('modalTitle').innerText = mode === 'add' ? 'Tambah Pertanyaan' : 'Edit Pertanyaan';
+                document.getElementById('saveButton').innerText = mode === 'add' ? 'Tambah' : 'Update';
+                editingRowIndex = mode === 'edit' ? getSelectedRowIndex() : null;
 
-    function saveQuestion() {
-        const values = [];
-        for (let i = 0; i <= 10; i++) {
-            values.push(document.getElementById('field' + i).value);
-        }
+                // Kosongkan form atau isi data jika mode edit
+                for (let i = 0; i <= 10; i++) {
+                    document.getElementById('field' + i).value = editingRowIndex !== null ?
+                        document.querySelector(`#tableBody tr:nth-child(${editingRowIndex + 1}) td:nth-child(${i + 2})`)
+                        .innerText : '';
+                }
+            }
 
-        if (editingRowIndex !== null) {
-            const row = document.querySelector(`#tableBody tr:nth-child(${editingRowIndex + 1})`);
-            values.forEach((val, i) => row.children[i + 1].innerText = val);
-        } else {
-            const tableBody = document.getElementById('tableBody');
-            const row = document.createElement('tr');
-            row.innerHTML = `<td class="border px-2 py-1">${tableBody.children.length + 1}</td>` +
-                values.map(val => `<td class="border px-2 py-1">${val}</td>`).join('');
-            tableBody.appendChild(row);
-        }
+            function closeModal() {
+                document.getElementById('modal').classList.add('hidden');
+            }
 
-        closeModal();
-    }
+            function saveQuestion() {
+                const values = [];
+                for (let i = 0; i <= 10; i++) {
+                    values.push(document.getElementById('field' + i).value);
+                }
 
-    function getSelectedRowIndex() {
-        const rows = document.querySelectorAll('#tableBody tr');
-        if (rows.length === 0) {
-            alert('Tidak ada data untuk diedit!');
-            return null;
-        }
-        return rows.length - 1; // Default: edit baris terakhir (bisa dimodifikasi untuk pilihan spesifik)
-    }
+                if (editingRowIndex !== null) {
+                    const row = document.querySelector(`#tableBody tr:nth-child(${editingRowIndex + 1})`);
+                    values.forEach((val, i) => row.children[i + 1].innerText = val);
+                } else {
+                    const tableBody = document.getElementById('tableBody');
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td class="border px-2 py-1">${tableBody.children.length + 1}</td>` +
+                        values.map(val => `<td class="border px-2 py-1">${val}</td>`).join('');
+                    tableBody.appendChild(row);
+                }
 
-    function downloadData() {
-        let csv = 'No,Daftar Pertanyaan,Indikator Kinerja, Sumber Bukti,Metode Perhitungan,Target,Realisasi,Standar Nasional,Uraian Isian,Akar Penyebab,Akar Penunjang,Rencana Perbaikan\n';
-        document.querySelectorAll('#tableBody tr').forEach(row => {
-            const cols = Array.from(row.children).map(cell => `"${cell.innerText}"`);
-            csv += cols.join(',') + '\n';
-        });
+                closeModal();
+            }
 
-        const blob = new Blob([csv], { type: 'text/csv' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'data_checklist.csv';
-        link.click();
-        URL.revokeObjectURL(url);
-    }
+            function getSelectedRowIndex() {
+                const rows = document.querySelectorAll('#tableBody tr');
+                if (rows.length === 0) {
+                    alert('Tidak ada data untuk diedit!');
+                    return null;
+                }
+                return rows.length - 1; // Default: edit baris terakhir (bisa dimodifikasi untuk pilihan spesifik)
+            }
 
-    function importData() {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.csv';
-        input.onchange = e => {
-            const file = e.target.files[0];
-            const reader = new FileReader();
-            reader.onload = () => {
-                const lines = reader.result.split('\n').slice(1);
-                lines.forEach(line => {
-                    const cols = line.split(',').map(cell => cell.replace(/"/g, '').trim());
-                    if (cols.length >= 11) {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `<td class="border px-2 py-1">${document.getElementById('tableBody').children.length + 1}</td>` +
-                            cols.slice(0, 11).map(c => `<td class="border px-2 py-1">${c}</td>`).join('');
-                        document.getElementById('tableBody').appendChild(row);
-                    }
+            function downloadData() {
+                let csv =
+                    'No,Daftar Pertanyaan,Indikator Kinerja, Sumber Bukti,Metode Perhitungan,Target,Realisasi,Standar Nasional,Uraian Isian,Akar Penyebab,Akar Penunjang,Rencana Perbaikan\n';
+                document.querySelectorAll('#tableBody tr').forEach(row => {
+                    const cols = Array.from(row.children).map(cell => `"${cell.innerText}"`);
+                    csv += cols.join(',') + '\n';
                 });
-            };
-            reader.readAsText(file);
-        };
-        input.click();
-    }
 
-    function showPrevious() {
-        alert("Pagination sebelumnya (belum diimplementasi backend)");
-    }
+                const blob = new Blob([csv], {
+                    type: 'text/csv'
+                });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'data_checklist.csv';
+                link.click();
+                URL.revokeObjectURL(url);
+            }
 
-    function showNext() {
-        alert("Pagination berikutnya (belum diimplementasi backend)");
-    }
-</script>
+            function importData() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.csv';
+                input.onchange = e => {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        const lines = reader.result.split('\n').slice(1);
+                        lines.forEach(line => {
+                            const cols = line.split(',').map(cell => cell.replace(/"/g, '').trim());
+                            if (cols.length >= 11) {
+                                const row = document.createElement('tr');
+                                row.innerHTML =
+                                    `<td class="border px-2 py-1">${document.getElementById('tableBody').children.length + 1}</td>` +
+                                    cols.slice(0, 11).map(c => `<td class="border px-2 py-1">${c}</td>`).join(
+                                        '');
+                                document.getElementById('tableBody').appendChild(row);
+                            }
+                        });
+                    };
+                    reader.readAsText(file);
+                };
+                input.click();
+            }
+
+            function showPrevious() {
+                alert("Pagination sebelumnya (belum diimplementasi backend)");
+            }
+
+            function showNext() {
+                alert("Pagination berikutnya (belum diimplementasi backend)");
+            }
+        </script>
 
 
-<script>
-    let currentKriteria = 1;
+        <script>
+            let currentKriteria = 1;
 
-    const kriteriaData = {
-        1: `
+            const kriteriaData = {
+                1: `
             <p class="font-semibold text-gray-700 mb-3 dark:text-gray-300">
                 Kriteria : 1. Visi, Misi, Tujuan, Strategi
             </p>
@@ -232,7 +239,7 @@
                 </table>
             </div>
         `,
-             2: `
+                2: `
             <p class="font-semibold text-gray-700 mb-3 dark:text-gray-300">
     Kriteria : 2. Tata Kelola, Tata Pamong, dan Kerjasama
 </p>
@@ -266,7 +273,7 @@
 </div>
 
          `,
-         3: `
+                3: `
     <p class="font-semibold text-gray-700 mb-3 dark:text-gray-300">
     Kriteria : 3. Visi, Misi, Tujuan, Strategi
 </p>
@@ -310,7 +317,7 @@
 </div>
 
 `,
-4: `
+                4: `
     <p class="font-semibold text-gray-700 mb-3 dark:text-gray-300">
     Kriteria : 4. Sumber Daya Manusia
 </p>
@@ -354,7 +361,7 @@
 </div>
 
 `,
-5: `
+                5: `
     <p class="font-semibold text-gray-700 mb-3 dark:text-gray-300">
     Kriteria : 5. Tata Kelola
 </p>
@@ -398,7 +405,7 @@
 </div>
 
 `,
-6: `
+                6: `
     <p class="font-semibold text-gray-700 mb-3 dark:text-gray-300">
     Kriteria : 6. Kurikulum dan Pembelajaran
 </p>
@@ -443,7 +450,7 @@
 </div>
 
 `,
-7: `
+                7: `
     <p class="font-semibold text-gray-700 mb-3 dark:text-gray-300">
     Kriteria : 7. Penelitian
 </p>
@@ -488,7 +495,7 @@
 </div>
 
 `,
-8: `
+                8: `
     <p class="font-semibold text-gray-700 mb-3 dark:text-gray-300">
     Kriteria : 8. Pengabdian kepada Masyarakat
 </p>
@@ -533,7 +540,7 @@
 </div>
 
 `,
-9: `
+                9: `
    <p class="font-semibold text-gray-700 mb-3 dark:text-gray-300">
     Kriteria : 9. Luaran Tridharma
 </p>
@@ -605,50 +612,49 @@
 
 `
 
-               
-    };
-    
 
-    function renderKriteria() {
-        document.getElementById('kriteria-container').innerHTML = kriteriaData[currentKriteria];
-    }
+            };
 
-    function showNext() {
-        if (currentKriteria < Object.keys(kriteriaData).length) {
-            currentKriteria++;
+
+            function renderKriteria() {
+                document.getElementById('kriteria-container').innerHTML = kriteriaData[currentKriteria];
+            }
+
+            function showNext() {
+                if (currentKriteria < Object.keys(kriteriaData).length) {
+                    currentKriteria++;
+                    renderKriteria();
+                }
+            }
+
+            function showPrevious() {
+                if (currentKriteria > 1) {
+                    currentKriteria--;
+                    renderKriteria();
+                }
+            }
+
+            function openModal(action) {
+                const modal = document.getElementById('modal');
+                const modalTitle = document.getElementById('modalTitle');
+                const saveButton = document.getElementById('saveButton');
+
+                if (action === 'add') {
+                    modalTitle.textContent = 'Tambah Pertanyaan';
+                    saveButton.textContent = 'Save';
+                } else if (action === 'edit') {
+                    modalTitle.textContent = 'Edit Pertanyaan';
+                    saveButton.textContent = 'Update';
+                }
+
+                modal.classList.remove('hidden');
+            }
+
+            function closeModal() {
+                document.getElementById('modal').classList.add('hidden');
+            }
+
+            // Tampilkan pertama kali
             renderKriteria();
-        }
-    }
-
-    function showPrevious() {
-        if (currentKriteria > 1) {
-            currentKriteria--;
-            renderKriteria();
-        }
-    }
-
-    function openModal(action) {
-        const modal = document.getElementById('modal');
-        const modalTitle = document.getElementById('modalTitle');
-        const saveButton = document.getElementById('saveButton');
-
-        if (action === 'add') {
-            modalTitle.textContent = 'Tambah Pertanyaan';
-            saveButton.textContent = 'Save';
-        } else if (action === 'edit') {
-            modalTitle.textContent = 'Edit Pertanyaan';
-            saveButton.textContent = 'Update';
-        }
-
-        modal.classList.remove('hidden');
-    }
-
-    function closeModal() {
-        document.getElementById('modal').classList.add('hidden');
-    }
-
-    // Tampilkan pertama kali
-    renderKriteria();
-</script>
-@endsection
-
+        </script>
+    @endsection
