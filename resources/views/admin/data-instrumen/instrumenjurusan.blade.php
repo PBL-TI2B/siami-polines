@@ -32,16 +32,12 @@
             </div>
 
             <!-- Filter Dropdowns -->
-            <div class="flex flex-wrap gap-2">
-                <select class="w-28 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 text-sm rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500 focus:outline-none transition-all duration-200">
+<div class="flex flex-wrap gap-2">
+                <select id="unitKerjaSelect" class="w-40 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 text-sm rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500 focus:outline-none transition-all duration-200">
                     <option selected disabled>Pilih Unit</option>
-                    <option value="unit1">Unit 1</option>
-                    <option value="unit2">Unit 2</option>
                 </select>
-                <select class="w-40 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 text-sm rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500 focus:outline-none transition-all duration-200">
+                <select id="periodeSelect" class="w-40 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 text-sm rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500 focus:outline-none transition-all duration-200">
                     <option selected disabled>Pilih Periode AMI</option>
-                    <option value="periode1">Periode 2023</option>
-                    <option value="periode2">Periode 2024</option>
                 </select>
             </div>
         </div>
@@ -229,5 +225,39 @@
         `;
     });
 });
+// =========================== BAGIAN 2: Dropdown Unit Kerja ===========================
+    fetch('http://127.0.0.1:5000/api/unit-kerja')
+        .then(response => response.json())
+        .then(result => {
+            const data = result.data;
+            const select = document.getElementById('unitKerjaSelect');
+
+            data.forEach(unit => {
+                const option = document.createElement('option');
+                option.value = unit.unit_kerja_id;
+                option.textContent = unit.nama_unit_kerja;
+                select.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Gagal memuat unit kerja:', error);
+        });
+        // =========================== BAGIAN 3: Dropdown Periode ===========================
+        fetch('http://127.0.0.1:5000/api/periode-audits')
+            .then(response => response.json())
+            .then(result => {
+                const data = result.data.data;
+                const select = document.getElementById('periodeSelect');
+
+                data.forEach(unit => {
+                    const option = document.createElement('option');
+                    option.value = unit.periode_id;
+                    option.textContent = unit.nama_periode;
+                    select.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Gagal memuat periode AMI:', error);
+            });
     </script>
 @endsection

@@ -45,11 +45,11 @@
                 <x-heroicon-o-moon class="block h-6 w-6 dark:hidden" />
             </button>
             <!-- Notifications -->
-            <button type="button" data-dropdown-toggle="notification-dropdown"
+            <!-- <button type="button" data-dropdown-toggle="notification-dropdown"
                 class="mr-1 hidden rounded-lg p-2 text-sky-200 hover:bg-sky-100 hover:text-sky-800 focus:ring-4 focus:ring-sky-300 md:block dark:text-sky-300 dark:hover:bg-sky-700 dark:hover:text-white dark:focus:ring-sky-600">
                 <span class="sr-only">Lihat notifikasi</span>
                 <x-heroicon-o-bell class="h-6 w-6" />
-            </button>
+            </button> -->
             <!-- Notification Dropdown -->
             <div class="z-50 my-4 hidden max-w-sm list-none divide-y divide-sky-600 overflow-hidden rounded-xl bg-sky-700 text-base shadow-lg dark:divide-sky-800 dark:bg-sky-800"
                 id="notification-dropdown">
@@ -87,10 +87,10 @@
                 </a>
             </div>
             <!-- Apps -->
-            <button type="button" data-dropdown-toggle="apps-dropdown"
+            <!-- <button type="button" data-dropdown-toggle="apps-dropdown"
                 class="mr-1 hidden rounded-lg p-2 text-sky-200 hover:bg-sky-100 hover:text-sky-800 focus:ring-4 focus:ring-sky-300 md:block dark:text-sky-300 dark:hover:bg-sky-700 dark:hover:text-white dark:focus:ring-sky-600">
                 <x-heroicon-o-squares-2x2 class="h-6 w-6" />
-            </button>
+            </button> -->
             <!-- Apps Dropdown -->
             <div class="z-50 my-4 hidden max-w-sm list-none divide-y divide-sky-600 overflow-hidden rounded-xl bg-sky-700 text-base shadow-lg dark:divide-sky-800 dark:bg-sky-800"
                 id="apps-dropdown">
