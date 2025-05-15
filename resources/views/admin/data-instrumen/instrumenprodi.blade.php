@@ -19,15 +19,8 @@
         <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
             <!-- Action Buttons -->
             <div class="flex flex-wrap gap-2">
-                <x-button href="{{ route('admin.data-instrumen.tambah') }}" color="sky" icon="heroicon-o-plus" class="shadow-md hover:shadow-lg transition-all">
+                <x-button href="{{ route('admin.data-instrumen.tambahprodi') }}" color="sky" icon="heroicon-o-plus" class="shadow-md hover:shadow-lg transition-all">
                     Tambah Instrumen
-                </x-button>
-
-                <x-button href="{{ route('admin.data-instrumen.export') }}" color="sky" icon="heroicon-o-document-arrow-down" class="shadow-md hover:shadow-lg transition-all">
-                    Unduh Data
-                </x-button>
-                <x-button href="#" color="yellow" icon="heroicon-o-document-arrow-up" class="shadow-md hover:shadow-lg transition-all">
-                    Import Data
                 </x-button>
             </div>
 
@@ -79,14 +72,15 @@
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Standar</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Deskripsi Area Audit-Sub Butir Standar</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Pemeriksaan Pada Unsur</th>
-                            <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Ketersediaan Standar dan Dokumen (Ada/Tidak)</th>
+                            <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Nama Unit Kerja</th>
+                            {{-- <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Ketersediaan Standar dan Dokumen (Ada/Tidak)</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Pencapaian Standar SPT PT</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Pencapaian Standar SN DIKTI</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Daya Saing Lokal</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Daya Saing Nasional</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Daya Saing Internasional</th>
-                            <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Keterangan</th>
-                            {{-- <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Aksi</th> --}}
+                            <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Keterangan</th> --}}
+                            <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="instrumen-table-body" class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -137,11 +131,12 @@ document.addEventListener('DOMContentLoaded', function () {
             const data = result.data;
             const tableBody = document.getElementById('instrumen-table-body');
 
-            let index = 1;
+            let index = 1; // Nomor urut berdasarkan standar
 
             const grouped = {};
             const rowspanStandar = {};
 
+            // Mengelompokkan data berdasarkan standar, deskripsi, dan unsur
             data.forEach(item => {
                 const standar = item.unsur.deskripsi.kriteria.nama_kriteria;
                 const deskripsi = item.unsur.deskripsi.isi_deskripsi;
@@ -164,53 +159,86 @@ document.addEventListener('DOMContentLoaded', function () {
                 rowspanStandar[standar]++;
             });
 
+            // Iterasi melalui setiap standar
             for (const standar in grouped) {
                 let standarDisplayed = false;
+                let nomorDisplayed = false;
 
+                // Menghitung total baris untuk standar ini
                 const totalRowsForStandar = Object.values(grouped[standar])
                     .map(desc => Object.values(desc).reduce((sum, arr) => sum + arr.length, 0))
                     .reduce((a, b) => a + b, 0);
 
+                // Iterasi melalui setiap deskripsi dalam standar
                 for (const deskripsi in grouped[standar]) {
                     let deskripsiDisplayed = false;
 
+                    // Menghitung total baris untuk deskripsi ini
                     const totalRowsForDeskripsi = Object.values(grouped[standar][deskripsi])
                         .reduce((sum, arr) => sum + arr.length, 0);
 
+                    // Iterasi melalui setiap unsur dalam deskripsi
                     for (const unsur in grouped[standar][deskripsi]) {
                         let unsurDisplayed = false;
                         const items = grouped[standar][deskripsi][unsur];
                         const totalRowsForUnsur = items.length;
 
+                        // Iterasi melalui setiap item dalam unsur
                         items.forEach(item => {
                             const row = document.createElement('tr');
-                            let html = `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600">${index++}</td>`;
+                            let html = '';
 
+                            // Kolom No (hanya ditampilkan sekali per standar)
+                            if (!nomorDisplayed) {
+                                html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600" rowspan="${totalRowsForStandar}">${index}</td>`;
+                                nomorDisplayed = true;
+                            }
+
+                            // Kolom Standar (hanya ditampilkan sekali per standar)
                             if (!standarDisplayed) {
                                 html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600" rowspan="${totalRowsForStandar}">${standar}</td>`;
                                 standarDisplayed = true;
                             }
 
+                            // Kolom Deskripsi (hanya ditampilkan sekali per deskripsi)
                             if (!deskripsiDisplayed) {
                                 html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600" rowspan="${totalRowsForDeskripsi}">${deskripsi}</td>`;
                                 deskripsiDisplayed = true;
                             }
 
+                            // Kolom Unsur (hanya ditampilkan sekali per unsur)
                             if (!unsurDisplayed) {
                                 html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600" rowspan="${totalRowsForUnsur}">${unsur}</td>`;
                                 unsurDisplayed = true;
                             }
 
-                            // Kolom lain (kosong diisi "-")
-                            for (let i = 0; i < 7; i++) {
-                                html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">-</td>`;
-                            }
+                            // Kolom Nama Unit Kerja (tampilkan untuk setiap baris)
+                            html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600">${item.unit_kerja.nama_unit_kerja}</td>`;
+
+                            // Kolom Aksi (tampilkan untuk setiap baris)
+                            html += `
+                                <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">
+                                    <div class="flex items-center gap-2 justify-center">
+                                        <a href="/admin/data-instrumen/${item.set_instrumen_unit_kerja_id}/edit" class="text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-200 transition-colors duration-200">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L16.732 3.732z"></path>
+                                            </svg>
+                                        </a>
+                                        <button data-id="${item.set_instrumen_unit_kerja_id}" class="delete-btn text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 transition-colors duration-200">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4m-4 0a2 2 0 00-2 2v1h8V5a2 2 0 00-2-2zm-3 4h6"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            `;
 
                             row.innerHTML = html;
                             tableBody.appendChild(row);
                         });
                     }
                 }
+                index++; // Increment nomor hanya setelah satu standar selesai
             }
         })
         .catch(error => {
@@ -242,23 +270,56 @@ document.addEventListener('DOMContentLoaded', function () {
         .catch(error => {
             console.error('Gagal memuat unit kerja:', error);
         });
-        // =========================== BAGIAN 3: Dropdown Periode ===========================
-        fetch('http://127.0.0.1:5000/api/periode-audits')
-            .then(response => response.json())
-            .then(result => {
-                const data = result.data.data;
-                const select = document.getElementById('periodeSelect');
 
-                data.forEach(unit => {
-                    const option = document.createElement('option');
-                    option.value = unit.periode_id;
-                    option.textContent = unit.nama_periode;
-                    select.appendChild(option);
-                });
-            })
-            .catch(error => {
-                console.error('Gagal memuat periode AMI:', error);
+    // =========================== BAGIAN 3: Dropdown Periode ===========================
+    fetch('http://127.0.0.1:5000/api/periode-audits')
+        .then(response => response.json())
+        .then(result => {
+            const data = result.data.data;
+            const select = document.getElementById('periodeSelect');
+
+            data.forEach(unit => {
+                const option = document.createElement('option');
+                option.value = unit.periode_id;
+                option.textContent = unit.nama_periode;
+                select.appendChild(option);
             });
+        })
+        .catch(error => {
+            console.error('Gagal memuat periode AMI:', error);
+        });
 });
+// Event listener untuk tombol hapus
+document.getElementById('instrumen-table-body').addEventListener('click', function (e) {
+    const deleteBtn = e.target.closest('.delete-btn');
+    if (deleteBtn) {
+        e.preventDefault();
+        const setInstrumenId = deleteBtn.getAttribute('data-id');
+
+        if (confirm('Apakah Anda yakin ingin menghapus instrumen ini?')) {
+            fetch(`http://127.0.0.1:5000/api/set-instrumen/${setInstrumenId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Gagal menghapus instrumen');
+                    }
+                    return response.json();
+                })
+                .then(result => {
+                    alert('Instrumen berhasil dihapus!');
+                    window.location.href = '/admin/data-instrumen/prodi';
+                })
+                .catch(error => {
+                    console.error('Gagal menghapus instrumen:', error);
+                    alert('Gagal menghapus instrumen. Silakan coba lagi.');
+                });
+        }
+    }
+});
+
 </script>
 @endsection

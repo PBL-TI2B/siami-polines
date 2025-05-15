@@ -15,6 +15,10 @@ class DataInstrumenController extends Controller
     {
         return view('admin.data-instrumen.tambah');
     }
+    public function storeprodi()
+    {
+        return view('admin.data-instrumen.tambahprodi');
+    }
     public function edit($sasaran_strategis_id)
     {
         return view('admin.data-instrumen.edit', compact('sasaran_strategis_id'));
