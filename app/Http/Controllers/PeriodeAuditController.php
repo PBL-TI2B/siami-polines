@@ -12,7 +12,6 @@ class PeriodeAuditController extends Controller
 
     public function __construct()
     {
-        // Sesuaikan dengan URL API Anda
         $this->apiBaseUrl = 'http://localhost:5000/api';
     }
 
