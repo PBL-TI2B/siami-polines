@@ -5,6 +5,22 @@
 
 @section('content')
     <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+        <!-- Toast Notification -->
+        @if (session('success'))
+            <x-toast id="toast-success" type="success" :message="session('success')" />
+        @endif
+
+        @if (session('error') || $errors->any())
+            <x-toast id="toast-danger" type="danger">
+                @if (session('error'))
+                    {{ session('error') }}<br>
+                @endif
+                @foreach ($errors->all() as $error)
+                    {{ $error }}<br>
+                @endforeach
+            </x-toast>
+        @endif
+
         <!-- Breadcrumb -->
         <x-breadcrumb :items="[
             ['label' => 'Dashboard', 'url' => route('admin.dashboard.index')],
@@ -81,9 +97,12 @@
                 </tr>
             @endforelse
         </x-table>
+    </div>
 
-        <!-- JavaScript for Select All Checkboxes -->
+    <!-- JavaScript untuk Select All Checkboxes dan Toast -->
+    @push('scripts')
         <script>
+            // Select All Checkboxes
             document.getElementById('select-all').addEventListener('change', function() {
                 document.querySelectorAll('.user-checkbox').forEach(checkbox => {
                     checkbox.checked = this.checked;
@@ -98,6 +117,25 @@
                     });
                 });
             });
+
+            // Otomatis tutup toast setelah 5 detik
+            document.addEventListener('DOMContentLoaded', function() {
+                const toasts = ['toast-success', 'toast-danger'];
+                toasts.forEach(toastId => {
+                    const toast = document.getElementById(toastId);
+                    if (toast) {
+                        toast.classList.remove('opacity-0');
+                        toast.classList.add('opacity-100');
+                        setTimeout(() => {
+                            toast.classList.remove('opacity-100');
+                            toast.classList.add('opacity-0');
+                            setTimeout(() => {
+                                toast.classList.add('hidden');
+                            }, 300);
+                        }, 5000);
+                    }
+                });
+            });
         </script>
-    </div>
+    @endpush
 @endsection

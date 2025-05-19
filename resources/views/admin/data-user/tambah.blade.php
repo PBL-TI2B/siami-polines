@@ -4,6 +4,22 @@
 
 @section('content')
     <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+        <!-- Toast Notification -->
+        @if (session('success'))
+            <x-toast id="toast-success" type="success" :message="session('success')" />
+        @endif
+
+        @if (session('error') || $errors->any())
+            <x-toast id="toast-danger" type="danger">
+                @if (session('error'))
+                    {{ session('error') }}<br>
+                @endif
+                @foreach ($errors->all() as $error)
+                    {{ $error }}<br>
+                @endforeach
+            </x-toast>
+        @endif
+
         <!-- Breadcrumb -->
         <x-breadcrumb :items="[
             ['label' => 'Dashboard', 'url' => route('admin.dashboard.index')],
@@ -15,18 +31,6 @@
         <h1 class="mb-6 text-3xl font-bold text-gray-900 dark:text-gray-200">
             Tambah User
         </h1>
-
-        <!-- Pesan Error atau Sukses -->
-        @if (session('error'))
-            <div class="mb-4 rounded-md bg-red-100 p-4 text-red-700">
-                {{ session('error') }}
-            </div>
-        @endif
-        @if (session('success'))
-            <div class="mb-4 rounded-md bg-green-100 p-4 text-green-700">
-                {{ session('success') }}
-            </div>
-        @endif
 
         <!-- Form -->
         <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
@@ -146,22 +150,44 @@
         </div>
     </div>
 
-    <!-- JavaScript untuk Toggle Password -->
-    <script>
-        document.getElementById('toggle-password').addEventListener('click', function () {
-            const passwordInput = document.getElementById('password');
-            const eyeOpen = document.getElementById('eye-open');
-            const eyeClosed = document.getElementById('eye-closed');
+    <!-- JavaScript untuk Toggle Password dan Toast -->
+    @push('scripts')
+        <script>
+            // Toggle Password
+            document.getElementById('toggle-password').addEventListener('click', function () {
+                const passwordInput = document.getElementById('password');
+                const eyeOpen = document.getElementById('eye-open');
+                const eyeClosed = document.getElementById('eye-closed');
 
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                eyeOpen.classList.remove('hidden');
-                eyeClosed.classList.add('hidden');
-            } else {
-                passwordInput.type = 'password';
-                eyeOpen.classList.add('hidden');
-                eyeClosed.classList.remove('hidden');
-            }
-        });
-    </script>
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    eyeOpen.classList.remove('hidden');
+                    eyeClosed.classList.add('hidden');
+                } else {
+                    passwordInput.type = 'password';
+                    eyeOpen.classList.add('hidden');
+                    eyeClosed.classList.remove('hidden');
+                }
+            });
+
+            // Otomatis tutup toast setelah 5 detik
+            document.addEventListener('DOMContentLoaded', function() {
+                const toasts = ['toast-success', 'toast-danger'];
+                toasts.forEach(toastId => {
+                    const toast = document.getElementById(toastId);
+                    if (toast) {
+                        toast.classList.remove('opacity-0');
+                        toast.classList.add('opacity-100');
+                        setTimeout(() => {
+                            toast.classList.remove('opacity-100');
+                            toast.classList.add('opacity-0');
+                            setTimeout(() => {
+                                toast.classList.add('hidden');
+                            }, 300);
+                        }, 5000);
+                    }
+                });
+            });
+        </script>
+    @endpush
 @endsection
