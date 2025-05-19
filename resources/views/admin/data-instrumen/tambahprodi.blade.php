@@ -23,11 +23,11 @@
                 <div class="grid grid-cols-1 gap-6">
                     <!-- Unit Kerja Dropdown -->
                     <div class="mb-6">
-                        <label for="unit_kerja" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Unit Kerja</label>
+                        <label for="unit_kerja" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Jenis Unit Kerja</label>
                         <select id="unit_kerja" name="unit_kerja_id" 
                             class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200" 
                             required>
-                            <option value="">Pilih Unit Kerja</option>
+                            <option value="">Pilih Jenis Unit Kerja</option>
                         </select>
                     </div>
 
@@ -106,14 +106,14 @@
         async function populateUnitKerjaSelect() {
             const selectElement = document.getElementById('unit_kerja');
             try {
-                const response = await fetch('http://127.0.0.1:5000/api/unit-kerja');
+                const response = await fetch('http://127.0.0.1:5000/api/jenis-units');
                 const result = await response.json();
                 const data = result.data;
-                selectElement.innerHTML = '<option value="">Pilih Unit Kerja</option>';
+                selectElement.innerHTML = '<option value="">Pilih Jenis Unit Kerja</option>';
                 data.forEach(unit => {
                     const option = document.createElement('option');
-                    option.value = unit.unit_kerja_id;
-                    option.textContent = unit.nama_unit_kerja;
+                    option.value = unit.jenis_unit_id;
+                    option.textContent = unit.nama_jenis_unit;
                     selectElement.appendChild(option);
                 });
             } catch (error) {
@@ -400,7 +400,7 @@
                 kriteria.deskripsi.forEach(deskripsi => {
                     deskripsi.unsur.forEach(unsur => {
                         payload.push({
-                            unit_kerja_id: unsur.unit_kerja_id,
+                            jenis_unit_id: unsur.unit_kerja_id,
                             aktivitas_id: null, // Secara eksplisit menyertakan aktivitas_id
                             unsur: {
                                 isi_unsur: unsur.isi_unsur,

@@ -27,7 +27,7 @@
             <!-- Filter Dropdowns -->
             <div class="flex flex-wrap gap-2">
                 <select id="unitKerjaSelect" class="w-40 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 text-sm rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500 focus:outline-none transition-all duration-200">
-                    <option selected disabled>Pilih Unit</option>
+                    <option selected disabled>Pilih Jenis Unit</option>
                 </select>
                 <select id="periodeSelect" class="w-40 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 text-sm rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500 focus:outline-none transition-all duration-200">
                     <option selected disabled>Pilih Periode AMI</option>
@@ -72,7 +72,7 @@
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Standar</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Deskripsi Area Audit-Sub Butir Standar</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Pemeriksaan Pada Unsur</th>
-                            <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Nama Unit Kerja</th>
+                            <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Jenis Unit Kerja</th>
                             {{-- <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Ketersediaan Standar dan Dokumen (Ada/Tidak)</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Pencapaian Standar SPT PT</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Pencapaian Standar SN DIKTI</th>
@@ -212,14 +212,14 @@ document.addEventListener('DOMContentLoaded', function () {
                                 unsurDisplayed = true;
                             }
 
-                            // Kolom Nama Unit Kerja (tampilkan untuk setiap baris)
-                            html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600">${item.unit_kerja.nama_unit_kerja}</td>`;
+                            // Kolom Jenis Unit Kerja (tampilkan untuk setiap baris)
+                            html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600">${item.jenisunit.nama_jenis_unit}</td>`;
 
                             // Kolom Aksi (tampilkan untuk setiap baris)
                             html += `
                                 <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">
                                     <div class="flex items-center gap-2 justify-center">
-                                        <a href="/admin/data-instrumen/${item.set_instrumen_unit_kerja_id}/edit" class="text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-200 transition-colors duration-200">
+                                        <a href="/admin/data-instrumen/prodi/${item.set_instrumen_unit_kerja_id}/edit" class="text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-200 transition-colors duration-200">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L16.732 3.732z"></path>
                                             </svg>
@@ -254,7 +254,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
     // =========================== BAGIAN 2: Dropdown Unit Kerja ===========================
-    fetch('http://127.0.0.1:5000/api/unit-kerja')
+    fetch('http://127.0.0.1:5000/api/jenis-units')
         .then(response => response.json())
         .then(result => {
             const data = result.data;
@@ -262,8 +262,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             data.forEach(unit => {
                 const option = document.createElement('option');
-                option.value = unit.unit_kerja_id;
-                option.textContent = unit.nama_unit_kerja;
+                option.value = unit.jenis_unit_id;
+                option.textContent = unit.nama_jenis_unit;
                 select.appendChild(option);
             });
         })
