@@ -3,147 +3,131 @@
 @section('title', 'Edit Jadwal Audit')
 
 @section('content')
-    <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-        <!-- Breadcrumb -->
-        <x-breadcrumb :items="[
-            ['label' => 'Dashboard', 'url' => route('admin.dashboard.index')],
-            ['label' => 'Jadwal Audit', 'url' => route('admin.ploting-ami.index')],
-            ['label' => 'Edit Jadwal Audit', 'url' => route('ploting-ami.edit', $audit->auditing_id)],
-        ]" />
+<div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+    <x-breadcrumb :items="[
+        ['label' => 'Dashboard', 'url' => route('admin.dashboard.index')],
+        ['label' => 'Jadwal Audit', 'url' => route('admin.ploting-ami.index')],
+        ['label' => 'Edit Jadwal Audit', 'url' => route('admin.ploting-ami.edit', $audit->auditing_id)],
+    ]" />
 
-        <!-- Heading -->
-        <h1 class="mb-8 text-3xl font-bold text-gray-900 dark:text-gray-200">
-            Edit Jadwal Audit
-        </h1>
+    <h1 class="mb-8 text-3xl font-bold text-gray-900 dark:text-gray-200">
+        Edit Jadwal Audit
+    </h1>
 
-        <form id="editJadwalForm" action="{{ route('admin.ploting-ami.update', $audit->auditing_id) }}" method="POST"
-            class="space-y-6 rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
-            @csrf
-            @method('PUT')
-
-            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <!-- Unit Kerja -->
-                <div>
-                    <label for="unit_kerja" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Unit
-                        Kerja</label>
-                    <select id="unit_kerja" name="unit_kerja_id"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:text-white">
-                        <option value="">Pilih Unit Kerja</option>
-                    </select>
-                </div>
-
-                <!-- Waktu Audit -->
-                <div>
-                    <label for="waktu_audit" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Waktu
-                        Audit</label>
-                    <input type="date" id="waktu_audit" name="waktu_audit"
-                        value="{{ $audit->periode->tanggal_mulai ?? '' }}"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:text-white">
-                </div>
-
-                <!-- Auditee 1 -->
-                <div>
-                    <label for="auditee_1" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Auditee
-                        1</label>
-                    <select id="auditee_1" name="user_id_1_auditee"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:text-white">
-                        <option value="">Pilih Auditee 1</option>
-                    </select>
-                </div>
-
-                <!-- Auditor 1 -->
-                <div>
-                    <label for="auditor_1" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Auditor
-                        1</label>
-                    <select id="auditor_1" name="user_id_1_auditor"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:text-white">
-                        <option value="">Pilih Auditor 1</option>
-                    </select>
-                </div>
-
-                <!-- Auditee 2 -->
-                <div>
-                    <label for="auditee_2" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Auditee
-                        2</label>
-                    <select id="auditee_2" name="user_id_2_auditee"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:text-white">
-                        <option value="">Pilih Auditee 2</option>
-                    </select>
-                </div>
-
-                <!-- Auditor 2 -->
-                <div>
-                    <label for="auditor_2" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Auditor
-                        2</label>
-                    <select id="auditor_2" name="user_id_2_auditor"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:text-white">
-                        <option value="">Pilih Auditor 2</option>
-                    </select>
-                </div>
+    <form id="editJadwalForm" class="space-y-6 rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
+        @csrf
+        @method('PUT')
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <!-- Unit Kerja -->
+            <div>
+                <label for="unit_kerja_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Unit Kerja</label>
+                <select id="unit_kerja_id" name="unit_kerja_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:text-white">
+                </select>
             </div>
-
-            <!-- Tombol -->
-            <div class="flex justify-end space-x-3">
-                <a href="{{ route('admin.ploting-ami.index') }}"
-                    class="rounded-md bg-gray-200 px-4 py-2 text-gray-800 shadow hover:bg-gray-300 dark:bg-gray-600 dark:text-white">Batal</a>
-                <button type="submit"
-                    class="rounded-md bg-sky-800 px-4 py-2 text-white shadow hover:bg-sky-700">Simpan</button>
+            <!-- Waktu Audit -->
+            <div>
+                <label for="waktu_audit" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Waktu Audit</label>
+                <input type="date" id="waktu_audit" name="waktu_audit" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:text-white">
             </div>
-        </form>
-    </div>
-@endsection
+            <!-- Auditee 1 -->
+            <div>
+                <label for="user_id_1_auditee" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Auditee 1</label>
+                <select id="user_id_1_auditee" name="user_id_1_auditee" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:text-white">
+                </select>
+            </div>
+            <!-- Auditor 1 -->
+            <div>
+                <label for="user_id_1_auditor" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Auditor 1</label>
+                <select id="user_id_1_auditor" name="user_id_1_auditor" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:text-white">
+                </select>
+            </div>
+            <!-- Auditee 2 -->
+            <div>
+                <label for="user_id_2_auditee" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Auditee 2</label>
+                <select id="user_id_2_auditee" name="user_id_2_auditee" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:text-white">
+                </select>
+            </div>
+            <!-- Auditor 2 -->
+            <div>
+                <label for="user_id_2_auditor" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Auditor 2</label>
+                <select id="user_id_2_auditor" name="user_id_2_auditor" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:text-white">
+                </select>
+            </div>
+        </div>
+        <div class="flex justify-start space-x-3">
+            <a href="{{ route('admin.ploting-ami.index') }}" class="rounded-md bg-gray-200 px-4 py-2 text-gray-800 shadow hover:bg-gray-300 dark:bg-gray-600 dark:text-white">Batal</a>
+            <button type="submit" class="rounded-md bg-sky-800 px-4 py-2 text-white shadow hover:bg-sky-700">Simpan</button>
+        </div>
+    </form>
+</div>
 
-@push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const auditId = "{{ $audit->auditing_id }}";
+<script>
+document.addEventListener('DOMContentLoaded', async function() {
+    const auditId = "{{ $audit->auditing_id }}";
+    // Ambil data audit yang akan diedit
+    const auditRes = await fetch(`http://127.0.0.1:5000/api/auditings/${auditId}`).then(r => r.json());
+    const audit = auditRes.data;
 
-            // Fetch existing data for the form
-            fetch(`/api/penjadwalan/${auditId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.data) {
-                        document.getElementById('unit_kerja').value = data.data.unit_kerja.nama_unit_kerja;
-                        document.getElementById('waktu_audit').value = data.data.jadwal_audit;
-                        document.getElementById('auditee_1').value = data.data.auditee_1.nama;
-                        document.getElementById('auditee_2').value = data.data.auditee_2.nama;
-                        document.getElementById('auditor_1').value = data.data.auditor_1.nama;
-                        document.getElementById('auditor_2').value = data.data.auditor_2.nama;
-                    }
+    // Isi Unit Kerja
+    fetch('http://127.0.0.1:5000/api/unit-kerja')
+        .then(res => res.json())
+        .then(data => {
+            const select = document.getElementById('unit_kerja_id');
+            data.data.forEach(item => {
+                select.innerHTML += `<option value="${item.unit_kerja_id}">${item.nama_unit_kerja}</option>`;
+            });
+            select.value = audit.unit_kerja_id;
+        });
+
+    // Isi Users
+    fetch('http://127.0.0.1:5000/api/data-user')
+        .then(res => res.json())
+        .then(data => {
+            const auditees = data.data.filter(u => u.role_id == 3);
+            const auditors = data.data.filter(u => u.role_id == 2);
+
+            ['user_id_1_auditee', 'user_id_2_auditee'].forEach((id, idx) => {
+                const select = document.getElementById(id);
+                auditees.forEach(user => {
+                    select.innerHTML += `<option value="${user.user_id}">${user.nama}</option>`;
                 });
-
-            // Submit form
-            document.getElementById('editJadwalForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-
-                const formData = {
-                    auditor_1: document.getElementById('auditor_1').value,
-                    auditor_2: document.getElementById('auditor_2').value,
-                    auditee_1: document.getElementById('auditee_1').value,
-                    auditee_2: document.getElementById('auditee_2').value,
-                    unit_kerja: document.getElementById('unit_kerja').value,
-                    jadwal_audit: document.getElementById('waktu_audit').value,
-                };
-
-                fetch(`/api/penjadwalan/${auditId}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify(formData)
-                    })
-                    .then(response => {
-                        if (!response.ok) throw new Error('Gagal memperbarui data jadwal audit');
-                        return response.json();
-                    })
-                    .then(data => {
-                        alert('Jadwal audit berhasil diperbarui!');
-                    })
-                    .catch(error => {
-                        alert('Terjadi kesalahan: ' + error.message);
-                    });
+                // Set value sesuai data lama
+                select.value = idx === 0 ? audit.user_id_1_auditee : audit.user_id_2_auditee;
+            });
+            ['user_id_1_auditor', 'user_id_2_auditor'].forEach((id, idx) => {
+                const select = document.getElementById(id);
+                auditors.forEach(user => {
+                    select.innerHTML += `<option value="${user.user_id}">${user.nama}</option>`;
+                });
+                // Set value sesuai data lama
+                select.value = idx === 0 ? audit.user_id_1_auditor : audit.user_id_2_auditor;
             });
         });
-    </script>
-@endpush
+
+    // Isi tanggal audit
+    document.getElementById('waktu_audit').value = audit.waktu_audit ? audit.waktu_audit.substring(0,10) : '';
+
+    // Handle submit
+    document.getElementById('editJadwalForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        formData.delete('_token');
+        formData.delete('_method');
+        fetch(`http://127.0.0.1:5000/api/auditings/${auditId}`, {
+            method: 'PUT',
+            body: formData
+        })
+        .then(res => res.json().then(data => ({status: res.status, body: data})))
+        .then(({status, body}) => {
+            if (status === 200 || status === 201) {
+                alert('Data berhasil diperbarui!');
+                window.location.href = "{{ route('admin.ploting-ami.index') }}";
+            } else {
+                alert('Gagal memperbarui data!\n' + (body.message || JSON.stringify(body)));
+            }
+        })
+        .catch(err => alert('Gagal memperbarui data!'));
+    });
+});
+</script>
+@endsection

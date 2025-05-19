@@ -8,6 +8,7 @@ use App\Models\UnitKerja;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Http;
 use Maatwebsite\Excel\Facades\Excel;
 
 
@@ -15,6 +16,8 @@ class PlotingAMIController extends Controller
 {
     public function index(Request $request)
     {
+        $response = Http::get('http://127.0.0.1:5000/api/auditings');
+        $auditings = $response->json()['data'] ?? [];
         // Ambil jumlah entri dari query string, default ke 10
         $entries = $request->get('per_page', 10);
 
@@ -65,7 +68,12 @@ class PlotingAMIController extends Controller
 
     public function create()
 {
-    return view('admin.ploting-ami.create');
+    $unitKerja = UnitKerja::all();
+    $periodeAudit = PeriodeAudit::all();
+    $auditors = User::where('role_id', 2)->get(); 
+    $auditees = User::where('role_id', 3)->get();   
+
+    return view('admin.ploting-ami.create', compact('unitKerja', 'periodeAudit', 'auditors', 'auditees'));
 }
 
 public function makeJadwalAudit(Request $request)
@@ -84,16 +92,6 @@ public function makeJadwalAudit(Request $request)
             'errors' => $validator->errors()
         ], 422);
     }
-
-    $audit = Auditing::create([
-        'user_id_1_auditor' => $request->user_id_1_auditor,
-        'user_id_2_auditor' => $request->user_id_2_auditor,
-        'user_id_1_auditee' => $request->user_id_1_auditee,
-        'user_id_2_auditee' => $request->user_id_2_auditee,
-        'unit_kerja_id' => $request->unit_kerja_id,
-        'periode_id' => $request->periode_id,
-        'status' => 'Menunggu',
-    ]);
 
     return response()->json([
         'message' => 'Data berhasil disimpan!',

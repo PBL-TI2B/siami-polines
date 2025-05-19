@@ -52,7 +52,6 @@ Route::prefix('admin')->middleware('auth.ami:admin')->group(function () {
         Route::get('/create', [PlotingAMIController::class, 'create'])->name('admin.ploting-ami.create'); // Route untuk halaman form
         Route::post('/store', [PlotingAMIController::class, 'makeJadwalAudit'])->name('admin.ploting-ami.store'); // Route untuk menyimpan data
         Route::delete('/{id}', [PlotingAMIController::class, 'destroy'])->name('admin.ploting-ami.destroy');
-        Route::post('/reset', [PlotingAMIController::class, 'reset'])->name('admin.ploting-ami.reset');
         Route::get('/download', [PlotingAMIController::class, 'download'])->name('admin.ploting-ami.download');
         Route::get('/{id}/edit', [PlotingAMIController::class, 'edit'])->name('admin.ploting-ami.edit');
         Route::put('/{id}', [PlotingAMIController::class, 'update'])->name('admin.ploting-ami.update');

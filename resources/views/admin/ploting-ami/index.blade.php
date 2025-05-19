@@ -32,26 +32,13 @@
                 Unduh Data
             </a>
 
-            <!-- Tombol Reset Semua Jadwal -->
-            <button type="button"
-                class="inline-flex items-center rounded bg-red-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-red-700"
-                data-modal-target="reset-jadwal-modal" data-modal-toggle="reset-jadwal-modal">
-                <svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M4 4v6h6M20 20v-6h-6M4 14a8 8 0 0114-6.32M20 10a8 8 0 01-14 6.32" />
-                </svg>
-                Reset Semua Ploting
-            </button>
-
-            <!-- Modal Reset Semua Jadwal -->
-            <x-reset-jadwal-modal id="reset-jadwal-modal" :action="route('admin.ploting-ami.reset')"
-                warningMessage="Reset ini akan menghapus seluruh data jadwal audit yang telah dibuat." />
-
-
             <div class="ml-auto">
                 <select id="periodeFilter"
                     class="appearance-none rounded-md border border-gray-300 px-4 py-2 pr-10 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">Pilih Periode AMI</option>
+                    <option value="">Periode 2023</option>
+                    <option value="">Periode 2024</option>
+                    <option value="">Periode 2025</option>
                 </select>
             </div>
         </div>
