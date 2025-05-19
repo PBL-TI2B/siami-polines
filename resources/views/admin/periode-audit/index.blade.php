@@ -139,20 +139,6 @@
     @push('scripts')
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                // Inisialisasi Toast
-                const toasts = ['toast-success', 'toast-danger'];
-                toasts.forEach(toastId => {
-                    const toast = document.getElementById(toastId);
-                    if (toast) {
-                        toast.classList.remove('opacity-0');
-                        toast.classList.add('opacity-100');
-                        setTimeout(() => {
-                            toast.classList.remove('opacity-100');
-                            toast.classList.add('opacity-0');
-                            setTimeout(() => toast.classList.add('hidden'), 300);
-                        }, 5000);
-                    }
-                });
 
                 // Validasi Form Tambah Periode
                 const form = document.getElementById('periode-audit-form');
