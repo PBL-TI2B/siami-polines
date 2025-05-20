@@ -9,14 +9,14 @@
     <!-- Flash Message Container -->
     <div id="flashMessage" class="hidden fixed top-4 right-4 z-50 p-4 rounded-md shadow-lg"></div>
 
-    <form id="tilikForm" method="POST">
+    <form id="tilikForm" method="POST" action="{{ route('auditor.daftar-tilik.index', $id) }}">
         @csrf
         @method('PUT')
 
         <!-- Dropdown Kriteria -->
         <div class="mb-4">
             <label for="kriteria" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Kriteria</label>
-            <select name="kriteria_id" id="kriteria"
+            <select name="kriteria" id="kriteria"
                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm dark:bg-gray-700 dark:text-white dark:border-gray-600">
                 <option value="" disabled selected class="text-gray-400">Pilih Kriteria</option>
             </select>
@@ -72,99 +72,83 @@
     <div id="responseMessage" class="mt-4 hidden text-sm"></div>
 </div>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const select = document.getElementById('kriteria');
-        const form = document.getElementById('tilikForm');
-        const flashMessage = document.getElementById('flashMessage');
-        const responseMessage = document.getElementById('responseMessage');
+document.addEventListener('DOMContentLoaded', function () {
+    const select = document.getElementById('kriteria');
 
-        // Kriteria mapping
-        const kriteriaList = [
-            { id: 1, nama: "Visi, Misi, Tujuan, Strategi" },
-            { id: 2, nama: "Tata Kelola, Tata Pamong, dan Kerjasama" },
-            { id: 3, nama: "Kurikulum dan Pembelajaran" },
-            { id: 4, nama: "Penelitian" },
-            { id: 5, nama: "Luaran Tridharma" }
-        ];
+    const kriteriaList = [
+        { id: 1, nama: "1. Visi,  Misi, Tujuan, Strategi" },
+        { id: 2, nama: "2. Tata Kelola, Tata Pamong, dan Kerjasama" },
+        { id: 3, nama: "3. Kurikulum dan Pembelajaran" },
+        { id: 4, nama: "4. Penelitian" },
+        { id: 5, nama: "5. Luaran Tridharma" }
+    ];
 
-        // Populate select options
-        kriteriaList.forEach(k => {
-            const option = document.createElement('option');
-            option.value = k.id;
-            option.textContent = k.nama;
-            select.appendChild(option);
-        });
-
-        // Fetch existing data
-        fetch('http://127.0.0.1:5000/api/tilik/{{ $id }}')
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    const tilik = data.data;
-                    document.getElementById('kriteria').value = tilik.kriteria_id || '';
-                    document.getElementById('pertanyaan').value = tilik.pertanyaan || '';
-                    document.getElementById('indikator').value = tilik.indikator || '';
-                    document.getElementById('sumber_data').value = tilik.sumber_data || '';
-                    document.getElementById('metode_perhitungan').value = tilik.metode_perhitungan || '';
-                    document.getElementById('target').value = tilik.target || '';
-                } else {
-                    showFlashMessage('bg-red-500', 'text-white', data.message || 'Gagal memuat data.');
-                }
-            })
-            .catch(error => {
-                showFlashMessage('bg-red-500', 'text-white', 'Error fetching data: ' + error.message);
-            });
-
-        // Handle form submission
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            const formData = {
-                tilik_id: {{ $id }},
-                kriteria_id: parseInt(document.getElementById('kriteria').value),
-                pertanyaan: document.getElementById('pertanyaan').value,
-                indikator: document.getElementById('indikator').value,
-                sumber_data: document.getElementById('sumber_data').value,
-                metode_perhitungan: document.getElementById('metode_perhitungan').value,
-                target: document.getElementById('target').value
-            };
-
-            fetch('http://127.0.0.1:5000/api/tilik/{{ $id }}', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
-                },
-                body: JSON.stringify(formData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showFlashMessage('bg-green-500', 'text-white', 'Data berhasil disimpan!');
-                    responseMessage.classList.remove('hidden');
-                    responseMessage.classList.add('text-green-600');
-                    responseMessage.textContent = 'Data berhasil disimpan!';
-                    setTimeout(() => {
-                        window.location.href = '{{ route("auditor.daftar-tilik.index") }}';
-                    }, 2000);
-                } else {
-                    showFlashMessage('bg-red-500', 'text-white', data.message || 'Gagal menyimpan data.');
-                }
-            })
-            .catch(error => {
-                showFlashMessage('bg-red-500', 'text-white', 'Error: ' + error.message);
-            });
-        });
-
-        function showFlashMessage(bgClass, textClass, message) {
-            flashMessage.classList.remove('hidden');
-            flashMessage.classList.add(bgClass, textClass);
-            flashMessage.textContent = message;
-            setTimeout(() => {
-                flashMessage.classList.add('hidden');
-                flashMessage.classList.remove(bgClass, textClass);
-            }, 3000);
-        }
+    kriteriaList.forEach(k => {
+        const option = document.createElement('option');
+        option.value = k.id;
+        option.textContent = k.nama;
+        select.appendChild(option);
     });
+
+    fetch('http://127.0.0.1:5000/api/tilik/{{ $id }}')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const tilik = data.data;
+                document.getElementById('kriteria').value = tilik.kriteria_id || '';
+                document.getElementById('pertanyaan').value = tilik.pertanyaan || '';
+                document.getElementById('indikator').value = tilik.indikator || '';
+                document.getElementById('sumber_data').value = tilik.sumber_data || '';
+                document.getElementById('metode_perhitungan').value = tilik.metode_perhitungan || '';
+                document.getElementById('target').value = tilik.target || '';
+            } else {
+                showError(data.message || 'Gagal memuat data.');
+            }
+        })
+        .catch(error => {
+            showError('Error fetching data: ' + error.message);
+        });
+
+    function showError(message) {
+        const flash = document.getElementById('flashMessage');
+        flash.classList.remove('hidden');
+        flash.classList.add('bg-red-500', 'text-white');
+        flash.textContent = message;
+    }
+
+    // Kirim PUT saat form disubmit
+    document.getElementById('tilikForm').addEventListener('submit', function (e) {
+        e.preventDefault(); // Stop form default
+
+        const payload = {
+            kriteria_id: parseInt(document.getElementById('kriteria').value),
+            pertanyaan: document.getElementById('pertanyaan').value,
+            indikator: document.getElementById('indikator').value,
+            sumber_data: document.getElementById('sumber_data').value,
+            metode_perhitungan: document.getElementById('metode_perhitungan').value,
+            target: document.getElementById('target').value
+        };
+
+        fetch('http://127.0.0.1:5000/api/tilik/{{ $id }}', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert('Data berhasil diperbarui!');
+                window.location.href = "{{ route('auditor.daftar-tilik.index') }}";
+            } else {
+                alert('Gagal update: ' + data.message);
+            }
+        })
+        .catch(error => {
+            alert('Terjadi kesalahan: ' + error.message);
+        });
+    });
+});
 </script>
 @endsection
