@@ -26,13 +26,13 @@
                         <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-200 mb-4">Sasaran</h2>
                         
                         <div id="sasaran-container">
-                            <div class="sasaran-item mb-6 p-4 border border-gray-200 rounded-lg">
+                            <div class="sasaran-item mb-3 p-4 border border-gray-200 rounded-lg">
                                 <x-form-input id="nama_sasaran" name="sasaran[0][nama_sasaran]" 
                                     label="Nama Sasaran" placeholder="Masukkan nama sasaran" 
                                     :required="true" maxlength="255" />
                                 
                                 <!-- Indikator Kinerja Section -->
-                                <div class="indikator-container mt-4 pl-4 border-l-2 border-gray-200">
+                                <div class="indikator-container mt-4 pl-4  border-gray-200">
                                     <h3 class="text-lg font-medium text-gray-900 dark:text-gray-200 mb-3">Indikator Kinerja</h3>
                                     
                                     <div class="indikator-item mb-4 p-3 border border-gray-200 rounded-lg">
@@ -41,7 +41,7 @@
                                             :required="true" maxlength="255" />
                                         
                                         <!-- Aktivitas Section -->
-                                        <div class="aktivitas-container mt-3 pl-4 border-l-2 border-gray-200">
+                                        <div class="aktivitas-container mt-3 pl-4 border-gray-200">
                                             <h4 class="text-md font-medium text-gray-900 dark:text-gray-200 mb-2">Aktivitas</h4>
                                             
                                             <div class="aktivitas-item mb-3 p-2 border border-gray-200 rounded-lg">
@@ -62,25 +62,24 @@
                                             </div>
                                         </div>
                                         
-                                        <button type="button" class="mt-2 bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-medium py-1 px-3 rounded add-aktivitas">
+                                        <button type="button" class="mt-2 bg-blue-100 hover:bg-blue-200 text-blue-800 text-sm font-medium py-1 px-3 rounded">
                                             Tambah Aktivitas
                                         </button>
                                     </div>
                                 </div>
-                                
-                                <button type="button" class="mt-2 bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-medium py-1 px-3 rounded add-indikator">
+                                <button type="button" class=" bg-blue-100 hover:bg-blue-200 text-blue-800 text-sm font-medium py-1 px-3 rounded">
                                     Tambah Indikator Kinerja
                                 </button>
                             </div>
                         </div>
                         
-                        <button type="button" id="add-sasaran" class="mt-2 bg-blue-100 hover:bg-blue-200 text-blue-800 text-sm font-medium py-1 px-3 rounded">
+                        <button type="button" id="add-sasaran" class=" bg-blue-100 hover:bg-blue-200 text-blue-800 text-sm font-medium py-1 px-3 rounded">
                             Tambah Sasaran
                         </button>
                     </div>
                 </div>
                 
-                <div class="mt-6 flex gap-3">
+                <div class="mt-6 flex gap-3 justify-end">
                     <x-button type="submit" color="sky" icon="heroicon-o-plus">
                         Simpan
                     </x-button>
