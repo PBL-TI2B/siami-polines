@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Daftar Titik')
+@section('title', 'Daftar Tilik')
 
 @section('content')
     <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
@@ -11,650 +11,214 @@
         ]" />
 
         <!-- Heading -->
-        <h1 class="mb-8 text-3xl font-bold text-gray-900 dark:text-gray-200">
+        <h1 class="mb-4 text-3xl font-bold text-gray-900 dark:text-gray-200">
             Daftar Tilik
         </h1>
 
-        <!-- Action Buttons -->
-        <div class="mb-4 flex flex-wrap gap-2">
-            <button onclick="openModal('add')"
-                class="rounded bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800">
-                ➕ Tambah Pertanyaan
-            </button>
-            <button onclick="openModal('edit')"
-                class="rounded bg-yellow-500 px-4 py-2 font-semibold text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700">
-                📝 Edit Pertanyaan
-            </button>
-            <button onclick="downloadData()"
-                class="rounded bg-blue-500 px-4 py-2 font-semibold text-white hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700">
-                ⬇️ Unduh Data
-            </button>
-            <button onclick="importData()"
-                class="rounded bg-yellow-500 px-4 py-2 font-semibold text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700">
-                ⬆️ Import Data
-            </button>
+        <div class="mb-6 flex gap-2">
+            <x-button href="{{ route('admin.daftar-tilik.create') }}" color="sky" icon="heroicon-o-plus">
+                Tambah Pertanyaan
+            </x-button>
         </div>
 
-        <!-- Filter & Search -->
-        <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
-            <div class="flex gap-2">
-                <select
-                    class="rounded border border-gray-300 px-2 py-1 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
-                    <option>Pilih Unit</option>
-                </select>
-                <select
-                    class="rounded border border-gray-300 px-2 py-1 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
-                    <option>Pilih Periode Ami</option>
-                </select>
-            </div>
-            <input type="text" placeholder="Search"
-                class="w-64 rounded border border-gray-300 px-3 py-1 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200" />
-        </div>
-
-        <!-- Kriteria Container -->
-        <div id="kriteria-container"
-            class="rounded border border-blue-500 bg-white p-4 shadow dark:border-gray-600 dark:bg-gray-800">
-            <!-- Konten akan dimuat via JavaScript -->
-        </div>
-
-        <!-- Pagination -->
-        <div class="mt-4 flex justify-end gap-2">
-            <button onclick="showPrevious()"
-                class="rounded bg-yellow-500 px-3 py-1 font-semibold text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700">
-                Previous
-            </button>
-            <button onclick="showNext()"
-                class="rounded bg-blue-600 px-3 py-1 font-semibold text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800">
-                Next
-            </button>
-        </div>
-
-        <!-- Modal -->
-        <div id="modal" class="fixed inset-0 z-50 flex hidden items-center justify-center bg-black bg-opacity-50">
-            <div class="w-full max-w-2xl rounded-lg bg-white p-6 dark:bg-gray-800">
-                <h3 class="mb-4 text-xl font-bold dark:text-white" id="modalTitle"></h3>
-                <div class="grid grid-cols-2 gap-4 text-sm text-gray-700 dark:text-gray-100">
-                    <input id="field0" class="rounded border p-2 dark:bg-gray-700" placeholder="Daftar Pertanyaan" />
-                    <input id="field1" class="rounded border p-2 dark:bg-gray-700"
-                        placeholder="Indikator Kinerja Renstra & LKPS" />
-                    <input id="field2" class="rounded border p-2 dark:bg-gray-700" placeholder="Sumber Bukti/Bukti" />
-                    <input id="field3" class="rounded border p-2 dark:bg-gray-700" placeholder="Metode Perhitungan" />
-                    <input id="field4" class="rounded border p-2 dark:bg-gray-700" placeholder="Target" />
-                    <input id="field5" class="rounded border p-2 dark:bg-gray-700" placeholder="Realisasi" />
-                    <input id="field6" class="rounded border p-2 dark:bg-gray-700"
-                        placeholder="Standar Nasional / POLINES" />
-                    <input id="field7" class="rounded border p-2 dark:bg-gray-700" placeholder="Uraian Isian" />
-                    <input id="field8" class="rounded border p-2 dark:bg-gray-700" placeholder="Akar Penyebab" />
-                    <input id="field9" class="rounded border p-2 dark:bg-gray-700" placeholder="Akar Penunjang" />
-                    <input id="field10" class="rounded border p-2 dark:bg-gray-700"
-                        placeholder="Rencana Perbaikan & Tindak Lanjut '25" />
+        <!-- Table and Pagination -->
+        <div class="rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
+            <!-- Table Controls -->
+            <div
+                class="flex flex-col items-center justify-between gap-4 rounded-t-2xl border-b border-gray-200 bg-white p-4 sm:flex-row dark:border-gray-700 dark:bg-gray-800">
+                <div class="flex items-center gap-2">
+                    <span class="text-sm text-gray-700 dark:text-gray-300">Tampilkan</span>
+                    <form action="#" method="GET">
+                        <select name="per_page"
+                            class="w-18 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 transition-all duration-200 focus:border-sky-500 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                            onchange="this.form.submit()">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select>
+                    </form>
+                    <span class="text-sm text-gray-700 dark:text-gray-300">entri</span>
                 </div>
-                <div class="mt-4 flex justify-end gap-2">
-                    <button onclick="closeModal()"
-                        class="rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600">Tutup</button>
-                    <button onclick="saveQuestion()" id="saveButton"
-                        class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Simpan</button>
+                <div class="relative w-full sm:w-auto">
+                    <form action="#" method="GET">
+                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                            <svg class="h-4 w-4 text-gray-500 dark:text-gray-400" xmlns="http://www.w3.org/2000/svg"
+                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                        <input type="search" name="search" placeholder="Cari" value=""
+                            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 transition-all duration-200 focus:border-sky-500 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                    </form>
                 </div>
             </div>
-        </div>
-        <script>
-            let editingRowIndex = null;
 
-            function openModal(mode) {
-                document.getElementById('modal').classList.remove('hidden');
-                document.getElementById('modalTitle').innerText = mode === 'add' ? 'Tambah Pertanyaan' : 'Edit Pertanyaan';
-                document.getElementById('saveButton').innerText = mode === 'add' ? 'Tambah' : 'Update';
-                editingRowIndex = mode === 'edit' ? getSelectedRowIndex() : null;
-
-                // Kosongkan form atau isi data jika mode edit
-                for (let i = 0; i <= 10; i++) {
-                    document.getElementById('field' + i).value = editingRowIndex !== null ?
-                        document.querySelector(`#tableBody tr:nth-child(${editingRowIndex + 1}) td:nth-child(${i + 2})`)
-                        .innerText : '';
-                }
-            }
-
-            function closeModal() {
-                document.getElementById('modal').classList.add('hidden');
-            }
-
-            function saveQuestion() {
-                const values = [];
-                for (let i = 0; i <= 10; i++) {
-                    values.push(document.getElementById('field' + i).value);
-                }
-
-                if (editingRowIndex !== null) {
-                    const row = document.querySelector(`#tableBody tr:nth-child(${editingRowIndex + 1})`);
-                    values.forEach((val, i) => row.children[i + 1].innerText = val);
-                } else {
-                    const tableBody = document.getElementById('tableBody');
-                    const row = document.createElement('tr');
-                    row.innerHTML = `<td class="border px-2 py-1">${tableBody.children.length + 1}</td>` +
-                        values.map(val => `<td class="border px-2 py-1">${val}</td>`).join('');
-                    tableBody.appendChild(row);
-                }
-
-                closeModal();
-            }
-
-            function getSelectedRowIndex() {
-                const rows = document.querySelectorAll('#tableBody tr');
-                if (rows.length === 0) {
-                    alert('Tidak ada data untuk diedit!');
-                    return null;
-                }
-                return rows.length - 1; // Default: edit baris terakhir (bisa dimodifikasi untuk pilihan spesifik)
-            }
-
-            function downloadData() {
-                let csv =
-                    'No,Daftar Pertanyaan,Indikator Kinerja, Sumber Bukti,Metode Perhitungan,Target,Realisasi,Standar Nasional,Uraian Isian,Akar Penyebab,Akar Penunjang,Rencana Perbaikan\n';
-                document.querySelectorAll('#tableBody tr').forEach(row => {
-                    const cols = Array.from(row.children).map(cell => `"${cell.innerText}"`);
-                    csv += cols.join(',') + '\n';
-                });
-
-                const blob = new Blob([csv], {
-                    type: 'text/csv'
-                });
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = 'data_checklist.csv';
-                link.click();
-                URL.revokeObjectURL(url);
-            }
-
-            function importData() {
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = '.csv';
-                input.onchange = e => {
-                    const file = e.target.files[0];
-                    const reader = new FileReader();
-                    reader.onload = () => {
-                        const lines = reader.result.split('\n').slice(1);
-                        lines.forEach(line => {
-                            const cols = line.split(',').map(cell => cell.replace(/"/g, '').trim());
-                            if (cols.length >= 11) {
-                                const row = document.createElement('tr');
-                                row.innerHTML =
-                                    `<td class="border px-2 py-1">${document.getElementById('tableBody').children.length + 1}</td>` +
-                                    cols.slice(0, 11).map(c => `<td class="border px-2 py-1">${c}</td>`).join(
-                                        '');
-                                document.getElementById('tableBody').appendChild(row);
-                            }
-                        });
-                    };
-                    reader.readAsText(file);
-                };
-                input.click();
-            }
-
-            function showPrevious() {
-                alert("Pagination sebelumnya (belum diimplementasi backend)");
-            }
-
-            function showNext() {
-                alert("Pagination berikutnya (belum diimplementasi backend)");
-            }
-        </script>
-
-
-        <script>
-            let currentKriteria = 1;
-
-            const kriteriaData = {
-                1: `
-            <p class="font-semibold text-gray-700 mb-3 dark:text-gray-300">
-                Kriteria : 1. Visi, Misi, Tujuan, Strategi
-            </p>
-            <div class="overflow-auto">
-                <table class="w-full table-auto text-sm border-collapse border border-gray-300 dark:border-gray-600">
-                    <thead class="bg-gray-100 dark:bg-gray-700">
+            <!-- Table -->
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-left text-sm text-gray-500 dark:text-gray-400">
+                    <thead
+                        class="border-b border-t border-gray-200 bg-gray-50 text-xs uppercase text-gray-700 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
                         <tr>
-                            <th class="border border-gray-300 px-2 py-2 text-center dark:border-gray-600 dark:text-gray-200">No</th>
-                            <th class="border border-gray-300 px-2 py-2 dark:border-gray-600 dark:text-gray-200">Daftar Pertanyaan</th>
-                            <th class="border border-gray-300 px-2 py-2 text-center dark:border-gray-600 dark:text-gray-200">Indikator Kinerja<br>Renstra & LKPS</th>
-                            <th class="border border-gray-300 px-2 py-2 dark:border-gray-600 dark:text-gray-200">Sumber Bukti/Bukti</th>
-                            <th class="border border-gray-300 px-2 py-2 dark:border-gray-600 dark:text-gray-200">Metode Perhitungan</th>
-                            <th class="border border-gray-300 px-2 py-2 text-center dark:border-gray-600 dark:text-gray-200">Target</th>
-                            <th class="border border-gray-300 px-2 py-2 text-center dark:border-gray-600 dark:text-gray-200">Realisasi</th>
-                            <th class="border border-gray-300 px-2 py-2 text-center dark:border-gray-600 dark:text-gray-200">Standar Nasional</th>
+                            <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">No
+                            </th>
+                            <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">
+                                Kriteria</th>
+                            <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">
+                                Daftar Pertanyaan</th>
+                            <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">
+                                Indikator Kinerja Renstra & LKPS</th>
+                            <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">
+                                Sumber Bukti/Bukti</th>
+                            <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">
+                                Metode Perhitungan</th>
+                            <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">
+                                Target</th>
+                            <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">
+                                Aksi</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-600">
-                            <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-600 dark:text-gray-200">1</td>
-                            <td class="border border-gray-300 px-2 py-2 dark:border-gray-600 dark:text-gray-200">Berapa persen pemenuhan Dosen dengan kualifikasi minimal S2 yang mengajar S1 dan Diploma</td>
-                            <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-600 dark:text-gray-200">SPM 5.1.1</td>
-                            <td class="border border-gray-300 px-2 py-2 dark:border-gray-600 dark:text-gray-200">Data pendidikan dosen</td>
-                            <td class="border border-gray-300 px-2 py-2 dark:border-gray-600 dark:text-gray-200">Jumlah dosen S2 mengajar STr dan D3 / jumlah total dosen</td>
-                            <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-600 dark:text-gray-200">100%</td>
-                            <td class="border border-gray-300 px-2 py-2 dark:border-gray-600 dark:text-gray-200"></td>
-                            <td class="border border-gray-300 px-2 py-2 dark:border-gray-600 dark:text-gray-200"></td>
-                        </tr>
+                    <tbody id="tilik-table-body" class="divide-y divide-gray-200 dark:divide-gray-700">
+                        <!-- Baris data akan ditambahkan via JavaScript -->
                     </tbody>
                 </table>
             </div>
-        `,
-                2: `
-            <p class="font-semibold text-gray-700 mb-3 dark:text-gray-300">
-    Kriteria : 2. Tata Kelola, Tata Pamong, dan Kerjasama
-</p>
-<div class="overflow-auto">
-    <table class="w-full table-auto text-sm border-collapse border border-gray-300 dark:border-gray-600">
-        <thead class="bg-gray-100 dark:bg-gray-700">
-            <tr>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">No</th>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Daftar Pertanyaan</th>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">Indikator Kinerja<br>Renstra & LKPS</th>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Sumber Bukti/Bukti</th>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Metode Perhitungan</th>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">Target</th>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">Realisasi</th>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">Standar Nasional</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr class="hover:bg-gray-50 dark:hover:bg-gray-600">
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">1</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Berapa persen pemenuhan Dosen dengan kualifikasi minimal S2 yang mengajar S1 dan Diploma</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">SPM 5.1.1</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Data pendidikan dosen</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Jumlah dosen S2 mengajar STr dan D3 / jumlah total dosen</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">100%</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white"></td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white"></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
 
-         `,
-                3: `
-    <p class="font-semibold text-gray-700 mb-3 dark:text-gray-300">
-    Kriteria : 3. Visi, Misi, Tujuan, Strategi
-</p>
-<div class="overflow-auto">
-    <table class="w-full table-auto text-sm border-collapse border border-gray-300 dark:border-gray-600">
-        <thead class="bg-gray-100 dark:bg-gray-700">
-            <tr>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">No</th>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Daftar Pertanyaan</th>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">Indikator Kinerja<br>Renstra & LKPS</th>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Sumber Bukti/Bukti</th>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Metode Perhitungan</th>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">Target</th>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">Realisasi</th>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">Standar Nasional</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr class="hover:bg-gray-50 dark:hover:bg-gray-600">
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">1</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Berapa persen pemenuhan Dosen dengan kualifikasi minimal S2 yang mengajar S1 dan Diploma</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">SPM 5.1.1</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Data pendidikan dosen</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Jumlah dosen S2 mengajar STr dan D3 / jumlah total dosen</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">100%</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">100%</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white"></td>
-            </tr>
-            <tr class="hover:bg-gray-50 dark:hover:bg-gray-600">
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">2</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Berapa persen pemenuhan Dosen dengan kualifikasi minimal S3 yang mengajar S2</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">SPM 5.1.2</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Data pendidikan dosen</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Jumlah dosen S3 mengajar S2 / jumlah total dosen</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">100%</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">100%</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white"></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+            <!-- Pagination -->
+            <div class="p-4">
+                <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
+                    <span class="text-sm text-gray-700 dark:text-gray-300">
+                        Menampilkan <strong>1</strong> hingga <strong>2</strong> dari <strong>1000</strong> hasil
+                    </span>
+                    <nav aria-label="Navigasi Paginasi">
+                        <ul class="inline-flex -space-x-px text-sm">
+                            <li>
+                                <a href="#"
+                                    class="flex h-8 cursor-not-allowed items-center justify-center rounded-l-lg border border-gray-300 bg-white px-3 leading-tight text-gray-500 opacity-50 transition-all duration-200 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200">
+                                    <x-heroicon-s-chevron-left class="mr-1 h-4 w-4" />
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#"
+                                    class="flex h-8 items-center justify-center border border-sky-300 bg-sky-50 px-3 leading-tight text-sky-800 transition-all duration-200 dark:border-sky-700 dark:bg-sky-900 dark:text-sky-200">
+                                    1
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#"
+                                    class="flex h-8 items-center justify-center border border-gray-300 bg-white px-3 leading-tight text-gray-500 transition-all duration-200 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200">
+                                    2
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#"
+                                    class="flex h-8 items-center justify-center rounded-r-lg border border-gray-300 bg-white px-3 leading-tight text-gray-500 transition-all duration-200 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200">
+                                    <x-heroicon-s-chevron-right class="ml-1 h-4 w-4" />
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
 
-`,
-                4: `
-    <p class="font-semibold text-gray-700 mb-3 dark:text-gray-300">
-    Kriteria : 4. Sumber Daya Manusia
-</p>
-<div class="overflow-auto">
-    <table class="w-full table-auto text-sm border-collapse border border-gray-300 dark:border-gray-600">
-        <thead class="bg-gray-100 dark:bg-gray-700">
-            <tr>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">No</th>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Daftar Pertanyaan</th>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">Indikator Kinerja<br>Renstra & LKPS</th>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Sumber Bukti/Bukti</th>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Metode Perhitungan</th>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">Target</th>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">Realisasi</th>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">Standar Nasional</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr class="hover:bg-gray-50 dark:hover:bg-gray-600">
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">1</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Berapa persen dosen tetap yang memiliki sertifikasi pendidik</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">SPM 6.2.1</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Data dosen dan sertifikasi</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Jumlah dosen bersertifikat / jumlah dosen tetap</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">80%</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">75%</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white"></td>
-            </tr>
-            <tr class="hover:bg-gray-50 dark:hover:bg-gray-600">
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">2</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Berapa persen dosen tetap yang memiliki jabatan fungsional minimal Lektor</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">SPM 6.3.2</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Data jabatan fungsional dosen</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Jumlah dosen Lektor ke atas / jumlah dosen tetap</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">70%</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">65%</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white"></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+    <!-- Pass route to JavaScript -->
+    <script>
+        window.App = {
+            routes: {
+                editTilik: '{{ route("admin.daftar-tilik.edit", ":id") }}'
+            }
+        };
+    </script>
 
-`,
-                5: `
-    <p class="font-semibold text-gray-700 mb-3 dark:text-gray-300">
-    Kriteria : 5. Tata Kelola
-</p>
-<div class="overflow-auto">
-    <table class="w-full table-auto text-sm border-collapse border border-gray-300 dark:border-gray-600">
-        <thead class="bg-gray-100 dark:bg-gray-700">
-            <tr>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">No</th>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Daftar Pertanyaan</th>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">Indikator Kinerja<br>Renstra & LKPS</th>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Sumber Bukti/Bukti</th>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Metode Perhitungan</th>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">Target</th>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">Realisasi</th>
-                <th class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">Standar Nasional</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr class="hover:bg-gray-50 dark:hover:bg-gray-600">
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">1</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Apakah tersedia profil Lulusan, Capaian Pembelajaran Lulusan (CPL) sesuai dengan Profil Lulusan dan jenjang KKNI/SKKNI disertai bukti yang sahih dan sangat lengkap.</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">SPM 3.2.1</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Dokumen Kurikulum</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white"></td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white"></td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white"></td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white"></td>
-            </tr>
-            <tr class="hover:bg-gray-50 dark:hover:bg-gray-600">
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">2</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Apakah tersedia dokumen kurikulum yang lengkap dengan SK kurikulum?</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white">SPM 3.2.1</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white">Dokumen Kurikulum</td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 dark:text-white"></td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white"></td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white"></td>
-                <td class="border border-gray-300 dark:border-gray-600 px-2 py-2 text-center dark:text-white"></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-`,
-                6: `
-    <p class="font-semibold text-gray-700 mb-3 dark:text-gray-300">
-    Kriteria : 6. Kurikulum dan Pembelajaran
-</p>
-
-<div class="overflow-auto">
-    <table class="w-full table-auto text-sm border-collapse border border-gray-300 dark:border-gray-700">
-        <thead class="bg-gray-100 dark:bg-gray-800">
-            <tr>
-                <th class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">No</th>
-                <th class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Daftar Pertanyaan</th>
-                <th class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">Indikator Kinerja<br>Renstra & LKPS</th>
-                <th class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Sumber Bukti/Bukti</th>
-                <th class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Metode Perhitungan</th>
-                <th class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">Target</th>
-                <th class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">Realisasi</th>
-                <th class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">Standar Nasional</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr class="hover:bg-gray-50 dark:hover:bg-gray-600">
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">1</td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Apakah tersedia profil Lulusan, Capaian Pembelajaran Lulusan (CPL) sesuai dengan Profil Lulusan dan jenjang KKNI/SKKNI disertai bukti yang sahih dan sangat lengkap.</td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">SPM 3.2.1</td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Dokumen Kurikulum</td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-            </tr>
-            <tr class="hover:bg-gray-50 dark:hover:bg-gray-600">
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">2</td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Apakah tersedia dokumen kurikulum yang lengkap dengan SK kurikulum?</td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">SPM 3.2.1</td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Dokumen Kurikulum</td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-`,
-                7: `
-    <p class="font-semibold text-gray-700 mb-3 dark:text-gray-300">
-    Kriteria : 7. Penelitian
-</p>
-
-<div class="overflow-auto">
-    <table class="w-full table-auto text-sm border-collapse border border-gray-300 dark:border-gray-700">
-        <thead class="bg-gray-100 dark:bg-gray-800">
-            <tr>
-                <th class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">No</th>
-                <th class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Daftar Pertanyaan</th>
-                <th class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">Indikator Kinerja<br>Renstra & LKPS</th>
-                <th class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Sumber Bukti/Bukti</th>
-                <th class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Metode Perhitungan</th>
-                <th class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">Target</th>
-                <th class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">Realisasi</th>
-                <th class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">Standar Nasional</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr class="hover:bg-gray-50 dark:hover:bg-gray-600">
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">1</td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Apakah UPPS memiliki peta jalan yang memayungi tema penelitian dosen</td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">IKU.2.01.01<br>Memiliki peta jalan yang memayungi tema penelitian dosen.</td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Dokumen peta jalan penelitian</td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Ketersediaan Dokumen</td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-            </tr>
-            <tr class="hover:bg-gray-50 dark:hover:bg-gray-600">
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">2</td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Apakah UPPS sudah melakukan evaluasi kesesuaian penelitian dosen dengan peta jalan</td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">IKU.2.01.01<br>Melakukan evaluasi kesesuaian penelitian dosen dengan peta jalan</td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Dokumen hasil evaluasi kesesuaian penelitian dosen dengan peta jalan penelitian</td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Ketersediaan Dokumen</td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-`,
-                8: `
-    <p class="font-semibold text-gray-700 mb-3 dark:text-gray-300">
-    Kriteria : 8. Pengabdian kepada Masyarakat
-</p>
-
-<div class="overflow-auto">
-    <table class="w-full table-auto text-sm border-collapse border border-gray-300 dark:border-gray-700">
-        <thead class="bg-gray-100 dark:bg-gray-800">
-            <tr>
-                <th class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">No</th>
-                <th class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Daftar Pertanyaan</th>
-                <th class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">Indikator Kinerja<br>Renstra & LKPS</th>
-                <th class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Sumber Bukti/Bukti</th>
-                <th class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Metode Perhitungan</th>
-                <th class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">Target</th>
-                <th class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">Realisasi</th>
-                <th class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">Standar Nasional</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr class="hover:bg-gray-50 dark:hover:bg-gray-600">
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">1</td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Apakah UPPS memiliki peta jalan yang memayungi tema pengabdian dosen</td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">IKU.2.02.01<br>Memiliki peta jalan yang memayungi tema pengabdian dosen</td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Dokumen peta jalan pengabdian</td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Ketersediaan Dokumen</td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-            </tr>
-            <tr class="hover:bg-gray-50 dark:hover:bg-gray-600">
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">2</td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Apakah UPPS sudah melakukan evaluasi kesesuaian pengabdian dosen dengan peta jalan</td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">IKU.2.02.01<br>Melakukan evaluasi kesesuaian pengabdian dosen dengan peta jalan</td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Dokumen hasil evaluasi kesesuaian pengabdian dosen dengan peta jalan pengabdian</td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Ketersediaan Dokumen</td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-`,
-                9: `
-   <p class="font-semibold text-gray-700 mb-3 dark:text-gray-300">
-    Kriteria : 9. Luaran Tridharma
-</p>
-
-<div class="overflow-auto">
-    <table class="w-full table-auto text-sm border-collapse border border-gray-300 dark:border-gray-700">
-        <thead class="bg-gray-100 dark:bg-gray-800">
-            <tr>
-                <th class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">No</th>
-                <th class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Daftar Pertanyaan</th>
-                <th class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">Indikator Kinerja<br>Renstra & LKPS</th>
-                <th class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">Sumber Bukti/Bukti</th>
-                <th class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">Metode Perhitungan</th>
-                <th class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">Target</th>
-                <th class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">Realisasi</th>
-                <th class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">Standar Nasional / POLINES</th>
-                <th class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Uraian Isian</th>
-                <th class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Akar Penyebab (Target tidak tercapai)</th>
-                <th class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Akar Penunjang (Target tercapai)</th>
-                <th class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Rencana Perbaikan & Tindak Lanjut '25</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr class="hover:bg-gray-50 dark:hover:bg-gray-600">
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">1</td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Berapakah IPK lulusan (SPM.1.5.1)</td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">3,3</td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white"></td>
-            </tr>
-            <tr class="hover:bg-gray-50 dark:hover:bg-gray-600">
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">2</td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Berapakah waktu tunggu lulusan yang mendapat pekerjaan (SPM.1.5.2)</td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">0,3 Th</td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white"></td>
-            </tr>
-            <tr class="hover:bg-gray-50 dark:hover:bg-gray-600">
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">3</td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white">Berapakah jumlah hasil penelitian yang diaplikasikan</td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white">14 Judul/Th</td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 text-center dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white"></td>
-                <td class="border border-gray-300 px-2 py-2 dark:border-gray-700 dark:text-white"></td>
-            </tr>
-        </tbody>
-    </table>
-   </div>
-
-`
-
-
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Static mapping for kriteria_id to name
+            const kriteriaMap = {
+                1: '1. Visi,  Misi, Tujuan, Strategi',
+                2: '2. Tata Kelola, Tata Pamong, dan Kerjasama',
+                3: '3. Kurikulum dan Pembelajaran',
+                4: '4. Penelitian',
+                5: '5. Luaran Tridharma',
             };
 
+            fetch('http://127.0.0.1:5000/api/tilik')
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success && Array.isArray(result.data)) {
+                        const tbody = document.getElementById('tilik-table-body');
+                        tbody.innerHTML = ''; // Clear existing rows if any
 
-            function renderKriteria() {
-                document.getElementById('kriteria-container').innerHTML = kriteriaData[currentKriteria];
-            }
+                        result.data.forEach((item, index) => {
+                            const row = document.createElement('tr');
+                            row.className = "transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700";
 
-            function showNext() {
-                if (currentKriteria < Object.keys(kriteriaData).length) {
-                    currentKriteria++;
-                    renderKriteria();
-                }
-            }
+                            // Resolve kriteria name or fallback to kriteria_id
+                            const kriteriaName = kriteriaMap[item.kriteria_id] || item.kriteria_id;
 
-            function showPrevious() {
-                if (currentKriteria > 1) {
-                    currentKriteria--;
-                    renderKriteria();
-                }
-            }
+                            row.innerHTML = `
+                                <td class="px-4 py-3 sm:px-6">${index + 1}</td>
+                                <td class="px-4 py-3 sm:px-6">${kriteriaName}</td>
+                                <td class="px-4 py-3 sm:px-6">${item.pertanyaan}</td>
+                                <td class="px-4 py-3 sm:px-6">${item.indikator ?? '-'}</td>
+                                <td class="px-4 py-3 sm:px-6">${item.sumber_data ?? '-'}</td>
+                                <td class="px-4 py-3 sm:px-6">${item.metode_perhitungan ?? '-'}</td>
+                                <td class="px-4 py-3 sm:px-6">${item.target ?? '-'}</td>
+                                <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">
+                                    <div class="flex items-center gap-2 justify-center">
+                                        <a href="/admin/daftar-tilik/${item.tilik_id}/edit" class="text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-200 transition-colors duration-200">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L16.732 3.732z"></path>
+                                            </svg>
+                                        </a>
+                                        <button data-id="${item.tilik_id}" class="delete-btn text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 transition-colors duration-200">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4m-4 0a2 2 0 00-2 2v1h8V5a2 2 0 00-2-2zm-3 4h6"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            `;
+                            tbody.appendChild(row);
+                        });
 
-            function openModal(action) {
-                const modal = document.getElementById('modal');
-                const modalTitle = document.getElementById('modalTitle');
-                const saveButton = document.getElementById('saveButton');
-
-                if (action === 'add') {
-                    modalTitle.textContent = 'Tambah Pertanyaan';
-                    saveButton.textContent = 'Save';
-                } else if (action === 'edit') {
-                    modalTitle.textContent = 'Edit Pertanyaan';
-                    saveButton.textContent = 'Update';
-                }
-
-                modal.classList.remove('hidden');
-            }
-
-            function closeModal() {
-                document.getElementById('modal').classList.add('hidden');
-            }
-
-            // Tampilkan pertama kali
-            renderKriteria();
-        </script>
-    @endsection
+                        // Add event listeners for delete buttons
+                        document.querySelectorAll('.delete-btn').forEach(button => {
+                            button.addEventListener('click', function () {
+                                const tilikId = this.getAttribute('data-id');
+                                if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                                    fetch(`http://127.0.0.1:5000/api/tilik/${tilikId}`, {
+                                        method: 'DELETE',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        },
+                                    })
+                                    .then(response => response.json())
+                                    .then(result => {
+                                        if (result.success) {
+                                            alert('Data berhasil dihapus!');
+                                            // Reload the table data
+                                            location.reload();
+                                        } else {
+                                            alert('Gagal menghapus data: ' + (result.message || 'Unknown error'));
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error deleting tilik data:', error);
+                                        alert('Terjadi kesalahan saat menghapus data.');
+                                    });
+                                }
+                            });
+                        });
+                    } else {
+                        console.error("Gagal mendapatkan data tilik.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching tilik data:", error);
+                });
+        });
+    </script>
+@endsection

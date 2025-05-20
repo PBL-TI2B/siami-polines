@@ -59,8 +59,11 @@ Route::prefix('admin')->middleware('auth.ami:admin')->group(function () {
 
     // Daftar Tilik
     Route::prefix('daftar-tilik')->group(function () {
-        Route::get('/', [DaftarTilikController::class, 'index'])->name('admin.daftar-tilik.index');
-        Route::post('/', [DaftarTilikController::class, 'store'])->name('admin.daftar-tilik.store');
+        //Route::get('/', [DaftarTilikController::class, 'index'])->name('admin.daftar-tilik.index');
+        //Route::post('/', [DaftarTilikController::class, 'store'])->name('admin.daftar-tilik.store');
+        Route::get('/', [DaftarTilikController::class, 'admintilik'])->name('admin.daftar-tilik.index');
+        Route::get('/{id}/edit', [DaftarTilikController::class, 'editadmin'])->name('admin.daftar-tilik.edit');
+        Route::get('/create', [DaftarTilikController::class, 'createadmin'])->name('admin.daftar-tilik.create');
     });
 
     // Data Unit (Unit Kerja)

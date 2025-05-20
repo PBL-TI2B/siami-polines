@@ -26,7 +26,18 @@ class DaftarTilikController extends Controller
     {
         // Validasi dan simpan ke database
     }
-
+     public function admintilik()
+    {
+        return view('admin.daftar-tilik.index');
+    }
+    public function editadmin($id)
+    {
+        return view('admin.daftar-tilik.edit', compact('id'));
+    }
+    public function createadmin()
+    {
+        return view('admin.daftar-tilik.create');
+    }
 
 }
 
