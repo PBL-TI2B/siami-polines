@@ -19,16 +19,6 @@
             <x-button href="{{ route('auditor.daftar-tilik.create') }}" color="sky" icon="heroicon-o-plus">
                 Tambah Pertanyaan
             </x-button>
-
-            <x-button href="{{ route('unit-kerja.create', ['type' => 'upt']) }}" color="sky" icon="heroicon-o-plus">
-                Edit Pertanyaan
-            </x-button>
-            <x-button type="submit" color="sky" icon="heroicon-o-document-arrow-down">
-                Unduh Data
-            </x-button>
-            <x-button type="submit" color="yellow" icon="heroicon-o-document-arrow-up">
-                Import Data
-            </x-button>
         </div>
 
         <!-- Table and Pagination -->
@@ -95,14 +85,15 @@
                                 Penyebab (Target tidak Tercapai)/Akar Penunjang(Target tercapai)</th>
                             <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">
                                 Rencana Perbaikan & Tindak Lanjut'25</th>
-
+                            <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">
+                                Aksi</th>
+                        </tr>
                     </thead>
                     <tbody id="tilik-table-body" class="divide-y divide-gray-200 dark:divide-gray-700">
                         <!-- Baris data akan ditambahkan via JavaScript -->
                     </tbody>
                 </table>
             </div>
-
 
             <!-- Pagination -->
             <div class="p-4">
@@ -142,42 +133,107 @@
             </div>
         </div>
     </div>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    fetch('http://127.0.0.1:5000/api/tilik')
-        .then(response => response.json())
-        .then(result => {
-            if (result.success && Array.isArray(result.data)) {
-                const tbody = document.getElementById('tilik-table-body');
-                tbody.innerHTML = ''; // clear existing rows if any
 
-                result.data.forEach((item, index) => {
-                    const row = document.createElement('tr');
-                    row.className = "transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700";
-
-                    row.innerHTML = `
-                        <td class="px-4 py-3 sm:px-6">${index + 1}</td>
-                        <td class="px-4 py-3 sm:px-6">${item.tilik_id}</td>
-                        <td class="px-4 py-3 sm:px-6">${item.pertanyaan}</td>
-                        <td class="px-4 py-3 sm:px-6">${item.indikator ?? '-'}</td>
-                        <td class="px-4 py-3 sm:px-6">${item.sumber_data ?? '-'}</td>
-                        <td class="px-4 py-3 sm:px-6">${item.metode_perhitungan ?? '-'}</td>
-                        <td class="px-4 py-3 sm:px-6">${item.target ?? '-'}</td>
-                        <td class="px-4 py-3 sm:px-6">-</td>
-                        <td class="px-4 py-3 sm:px-6">-</td>
-                        <td class="px-4 py-3 sm:px-6">-</td>
-                        <td class="px-4 py-3 sm:px-6">-</td>
-                        <td class="px-4 py-3 sm:px-6">-</td>
-                    `;
-                    tbody.appendChild(row);
-                });
-            } else {
-                console.error("Gagal mendapatkan data tilik.");
+    <!-- Pass route to JavaScript -->
+    <script>
+        window.App = {
+            routes: {
+                editTilik: '{{ route("auditor.daftar-tilik.edit", ":id") }}'
             }
-        })
-        .catch(error => {
-            console.error("Error fetching tilik data:", error);
+        };
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Static mapping for kriteria_id to name
+            const kriteriaMap = {
+                1: '1. Visi,  Misi, Tujuan, Strategi',
+                2: '2. Tata Kelola, Tata Pamong, dan Kerjasama',
+                3: '3. Kurikulum dan Pembelajaran',
+                4: '4. Penelitian',
+                5: '5. Luaran Tridharma',
+            };
+
+            fetch('http://127.0.0.1:5000/api/tilik')
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success && Array.isArray(result.data)) {
+                        const tbody = document.getElementById('tilik-table-body');
+                        tbody.innerHTML = ''; // Clear existing rows if any
+
+                        result.data.forEach((item, index) => {
+                            const row = document.createElement('tr');
+                            row.className = "transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700";
+
+                            // Resolve kriteria name or fallback to kriteria_id
+                            const kriteriaName = kriteriaMap[item.kriteria_id] || item.kriteria_id;
+
+                            row.innerHTML = `
+                                <td class="px-4 py-3 sm:px-6">${index + 1}</td>
+                                <td class="px-4 py-3 sm:px-6">${kriteriaName}</td>
+                                <td class="px-4 py-3 sm:px-6">${item.pertanyaan}</td>
+                                <td class="px-4 py-3 sm:px-6">${item.indikator ?? '-'}</td>
+                                <td class="px-4 py-3 sm:px-6">${item.sumber_data ?? '-'}</td>
+                                <td class="px-4 py-3 sm:px-6">${item.metode_perhitungan ?? '-'}</td>
+                                <td class="px-4 py-3 sm:px-6">${item.target ?? '-'}</td>
+                                <td class="px-4 py-3 sm:px-6">-</td>
+                                <td class="px-4 py-3 sm:px-6">-</td>
+                                <td class="px-4 py-3 sm:px-6">-</td>
+                                <td class="px-4 py-3 sm:px-6">-</td>
+                                <td class="px-4 py-3 sm:px-6">-</td>
+                                <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">
+                                    <div class="flex items-center gap-2 justify-center">
+                                        <a href="/auditor/daftar-tilik/${item.tilik_id}/edit" class="text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-200 transition-colors duration-200">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L16.732 3.732z"></path>
+                                            </svg>
+                                        </a>
+                                        <button data-id="${item.tilik_id}" class="delete-btn text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 transition-colors duration-200">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4m-4 0a2 2 0 00-2 2v1h8V5a2 2 0 00-2-2zm-3 4h6"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            `;
+                            tbody.appendChild(row);
+                        });
+
+                        // Add event listeners for delete buttons
+                        document.querySelectorAll('.delete-btn').forEach(button => {
+                            button.addEventListener('click', function () {
+                                const tilikId = this.getAttribute('data-id');
+                                if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                                    fetch(`http://127.0.0.1:5000/api/tilik/${tilikId}`, {
+                                        method: 'DELETE',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        },
+                                    })
+                                    .then(response => response.json())
+                                    .then(result => {
+                                        if (result.success) {
+                                            alert('Data berhasil dihapus!');
+                                            // Reload the table data
+                                            location.reload();
+                                        } else {
+                                            alert('Gagal menghapus data: ' + (result.message || 'Unknown error'));
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error deleting tilik data:', error);
+                                        alert('Terjadi kesalahan saat menghapus data.');
+                                    });
+                                }
+                            });
+                        });
+                    } else {
+                        console.error("Gagal mendapatkan data tilik.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching tilik data:", error);
+                });
         });
-});
-</script>
+    </script>
 @endsection

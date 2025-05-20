@@ -18,6 +18,10 @@ class DaftarTilikController extends Controller
     {
         return view('auditor.daftar-tilik.create'); // Pastikan file ini ada
     }
+    public function edit($id)
+    {
+        return view('auditor.daftar-tilik.edit', compact('id'));
+    }
     public function store(Request $request)
     {
         // Validasi dan simpan ke database

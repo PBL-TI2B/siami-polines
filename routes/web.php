@@ -60,6 +60,7 @@ Route::prefix('admin')->middleware('auth.ami:admin')->group(function () {
     // Daftar Tilik
     Route::prefix('daftar-tilik')->group(function () {
         Route::get('/', [DaftarTilikController::class, 'index'])->name('admin.daftar-tilik.index');
+        Route::post('/', [DaftarTilikController::class, 'store'])->name('admin.daftar-tilik.store');
     });
 
     // Data Unit (Unit Kerja)
@@ -113,12 +114,13 @@ Route::prefix('auditor')->middleware('auth.ami:auditor')->group(function () {
         return view('auditor.dashboard.index');
     })->name('auditor.dashboard.index');
 
-    Route::resource('daftar-tilik', DaftarTilikController::class)->only(['index', 'create', 'store']);
-
+    //Route::resource('daftar-tilik', DaftarTilikController::class)->only(['index', 'create', 'store']);
+    
     Route::get('/daftar-tilik', [DaftarTilikController::class, 'auditortilik'])->name('auditor.daftar-tilik.index');
-    #coba ini
+    Route::get('/daftar-tilik/{id}/edit', [DaftarTilikController::class, 'edit'])->name('auditor.daftar-tilik.edit');
     Route::get('/daftar-tilik/create', [DaftarTilikController::class, 'create'])->name('auditor.daftar-tilik.create'); 
-    Route::post('/daftar-tilik', [DaftarTilikController::class, 'store'])->name('auditor.daftar-tilik.store');
+
+    //Route::post('/daftar-tilik', [DaftarTilikController::class, 'store'])->name('auditor.daftar-tilik.store');
 
     Route::get('/assesmen-lapangan', function () {
         return view('auditor.assesmen-lapangan.index');
