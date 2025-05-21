@@ -118,10 +118,10 @@ Route::prefix('auditor')->middleware('auth.ami:auditor')->group(function () {
     })->name('auditor.dashboard.index');
 
     //Route::resource('daftar-tilik', DaftarTilikController::class)->only(['index', 'create', 'store']);
-    
+
     Route::get('/daftar-tilik', [DaftarTilikController::class, 'auditortilik'])->name('auditor.daftar-tilik.index');
     Route::get('/daftar-tilik/{id}/edit', [DaftarTilikController::class, 'edit'])->name('auditor.daftar-tilik.edit');
-    Route::get('/daftar-tilik/create', [DaftarTilikController::class, 'create'])->name('auditor.daftar-tilik.create'); 
+    Route::get('/daftar-tilik/create', [DaftarTilikController::class, 'create'])->name('auditor.daftar-tilik.create');
 
     //Route::post('/daftar-tilik', [DaftarTilikController::class, 'store'])->name('auditor.daftar-tilik.store');
 
@@ -149,10 +149,9 @@ Route::prefix('auditee')->middleware('auth.ami:auditee')->group(function () {
     Route::get('/dashboard', function () {
         return view('auditee.dashboard.index');
     })->name('auditee.dashboard.index');
-
-    ROute::get('/pengisian-form-AMI', function () {
-        return view('auditee.pengisian-form-ami.index');
-    })->name('auditee.pengisian-form-ami.index');
+    Route::get('/pengisian-instrumen', function () {
+        return view('auditee.pengisian-instrumen.index');
+    })->name('auditee.pengisian-instrumen.index');
     Route::get('/tindak-lanjut-perbaikan', function () {
         return view('auditee.tindak-lanjut-perbaikan.index');
     })->name('auditee.tindak-lanjut-perbaikan.index');
@@ -161,3 +160,23 @@ Route::prefix('auditee')->middleware('auth.ami:auditee')->group(function () {
     })->name('auditee.riwayat-audit.index');
 });
 
+Route::prefix('kepala-pmpp')->middleware('auth.ami:kepala-pmpp')->group(function () {
+    Route::get('/dashboard', fn() => view('kepala-pmpp.dashboard.index'))->name('kepala-pmpp.dashboard.index');
+    Route::get('/rapat-tinjauan-manajemen', fn() => view('kepala-pmpp.rapat-tinjauan-manajemen.index'))->name('kepala-pmpp.rapat-tinjauan-manajemen.index');
+    Route::get('/ploting-ami', fn() => view('kepala-pmpp.ploting-ami.index'))->name('kepala-pmpp.ploting-ami.index');
+    Route::get('/daftar-tilik', fn() => view('kepala-pmpp.daftar-tilik.index'))->name('kepala-pmpp.daftar-tilik.index');
+    Route::get('/data-instrumen', fn() => view('kepala-pmpp.data-instrumen.index'))->name('kepala-pmpp.data-instrumen.index');
+    Route::get('/data-instrumen/upt', fn() => view('kepala-pmpp.data-instrumen.upt'))->name('kepala-pmpp.data-instrumen.upt');
+    Route::get('/data-instrumen/prodi', fn() => view('kepala-pmpp.data-instrumen.prodi'))->name('kepala-pmpp.data-instrumen.instrumenprodi');
+    Route::get('/data-instrumen/jurusan', fn() => view('kepala-pmpp.data-instrumen.jurusan'))->name('kepala-pmpp.data-instrumen.instrumenjurusan');
+    Route::get('/ptpp', fn() => view('kepala-pmpp.ptpp.index'))->name('kepala-pmpp.ptpp.index');
+});
+
+Route::prefix('admin-unit')->middleware('auth.ami:admin-unit')->group(function () {
+    Route::get('/dashboard', fn() => view('admin-unit.dashboard.index'))->name('admin-unit.dashboard.index');
+    Route::get('/ploting-ami', fn() => view('admin-unit.ploting-ami.index'))->name('admin-unit.ploting-ami.index');
+    Route::get('/unit-kerja', fn() => view('admin-unit.unit-kerja.index'))->name('admin-unit.unit-kerja.index');
+    Route::get('/data-instrumen', fn() => view('admin-unit.data-instrumen.index'))->name('admin-unit.data-instrumen.index');
+    Route::get('/data-instrumen/upt', fn() => view('admin-unit.data-instrumen.upt'))->name('admin-unit.data-instrumen.upt');
+    Route::get('/data-instrumen/prodi', fn() => view('admin-unit.data-instrumen.prodi'))->name('admin-unit.data-instrumen.instrumenprodi');
+});

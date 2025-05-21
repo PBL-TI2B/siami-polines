@@ -8,8 +8,12 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="antialiased bg-gray-50 dark:bg-gray-900">
-    <div class="flex flex-col min-h-screen">
+<body class="bg-gray-50 antialiased dark:bg-gray-900">
+    <div class="flex min-h-screen flex-col">
+        <!-- Page Loading -->
+        <x-progress-bar />
+        {{-- <x-page-loading /> --}}
+
         <!-- Navbar -->
         <x-navbar />
 
@@ -17,7 +21,7 @@
         <x-sidebar />
 
         <!-- Main Content -->
-        <main class="p-4 md:ml-64 h-auto pt-22 bg-gray-50 dark:bg-gray-900">
+        <main class="pt-22 h-auto bg-gray-50 p-4 md:ml-64 dark:bg-gray-900">
             @yield('content')
         </main>
     </div>
