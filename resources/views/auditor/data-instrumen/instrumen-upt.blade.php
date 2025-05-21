@@ -20,7 +20,7 @@
 
 
             <!-- Filter Dropdowns -->
-            <div class="flex flex-wrap gap-2">
+            <!-- <div class="flex flex-wrap gap-2">
                 <select id="unitKerjaSelect"
                     class="w-40 rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 text-sm text-gray-900 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
                     <option selected disabled>Pilih Unit</option>
@@ -29,7 +29,7 @@
                     class="w-40 rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 text-sm text-gray-900 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
                     <option selected disabled>Pilih Periode AMI</option>
                 </select>
-            </div>
+            </div> -->
         </div>
 
         <!-- Table and Pagination -->
