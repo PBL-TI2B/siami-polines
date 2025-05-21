@@ -1,7 +1,10 @@
 @extends('layouts.app')
 
 @section('title', 'Instrumen UPT')
-
+<!-- Letakkan di head atau sebelum script Anda -->
+@if(session('user'))
+    <meta name="user-id" content="{{ session('user')['user_id'] }}">
+@endif
 @section('content')
     <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
         <!-- Breadcrumb -->
@@ -145,99 +148,7 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            fetch('http://127.0.0.1:5000/api/data-instrumen')
-                .then(response => response.json())
-                .then(data => {
-                    const tableBody = document.getElementById('instrumen-table-body');
-                    let rowNumber = 1;
-                    let rowspanCounts = {}; // Menyimpan jumlah baris per sasaran
-
-                    // Hitung jumlah baris per sasaran strategis
-                    data.forEach(sasaran => {
-                        let count = 0;
-                        sasaran.indikator_kinerja.forEach(indikator => {
-                            count += indikator.aktivitas.length;
-                        });
-                        rowspanCounts[sasaran.sasaran_strategis_id] = count;
-                    });
-
-                    // Loop melalui setiap sasaran strategis
-                    data.forEach(sasaran => {
-                        let isFirstRowForSasaran = true;
-                        let sasaranRowspan = rowspanCounts[sasaran.sasaran_strategis_id];
-
-                        // Loop melalui setiap indikator kinerja
-                        sasaran.indikator_kinerja.forEach(indikator => {
-                            let isFirstRowForIndikator = true;
-                            let indikatorRowspan = indikator.aktivitas.length;
-
-                            // Loop melalui setiap aktivitas
-                            indikator.aktivitas.forEach((aktivitas, index) => {
-                                const row = document.createElement('tr');
-                                row.className =
-                                    'hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200';
-
-                                // Nomor hanya ditampilkan di baris pertama sasaran
-                                const noCell = isFirstRowForSasaran ?
-                                    `<td rowspan="${sasaranRowspan}" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${rowNumber}</td>` :
-                                    '';
-
-                                // Sasaran strategis hanya ditampilkan di baris pertama sasaran
-                                const sasaranCell = isFirstRowForSasaran ?
-                                    `<td rowspan="${sasaranRowspan}" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${sasaran.nama_sasaran}</td>` :
-                                    '';
-
-                                // Indikator kinerja hanya ditampilkan di baris pertama indikator
-                                const indikatorCell = isFirstRowForIndikator ?
-                                    `<td rowspan="${indikatorRowspan}" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${indikator.isi_indikator_kinerja}</td>` :
-                                    '';
-
-                                // Aksi hanya ditampilkan di baris pertama sasaran
-                                const aksiCell = isFirstRowForSasaran ?
-                                    `<td rowspan="${sasaranRowspan}" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">
-                            <div class="flex items-center gap-2">
-                                <a href="/admin/data-instrumen/${sasaran.sasaran_strategis_id}/edit" class="text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-200 transition-colors duration-200">
-                                    <x-heroicon-o-pencil class="w-5 h-5" />
-                                </a>
-                                <a href="#" class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 transition-colors duration-200">
-                                    <x-heroicon-o-trash class="w-5 h-5" />
-                                </a>
-                            </div>
-                        </td>` : '';
-
-                                row.innerHTML = `
-                        ${noCell}
-                        ${sasaranCell}
-                        ${indikatorCell}
-                        <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${aktivitas.nama_aktivitas}</td>
-                        <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${aktivitas.satuan}</td>
-                        <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${aktivitas.target}</td>
-                        ${aksiCell}
-                    `;
-
-                                tableBody.appendChild(row);
-
-                                isFirstRowForSasaran = false;
-                                isFirstRowForIndikator = false;
-                            });
-                        });
-
-                        rowNumber++;
-                    });
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                    const tableBody = document.getElementById('instrumen-table-body');
-                    tableBody.innerHTML = `
-            <tr>
-                <td colspan="14" class="px-4 py-3 sm:px-6 text-center text-red-500">
-                    Gagal memuat data. Silakan coba lagi.
-                </td>
-            </tr>
-        `;
-                });
-        });
+        const userId = {{ session('user.user_id', 0) }};
         // =========================== BAGIAN 2: Dropdown Unit Kerja ===========================
         fetch('http://127.0.0.1:5000/api/unit-kerja')
             .then(response => response.json())
@@ -272,5 +183,111 @@
             .catch(error => {
                 console.error('Gagal memuat periode AMI:', error);
             });
-    </script>
+            
+        fetch('http://127.0.0.1:5000/api/instrumen-response')
+        .then(response => response.json())
+        .then(result => {
+            const allData = result.data;
+            const tableBody = document.getElementById('instrumen-upt-table-body');
+            
+            // Filter data berdasarkan user_id session
+            const filteredData = allData.filter(item => {
+                return item.auditing.user_id_1_auditor === userId || 
+                       item.auditing.user_id_2_auditor === userId;
+            });
+            
+            // Clear existing table content
+            tableBody.innerHTML = '';
+            
+            if (filteredData.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="13" class="px-4 py-4 text-center text-gray-500 dark:text-gray-400">
+                            Tidak ada data yang tersedia untuk user ini.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            // Populate table with filtered data
+            filteredData.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50 dark:hover:bg-gray-700';
+                
+                // Helper function to safely access nested properties
+                const getValue = (path, defaultValue = '-') => {
+                    try {
+                        const value = path.split('.').reduce((obj, key) => obj[key], item);
+                        return value !== null && value !== undefined ? value : defaultValue;
+                    } catch {
+                        return defaultValue;
+                    }
+                };
+                
+                row.innerHTML = `
+                    <td class="whitespace-nowrap border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">${index + 1}</td>
+                    <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
+                        ${getValue('set_instrumen_unit_kerja.aktivitas.indikator_kinerja.sasaran_strategis.nama_sasaran')}
+                    </td>
+                    <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
+                        ${getValue('set_instrumen_unit_kerja.aktivitas.indikator_kinerja.isi_indikator_kinerja')}
+                    </td>
+                    <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
+                        ${getValue('set_instrumen_unit_kerja.aktivitas.nama_aktivitas')}
+                    </td>
+                    <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
+                        ${getValue('set_instrumen_unit_kerja.aktivitas.satuan')}
+                    </td>
+                    <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
+                        ${getValue('set_instrumen_unit_kerja.aktivitas.target')}
+                    </td>
+                    <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
+                        ${getValue('response.capaian')}
+                    </td>
+                    <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
+                        ${getValue('status_instrumen')}
+                    </td>
+                    <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
+                        ${getValue('response.sesuai')}
+                    </td>
+                    <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
+                        ${getValue('response.lokasi_bukti_dukung')}
+                    </td>
+                    <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
+                        ${getValue('response.minor')}
+                    </td>
+                    <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
+                        ${getValue('response.mayor')}
+                    </td>
+                    <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
+                        ${getValue('response.ofi')}
+                    </td>
+                    <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
+                        <div class="flex items-center gap-2">
+                            <button class="rounded-lg bg-sky-500 p-2 text-white transition-all duration-200 hover:bg-sky-600">
+                                <x-heroicon-s-pencil-square class="h-4 w-4" />
+                            </button>
+                            <button class="rounded-lg bg-red-500 p-2 text-white transition-all duration-200 hover:bg-red-600">
+                                <x-heroicon-s-trash class="h-4 w-4" />
+                            </button>
+                        </div>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error('Gagal memuat data instrumen:', error);
+            const tableBody = document.getElementById('instrumen-upt-table-body');
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="13" class="px-4 py-4 text-center text-gray-500 dark:text-gray-400">
+                        Gagal memuat data. Silakan coba lagi.
+                    </td>
+                </tr>
+            `;
+        });
+            </script>
 @endsection
