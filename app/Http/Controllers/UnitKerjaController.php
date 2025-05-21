@@ -76,7 +76,25 @@ class UnitKerjaController extends Controller
     }
 
     public function create($type = null) {
-        return view('admin.unit-kerja.create', compact('type'));
+        $list_jurusan = [];
+
+        if ($type === 'prodi') {
+            try {
+                $response = Http::get('http://127.0.0.1:5000/api/unit-kerja/jurusan');
+
+                if ($response->successful()) {
+                    $list_jurusan = collect($response->json()['data'] ?? [])
+                        ->pluck('nama_unit_kerja')
+                        ->toArray();
+                } else {
+                    Log::error('Gagal mengambil data jurusan: ' . $response->body());
+                }
+            } catch (\Exception $e) {
+                Log::error('Exception saat mengambil data jurusan: ' . $e->getMessage());
+            }
+        }
+
+        return view('admin.unit-kerja.create', compact('type', 'list_jurusan'));
     }
 
     public function store(Request $request) {
@@ -120,7 +138,26 @@ class UnitKerjaController extends Controller
     public function edit($id, $type = null)
     {
         $unitKerja = UnitKerja::findOrFail($id);
-        return view('admin.unit-kerja.edit', compact('unitKerja', 'type'));
+
+        $list_jurusan = [];
+
+        if ($type === 'prodi') {
+            try {
+                $response = Http::get('http://127.0.0.1:5000/api/unit-kerja/jurusan');
+
+                if ($response->successful()) {
+                    $list_jurusan = collect($response->json()['data'] ?? [])
+                        ->pluck('nama_unit_kerja')
+                        ->toArray();
+                } else {
+                    Log::error('Gagal mengambil data jurusan: ' . $response->body());
+                }
+            } catch (\Exception $e) {
+                Log::error('Exception saat mengambil data jurusan: ' . $e->getMessage());
+            }
+        }
+
+        return view('admin.unit-kerja.edit', compact('unitKerja', 'type', 'list_jurusan'));
     }
 
     public function update(Request $request, $id, $type = null)

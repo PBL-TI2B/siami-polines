@@ -14,14 +14,22 @@
         Edit Jadwal Audit
     </h1>
 
-    <form id="editJadwalForm" class="space-y-6 rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
+    <form action="{{ route('admin.ploting-ami.edit', ['id' => $audit->auditing_id]) }}" id="editJadwalForm" class="space-y-6 rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
         @csrf
         @method('PUT')
         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
             <!-- Unit Kerja -->
             <div>
                 <label for="unit_kerja_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Unit Kerja</label>
-                <select id="unit_kerja_id" name="unit_kerja_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:text-white">
+                <select id="unitkerja" name="unitKerja" required
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+                    <option value="">-- Pilih Unit Kerja --</option>
+                    @foreach ($list_unitKerja as $id => $nama)
+                        <option value="{{ $id }}"
+                            @if ($audit->unit_kerja_id === $id) selected @endif>
+                            {{ $nama }}
+                        </option>
+                    @endforeach
                 </select>
             </div>
             <!-- Waktu Audit -->
@@ -32,25 +40,57 @@
             <!-- Auditee 1 -->
             <div>
                 <label for="user_id_1_auditee" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Auditee 1</label>
-                <select id="user_id_1_auditee" name="user_id_1_auditee" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:text-white">
+                <select id="Auditee" name="Auditee" required
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+                    <option value="">-- Pilih Auditee --</option>
+                    @foreach ($list_auditee as $id => $nama)
+                        <option value="{{ $id }}"
+                            @if ($audit->user_id_1_auditee === $id) selected @endif>
+                            {{ $nama }}
+                        </option>
+                    @endforeach
                 </select>
             </div>
             <!-- Auditor 1 -->
             <div>
                 <label for="user_id_1_auditor" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Auditor 1</label>
-                <select id="user_id_1_auditor" name="user_id_1_auditor" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:text-white">
+                <select id="Auditor" name="Auditor" required
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+                    <option value="">-- Pilih Auditor --</option>
+                    @foreach ($list_auditor as $id => $nama)
+                        <option value="{{ $id }}"
+                            @if ($audit->user_id_1_auditor === $id) selected @endif>
+                            {{ $nama }}
+                        </option>
+                    @endforeach
                 </select>
             </div>
             <!-- Auditee 2 -->
             <div>
                 <label for="user_id_2_auditee" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Auditee 2</label>
-                <select id="user_id_2_auditee" name="user_id_2_auditee" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:text-white">
+                <select id="Auditee" name="Auditee" required
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+                    <option value="">-- Pilih Auditee --</option>
+                    @foreach ($list_auditee as $id => $nama)
+                        <option value="{{ $id }}"
+                            @if ($audit->user_id_2_auditee === $id) selected @endif>
+                            {{ $nama }}
+                        </option>
+                    @endforeach
                 </select>
             </div>
             <!-- Auditor 2 -->
             <div>
                 <label for="user_id_2_auditor" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Auditor 2</label>
-                <select id="user_id_2_auditor" name="user_id_2_auditor" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:text-white">
+                <select id="Auditor" name="Auditor" required
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+                    <option value="">-- Pilih Auditor --</option>
+                    @foreach ($list_auditor as $id => $nama)
+                        <option value="{{ $id }}"
+                            @if ($audit->user_id_2_auditor === $id) selected @endif>
+                            {{ $nama }}
+                        </option>
+                    @endforeach
                 </select>
             </div>
         </div>
@@ -61,7 +101,7 @@
     </form>
 </div>
 
-<script>
+{{-- <script>
 document.addEventListener('DOMContentLoaded', async function() {
     const auditId = "{{ $audit->auditing_id }}";
     // Ambil data audit yang akan diedit
@@ -129,5 +169,5 @@ document.addEventListener('DOMContentLoaded', async function() {
         .catch(err => alert('Gagal memperbarui data!'));
     });
 });
-</script>
+</script> --}}
 @endsection

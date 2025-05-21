@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 
 
@@ -153,12 +154,44 @@ public function download()
 }
 
 public function edit($id) {
-    //dd($id); // Debugging line to check the ID
-    // Cari data jadwal audit berdasarkan ID
     $audit = Auditing::with(['auditor1', 'auditor2', 'auditee1', 'auditee2', 'unitKerja', 'periode'])->findOrFail($id);
 
-    // Tampilkan halaman edit dengan data yang ditemukan
-    return view('admin.ploting-ami.edit', compact('audit'));
+    $list_auditor = [];
+    $list_auditee = [];
+    $list_unitKerja = [];
+
+    try {
+        $responseUser = Http::get('http://127.0.0.1:5000/api/data-user');
+        $responseUnitKerja = Http::get('http://127.0.0.1:5000/api/unit-kerja');
+
+        if ($responseUser->successful()) {
+            $dataUser = collect($responseUser->json()['data'] ?? []);
+
+            $list_auditor = $dataUser
+                ->filter(fn($user) => $user['role_id'] == 2)
+                ->pluck('nama', 'user_id')
+                ->toArray();
+
+            $list_auditee = $dataUser
+                ->filter(fn($user) => $user['role_id'] == 3)
+                ->pluck('nama', 'user_id')
+                ->toArray();
+        } else {
+            Log::error('Gagal mengambil data user: ' . $responseUser->body());
+        }
+
+        if ($responseUnitKerja->successful()) {
+            $list_unitKerja = collect($responseUnitKerja->json()['data'] ?? [])
+                ->pluck('nama_unit_kerja', 'unit_kerja_id')
+                ->toArray();
+        } else {
+            Log::error('Gagal mengambil data unit kerja: ' . $responseUnitKerja->body());
+        }
+    } catch (\Exception $e) {
+        Log::error('Exception saat mengambil data: ' . $e->getMessage());
+    }
+
+    return view('admin.ploting-ami.edit', compact('audit', 'list_auditor', 'list_auditee', 'list_unitKerja'));
 }
 
 public function update(Request $request, $id) {
@@ -173,7 +206,7 @@ public function update(Request $request, $id) {
     ]);
 
      // Find the audit record by ID
-     $audit = Audit::findOrFail($id);
+     $audit = Auditing::findOrFail($id);
 
      // Update the audit record with validated data
      $audit->update($validatedData);
