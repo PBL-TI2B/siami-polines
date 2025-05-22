@@ -158,6 +158,12 @@ Route::prefix('auditee')->middleware('auth.ami:auditee')->group(function () {
     Route::get('/riwayat-audit', function () {
         return view('auditee.riwayat-audit.index');
     })->name('auditee.riwayat-audit.index');
+    //route daftar tilik
+    Route::prefix('daftar-tilik')->group(function () {
+        Route::get('/', [DaftarTilikController::class, 'auditeetilik'])->name('auditee.daftar-tilik.index');
+        Route::get('/{id}/edit', [DaftarTilikController::class, 'editauditee'])->name('auditee.daftar-tilik.edit');
+        Route::get('/{tilik_id}/create', [DaftarTilikController::class, 'createauditee'])->name('auditee.daftar-tilik.create');
+    });
 });
 
 Route::prefix('kepala-pmpp')->middleware('auth.ami:kepala-pmpp')->group(function () {
