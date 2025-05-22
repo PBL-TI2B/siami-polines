@@ -126,8 +126,8 @@
             <div class="z-50 my-4 hidden w-56 list-none divide-y divide-sky-600 rounded-xl bg-sky-700 text-base shadow dark:divide-sky-800 dark:bg-sky-800"
                 id="dropdown">
                 <div class="px-4 py-3">
-                    <span class="block text-sm font-semibold text-sky-100 dark:text-sky-200">Guest</span>
-                    <span class="block truncate text-sm text-sky-200 dark:text-sky-300">guest@example.com</span>
+                    <span class="block text-sm font-semibold text-sky-100 dark:text-sky-200"> {{ session('user.nama', 'Guest') }} </span>
+                    <span class="block truncate text-sm text-sky-200 dark:text-sky-300">{{ session('user.email', 'Guest') }}</span>
                 </div>
                 <ul class="py-1 text-sky-200 dark:text-sky-300" aria-labelledby="dropdown">
                     <li>
