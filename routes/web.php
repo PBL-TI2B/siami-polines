@@ -125,9 +125,11 @@ Route::prefix('auditor')->middleware('auth.ami:auditor')->group(function () {
 
     //Route::post('/daftar-tilik', [DaftarTilikController::class, 'store'])->name('auditor.daftar-tilik.store');
 
-    Route::get('/assesmen-lapangan', function () {
-        return view('auditor.assesmen-lapangan.index');
-    })->name('auditor.assesmen-lapangan.index');
+    Route::prefix('assesmen-lapangan')->group(function () {
+        Route::get('/', [PlotingAMIController::class, 'indexAssesmen'])->name('auditor.assesmen-lapangan.index');
+        Route::get('/{id}/edit', [PlotingAMIController::class, 'edit'])->name('auditor.assesmen-lapangan.edit');
+        Route::put('/{id}', [PlotingAMIController::class, 'update'])->name('auditor.assesmen-lapangan.update');
+    });
 
     // Rute untuk data-instrumen
     Route::get('/data-instrumen', [DataInstrumenControllerAuditor::class, 'index'])->name('auditor.data-instrumen.index');

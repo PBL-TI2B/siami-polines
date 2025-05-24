@@ -2,6 +2,10 @@
 
 @section('title', 'Asesmen Lapangan')
 
+{{-- @if(session('user'))
+    <meta name="user-id" content="{{ session('user')['user_id'] }}">
+@endif --}}
+
 @section('content')
     <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
         <!-- Breadcrumb -->
@@ -13,7 +17,6 @@
     </h1>
 
     <x-table id="jadwalAuditTable" :headers="[
-            '',
             'No',
             'Unit Kerja',
             'Waktu Audit',
@@ -28,9 +31,6 @@
             @forelse ($auditings as $index => $auditing)
                 <tr
                     class="border-y border-gray-200 bg-white transition-all duration-200 hover:bg-gray-50 dark:border-gray-500 dark:bg-gray-800 dark:hover:bg-gray-600">
-                    <td class="border border-gray-200 px-4 py-4">
-                        <input type="checkbox" class="h-4 w-4 rounded border-gray-200 bg-gray-100 text-sky-800">
-                    </td>
                     <td class="border border-gray-200 px-4 py-4">
                         {{ $auditings->firstItem() + $index }}
                     </td>
@@ -76,8 +76,8 @@
                 </tr>
 
                 <!-- Modal Hapus -->
-                <x-confirmation-modal id="delete-jadwal-modal-{{ $auditing->auditing_id }}" title="Konfirmasi Hapus Jadwal"
-                    :action="route('auditor.assesmen-lapangan.destroy', $auditing->auditing_id)" method="DELETE" type="delete" formClass="delete-modal-form" :warningMessage="'Menghapus jadwal ini akan menghapus seluruh data audit yang terkait.'" />
+                {{-- <x-confirmation-modal id="delete-jadwal-modal-{{ $auditing->auditing_id }}" title="Konfirmasi Hapus Jadwal"
+                    :action="route('auditor.assesmen-lapangan.destroy', $auditing->auditing_id)" method="DELETE" type="delete" formClass="delete-modal-form" :warningMessage="'Menghapus jadwal ini akan menghapus seluruh data audit yang terkait.'" /> --}}
             @empty
                 <tr>
                     <td colspan="10" class="py-4 text-center text-gray-500">

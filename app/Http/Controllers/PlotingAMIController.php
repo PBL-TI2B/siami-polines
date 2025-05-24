@@ -7,6 +7,7 @@ use App\Models\PeriodeAudit;
 use App\Models\UnitKerja;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -53,6 +54,50 @@ class PlotingAMIController extends Controller
         })
         ->paginate($entries);
         return view('admin.ploting-ami.index', compact('auditings'));
+    }
+
+    public function indexAssesmen(Request $request) {
+        $user = session('user')['user_id'];
+
+        $response = Http::get('http://127.0.0.1:5000/api/auditings', [
+            'user_id_1_auditor' => $user,
+            'user_id_2_auditor' => $user
+        ]);
+        $auditings = $response->json()['data'] ?? [];
+        // Ambil jumlah entri dari query string, default ke 10
+        $entries = $request->get('per_page', 10);
+
+        // Ambil kata kunci pencarian
+        $search = $request->get('search', '');
+
+        // query data dengan pencarian
+        $auditings = Auditing::with([
+            'auditor1', 'auditor2',
+            'auditee1', 'auditee2',
+            'unitKerja', 'periode'
+        ]) -> where('user_id_1_auditor', $user)
+        -> when($search, function ($query, $search) {
+            $query->whereHas('unitKerja', function ($q) use ($search) {
+                $q->where('nama_unit_kerja', 'like', "%{$search}%");
+            })
+            ->orWhereHas('auditor1', function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%");
+            })
+            ->orWhereHas('auditor2', function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%");
+            })
+            ->orWhereHas('auditee1', function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%");
+            })
+            ->orWhereHas('auditee2', function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%");
+            })
+            ->orWhereHas('periode', function ($q) use ($search) {
+                $q->where('tanggal_mulai', 'like', "%{$search}%");
+            });
+        })
+        ->paginate($entries);
+        return view('auditor.assesmen-lapangan.index', compact('auditings'));
     }
 
     public function getAllJadwalAudit() {
