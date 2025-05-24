@@ -11,6 +11,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
 
@@ -240,26 +241,27 @@ public function edit($id) {
     return view('admin.ploting-ami.edit', compact('audit', 'list_auditor', 'list_auditee', 'list_unitKerja'));
 }
 
-public function update(Request $request, $id) {
-    // Validate the incoming request data
-    $validatedData = $request->validate([
-        'unit_kerja_id' => 'required|exists:unit_kerjas,id',
+public function update(Request $request, $id)
+{
+    $validated = $request->validate([
+        'unit_kerja_id' => 'required|exists:unit_kerja,unit_kerja_id',
         'jadwal_audit' => 'required|date',
-        // 'waktu_audit' => 'required|date',
-        'user_id_1_auditee' => 'nullable|exists:users,id',
-        'user_id_1_auditor' => 'nullable|exists:users,id',
-        'user_id_2_auditee' => 'nullable|exists:users,id',
-        'user_id_2_auditor' => 'nullable|exists:users,id',
+        'user_id_1_auditee' => 'required|exists:users,user_id',
+        'user_id_2_auditee' => 'nullable|exists:users,user_id',
+        'user_id_1_auditor' => 'required|exists:users,user_id',
+        'user_id_2_auditor' => 'nullable|exists:users,user_id',
     ]);
 
-     // Find the audit record by ID
-     $audit = Auditing::findOrFail($id);
+    // Kirim update ke API
+    $response = Http::asJson()->put("http://127.0.0.1:5000/api/auditings/{$id}", $validated);
 
-     // Update the audit record with validated data
-     $audit->update($validatedData);
+    if (!$response->successful()) {
+        $errorMessage = $response->json()['message'] ?? 'Gagal memperbarui data audit di API.';
+        Log::error('Failed to update audit', ['id' => $id, 'response' => $response->body()]);
+        return redirect()->back()->with('error', $errorMessage);
+    }
 
-     // Redirect back with a success message
-     return redirect()->route('admin.ploting-ami.index')->with('success', 'Jadwal Audit berhasil diperbarui.');
+    return redirect()->route('admin.ploting-ami.index')->with('success', 'Jadwal Audit berhasil diperbarui');
 }
 
     // public function makeJadwalAudit(Request $request) {
