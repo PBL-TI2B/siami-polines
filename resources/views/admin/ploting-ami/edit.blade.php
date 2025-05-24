@@ -14,7 +14,7 @@
         Edit Jadwal Audit
     </h1>
 
-    <form action="{{ route('admin.ploting-ami.edit', ['id' => $audit->auditing_id]) }}" id="editJadwalForm" class="space-y-6 rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
+    <form action="{{ route('admin.ploting-ami.edit', ['id' => $audit->auditing_id]) }}" method="POST" id="editJadwalForm" class="space-y-6 rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
         @csrf
         @method('PUT')
         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -34,8 +34,8 @@
             </div>
             <!-- Waktu Audit -->
             <div>
-                <label for="waktu_audit" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Waktu Audit</label>
-                <input type="date" id="waktu_audit" name="waktu_audit" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:text-white">
+                <label for="jadwal_audit" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Waktu Audit</label>
+                <input type="date" id="jadwal_audit" name="jadwal_audit" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:text-white">
             </div>
             <!-- Auditee 1 -->
             <div>
@@ -101,7 +101,7 @@
     </form>
 </div>
 
-{{-- <script>
+<!-- {{-- <script>
 document.addEventListener('DOMContentLoaded', async function() {
     const auditId = "{{ $audit->auditing_id }}";
     // Ambil data audit yang akan diedit
@@ -145,13 +145,13 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
 
     // Isi tanggal audit
-    document.getElementById('waktu_audit').value = audit.waktu_audit ? audit.waktu_audit.substring(0,10) : '';
+    document.getElementById('jadwal_audit').value = audit.jadwal_audit ? audit.jadwal_audit.substring(0,10) : '';
 
     // Handle submit
     document.getElementById('editJadwalForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const formData = new FormData(this);
-        formData.delete('_token');
+        //formData.delete('_token');
         formData.delete('_method');
         fetch(`http://127.0.0.1:5000/api/auditings/${auditId}`, {
             method: 'PUT',
@@ -169,5 +169,5 @@ document.addEventListener('DOMContentLoaded', async function() {
         .catch(err => alert('Gagal memperbarui data!'));
     });
 });
-</script> --}}
+</script> --}} -->
 @endsection

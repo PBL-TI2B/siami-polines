@@ -131,6 +131,7 @@ public function makeJadwalAudit(Request $request)
         'user_id_2_auditee' => 'nullable|exists:users,user_id',
         'unit_kerja_id' => 'required|exists:unit_kerja,unit_kerja_id',
         'periode_id' => 'required|exists:periode_audit,periode_id',
+        'jadwal_audit' => 'nullable|date',
     ]);
 
     if ($validator->fails()) {
@@ -243,7 +244,8 @@ public function update(Request $request, $id) {
     // Validate the incoming request data
     $validatedData = $request->validate([
         'unit_kerja_id' => 'required|exists:unit_kerjas,id',
-        'waktu_audit' => 'required|date',
+        'jadwal_audit' => 'required|date',
+        // 'waktu_audit' => 'required|date',
         'user_id_1_auditee' => 'nullable|exists:users,id',
         'user_id_1_auditor' => 'nullable|exists:users,id',
         'user_id_2_auditee' => 'nullable|exists:users,id',

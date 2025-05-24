@@ -55,6 +55,7 @@ Route::prefix('admin')->middleware('auth.ami:admin')->group(function () {
         Route::get('/download', [PlotingAMIController::class, 'download'])->name('admin.ploting-ami.download');
         Route::get('/{id}/edit', [PlotingAMIController::class, 'edit'])->name('admin.ploting-ami.edit');
         Route::put('/{id}', [PlotingAMIController::class, 'update'])->name('admin.ploting-ami.update');
+        Route::get('/{id}/revisi', [PlotingAMIController::class, 'revisi'])->name('admin.ploting-ami.revisi');
     });
 
     // Daftar Tilik
