@@ -20,42 +20,43 @@
             'No',
             'Unit Kerja',
             'Waktu Audit',
-            'Auditee',
+            'Auditee 1',
             'Auditee 2',
             'Auditor 1',
             'Auditor 2',
             'Status',
             'Aksi',
-        ]" :data="$auditings" :perPage="$auditings->perPage()" :route="route('auditor.assesmen-lapangan.index')">
+        ]" :data="$auditings" :data="$auditings" :route="route('auditor.assesmen-lapangan.index')">
 
             @forelse ($auditings as $index => $auditing)
                 <tr
                     class="border-y border-gray-200 bg-white transition-all duration-200 hover:bg-gray-50 dark:border-gray-500 dark:bg-gray-800 dark:hover:bg-gray-600">
-                    <td class="border border-gray-200 px-4 py-4">
-                        {{ $auditings->firstItem() + $index }}
+                    <td class="border-r border-gray-200 px-4 py-4 sm:px-6 dark:border-gray-600">
+                        {{ $index + 1 }}
+                    </td>
+                    <td
+                        class="whitespace-nowrap border-r border-gray-200 px-4 py-4 font-medium text-gray-900 sm:px-6 dark:border-gray-600 dark:text-white">
+                        {{ $auditing['unit_kerja']['nama_unit_kerja'] }}
                     </td>
                     <td class="border border-gray-200 px-4 py-4">
-                        {{ $auditing->unitKerja->nama_unit_kerja ?? 'N/A' }}
+                        {{ $auditing['jadwal_audit'] ? \Carbon\Carbon::parse($auditing->periode->waktu_audit)->format('d F Y') : 'N/A' }}
                     </td>
                     <td class="border border-gray-200 px-4 py-4">
-                        {{ $auditing->periode->tanggal_mulai ? \Carbon\Carbon::parse($auditing->periode->waktu_audit)->format('d F Y') : 'N/A' }}
+                        {{ $auditing['auditee1']['nama'] ?? 'N/A' }}
                     </td>
                     <td class="border border-gray-200 px-4 py-4">
-                        {{ $auditing->auditee1->nama ?? 'N/A' }}
+                        {{ $auditing['auditee2']['nama'] ?? '-' }}
                     </td>
                     <td class="border border-gray-200 px-4 py-4">
-                        {{ $auditing->auditee2->nama ?? '-' }}
+                        {{ $auditing['auditor1']['nama'] ?? 'N/A' }}
                     </td>
                     <td class="border border-gray-200 px-4 py-4">
-                        {{ $auditing->auditor1->nama ?? 'N/A' }}
-                    </td>
-                    <td class="border border-gray-200 px-4 py-4">
-                        {{ $auditing->auditor2->nama ?? '-' }}
+                        {{ $auditing['auditor2']['nama'] ?? '-' }}
                     </td>
                     <td class="border border-gray-200 px-4 py-4">
                         <span
-                            class="{{ $auditing->status == 'Selesai' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300' : 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300' }} inline-flex rounded-full px-2 py-1 text-xs font-semibold">
-                            {{ $auditing->status ?? 'Menunggu' }}
+                            class="{{ $auditing['status'] == 'Selesai' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300' : 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300' }} inline-flex rounded-full px-2 py-1 text-xs font-semibold">
+                            {{ $auditing['status'] ?? 'Menunggu' }}
                         </span>
                     </td>
 
@@ -64,13 +65,13 @@
                             'label' => 'Edit',
                             'color' => 'sky',
                             'icon' => 'heroicon-o-pencil',
-                            'href' => route('auditor.assesmen-lapangan.edit', $auditing->auditing_id),
+                            'href' => route('auditor.assesmen-lapangan.edit', $auditing['auditing_id']),
                         ],
                         [
                             'label' => 'Hapus',
                             'color' => 'red',
                             'icon' => 'heroicon-o-trash',
-                            'modalId' => 'delete-jadwal-modal-' . $auditing->auditing_id,
+                            'modalId' => 'delete-jadwal-modal-' . $auditing['auditing_id'],
                         ],
                     ]" />
                 </tr>
