@@ -9,6 +9,11 @@
     <!-- Flash Message Container -->
     <div id="flashMessage" class="hidden fixed top-4 right-4 z-50 p-4 rounded-md shadow-lg"></div>
 
+    <!-- Session-based Toast Notification -->
+    @if (session('success'))
+        <x-toast id="toast-success" type="success" :message="session('success')" />
+    @endif
+
     <form id="tilikForm" method="POST" action="{{ route('auditor.daftar-tilik.index', $id) }}">
         @csrf
         @method('PUT')
@@ -71,6 +76,7 @@
     <!-- Response Message -->
     <div id="responseMessage" class="mt-4 hidden text-sm"></div>
 </div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const select = document.getElementById('kriteria');
@@ -91,7 +97,12 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     fetch('http://127.0.0.1:5000/api/tilik/{{ $id }}')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
                 const tilik = data.data;
@@ -136,17 +147,22 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             body: JSON.stringify(payload)
         })
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) {
+                throw new Error(`HTTP error! Status: ${res.status}`);
+            }
+            return res.json();
+        })
         .then(data => {
             if (data.success) {
-                alert('Data berhasil diperbarui!');
+                // Redirect to the index page to trigger session('success') toast
                 window.location.href = "{{ route('auditor.daftar-tilik.index') }}";
             } else {
-                alert('Gagal update: ' + data.message);
+                showError('Gagal update: ' + data.message);
             }
         })
         .catch(error => {
-            alert('Terjadi kesalahan: ' + error.message);
+            showError('Terjadi kesalahan: ' + error.message);
         });
     });
 });
