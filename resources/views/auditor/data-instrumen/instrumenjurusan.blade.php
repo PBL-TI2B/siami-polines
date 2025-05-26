@@ -1,19 +1,36 @@
 @extends('layouts.app')
 
 @section('title', 'Instrumen Jurusan')
-
+<!-- Letakkan di head atau sebelum script Anda -->
+@if (session('user'))
+    <meta name="user-id" content="{{ session('user')['user_id'] }}">
+@endif
 @section('content')
     <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
         <!-- Breadcrumb -->
-        <x-breadcrumb :items="[
-            ['label' => 'Dashboard', 'url' => route('auditor.dashboard.index')],
-            ['label' => 'Data Instrumen Jurusan', 'url' => route('auditor.data-instrumen.instrumenjurusan')],
-        ]" />
+        <x-breadcrumb :items="[['label' => 'Dashboard', 'url' => ''], ['label' => 'Instrumen Jurusan']]" />
 
         <!-- Heading -->
         <h1 class="mb-6 text-3xl font-bold text-gray-900 dark:text-gray-200">
             Instrumen Jurusan
         </h1>
+
+        <!-- Toolbar -->
+        <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+
+
+            {{-- <!-- Filter Dropdowns -->
+            <div class="flex flex-wrap gap-2">
+                <select id="unitKerjaSelect"
+                    class="w-40 rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 text-sm text-gray-900 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                    <option selected disabled>Pilih Unit</option>
+                </select>
+                <select id="periodeSelect"
+                    class="w-40 rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 text-sm text-gray-900 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                    <option selected disabled>Pilih Periode AMI</option>
+                </select>
+            </div> --}}
+        </div>
 
         <!-- Table and Pagination -->
         <div class="rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
@@ -66,9 +83,9 @@
                             <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">
                                 Satuan</th>
                             <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">
-                                Target 25</th>
+                                Target</th>
                             <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">
-                                Capaian 25</th>
+                                Capaian</th>
                             <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">
                                 Keterangan</th>
                             <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">
@@ -85,48 +102,8 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                        <tr class="transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700">
-                            <td class="px-4 py-3 sm:px-6">1</td>
-                            <td class="px-4 py-3 sm:px-6">Meningkatnya kualitas lulusan pendidikan tinggi</td>
-                            <td class="px-4 py-3 sm:px-6">Persentase Lulusan S1 dan D4/D3/D2 yang Berhasil Mendapat
-                                Pekerjaan, Melanjutkan Studi, atau Menjadi Wirausaha.</td>
-                            <td class="px-4 py-3 sm:px-6">Peningkatan dan pengukuran kemampuan bahasa asing mahasiswa</td>
-                            <td class="px-4 py-3 sm:px-6">%</td>
-                            <td class="px-4 py-3 sm:px-6">80</td>
-                            <td class="px-4 py-3 sm:px-6">75</td>
-                            <td class="px-4 py-3 sm:px-6">Belum Tercapai</td>
-                            <td class="px-4 py-3 sm:px-6">Tidak Sesuai</td>
-                            <td class="px-4 py-3 sm:px-6">/bukti/laporan_mahasiswa_2023.pdf</td>
-                            <td class="px-4 py-3 sm:px-6">Perbaikan metode pengukuran</td>
-                            <td class="px-4 py-3 sm:px-6">-</td>
-                            <td class="px-4 py-3 sm:px-6">Revisi dokumen</td>
-                            <x-table-row-actions :actions="[
-                                ['label' => 'Edit', 'color' => 'sky', 'icon' => 'heroicon-o-pencil', 'href' => '#'],
-                                ['label' => 'Hapus', 'color' => 'red', 'icon' => 'heroicon-o-trash', 'href' => '#'],
-                            ]" />
-                        </tr>
-                        <tr class="transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700">
-                            <td class="px-4 py-3 sm:px-6">2</td>
-                            <td class="px-4 py-3 sm:px-6">Meningkatnya tata kelola satuan kerja di lingkungan Ditjen
-                                Pendidikan Vokasi</td>
-                            <td class="px-4 py-3 sm:px-6">Rata-rata Nilai Kinerja Anggaran atas pelaksanaan RKA-K/L Satker
-                                minimal 93</td>
-                            <td class="px-4 py-3 sm:px-6">Tata Kelola: Peningkatan kuantitas layanan.</td>
-                            <td class="px-4 py-3 sm:px-6">Nilai</td>
-                            <td class="px-4 py-3 sm:px-6">93</td>
-                            <td class="px-4 py-3 sm:px-6">95</td>
-                            <td class="px-4 py-3 sm:px-6">Tercapai</td>
-                            <td class="px-4 py-3 sm:px-6">Sesuai</td>
-                            <td class="px-4 py-3 sm:px-6">/bukti/laporan_anggaran_2023.pdf</td>
-                            <td class="px-4 py-3 sm:px-6">-</td>
-                            <td class="px-4 py-3 sm:px-6">-</td>
-                            <td class="px-4 py-3 sm:px-6">Lanjutkan monitoring</td>
-                            <x-table-row-actions :actions="[
-                                ['label' => 'Edit', 'color' => 'sky', 'icon' => 'heroicon-o-pencil', 'href' => '#'],
-                                ['label' => 'Hapus', 'color' => 'red', 'icon' => 'heroicon-o-trash', 'href' => '#'],
-                            ]" />
-                        </tr>
+                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700" id="instrumen-jurusan-table-body">
+                        <!-- Data akan diisi oleh JavaScript -->
                     </tbody>
                 </table>
             </div>
@@ -169,4 +146,148 @@
             </div>
         </div>
     </div>
+
+    <script>
+        const userId = {{ session('user.user_id', 0) }};
+        // =========================== BAGIAN 2: Dropdown Unit Kerja ===========================
+        fetch('http://127.0.0.1:5000/api/unit-kerja')
+            .then(response => response.json())
+            .then(result => {
+                const data = result.data;
+                const select = document.getElementById('unitKerjaSelect');
+
+                data.forEach(unit => {
+                    const option = document.createElement('option');
+                    option.value = unit.unit_kerja_id;
+                    option.textContent = unit.nama_unit_kerja;
+                    select.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Gagal memuat unit kerja:', error);
+            });
+        // =========================== BAGIAN 3: Dropdown Periode ===========================
+        fetch('http://127.0.0.1:5000/api/periode-audits')
+            .then(response => response.json())
+            .then(result => {
+                const data = result.data.data;
+                const select = document.getElementById('periodeSelect');
+
+                data.forEach(unit => {
+                    const option = document.createElement('option');
+                    option.value = unit.periode_id;
+                    option.textContent = unit.nama_periode;
+                    select.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Gagal memuat periode AMI:', error);
+            });
+
+        fetch('http://127.0.0.1:5000/api/instrumen-response')
+            .then(response => response.json())
+            .then(result => {
+                const allData = result.data;
+                const tableBody = document.getElementById('instrumen-jurusan-table-body');
+
+                // Filter data berdasarkan user_id session
+                const filteredData = allData.filter(item => {
+                    return item.auditing.user_id_1_auditor === userId ||
+                        item.auditing.user_id_2_auditor === userId;
+                });
+
+                // Clear existing table content
+                tableBody.innerHTML = '';
+
+                if (filteredData.length === 0) {
+                    tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="13" class="px-4 py-4 text-center text-gray-500 dark:text-gray-400">
+                            Tidak ada data yang tersedia untuk user ini.
+                        </td>
+                    </tr>
+                `;
+                    return;
+                }
+
+                // Populate table with filtered data
+                filteredData.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    row.className = 'hover:bg-gray-50 dark:hover:bg-gray-700';
+
+                    // Helper function to safely access nested properties
+                    const getValue = (path, defaultValue = '-') => {
+                        try {
+                            const value = path.split('.').reduce((obj, key) => obj[key], item);
+                            return value !== null && value !== undefined ? value : defaultValue;
+                        } catch {
+                            return defaultValue;
+                        }
+                    };
+
+                    row.innerHTML = `
+                    <td class="whitespace-nowrap border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">${index + 1}</td>
+                    <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
+                        ${getValue('set_instrumen_unit_kerja.aktivitas.indikator_kinerja.sasaran_strategis.nama_sasaran')}
+                    </td>
+                    <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
+                        ${getValue('set_instrumen_unit_kerja.aktivitas.indikator_kinerja.isi_indikator_kinerja')}
+                    </td>
+                    <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
+                        ${getValue('set_instrumen_unit_kerja.aktivitas.nama_aktivitas')}
+                    </td>
+                    <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
+                        ${getValue('set_instrumen_unit_kerja.aktivitas.satuan')}
+                    </td>
+                    <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
+                        ${getValue('set_instrumen_unit_kerja.aktivitas.target')}
+                    </td>
+                    <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
+                        ${getValue('response.capaian')}
+                    </td>
+                    <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
+                        ${getValue('status_instrumen')}
+                    </td>
+                    <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
+                        ${getValue('response.sesuai')}
+                    </td>
+                    <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
+                        ${getValue('response.lokasi_bukti_dukung')}
+                    </td>
+                    <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
+                        ${getValue('response.minor')}
+                    </td>
+                    <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
+                        ${getValue('response.mayor')}
+                    </td>
+                    <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
+                        ${getValue('response.ofi')}
+                    </td>
+                    <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
+                        <div class="flex items-center gap-2">
+                            <button class="rounded-lg bg-sky-500 p-2 text-white transition-all duration-200 hover:bg-sky-600">
+                                <x-heroicon-s-pencil-square class="h-4 w-4" />
+                            </button>
+                            <button class="rounded-lg bg-red-500 p-2 text-white transition-all duration-200 hover:bg-red-600">
+                                <x-heroicon-s-trash class="h-4 w-4" />
+                            </button>
+                        </div>
+                    </td>
+                `;
+
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Gagal memuat data instrumen:', error);
+                const tableBody = document.getElementById('instrumen-jurusan-table-body');
+                tableBody.innerHTML = `
+                <tr>
+                    <td colspan="13" class="px-4 py-4 text-center text-gray-500 dark:text-gray-400">
+                        Gagal memuat data. Silakan coba lagi.
+                    </td>
+                </tr>
+            `;
+            });
+    </script>
 @endsection

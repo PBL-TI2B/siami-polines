@@ -152,9 +152,14 @@ Route::prefix('auditee')->middleware('auth.ami:auditee')->group(function () {
     Route::get('/dashboard', function () {
         return view('auditee.dashboard.index');
     })->name('auditee.dashboard.index');
-    Route::get('/pengisian-instrumen', function () {
-        return view('auditee.pengisian-instrumen.index');
-    })->name('auditee.pengisian-instrumen.index');
+    Route::prefix('pengisian-instrumen')->group(function () {
+        Route::get('/', function () {
+            return view('auditee.pengisian-instrumen.index');
+        })->name('auditee.pengisian-instrumen.index');
+        Route::get('/instrumen-upt', function ($id) {
+            return view('auditee.pengisian-instrumen.instrumen-upt');
+        })->name('auditee.pengisian-instrumen.instrumen-upt');
+    });
     Route::get('/tindak-lanjut-perbaikan', function () {
         return view('auditee.tindak-lanjut-perbaikan.index');
     })->name('auditee.tindak-lanjut-perbaikan.index');
