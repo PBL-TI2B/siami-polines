@@ -10,6 +10,7 @@ use App\Http\Controllers\DataInstrumenControllerAuditor;
 use App\Http\Controllers\DataUserController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AuditController;
 use App\Http\Livewire\PeriodeAudit;
 use Illuminate\Support\Facades\Route;
 
@@ -44,7 +45,6 @@ Route::prefix('admin')->middleware('auth.ami:admin')->group(function () {
         Route::delete('/{id}', [PeriodeAuditController::class, 'destroy'])->name('admin.periode-audit.destroy');
         Route::put('/{id}/close', [PeriodeAuditController::class, 'close'])->name('admin.periode-audit.close');
     });
-
 
     // Jadwal Audit
     Route::prefix('ploting-ami')->group(function () {
@@ -161,6 +161,12 @@ Route::prefix('auditee')->middleware('auth.ami:auditee')->group(function () {
     Route::get('/riwayat-audit', function () {
         return view('auditee.riwayat-audit.index');
     })->name('auditee.riwayat-audit.index');
+
+    Route::prefix('audit')->group(function () {
+        Route::get('/', [AuditController::class, 'auditeeIndexPage'])->name('auditee.audit.index');
+        Route::get('/auditings', [AuditController::class, 'getAuditingsByUser'])->name('auditee.auditings');
+    });
+
     //route daftar tilik
     Route::prefix('daftar-tilik')->group(function () {
         Route::get('/', [DaftarTilikController::class, 'auditeetilik'])->name('auditee.daftar-tilik.index');
