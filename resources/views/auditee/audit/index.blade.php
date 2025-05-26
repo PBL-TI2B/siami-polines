@@ -41,8 +41,18 @@
         <h2 class="pt-8 mb-8 text-2xl text-gray-900 dark:text-gray-200">
             Progress Auditing Auditee
         </h2>
+        @php
+            $jenisUnitId = session('jenis_unit_id');
+            $instrumenRoute = match ($jenisUnitId) {
+                1 => route('auditee.data-instrumen.index'),
+                // 2 => route('auditee.data-instrumen.index2'),
+                3 => route('auditee.data-instrumen.instrumenprodi'),
+                default => '#', // fallback kalau tidak ditemukan
+            };
+        @endphp
+
         <x-breadcrumbproses :items="[
-            ['label' => 'Respon Instrumen', 'url' => '#'],
+            ['label' => 'Respon Instrumen', 'url' => $instrumenRoute],
             ['label' => 'Jadwal Assesmen Lapangan', 'url' => '#'],
             ['label' => 'Response Tilik', 'url' => '#'],
         ]" />

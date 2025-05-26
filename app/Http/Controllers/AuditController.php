@@ -32,7 +32,26 @@ class AuditController extends Controller
             $response = Http::get("http://127.0.0.1:5000/api/auditings/userID={$userId}");
 
             if ($response->successful()) {
-                return response()->json($response->json());
+                $data = $response->json();
+
+                // Ambil jenis_unit_id jika tersedia
+                $jenisUnitId = $data['data'][0]['unit_kerja']['jenis_unit_id'] ?? null;
+                $auditingId = $data['data'][0]['auditing_id'] ?? null;
+
+                // Simpan ke session (opsional)
+                if ($jenisUnitId !== null) {
+                    session(['jenis_unit_id' => $jenisUnitId]);
+                }
+                if ($auditingId !== null) {
+                    session(['auditing_id' => $auditingId]);
+                }
+
+                // Kembalikan respons seperti biasa, bisa juga sertakan jenis_unit_id
+                return response()->json([
+                    'message' => $data['message'],
+                    'jenis_unit_id' => $jenisUnitId,
+                    'data' => $data['data']
+                ]);
             } else {
                 return response()->json([
                     'message' => 'Gagal mengambil data dari API',

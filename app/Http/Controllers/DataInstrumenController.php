@@ -39,6 +39,10 @@ class DataInstrumenController extends Controller
     {
         return view('admin.data-instrumen.instrumenprodi');
     }
+    public function auditeeprodi()
+    {
+        return view('auditee.data-instrumen.instrumenprodi');
+    }
     public function export()
     {
         return Excel::download(new DataInstrumenExport, 'data-instrumen-' . date('YmdHis') . '.xlsx');
