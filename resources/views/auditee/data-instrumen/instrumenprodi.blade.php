@@ -104,20 +104,44 @@
     </div>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    // =========================== BAGIAN 1: Tabel Instrumen ===========================
-    fetch('http://127.0.0.1:5000/api/set-instrumen')
-        .then(response => response.json())
-        .then(result => {
-            const data = result.data;
-            const tableBody = document.getElementById('instrumen-table-body');
+    // Fetch both set-instrumen and responses data
+    const auditingId = {{ session('auditing_id') }}; // Assume auditing_id is passed from Blade
+    Promise.all([
+        fetch('http://127.0.0.1:5000/api/set-instrumen').then(res => res.json()),
+        fetch(`http://127.0.0.1:5000/api/responses/auditing/${auditingId}`)
+            .then(res => res.json())
+            .catch(() => ({ data: [] })) // Return empty data array if responses fetch fails
+    ])
+        .then(([instrumenResult, responseResult]) => {
+            const instrumenData = instrumenResult.data || [];
+            const responseData = responseResult.data || [];
 
+            // Create a map of responses by set_instrumen_unit_kerja_id
+            const responseMap = {};
+            responseData.forEach(response => {
+                responseMap[response.set_instrumen_unit_kerja_id] = response;
+            });
+
+            const tableBody = document.getElementById('instrumen-table-body');
             let index = 1; // Nomor urut berdasarkan standar
+
+            // If no instrumen data, show empty message
+            if (!instrumenData.length) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="12" class="px-4 py-3 sm:px-6 text-center text-red-500">
+                            Tidak ada data instrumen tersedia.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
 
             const grouped = {};
             const rowspanStandar = {};
 
-            // Mengelompokkan data berdasarkan standar, deskripsi, dan unsur
-            data.forEach(item => {
+            // Group instrumen data as before
+            instrumenData.forEach(item => {
                 const standar = item.unsur.deskripsi.kriteria.nama_kriteria;
                 const deskripsi = item.unsur.deskripsi.isi_deskripsi;
                 const unsur = item.unsur.isi_unsur;
@@ -126,11 +150,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     grouped[standar] = {};
                     rowspanStandar[standar] = 0;
                 }
-
                 if (!grouped[standar][deskripsi]) {
                     grouped[standar][deskripsi] = {};
                 }
-
                 if (!grouped[standar][deskripsi][unsur]) {
                     grouped[standar][deskripsi][unsur] = [];
                 }
@@ -139,111 +161,147 @@ document.addEventListener('DOMContentLoaded', function () {
                 rowspanStandar[standar]++;
             });
 
-            // Iterasi melalui setiap standar
+            // Helper function to render checklist
+            const renderChecklist = (value) => {
+                return value === '1' ? `
+                    <svg class="w-5 h-5 text-green-600 dark:text-green-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                ` : '-';
+            };
+
+            // Iterate through grouped data
             for (const standar in grouped) {
                 let standarDisplayed = false;
                 let nomorDisplayed = false;
 
-                // Menghitung total baris untuk standar ini
                 const totalRowsForStandar = Object.values(grouped[standar])
                     .map(desc => Object.values(desc).reduce((sum, arr) => sum + arr.length, 0))
                     .reduce((a, b) => a + b, 0);
 
-                // Iterasi melalui setiap deskripsi dalam standar
                 for (const deskripsi in grouped[standar]) {
                     let deskripsiDisplayed = false;
-
-                    // Menghitung total baris untuk deskripsi ini
                     const totalRowsForDeskripsi = Object.values(grouped[standar][deskripsi])
                         .reduce((sum, arr) => sum + arr.length, 0);
 
-                    // Iterasi melalui setiap unsur dalam deskripsi
                     for (const unsur in grouped[standar][deskripsi]) {
                         let unsurDisplayed = false;
                         const items = grouped[standar][deskripsi][unsur];
                         const totalRowsForUnsur = items.length;
 
-                        // Iterasi melalui setiap item dalam unsur
                         items.forEach(item => {
+                            const response = responseMap[item.set_instrumen_unit_kerja_id] || {};
                             const row = document.createElement('tr');
                             let html = '';
 
-                            // Kolom No (hanya ditampilkan sekali per standar)
+                            // Kolom No
                             if (!nomorDisplayed) {
                                 html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600" rowspan="${totalRowsForStandar}">${index}</td>`;
                                 nomorDisplayed = true;
                             }
 
-                            // Kolom Standar (hanya ditampilkan sekali per standar)
+                            // Kolom Standar
                             if (!standarDisplayed) {
                                 html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600" rowspan="${totalRowsForStandar}">${standar}</td>`;
                                 standarDisplayed = true;
                             }
 
-                            // Kolom Deskripsi (hanya ditampilkan sekali per deskripsi)
+                            // Kolom Deskripsi
                             if (!deskripsiDisplayed) {
                                 html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600" rowspan="${totalRowsForDeskripsi}">${deskripsi}</td>`;
                                 deskripsiDisplayed = true;
                             }
 
-                            // Kolom Unsur (hanya ditampilkan sekali per unsur)
+                            // Kolom Unsur
                             if (!unsurDisplayed) {
                                 html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600" rowspan="${totalRowsForUnsur}">${unsur}</td>`;
                                 unsurDisplayed = true;
                             }
+
+                            // Response columns with checklist
+                            html += `
+                                <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600">${response.ketersediaan_standar_dan_dokumen || '-'}</td>
+                                <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">${renderChecklist(response.spt_pt)}</td>
+                                <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">${renderChecklist(response.sn_dikti)}</td>
+                                <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">${renderChecklist(response.lokal)}</td>
+                                <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">${renderChecklist(response.nasional)}</td>
+                                <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">${renderChecklist(response.internasional)}</td>
+                                <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600">${response.keterangan || '-'}</td>
+                                <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">
+                                    <div class="flex items-center gap-2 justify-center">
+                                        ${response.response_id ? `
+                                            <a href="/auditee/daftar-tilik/${response.response_id}/edit" title="Edit Jawaban" class="text-sky-600 hover:text-sky-800 dark:text-sky-400 dark:hover:text-sky-200">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M14 4a2.5 2.5 0 113.536 3.536L6.5 21H3v-3.5L14 4z"/>
+                                                </svg>
+                                            </a>
+                                            <button data-id="${response.response_id}" class="delete-btn text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200" title="Hapus">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12A2 2 0 0116.1 21H7.9a2 2 0 01-2-1.9L5 7m5-4h4m-4 0a2 2 0 00-2 2v1h8V5a2 2 0 00-2-2z"/>
+                                                </svg>
+                                            </button>
+                                        ` : `
+                                            <a href="/auditee/data-instrumen/create/responses/prodi/${item.set_instrumen_unit_kerja_id}" title="Tambah Response" class="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-200">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                                </svg>
+                                            </a>
+                                        `}
+                                    </div>
+                                </td>
+                            `;
 
                             row.innerHTML = html;
                             tableBody.appendChild(row);
                         });
                     }
                 }
-                index++; // Increment nomor hanya setelah satu standar selesai
+                index++;
             }
         })
         .catch(error => {
-            console.error('Gagal mengambil data:', error);
+            console.error('Gagal mengambil data instrumen:', error);
             const tableBody = document.getElementById('instrumen-table-body');
             tableBody.innerHTML = `
                 <tr>
                     <td colspan="12" class="px-4 py-3 sm:px-6 text-center text-red-500">
-                        Gagal memuat data. Silakan coba lagi.
+                        Gagal memuat data instrumen. Silakan coba lagi.
                     </td>
                 </tr>
             `;
         });
-    
-});
-// Event listener untuk tombol hapus
-document.getElementById('instrumen-table-body').addEventListener('click', function (e) {
-    const deleteBtn = e.target.closest('.delete-btn');
-    if (deleteBtn) {
-        e.preventDefault();
-        const setInstrumenId = deleteBtn.getAttribute('data-id');
 
-        if (confirm('Apakah Anda yakin ingin menghapus instrumen ini?')) {
-            fetch(`http://127.0.0.1:5000/api/set-instrumen/${setInstrumenId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Gagal menghapus instrumen');
+    // Event listener for delete response buttons
+    document.getElementById('instrumen-table-body').addEventListener('click', function (e) {
+        const deleteBtn = e.target.closest('.delete-btn');
+        if (deleteBtn) {
+            e.preventDefault();
+            const responseId = deleteBtn.getAttribute('data-id');
+
+            if (confirm('Apakah Anda yakin ingin menghapus response ini?')) {
+                fetch(`http://127.0.0.1:5000/api/responses/${responseId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
                     }
-                    return response.json();
                 })
-                .then(result => {
-                    alert('Instrumen berhasil dihapus!');
-                    window.location.href = '/admin/data-instrumen/prodi';
-                })
-                .catch(error => {
-                    console.error('Gagal menghapus instrumen:', error);
-                    alert('Gagal menghapus instrumen. Silakan coba lagi.');
-                });
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Gagal menghapus response');
+                        }
+                        return response.json();
+                    })
+                    .then(result => {
+                        alert('Response berhasil dihapus!');
+                        window.location.reload(); // Refresh to update table
+                    })
+                    .catch(error => {
+                        console.error('Gagal menghapus response:', error);
+                        alert('Gagal menghapus response. Silakan coba lagi.');
+                    });
+            }
         }
-    }
+    });
 });
-
 </script>
 @endsection

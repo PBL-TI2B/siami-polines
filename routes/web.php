@@ -174,7 +174,7 @@ Route::prefix('auditee')->middleware('auth.ami:auditee')->group(function () {
     // Data Instrumen
     Route::prefix('data-instrumen')->group(function () {
         Route::get('/', [DataInstrumenController::class, 'index'])->name('auditee.data-instrumen.index');
-        Route::get('/create/prodi', [DataInstrumenController::class, 'storeprodi'])->name('auditee.data-instrumen.tambahprodi');
+        Route::get('/create/responses/prodi/{response_id}', [DataInstrumenController::class, 'auditeeprodiresponse'])->name('auditee.data-instrumen.tambahprodi');
         Route::get('/create', [DataInstrumenController::class, 'store'])->name('auditee.data-instrumen.tambah');
         Route::get('/{sasaran_strategis_id}/edit', [DataInstrumenController::class, 'edit'])->name('auditee.data-instrumen.edit');
         Route::get('/prodi/{set_instrumen_unit_kerja_id}/edit', [DataInstrumenController::class, 'editprodi'])->name('auditee.data-instrumen.editprodi');
