@@ -101,11 +101,18 @@
                 </div>
             </div>
         </div>
+        <div>
+            <x-button id="submit-lock-btn" type="submit" color="sky" icon="heroicon-o-plus" class="mt-8">
+                Submit dan Kunci Jawaban
+            </x-button>
+        </div>
     </div>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     // Fetch both set-instrumen and responses data
     const auditingId = {{ session('auditing_id') }}; // Assume auditing_id is passed from Blade
+    const auditStatus = {{ session('status') ?? 1 }}; // Get audit status, default to 1 if undefined
+
     Promise.all([
         fetch('http://127.0.0.1:5000/api/set-instrumen').then(res => res.json()),
         fetch(`http://127.0.0.1:5000/api/responses/auditing/${auditingId}`)
@@ -228,26 +235,30 @@ document.addEventListener('DOMContentLoaded', function () {
                                 <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">${renderChecklist(response.internasional)}</td>
                                 <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600">${response.keterangan || '-'}</td>
                                 <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">
-                                    <div class="flex items-center gap-2 justify-center">
-                                        ${response.response_id ? `
-                                            <a href="/auditee/daftar-tilik/${response.response_id}/edit" title="Edit Jawaban" class="text-sky-600 hover:text-sky-800 dark:text-sky-400 dark:hover:text-sky-200">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M14 4a2.5 2.5 0 113.536 3.536L6.5 21H3v-3.5L14 4z"/>
-                                                </svg>
-                                            </a>
-                                            <button data-id="${response.response_id}" class="delete-btn text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200" title="Hapus">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12A2 2 0 0116.1 21H7.9a2 2 0 01-2-1.9L5 7m5-4h4m-4 0a2 2 0 00-2 2v1h8V5a2 2 0 00-2-2z"/>
-                                                </svg>
-                                            </button>
-                                        ` : `
-                                            <a href="/auditee/data-instrumen/create/responses/prodi/${item.set_instrumen_unit_kerja_id}" title="Tambah Response" class="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-200">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                                                </svg>
-                                            </a>
-                                        `}
-                                    </div>
+                                    ${auditStatus != 1 ? `
+                                        <span class="text-gray-500 dark:text-gray-400">Jawaban Terkunci</span>
+                                    ` : `
+                                        <div class="flex items-center gap-2 justify-center">
+                                            ${response.response_id ? `
+                                                <a href="/auditee/data-instrumen/prodi/${response.response_id}/edit" title="Edit Response" class="text-sky-600 hover:text-sky-800 dark:text-sky-400 dark:hover:text-sky-200">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M14 4a2.5 2.5 0 113.536 3.536L6.5 21H3v-3.5L14 4z"/>
+                                                    </svg>
+                                                </a>
+                                                <button data-id="${response.response_id}" class="delete-btn text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200" title="Hapus">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12A2 2 0 0116.1 21H7.9a2 2 0 01-2-1.9L5 7m5-4h4m-4 0a2 2 0 00-2 2v1h8V5a2 2 0 00-2-2z"/>
+                                                    </svg>
+                                                </button>
+                                            ` : `
+                                                <a href="/auditee/data-instrumen/create/responses/prodi/${item.set_instrumen_unit_kerja_id}" title="Tambah Response" class="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-200">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                                    </svg>
+                                                </a>
+                                            `}
+                                        </div>
+                                    `}
                                 </td>
                             `;
 
@@ -257,6 +268,56 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 }
                 index++;
+            }
+
+            // Handle "Submit dan Kunci Jawaban" button click
+            const submitLockBtn = document.getElementById('submit-lock-btn');
+            if (submitLockBtn) {
+                // Disable button if auditStatus is not 1
+                if (auditStatus != 1) {
+                    submitLockBtn.disabled = true;
+                    submitLockBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    submitLockBtn.addEventListener('click', function (e) {
+                        e.preventDefault(); // Prevent default if button is in a form
+                        if (confirm('Apakah Anda yakin ingin mengunci jawaban? Tindakan ini tidak dapat dibatalkan.')) {
+                            fetch(`http://127.0.0.1:5000/api/auditings/${auditingId}`, {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ status: 2 })
+                            })
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error('Gagal mengunci jawaban');
+                                    }
+                                    return response.json();
+                                })
+                                .then(result => {
+                                    // Update all "Aksi" columns to "Jawaban Terkunci"
+                                    const rows = document.querySelectorAll('#instrumen-table-body tr');
+                                    rows.forEach(row => {
+                                        const actionCell = row.lastElementChild; // "Aksi" is the last td
+                                        actionCell.innerHTML = `
+                                            <span class="text-gray-500 dark:text-gray-400">Jawaban Terkunci</span>
+                                        `;
+                                        actionCell.classList.add('text-center'); // Ensure text is centered
+                                    });
+
+                                    // Disable the submit button to prevent further clicks
+                                    submitLockBtn.disabled = true;
+                                    submitLockBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                                    
+                                    alert('Jawaban berhasil dikunci!');
+                                })
+                                .catch(error => {
+                                    console.error('Gagal mengunci jawaban:', error);
+                                    alert('Gagal mengunci jawaban. Silakan coba lagi.');
+                                });
+                        }
+                    });
+                }
             }
         })
         .catch(error => {

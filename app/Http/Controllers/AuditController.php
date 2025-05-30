@@ -37,6 +37,7 @@ class AuditController extends Controller
                 // Ambil jenis_unit_id jika tersedia
                 $jenisUnitId = $data['data'][0]['unit_kerja']['jenis_unit_id'] ?? null;
                 $auditingId = $data['data'][0]['auditing_id'] ?? null;
+                $status = $data['data'][0]['status'] ?? null;
 
                 // Simpan ke session (opsional)
                 if ($jenisUnitId !== null) {
@@ -44,6 +45,9 @@ class AuditController extends Controller
                 }
                 if ($auditingId !== null) {
                     session(['auditing_id' => $auditingId]);
+                }
+                if ($status !== null) {
+                    session(['status' => $status]);
                 }
 
                 // Kembalikan respons seperti biasa, bisa juga sertakan jenis_unit_id
