@@ -1,26 +1,26 @@
 @extends('layouts.app')
 
-@section('title', 'Instrumen Jurusan')
+@section('title', 'Instrumen UPT')
 <!-- Letakkan di head atau sebelum script Anda -->
-@if (session('user'))
+@if(session('user'))
     <meta name="user-id" content="{{ session('user')['user_id'] }}">
 @endif
 @section('content')
     <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
         <!-- Breadcrumb -->
-        <x-breadcrumb :items="[['label' => 'Dashboard', 'url' => ''], ['label' => 'Instrumen Jurusan']]" />
+        <x-breadcrumb :items="[['label' => 'Dashboard', 'url' => ''], ['label' => 'Instrumen UPT']]" />
 
         <!-- Heading -->
         <h1 class="mb-6 text-3xl font-bold text-gray-900 dark:text-gray-200">
-            Instrumen Jurusan
+            Instrumen UPT
         </h1>
 
         <!-- Toolbar -->
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
 
 
-            {{-- <!-- Filter Dropdowns -->
-            <div class="flex flex-wrap gap-2">
+            <!-- Filter Dropdowns -->
+            <!-- <div class="flex flex-wrap gap-2">
                 <select id="unitKerjaSelect"
                     class="w-40 rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 text-sm text-gray-900 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
                     <option selected disabled>Pilih Unit</option>
@@ -29,7 +29,7 @@
                     class="w-40 rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 text-sm text-gray-900 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
                     <option selected disabled>Pilih Periode AMI</option>
                 </select>
-            </div> --}}
+            </div> -->
         </div>
 
         <!-- Table and Pagination -->
@@ -102,7 +102,7 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700" id="instrumen-jurusan-table-body">
+                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700" id="instrumen-upt-table-body">
                         <!-- Data akan diisi oleh JavaScript -->
                     </tbody>
                 </table>
@@ -183,49 +183,49 @@
             .catch(error => {
                 console.error('Gagal memuat periode AMI:', error);
             });
-
+            
         fetch('http://127.0.0.1:5000/api/instrumen-response')
-            .then(response => response.json())
-            .then(result => {
-                const allData = result.data;
-                const tableBody = document.getElementById('instrumen-jurusan-table-body');
-
-                // Filter data berdasarkan user_id session
-                const filteredData = allData.filter(item => {
-                    return item.auditing.user_id_1_auditor === userId ||
-                        item.auditing.user_id_2_auditor === userId;
-                });
-
-                // Clear existing table content
-                tableBody.innerHTML = '';
-
-                if (filteredData.length === 0) {
-                    tableBody.innerHTML = `
+        .then(response => response.json())
+        .then(result => {
+            const allData = result.data;
+            const tableBody = document.getElementById('instrumen-upt-table-body');
+            
+            // Filter data berdasarkan user_id session
+            const filteredData = allData.filter(item => {
+                return item.auditing.user_id_1_auditor === userId || 
+                       item.auditing.user_id_2_auditor === userId;
+            });
+            
+            // Clear existing table content
+            tableBody.innerHTML = '';
+            
+            if (filteredData.length === 0) {
+                tableBody.innerHTML = `
                     <tr>
                         <td colspan="13" class="px-4 py-4 text-center text-gray-500 dark:text-gray-400">
                             Tidak ada data yang tersedia untuk user ini.
                         </td>
                     </tr>
                 `;
-                    return;
-                }
-
-                // Populate table with filtered data
-                filteredData.forEach((item, index) => {
-                    const row = document.createElement('tr');
-                    row.className = 'hover:bg-gray-50 dark:hover:bg-gray-700';
-
-                    // Helper function to safely access nested properties
-                    const getValue = (path, defaultValue = '-') => {
-                        try {
-                            const value = path.split('.').reduce((obj, key) => obj[key], item);
-                            return value !== null && value !== undefined ? value : defaultValue;
-                        } catch {
-                            return defaultValue;
-                        }
-                    };
-
-                    row.innerHTML = `
+                return;
+            }
+            
+            // Populate table with filtered data
+            filteredData.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50 dark:hover:bg-gray-700';
+                
+                // Helper function to safely access nested properties
+                const getValue = (path, defaultValue = '-') => {
+                    try {
+                        const value = path.split('.').reduce((obj, key) => obj[key], item);
+                        return value !== null && value !== undefined ? value : defaultValue;
+                    } catch {
+                        return defaultValue;
+                    }
+                };
+                
+                row.innerHTML = `
                     <td class="whitespace-nowrap border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">${index + 1}</td>
                     <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
                         ${getValue('set_instrumen_unit_kerja.aktivitas.indikator_kinerja.sasaran_strategis.nama_sasaran')}
@@ -274,20 +274,20 @@
                         </div>
                     </td>
                 `;
-
-                    tableBody.appendChild(row);
-                });
-            })
-            .catch(error => {
-                console.error('Gagal memuat data instrumen:', error);
-                const tableBody = document.getElementById('instrumen-jurusan-table-body');
-                tableBody.innerHTML = `
+                
+                tableBody.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error('Gagal memuat data instrumen:', error);
+            const tableBody = document.getElementById('instrumen-upt-table-body');
+            tableBody.innerHTML = `
                 <tr>
                     <td colspan="13" class="px-4 py-4 text-center text-gray-500 dark:text-gray-400">
                         Gagal memuat data. Silakan coba lagi.
                     </td>
                 </tr>
             `;
-            });
-    </script>
+        });
+            </script>
 @endsection
