@@ -12,6 +12,7 @@ use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AuditController;
 use App\Http\Livewire\PeriodeAudit;
+use App\Http\Controllers\LaporanPtppController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -146,6 +147,14 @@ Route::prefix('auditor')->middleware('auth.ami:auditor')->group(function () {
     Route::get('/laporan', function () {
         return view('auditor.laporan.index');
     })->name('auditor.laporan.index');
+
+    Route::get('/dashboard', [LaporanPtppController::class, 'dashboard'])->name('auditor.dashboard.index');
+    Route::get('/laporan', [LaporanPtppController::class, 'index'])->name('auditor.laporan.index');
+    Route::get('/laporan/create', [LaporanPtppController::class, 'create'])->name('auditor.laporan.create');
+    Route::post('/laporan', [LaporanPtppController::class, 'store'])->name('auditor.laporan.store');
+    Route::get('/laporan/{id}/edit', [LaporanPtppController::class, 'edit'])->name('auditor.laporan.edit');
+    Route::put('/laporan/{id}', [LaporanPtppController::class, 'update'])->name('auditor.laporan.update');
+    Route::delete('/laporan/{id}', [LaporanPtppController::class, 'destroy'])->name('auditor.laporan.destroy');
 
     Route::get('/ptpp', function () {
         return view('auditor.ptpp.index');
