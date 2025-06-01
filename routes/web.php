@@ -126,6 +126,11 @@ Route::prefix('auditor')->middleware('auth.ami:auditor')->group(function () {
 
     //Route::post('/daftar-tilik', [DaftarTilikController::class, 'store'])->name('auditor.daftar-tilik.store');
 
+    Route::prefix('audit')->group(function () {
+        Route::get('/', [AuditController::class, 'auditorIndexPage'])->name('auditor.audit.index');
+        Route::get('/auditings', [AuditController::class, 'getAuditingsByUser'])->name('auditor.auditings');
+    });
+
     Route::prefix('assesmen-lapangan')->group(function () {
         Route::get('/', [PlotingAMIController::class, 'indexAssesmen'])->name('auditor.assesmen-lapangan.index');
         Route::get('/{id}/edit', [PlotingAMIController::class, 'edit'])->name('auditor.assesmen-lapangan.edit');

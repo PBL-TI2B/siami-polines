@@ -7,13 +7,15 @@
         <!-- Breadcrumb -->
         <x-breadcrumb :items="[
             ['label' => 'Dashboard', 'url' => route('auditor.dashboard.index')],
-            ['label' => 'Data Instrumen Prodi', 'url' => route('auditor.data-instrumen.instrumenprodi')],
+            ['label' => 'Audit', 'url' => route('auditor.audit.index')],
+            ['label' => 'Response Instrumen'],
         ]" />
 
         <!-- Heading -->
         <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-200 mb-8">
-            Data Instrumen Prodi
+            Lihat Response Instrumen
         </h1>
+
         <!-- Table and Pagination -->
         <div class="bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 rounded-2xl">
             <!-- Table Controls -->
@@ -58,7 +60,6 @@
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Daya Saing Nasional</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Daya Saing Internasional</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Keterangan</th>
-                            {{-- <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Aksi</th> --}}
                         </tr>
                     </thead>
                     <tbody id="instrumen-table-body" class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -99,21 +100,54 @@
                 </div>
             </div>
         </div>
+        <div>
+            <x-button id="submit-lock-btn" type="submit" color="sky" icon="heroicon-o-plus" class="mt-8">
+                Submit dan Kunci Jawaban
+            </x-button>
+        </div>
     </div>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    fetch('http://127.0.0.1:5000/api/set-instrumen') // Ganti URL jika perlu
-        .then(response => response.json())
-        .then(result => {
-            const data = result.data;
-            const tableBody = document.getElementById('instrumen-table-body');
+    // Fetch both set-instrumen and responses data
+    const auditingId = {{ session('auditing_id') }}; // Assume auditing_id is passed from Blade
+    const auditStatus = {{ session('status') ?? 1 }}; // Get audit status, default to 1 if undefined
 
-            let index = 1;
+    Promise.all([
+        fetch('http://127.0.0.1:5000/api/set-instrumen').then(res => res.json()),
+        fetch(`http://127.0.0.1:5000/api/responses/auditing/${auditingId}`)
+            .then(res => res.json())
+            .catch(() => ({ data: [] })) // Return empty data array if responses fetch fails
+    ])
+        .then(([instrumenResult, responseResult]) => {
+            const instrumenData = instrumenResult.data || [];
+            const responseData = responseResult.data || [];
+
+            // Create a map of responses by set_instrumen_unit_kerja_id
+            const responseMap = {};
+            responseData.forEach(response => {
+                responseMap[response.set_instrumen_unit_kerja_id] = response;
+            });
+
+            const tableBody = document.getElementById('instrumen-table-body');
+            let index = 1; // Nomor urut berdasarkan standar
+
+            // If no instrumen data, show empty message
+            if (!instrumenData.length) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="12" class="px-4 py-3 sm:px-6 text-center text-red-500">
+                            Tidak ada data instrumen tersedia.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
 
             const grouped = {};
             const rowspanStandar = {};
 
-            data.forEach(item => {
+            // Group instrumen data as before
+            instrumenData.forEach(item => {
                 const standar = item.unsur.deskripsi.kriteria.nama_kriteria;
                 const deskripsi = item.unsur.deskripsi.isi_deskripsi;
                 const unsur = item.unsur.isi_unsur;
@@ -122,11 +156,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     grouped[standar] = {};
                     rowspanStandar[standar] = 0;
                 }
-
                 if (!grouped[standar][deskripsi]) {
                     grouped[standar][deskripsi] = {};
                 }
-
                 if (!grouped[standar][deskripsi][unsur]) {
                     grouped[standar][deskripsi][unsur] = [];
                 }
@@ -135,8 +167,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 rowspanStandar[standar]++;
             });
 
+            // Helper function to render checklist
+            const renderChecklist = (value) => {
+                return value === '1' ? `
+                    <svg class="w-5 h-5 text-green-600 dark:text-green-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                ` : '-';
+            };
+
+            // Iterate through grouped data
             for (const standar in grouped) {
                 let standarDisplayed = false;
+                let nomorDisplayed = false;
 
                 const totalRowsForStandar = Object.values(grouped[standar])
                     .map(desc => Object.values(desc).reduce((sum, arr) => sum + arr.length, 0))
@@ -144,7 +187,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 for (const deskripsi in grouped[standar]) {
                     let deskripsiDisplayed = false;
-
                     const totalRowsForDeskripsi = Object.values(grouped[standar][deskripsi])
                         .reduce((sum, arr) => sum + arr.length, 0);
 
@@ -154,50 +196,172 @@ document.addEventListener('DOMContentLoaded', function () {
                         const totalRowsForUnsur = items.length;
 
                         items.forEach(item => {
+                            const response = responseMap[item.set_instrumen_unit_kerja_id] || {};
                             const row = document.createElement('tr');
-                            let html = `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600">${index++}</td>`;
+                            let html = '';
 
+                            // Kolom No
+                            if (!nomorDisplayed) {
+                                html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600" rowspan="${totalRowsForStandar}">${index}</td>`;
+                                nomorDisplayed = true;
+                            }
+
+                            // Kolom Standar
                             if (!standarDisplayed) {
                                 html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600" rowspan="${totalRowsForStandar}">${standar}</td>`;
                                 standarDisplayed = true;
                             }
 
+                            // Kolom Deskripsi
                             if (!deskripsiDisplayed) {
                                 html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600" rowspan="${totalRowsForDeskripsi}">${deskripsi}</td>`;
                                 deskripsiDisplayed = true;
                             }
 
+                            // Kolom Unsur
                             if (!unsurDisplayed) {
                                 html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600" rowspan="${totalRowsForUnsur}">${unsur}</td>`;
                                 unsurDisplayed = true;
                             }
 
-                            // Kolom lain (kosong diisi "-")
-                            for (let i = 0; i < 7; i++) {
-                                html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">-</td>`;
-                            }
-
-                            // Kolom aksi
-                            // html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">-</td>`;
+                            // Response columns with checklist
+                            html += `
+                                <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600">${response.ketersediaan_standar_dan_dokumen || '-'}</td>
+                                <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">${renderChecklist(response.spt_pt)}</td>
+                                <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">${renderChecklist(response.sn_dikti)}</td>
+                                <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">${renderChecklist(response.lokal)}</td>
+                                <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">${renderChecklist(response.nasional)}</td>
+                                <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">${renderChecklist(response.internasional)}</td>
+                                <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600">${response.keterangan || '-'}</td>
+                                <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">
+                                    ${auditStatus != 1 ? `
+                                        <span class="text-gray-500 dark:text-gray-400">Jawaban Terkunci</span>
+                                    ` : `
+                                        <div class="flex items-center gap-2 justify-center">
+                                            ${response.response_id ? `
+                                                <a href="/auditor/data-instrumen/prodi/${response.response_id}/edit" title="Edit Response" class="text-sky-600 hover:text-sky-800 dark:text-sky-400 dark:hover:text-sky-200">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M14 4a2.5 2.5 0 113.536 3.536L6.5 21H3v-3.5L14 4z"/>
+                                                    </svg>
+                                                </a>
+                                                <button data-id="${response.response_id}" class="delete-btn text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200" title="Hapus">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12A2 2 0 0116.1 21H7.9a2 2 0 01-2-1.9L5 7m5-4h4m-4 0a2 2 0 00-2 2v1h8V5a2 2 0 00-2-2z"/>
+                                                    </svg>
+                                                </button>
+                                            ` : `
+                                                <a href="/auditor/data-instrumen/create/responses/prodi/${item.set_instrumen_unit_kerja_id}" title="Tambah Response" class="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-200">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                                    </svg>
+                                                </a>
+                                            `}
+                                        </div>
+                                    `}
+                                </td>
+                            `;
 
                             row.innerHTML = html;
                             tableBody.appendChild(row);
                         });
                     }
                 }
+                index++;
+            }
+
+            // Handle "Submit dan Kunci Jawaban" button click
+            const submitLockBtn = document.getElementById('submit-lock-btn');
+            if (submitLockBtn) {
+                // Disable button if auditStatus is not 1
+                if (auditStatus != 1) {
+                    submitLockBtn.disabled = true;
+                    submitLockBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    submitLockBtn.addEventListener('click', function (e) {
+                        e.preventDefault(); // Prevent default if button is in a form
+                        if (confirm('Apakah Anda yakin ingin mengunci jawaban? Tindakan ini tidak dapat dibatalkan.')) {
+                            fetch(`http://127.0.0.1:5000/api/auditings/${auditingId}`, {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ status: 2 })
+                            })
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error('Gagal mengunci jawaban');
+                                    }
+                                    return response.json();
+                                })
+                                .then(result => {
+                                    Update all "Aksi" columns to "Jawaban Terkunci"
+                                    const rows = document.querySelectorAll('#instrumen-table-body tr');
+                                    rows.forEach(row => {
+                                        const actionCell = row.lastElementChild; // "Aksi" is the last td
+                                        actionCell.innerHTML = `
+                                            <span class="text-gray-500 dark:text-gray-400">Jawaban Terkunci</span>
+                                        `;
+                                        actionCell.classList.add('text-center'); // Ensure text is centered
+                                    });
+
+                                    // Disable the submit button to prevent further clicks
+                                    submitLockBtn.disabled = true;
+                                    submitLockBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                                    
+                                    alert('Jawaban berhasil dikunci!');
+                                })
+                                .catch(error => {
+                                    console.error('Gagal mengunci jawaban:', error);
+                                    alert('Gagal mengunci jawaban. Silakan coba lagi.');
+                                });
+                        }
+                    });
+                }
             }
         })
         .catch(error => {
-            console.error('Gagal mengambil data:', error);
+            console.error('Gagal mengambil data instrumen:', error);
             const tableBody = document.getElementById('instrumen-table-body');
             tableBody.innerHTML = `
                 <tr>
                     <td colspan="12" class="px-4 py-3 sm:px-6 text-center text-red-500">
-                        Gagal memuat data. Silakan coba lagi.
+                        Gagal memuat data instrumen. Silakan coba lagi.
                     </td>
                 </tr>
             `;
         });
+
+    // Event listener for delete response buttons
+    document.getElementById('instrumen-table-body').addEventListener('click', function (e) {
+        const deleteBtn = e.target.closest('.delete-btn');
+        if (deleteBtn) {
+            e.preventDefault();
+            const responseId = deleteBtn.getAttribute('data-id');
+
+            if (confirm('Apakah Anda yakin ingin menghapus response ini?')) {
+                fetch(`http://127.0.0.1:5000/api/responses/${responseId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Gagal menghapus response');
+                        }
+                        return response.json();
+                    })
+                    .then(result => {
+                        alert('Response berhasil dihapus!');
+                        window.location.reload(); // Refresh to update table
+                    })
+                    .catch(error => {
+                        console.error('Gagal menghapus response:', error);
+                        alert('Gagal menghapus response. Silakan coba lagi.');
+                    });
+            }
+        }
+    });
 });
 </script>
 @endsection
