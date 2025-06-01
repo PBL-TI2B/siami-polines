@@ -52,9 +52,11 @@
         @endphp
 
         <x-breadcrumbproses :items="[
-            ['label' => 'Respon Instrumen', 'url' => $instrumenRoute],
-            ['label' => 'Jadwal Assesmen Lapangan', 'url' => '#'],
-            ['label' => 'Response Tilik', 'url' => '#'],
+            ['label' => 'Koreksi Respon Instrumen', 'url' => $instrumenRoute],
+            ['label' => 'Jadwalkan Assesmen Lapangan', 'url' => route('auditor.assesmen-lapangan.index')],
+            ['label' => 'Daftar Tilik', 'url' => '#'],
+            ['label' => 'Laporan Temuan', 'url' => '#'],
+            ['label' => 'Closing Audit', 'url' => '#'],
         ]" />
     </div>
 <script>

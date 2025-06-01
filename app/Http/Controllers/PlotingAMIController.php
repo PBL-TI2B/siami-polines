@@ -83,6 +83,53 @@ class PlotingAMIController extends Controller
         return view('auditor.assesmen-lapangan.index', ['auditings' => $paginatedUnits]);
     }
 
+    public function editJadwal(Request $request)
+    {
+        $user = session('user')['user_id'];
+        $auditing = session('auditing_id');
+        $response = Http::get('http://127.0.0.1:5000/api/auditings/userID=' . $user);
+        $auditingUnit = $response->json()['data'] ?? [];
+        
+        // Find the specific auditing record by ID
+        $auditing = collect($auditingUnit)->firstWhere('auditing_id', $auditing);
+        
+        if (!$auditing) {
+            abort(404, 'Auditing record not found');
+        }
+
+        return view('auditor.assesmen-lapangan.index', compact('auditing'));
+    }
+
+    public function updateJadwal(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'jadwal_audit' => 'required|date',
+        ]);
+
+        // Kirim update ke API
+        $response = Http::asJson()->put("http://127.0.0.1:5000/api/auditings/$id", [
+            'jadwal_audit' => $validated['jadwal_audit'],
+        ]);
+
+        if (!$response->successful()) {
+            $errorMessage = $response->json()['message'] ?? 'Gagal memperbarui data audit di API.';
+            return redirect()->back()->with('error', $errorMessage);
+        }
+
+        // Fetch the updated auditing record
+        $user = session('user')['user_id'];
+        $response = Http::get('http://127.0.0.1:5000/api/auditings/userID=' . $user);
+        $auditingUnit = $response->json()['data'] ?? [];
+        $auditing = collect($auditingUnit)->firstWhere('auditing_id', $id);
+
+        if (!$auditing) {
+            return redirect()->route('auditor.assesmen-lapangan.index')->with('error', 'Auditing record not found after update');
+        }
+
+        return view('auditor.audit.index', compact('auditing'))
+            ->with('success', 'Berhasil set jadwal assesmen lapangan');
+    }
+
     public function getAllJadwalAudit() {
         $jadwalAudit = Auditing::with([
             'auditor1', 'auditor2',

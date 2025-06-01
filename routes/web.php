@@ -133,9 +133,9 @@ Route::prefix('auditor')->middleware('auth.ami:auditor')->group(function () {
     });
 
     Route::prefix('assesmen-lapangan')->group(function () {
-        Route::get('/', [PlotingAMIController::class, 'indexAssesmen'])->name('auditor.assesmen-lapangan.index');
+        Route::get('/', [PlotingAMIController::class, 'editJadwal'])->name('auditor.assesmen-lapangan.index');
         Route::get('/{id}/edit', [PlotingAMIController::class, 'edit'])->name('auditor.assesmen-lapangan.edit');
-        Route::put('/{id}', [PlotingAMIController::class, 'update'])->name('auditor.assesmen-lapangan.update');
+        Route::put('/auditor/assesmen-lapangan/{id}', [PlotingAMIController::class, 'updateJadwal'])->name('auditor.assesmen-lapangan.update');
     });
 
     // Rute untuk data-instrumen

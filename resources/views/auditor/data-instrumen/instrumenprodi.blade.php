@@ -100,23 +100,48 @@
                 </div>
             </div>
         </div>
-        <div>
-            <x-button id="submit-lock-btn" type="submit" color="sky" icon="heroicon-o-plus" class="mt-8">
-                Submit dan Kunci Jawaban
+        <div class="flex gap-4 mt-8">
+            <x-button id="back-btn" type="button" color="red" icon="heroicon-o-arrow-left">
+                Kembali
             </x-button>
+            @if (session('status') == 2)
+            <x-button id="complete-correction-btn" type="button" color="sky" icon="heroicon-o-check">
+                Koreksi Selesai
+            </x-button>
+            @elseif (session('status') == 7)
+            <x-button id="complete-revision-btn" type="button" color="sky" icon="heroicon-o-check">
+                Koreksi Revisi Selesai
+            </x-button>
+            @endif
         </div>
     </div>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     // Fetch both set-instrumen and responses data
-    const auditingId = {{ session('auditing_id') }}; // Assume auditing_id is passed from Blade
-    const auditStatus = {{ session('status') ?? 1 }}; // Get audit status, default to 1 if undefined
+    const auditingId = {{ session('auditing_id') ?? 'null' }}; // Fallback to null if undefined
+    const auditStatus = {{ session('status') ?? 1 }}; // Default to 1 if undefined
+
+    if (!auditingId) {
+        const tableBody = document.getElementById('instrumen-table-body');
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="11" class="px-4 py-3 sm:px-6 text-center text-red-500">
+                    ID auditing tidak tersedia. Silakan coba lagi.
+                </td>
+            </tr>
+        `;
+        return;
+    }
 
     Promise.all([
-        fetch('http://127.0.0.1:5000/api/set-instrumen').then(res => res.json()),
-        fetch(`http://127.0.0.1:5000/api/responses/auditing/${auditingId}`)
-            .then(res => res.json())
-            .catch(() => ({ data: [] })) // Return empty data array if responses fetch fails
+        fetch('http://127.0.0.1:5000/api/set-instrumen').then(res => {
+            if (!res.ok) throw new Error('Gagal mengambil data set-instrumen');
+            return res.json();
+        }),
+        fetch(`http://127.0.0.1:5000/api/responses/auditing/${auditingId}`).then(res => {
+            if (!res.ok) throw new Error('Gagal mengambil data responses');
+            return res.json();
+        }).catch(() => ({ data: [] })) // Return empty data array if responses fetch fails
     ])
         .then(([instrumenResult, responseResult]) => {
             const instrumenData = instrumenResult.data || [];
@@ -135,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!instrumenData.length) {
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="12" class="px-4 py-3 sm:px-6 text-center text-red-500">
+                        <td colspan="11" class="px-4 py-3 sm:px-6 text-center text-red-500">
                             Tidak ada data instrumen tersedia.
                         </td>
                     </tr>
@@ -146,11 +171,11 @@ document.addEventListener('DOMContentLoaded', function () {
             const grouped = {};
             const rowspanStandar = {};
 
-            // Group instrumen data as before
+            // Group instrumen data
             instrumenData.forEach(item => {
-                const standar = item.unsur.deskripsi.kriteria.nama_kriteria;
-                const deskripsi = item.unsur.deskripsi.isi_deskripsi;
-                const unsur = item.unsur.isi_unsur;
+                const standar = item.unsur?.deskripsi?.kriteria?.nama_kriteria || 'Tidak Diketahui';
+                const deskripsi = item.unsur?.deskripsi?.isi_deskripsi || 'Tidak Diketahui';
+                const unsur = item.unsur?.isi_unsur || 'Tidak Diketahui';
 
                 if (!grouped[standar]) {
                     grouped[standar] = {};
@@ -224,7 +249,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 unsurDisplayed = true;
                             }
 
-                            // Response columns with checklist
+                            // Response columns
                             html += `
                                 <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600">${response.ketersediaan_standar_dan_dokumen || '-'}</td>
                                 <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">${renderChecklist(response.spt_pt)}</td>
@@ -233,32 +258,6 @@ document.addEventListener('DOMContentLoaded', function () {
                                 <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">${renderChecklist(response.nasional)}</td>
                                 <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">${renderChecklist(response.internasional)}</td>
                                 <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600">${response.keterangan || '-'}</td>
-                                <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">
-                                    ${auditStatus != 1 ? `
-                                        <span class="text-gray-500 dark:text-gray-400">Jawaban Terkunci</span>
-                                    ` : `
-                                        <div class="flex items-center gap-2 justify-center">
-                                            ${response.response_id ? `
-                                                <a href="/auditor/data-instrumen/prodi/${response.response_id}/edit" title="Edit Response" class="text-sky-600 hover:text-sky-800 dark:text-sky-400 dark:hover:text-sky-200">
-                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M14 4a2.5 2.5 0 113.536 3.536L6.5 21H3v-3.5L14 4z"/>
-                                                    </svg>
-                                                </a>
-                                                <button data-id="${response.response_id}" class="delete-btn text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200" title="Hapus">
-                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12A2 2 0 0116.1 21H7.9a2 2 0 01-2-1.9L5 7m5-4h4m-4 0a2 2 0 00-2 2v1h8V5a2 2 0 00-2-2z"/>
-                                                    </svg>
-                                                </button>
-                                            ` : `
-                                                <a href="/auditor/data-instrumen/create/responses/prodi/${item.set_instrumen_unit_kerja_id}" title="Tambah Response" class="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-200">
-                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                                                    </svg>
-                                                </a>
-                                            `}
-                                        </div>
-                                    `}
-                                </td>
                             `;
 
                             row.innerHTML = html;
@@ -269,50 +268,77 @@ document.addEventListener('DOMContentLoaded', function () {
                 index++;
             }
 
-            // Handle "Submit dan Kunci Jawaban" button click
-            const submitLockBtn = document.getElementById('submit-lock-btn');
-            if (submitLockBtn) {
-                // Disable button if auditStatus is not 1
-                if (auditStatus != 1) {
-                    submitLockBtn.disabled = true;
-                    submitLockBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                } else {
-                    submitLockBtn.addEventListener('click', function (e) {
-                        e.preventDefault(); // Prevent default if button is in a form
-                        if (confirm('Apakah Anda yakin ingin mengunci jawaban? Tindakan ini tidak dapat dibatalkan.')) {
+            // Handle "Kembali" button click
+            const backBtn = document.getElementById('back-btn');
+            if (backBtn) {
+                backBtn.addEventListener('click', function () {
+                    window.location.href = "{{ route('auditor.audit.index') }}";
+                });
+            }
+
+            // Handle "Koreksi Selesai" button click (only if auditStatus is 2)
+            if (auditStatus === 2) {
+                const completeCorrectionBtn = document.getElementById('complete-correction-btn');
+                if (completeCorrectionBtn) {
+                    completeCorrectionBtn.addEventListener('click', function () {
+                        if (confirm('Apakah Anda yakin ingin menyelesaikan koreksi? Tindakan ini tidak dapat dibatalkan.')) {
                             fetch(`http://127.0.0.1:5000/api/auditings/${auditingId}`, {
                                 method: 'PUT',
                                 headers: {
                                     'Content-Type': 'application/json',
                                 },
-                                body: JSON.stringify({ status: 2 })
+                                body: JSON.stringify({ status: 3 })
                             })
                                 .then(response => {
                                     if (!response.ok) {
-                                        throw new Error('Gagal mengunci jawaban');
+                                        throw new Error('Gagal menyelesaikan koreksi');
                                     }
                                     return response.json();
                                 })
                                 .then(result => {
-                                    Update all "Aksi" columns to "Jawaban Terkunci"
-                                    const rows = document.querySelectorAll('#instrumen-table-body tr');
-                                    rows.forEach(row => {
-                                        const actionCell = row.lastElementChild; // "Aksi" is the last td
-                                        actionCell.innerHTML = `
-                                            <span class="text-gray-500 dark:text-gray-400">Jawaban Terkunci</span>
-                                        `;
-                                        actionCell.classList.add('text-center'); // Ensure text is centered
-                                    });
+                                    alert('Koreksi berhasil diselesaikan!');
+                                    completeCorrectionBtn.disabled = true;
+                                    completeCorrectionBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                                    window.location.href = "{{ route('auditor.audit.index') }}";
 
-                                    // Disable the submit button to prevent further clicks
-                                    submitLockBtn.disabled = true;
-                                    submitLockBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                                    
-                                    alert('Jawaban berhasil dikunci!');
                                 })
                                 .catch(error => {
-                                    console.error('Gagal mengunci jawaban:', error);
-                                    alert('Gagal mengunci jawaban. Silakan coba lagi.');
+                                    console.error('Gagal menyelesaikan koreksi:', error);
+                                    alert('Gagal menyelesaikan koreksi. Silakan coba lagi.');
+                                });
+                        }
+                    });
+                }
+            }
+
+            // Handle "Koreksi Revisi Selesai" button click (only if auditStatus is 7)
+            if (auditStatus === 7) {
+                const completeRevisionBtn = document.getElementById('complete-revision-btn');
+                if (completeRevisionBtn) {
+                    completeRevisionBtn.addEventListener('click', function () {
+                        if (confirm('Apakah Anda yakin ingin menyelesaikan koreksi revisi? Tindakan ini tidak dapat dibatalkan.')) {
+                            fetch(`http://127.0.0.1:5000/api/auditings/${auditingId}`, {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ status: 8 })
+                            })
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error('Gagal menyelesaikan koreksi revisi');
+                                    }
+                                    return response.json();
+                                })
+                                .then(result => {
+                                    alert('Koreksi revisi berhasil diselesaikan!');
+                                    completeRevisionBtn.disabled = true;
+                                    completeRevisionBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                                    window.location.href = "{{ route('auditor.audit.index') }}";
+                                })
+                                .catch(error => {
+                                    console.error('Gagal menyelesaikan koreksi revisi:', error);
+                                    alert('Gagal menyelesaikan koreksi revisi. Silakan coba lagi.');
                                 });
                         }
                     });
@@ -324,44 +350,12 @@ document.addEventListener('DOMContentLoaded', function () {
             const tableBody = document.getElementById('instrumen-table-body');
             tableBody.innerHTML = `
                 <tr>
-                    <td colspan="12" class="px-4 py-3 sm:px-6 text-center text-red-500">
+                    <td colspan="11" class="px-4 py-3 sm:px-6 text-center text-red-500">
                         Gagal memuat data instrumen. Silakan coba lagi.
                     </td>
                 </tr>
             `;
         });
-
-    // Event listener for delete response buttons
-    document.getElementById('instrumen-table-body').addEventListener('click', function (e) {
-        const deleteBtn = e.target.closest('.delete-btn');
-        if (deleteBtn) {
-            e.preventDefault();
-            const responseId = deleteBtn.getAttribute('data-id');
-
-            if (confirm('Apakah Anda yakin ingin menghapus response ini?')) {
-                fetch(`http://127.0.0.1:5000/api/responses/${responseId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Gagal menghapus response');
-                        }
-                        return response.json();
-                    })
-                    .then(result => {
-                        alert('Response berhasil dihapus!');
-                        window.location.reload(); // Refresh to update table
-                    })
-                    .catch(error => {
-                        console.error('Gagal menghapus response:', error);
-                        alert('Gagal menghapus response. Silakan coba lagi.');
-                    });
-            }
-        }
-    });
 });
 </script>
 @endsection
