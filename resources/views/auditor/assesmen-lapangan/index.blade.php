@@ -39,7 +39,7 @@
                         {{ $auditing['unit_kerja']['nama_unit_kerja'] }}
                     </td>
                     <td class="border border-gray-200 px-4 py-4">
-                        {{ $auditing['jadwal_audit'] ? \Carbon\Carbon::parse($auditing->periode->waktu_audit)->format('d F Y') : 'N/A' }}
+                        {{ $auditing['jadwal_audit'] }}
                     </td>
                     <td class="border border-gray-200 px-4 py-4">
                         {{ $auditing['auditee1']['nama'] ?? 'N/A' }}

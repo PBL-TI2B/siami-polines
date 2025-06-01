@@ -70,6 +70,11 @@ class AuditController extends Controller
         }
     }
 
+    public function auditorIndexPage()
+    {
+        return view('auditor.audit.index');
+    }
+
     /**
      * Show the form for creating a new resource.
      */
