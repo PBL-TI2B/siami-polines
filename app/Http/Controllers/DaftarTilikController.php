@@ -6,17 +6,6 @@ use Illuminate\Http\Request;
 
 class DaftarTilikController extends Controller
 {
-    public function index(Request $request)
-    {
-        // Tangkap nilai dropdown 'jumlah', default ke 5
-        $jumlah = $request->input('jumlah', 5);
-
-        // Ambil data dari database dan paginasi
-        $data = DaftarTilik::paginate($jumlah);
-
-        // Kirim data ke blade
-        return view('daftar_tilik.index', compact('data', 'jumlah'));
-    }
     public function index()
     {
         return view('admin.daftar-tilik.index');
