@@ -27,10 +27,10 @@
                         <select name="per_page"
                             class="w-18 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 transition-all duration-200 focus:border-sky-500 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                             onchange="this.form.submit()">
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                            <option value="25">25</option>
-                            <option value="50">50</option>
+                            <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
+                            <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                            <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
+                            <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
                         </select>
                     </form>
                     <span class="text-sm text-gray-700 dark:text-gray-300">entri</span>
@@ -70,6 +70,7 @@
                                 Metode Perhitungan</th>
                             <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">
                                 Target</th>
+                            
                         </tr>
                     </thead>
                     <tbody id="tilik-table-body" class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -79,43 +80,19 @@
             </div>
 
             <!-- Pagination -->
-            <div class="p-4">
-                <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
-                    <span class="text-sm text-gray-700 dark:text-gray-300">
-                        Menampilkan <strong>1</strong> hingga <strong>2</strong> dari <strong>1000</strong> hasil
-                    </span>
-                    <nav aria-label="Navigasi Paginasi">
-                        <ul class="inline-flex -space-x-px text-sm">
-                            <li>
-                                <a href="#"
-                                    class="flex h-8 cursor-not-allowed items-center justify-center rounded-l-lg border border-gray-300 bg-white px-3 leading-tight text-gray-500 opacity-50 transition-all duration-200 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200">
-                                    <x-heroicon-s-chevron-left class="mr-1 h-4 w-4" />
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#"
-                                    class="flex h-8 items-center justify-center border border-sky-300 bg-sky-50 px-3 leading-tight text-sky-800 transition-all duration-200 dark:border-sky-700 dark:bg-sky-900 dark:text-sky-200">
-                                    1
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#"
-                                    class="flex h-8 items-center justify-center border border-gray-300 bg-white px-3 leading-tight text-gray-500 transition-all duration-200 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200">
-                                    2
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#"
-                                    class="flex h-8 items-center justify-center rounded-r-lg border border-gray-300 bg-white px-3 leading-tight text-gray-500 transition-all duration-200 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200">
-                                    <x-heroicon-s-chevron-right class="ml-1 h-4 w-4" />
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
-        </div>
+<div class="p-4">
+    <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
+        <span id="pagination-info" class="text-sm text-gray-700 dark:text-gray-300">
+            <!-- akan diisi via JS -->
+        </span>
+        <nav aria-label="Navigasi Paginasi">
+            <ul id="pagination-buttons" class="inline-flex -space-x-px text-sm">
+                <!-- tombol halaman akan dimuat via JS -->
+            </ul>
+        </nav>
     </div>
+</div>
+
 
     <!-- Pass route to JavaScript -->
 
@@ -130,74 +107,61 @@
                 5: '5. Luaran Tridharma',
             };
 
-            fetch('http://127.0.0.1:5000/api/tilik')
+        const urlParams = new URLSearchParams(window.location.search);
+        const perPage = urlParams.get('per_page') || 5;
+        const page = parseInt(urlParams.get('page')) || 1;
+
+            fetch(`http://127.0.0.1:5000/api/tilik?per_page=${perPage}&page=${page}`)
                 .then(response => response.json())
                 .then(result => {
                     if (result.success && Array.isArray(result.data)) {
-                        const tbody = document.getElementById('tilik-table-body');
-                        tbody.innerHTML = ''; // Clear existing rows if any
+                const tbody = document.getElementById('tilik-table-body');
+                tbody.innerHTML = '';
 
-                        result.data.forEach((item, index) => {
-                            const row = document.createElement('tr');
-                            row.className = "transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700";
+                result.data.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    row.className = "transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700";
 
-                            // Resolve kriteria name or fallback to kriteria_id
-                            const kriteriaName = kriteriaMap[item.kriteria_id] || item.kriteria_id;
+                    const kriteriaName = kriteriaMap[item.kriteria_id] || item.kriteria_id;
 
-                            row.innerHTML = `
-                                <td class="px-4 py-3 sm:px-6">${index + 1}</td>
-                                <td class="px-4 py-3 sm:px-6">${kriteriaName}</td>
-                                <td class="px-4 py-3 sm:px-6">${item.pertanyaan}</td>
-                                <td class="px-4 py-3 sm:px-6">${item.indikator ?? '-'}</td>
-                                <td class="px-4 py-3 sm:px-6">${item.sumber_data ?? '-'}</td>
-                                <td class="px-4 py-3 sm:px-6">${item.metode_perhitungan ?? '-'}</td>
-                                <td class="px-4 py-3 sm:px-6">${item.target ?? '-'}</td>
-                                <td class="px-4 py-3 sm:px-6">-</td>
-                                <td class="px-4 py-3 sm:px-6">-</td>
-                                <td class="px-4 py-3 sm:px-6">-</td>
-                                <td class="px-4 py-3 sm:px-6">-</td>
-                                <td class="px-4 py-3 sm:px-6">-</td>
-                                <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">
-                                </td>
-                            `;
-                            tbody.appendChild(row);
-                        });
-
-                        // Add event listeners for delete buttons
-                        document.querySelectorAll('.delete-btn').forEach(button => {
-                            button.addEventListener('click', function () {
-                                const tilikId = this.getAttribute('data-id');
-                                if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-                                    fetch(`http://127.0.0.1:5000/api/tilik/${tilikId}`, {
-                                        method: 'DELETE',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                        },
-                                    })
-                                    .then(response => response.json())
-                                    .then(result => {
-                                        if (result.success) {
-                                            alert('Data berhasil dihapus!');
-                                            // Reload the table data
-                                            location.reload();
-                                        } else {
-                                            alert('Gagal menghapus data: ' + (result.message || 'Unknown error'));
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.error('Error deleting tilik data:', error);
-                                        alert('Terjadi kesalahan saat menghapus data.');
-                                    });
-                                }
-                            });
-                        });
-                    } else {
-                        console.error("Gagal mendapatkan data tilik.");
-                    }
-                })
-                .catch(error => {
-                    console.error("Error fetching tilik data:", error);
+                    row.innerHTML =` 
+                        <td class="px-4 py-3 sm:px-6">${(page - 1) * perPage + index + 1}</td>
+                        <td class="px-4 py-3 sm:px-6">${kriteriaName}</td>
+                        <td class="px-4 py-3 sm:px-6">${item.pertanyaan}</td>
+                        <td class="px-4 py-3 sm:px-6">${item.indikator ?? '-'}</td>
+                        <td class="px-4 py-3 sm:px-6">${item.sumber_data ?? '-'}</td>
+                        <td class="px-4 py-3 sm:px-6">${item.metode_perhitungan ?? '-'}</td>
+                        <td class="px-4 py-3 sm:px-6">${item.target ?? '-'}</td>
+                    `;
+                    tbody.appendChild(row);
                 });
+                renderPagination(result.total, page, perPage);
+            } else {
+                console.error("Gagal mendapatkan data tilik.");
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching tilik data:", error);
         });
-    </script>
+
+        function renderPagination(totalItems, currentPage, perPage) {
+            const totalPages = Math.ceil(totalItems / perPage);
+            const pagination = document.getElementById("pagination-buttons");
+            const info = document.getElementById("pagination-info");
+
+            pagination.innerHTML = '';
+            info.innerHTML = `Menampilkan <strong>${(currentPage - 1) * perPage + 1}</strong> hingga <strong>${Math.min(currentPage * perPage, totalItems)}</strong> dari <strong>${totalItems}</strong> hasil`;
+
+            for (let page = 1; page <= totalPages; page++) {
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="?per_page=${perPage}&page=${page}"
+                    class="flex h-8 items-center justify-center border ${page === currentPage ? 'border-sky-300 bg-sky-50 text-sky-800 dark:border-sky-700 dark:bg-sky-900 dark:text-sky-200' : 'border-gray-300 bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200'} px-3 leading-tight transition-all duration-200">
+                    ${page}
+                </a>`;
+                pagination.appendChild(li);
+            }
+        }
+
+    });
+</script>
 @endsection
