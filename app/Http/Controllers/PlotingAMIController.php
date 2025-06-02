@@ -103,7 +103,7 @@ class PlotingAMIController extends Controller
     public function updateJadwal(Request $request, $id)
     {
         $validated = $request->validate([
-            'jadwal_audit' => 'required|date',
+            'jadwal_audit' => 'nullable|date',
         ]);
 
         // Kirim update ke API
@@ -188,24 +188,6 @@ public function destroy($id)
     return redirect()->route('admin.ploting-ami.index')->with('success', 'Jadwal audit berhasil dihapus.');
 }
 
-public function reset(Request $request)
-{
-    $request->validate([
-        'reset_confirmation' => 'required|in:RESET',
-    ]);
-
-   // Nonaktifkan foreign key checks
-   \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-
-   // Hapus semua data jadwal audit
-   Auditing::truncate();
-
-   // Aktifkan kembali foreign key checks
-   \DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-
-    return redirect()->route('admin.ploting-ami.index')->with('success', 'Semua jadwal audit berhasil direset.');
-}
-
 public function download()
 {
     $auditings = Auditing::with([
@@ -274,7 +256,7 @@ public function update(Request $request, $id)
 {
     $validated = $request->validate([
         'unit_kerja_id' => 'required|exists:unit_kerja,unit_kerja_id',
-        'jadwal_audit' => 'required|date',
+        'jadwal_audit' => 'nullable|date',
         'user_id_1_auditee' => 'required|exists:users,user_id',
         'user_id_2_auditee' => 'nullable|exists:users,user_id',
         'user_id_1_auditor' => 'required|exists:users,user_id',
@@ -291,31 +273,5 @@ public function update(Request $request, $id)
     }
 
     return redirect()->route('admin.ploting-ami.index')->with('success', 'Jadwal Audit berhasil diperbarui');
-}
-
-    // public function makeJadwalAudit(Request $request) {
-    //     $request->validate([
-    //         'user_id_1_auditor' => 'required|exists:users,user_id',
-    //         'user_id_2_auditor' => 'nullable|exists:users,user_id',
-    //         'user_id_1_auditee' => 'required|exists:users,user_id',
-    //         'user_id_2_auditee' => 'nullable|exists:users,user_id',
-    //         'unit_kerja_id' => 'required|exists:unit_kerja,unit_kerja_id',
-    //         'periode_id' => 'required|exists:periode_audit,periode_id',
-    //     ]);
-
-    //     $audit = Auditing::create([
-    //         'user_id_1_auditor' => $request->user_id_1_auditor,
-    //         'user_id_2_auditor' => $request->user_id_2_auditor,
-    //         'user_id_1_auditee' => $request->user_id_1_auditee,
-    //         'user_id_2_auditee' => $request->user_id_2_auditee,
-    //         'unit_kerja_id' => $request->unit_kerja_id,
-    //         'periode_id' => $request->periode_id,
-    //         'status' => 'Menunggu',
-    //     ]);
-
-    //     return response()->json([
-    //         'message' => 'Data jadwal audit berhasil disimpan!',
-    //         'data' => $audit,
-    //     ], 201);
-    // }
+} 
 }
