@@ -111,4 +111,49 @@
         </div>
     </form>
 </div>
+
+<!-- Tambahkan Tom Select CSS -->
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
+
+<!-- Tambahkan Tom Select JS dan inisialisasi -->
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    function initTomSelect(id) {
+        if (window.TomSelect) {
+            const selectEl = document.getElementById(id);
+            if (selectEl.tomselect) {
+                selectEl.tomselect.destroy();
+            }
+            const tom = new TomSelect(`#${id}`, {
+                create: false,
+                sortField: {
+                    field: "text",
+                    direction: "asc"
+                },
+                allowEmptyOption: true,
+                placeholder: 'Ketik untuk mencari...'
+            });
+            function removeDefaultOption() {
+                const option = selectEl.querySelector('option[value=""]');
+                if(option) option.remove();
+            }
+            tom.on('type', removeDefaultOption);
+            tom.on('dropdown_open', function() {
+                removeDefaultOption();
+                const searchInput = tom.control_input;
+                if (searchInput) searchInput.value = '';
+            });
+        }
+    }
+    // Inisialisasi Tom Select pada semua select yang relevan
+    [
+        'unit_kerja_id',
+        'user_id_1_auditee',
+        'user_id_1_auditor',
+        'user_id_2_auditee',
+        'user_id_2_auditor'
+    ].forEach(initTomSelect);
+});
+</script>
 @endsection
