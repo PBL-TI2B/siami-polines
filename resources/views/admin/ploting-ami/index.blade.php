@@ -113,12 +113,6 @@
                             'href' => route('admin.ploting-ami.edit', $auditing->auditing_id),
                         ],
                         [
-        'label' => 'Revisi',
-        'color' => 'yellow',
-        'icon' => 'heroicon-o-arrow-path', // Ganti dengan icon yang tersedia di project Anda
-        'href' => route('admin.ploting-ami.revisi', $auditing->auditing_id),
-    ],
-                        [
                             'label' => 'Hapus',
                             'color' => 'red',
                             'icon' => 'heroicon-o-trash',
