@@ -63,7 +63,7 @@
             'No',
             'Unit Kerja',
             'Waktu Audit',
-            'Auditee',
+            'Auditee 1',
             'Auditee 2',
             'Auditor 1',
             'Auditor 2',
