@@ -110,17 +110,36 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     // Fetch both set-instrumen and responses data
-    const auditingId = {{ session('auditing_id') }}; // Assume auditing_id is passed from Blade
+    const auditingId = {{ session('auditing_id') ?? 'null' }}; // Fallback to null if undefined
     const auditStatus = {{ session('status') ?? 1 }}; // Get audit status, default to 1 if undefined
 
+    // Check if auditingId is valid
+    if (!auditingId) {
+        const tableBody = document.getElementById('instrumen-table-body');
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="12" class="px-4 py-3 sm:px-6 text-center text-red-500">
+                    ID auditing tidak tersedia. Silakan coba lagi.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
     Promise.all([
-        fetch('http://127.0.0.1:5000/api/set-instrumen').then(res => res.json()),
+        fetch('http://127.0.0.1:5000/api/set-instrumen').then(res => {
+            if (!res.ok) throw new Error('Gagal mengambil data set-instrumen');
+            return res.json();
+        }),
         fetch(`http://127.0.0.1:5000/api/responses/auditing/${auditingId}`)
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) throw new Error('Gagal mengambil data responses');
+                return res.json();
+            })
             .catch(() => ({ data: [] })) // Return empty data array if responses fetch fails
     ])
         .then(([instrumenResult, responseResult]) => {
-            const instrumenData = instrumenResult.data || [];
+            const instrumenData = (instrumenResult.data || []).filter(item => item.jenis_unit_id === 3);
             const responseData = responseResult.data || [];
 
             // Create a map of responses by set_instrumen_unit_kerja_id
@@ -137,7 +156,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 tableBody.innerHTML = `
                     <tr>
                         <td colspan="12" class="px-4 py-3 sm:px-6 text-center text-red-500">
-                            Tidak ada data instrumen tersedia.
+                            Tidak ada data instrumen tersedia untuk Prodi.
                         </td>
                     </tr>
                 `;
@@ -147,11 +166,11 @@ document.addEventListener('DOMContentLoaded', function () {
             const grouped = {};
             const rowspanStandar = {};
 
-            // Group instrumen data as before
+            // Group instrumen data
             instrumenData.forEach(item => {
-                const standar = item.unsur.deskripsi.kriteria.nama_kriteria;
-                const deskripsi = item.unsur.deskripsi.isi_deskripsi;
-                const unsur = item.unsur.isi_unsur;
+                const standar = item.unsur?.deskripsi?.kriteria?.nama_kriteria || 'Tidak Diketahui';
+                const deskripsi = item.unsur?.deskripsi?.isi_deskripsi || 'Tidak Diketahui';
+                const unsur = item.unsur?.isi_unsur || 'Tidak Diketahui';
 
                 if (!grouped[standar]) {
                     grouped[standar] = {};

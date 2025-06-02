@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }).catch(() => ({ data: [] })) // Return empty data array if responses fetch fails
     ])
         .then(([instrumenResult, responseResult]) => {
-            const instrumenData = instrumenResult.data || [];
+            const instrumenData = (instrumenResult.data || []).filter(item => item.jenis_unit_id === 3);
             const responseData = responseResult.data || [];
 
             // Create a map of responses by set_instrumen_unit_kerja_id
@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 tableBody.innerHTML = `
                     <tr>
                         <td colspan="11" class="px-4 py-3 sm:px-6 text-center text-red-500">
-                            Tidak ada data instrumen tersedia.
+                            Tidak ada data instrumen tersedia untuk Prodi.
                         </td>
                     </tr>
                 `;
@@ -300,7 +300,6 @@ document.addEventListener('DOMContentLoaded', function () {
                                     completeCorrectionBtn.disabled = true;
                                     completeCorrectionBtn.classList.add('opacity-50', 'cursor-not-allowed');
                                     window.location.href = "{{ route('auditor.audit.index') }}";
-
                                 })
                                 .catch(error => {
                                     console.error('Gagal menyelesaikan koreksi:', error);

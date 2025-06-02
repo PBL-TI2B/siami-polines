@@ -126,8 +126,7 @@ class PlotingAMIController extends Controller
             return redirect()->route('auditor.assesmen-lapangan.index')->with('error', 'Auditing record not found after update');
         }
 
-        return view('auditor.audit.index', compact('auditing'))
-            ->with('success', 'Berhasil set jadwal assesmen lapangan');
+        return view('auditor.audit.index');
     }
 
     public function getAllJadwalAudit() {
