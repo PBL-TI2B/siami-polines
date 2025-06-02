@@ -197,7 +197,7 @@ Route::prefix('auditee')->middleware('auth.ami:auditee')->group(function () {
         //Route::get('/edit/{type?}', [DataInstrumenController::class, 'edit'])->name('auditee.data-instrumen.edit');
         Route::get('/upt', [DataInstrumenController::class, 'auditeeupt'])->name('auditee.data-instrumen.instrumenupt');
         Route::get('/prodi', [DataInstrumenController::class, 'auditeeprodi'])->name('auditee.data-instrumen.instrumenprodi');
-        Route::get('/jurusan', [DataInstrumenController::class, 'jurusan'])->name('auditee.data-instrumen.instrumenjurusan');
+        Route::get('/jurusan', [DataInstrumenController::class, 'auditeejurusan'])->name('auditee.data-instrumen.instrumenjurusan');
         Route::get('/export', [DataInstrumenController::class, 'export'])->name('auditee.data-instrumen.export');
     });
 

@@ -41,7 +41,7 @@
                                 class="w-18 rounded-lg border border-gray-200 bg-gray-50 p-2 text-sm text-gray-800 transition-all duration-200 focus:border-sky-500 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
                                 <option value="5">5</option>
                                 <option value="10">10</option>
-                                <option value="25">25</option>
+                                <option value="25" selected>25</option>
                                 <option value="50">50</option>
                             </select>
                         </form>
@@ -216,8 +216,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Mengambil ID auditing dan status audit dari session
             const auditingId = {{ session('auditing_id') }};
-            const auditStatus = {{ session('status') ?? 1 }}; // Menggunakan status dari session
-            const unitKerjaId = {{ session('unit_kerja_id') }}; // Mengambil unit_kerja_id dari session
+            const auditStatus = {{ session('status') ?? 1 }};
+            const unitKerjaId = {{ session('unit_kerja_id') }};
 
             const modal = document.getElementById('response-modal');
             const modalTitle = document.getElementById('modal-title');
@@ -225,42 +225,36 @@
             const submitBtn = document.getElementById('submit-btn');
             const cancelBtn = document.getElementById('cancel-btn');
             const tableBody = document.getElementById('instr-table-body');
-            const closeModalBtn = document.getElementById('close-modal-btn'); // Tombol tutup untuk modal utama
-
-            // Elemen untuk kontrol paginasi dan pencarian
-            const perPageSelect = document.getElementById('per-page-select');
+            const closeModalBtn = document.getElementById('close-modal-btn');
             const searchInput = document.getElementById('search-input');
             const searchForm = document.getElementById('search-form');
             const paginationInfo = document.getElementById('pagination-info');
             const pageNumbersContainer = document.getElementById('page-numbers');
             const prevPageBtn = document.getElementById('prev-page');
             const nextPageBtn = document.getElementById('next-page');
-
-            // Elemen untuk tombol kunci
             const submitLockBtn = document.getElementById('submit-lock-btn');
+            const perPageSelect = document.getElementById('per-page-select');
 
             // Variabel global untuk data dan paginasi
             let allInstrumenData = [];
             let allResponseData = [];
             let currentPage = 1;
-            let perPage = parseInt(perPageSelect.value);
+            let perPage = 25; // Default perPage diatur ke 25
             let searchQuery = '';
             let totalFilteredItems = 0;
             let totalPages = 0;
 
             // Fungsi untuk membuka modal
             const openModal = (isEdit, setInstrumenId, response = {}, instrumen = {}) => {
-                // Memeriksa status audit sebelum mengizinkan pengisian jawaban
                 if (auditStatus !== 1) {
                     showCustomMessage('Pengisian jawaban hanya diperbolehkan pada status Pengisian Instrumen.');
                     return;
                 }
-                modalTitle.textContent = isEdit ? 'Edit Jawaban UPT' : 'Jawab Instrumen UPT';
+                modalTitle.textContent = isEdit ? 'Edit Jawaban Jurusan' : 'Jawab Instrumen Jurusan';
                 document.getElementById('capaian').value = response.capaian || '';
                 document.getElementById('lokasi_bukti_dukung').value = response.lokasi_bukti_dukung || '';
                 document.getElementById('set_instrumen_unit_kerja_id').value = setInstrumenId;
                 document.getElementById('response_id').value = response.response_id || '';
-                // Mengisi data instrumen
                 document.getElementById('modal-sasaran').textContent = instrumen.sasaran || '-';
                 document.getElementById('modal-indikator').textContent = instrumen.indikator || '-';
                 document.getElementById('modal-aktivitas').textContent = instrumen.aktivitas || '-';
@@ -282,45 +276,46 @@
                 setTimeout(() => modal.classList.add('hidden'), 300);
             };
 
-            // Fungsi untuk menampilkan pesan kustom (mengganti alert)
+            // Fungsi untuk menampilkan pesan kustom
             const showCustomMessage = (message) => {
                 const messageBox = document.createElement('div');
                 messageBox.className = 'fixed inset-0 bg-gray-900/50 flex items-center justify-center z-[9999]';
                 messageBox.innerHTML = `
-                <div class="bg-white dark:bg-gray-800 rounded-lg p-8 shadow-xl border border-gray-200 dark:border-gray-600 text-center max-w-sm mx-auto">
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Pesan</h3>
-                    <p class="text-base text-gray-700 dark:text-gray-300 mb-6">${message}</p>
-                    <button id="close-message-btn-custom" class="px-6 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors duration-200 font-medium">Tutup</button>
-                </div>
-            `;
+            <div class="bg-white dark:bg-gray-800 rounded-lg p-8 shadow-xl border border-gray-200 dark:border-gray-600 text-center max-w-sm mx-auto">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Pesan</h3>
+                <p class="text-base text-gray-700 dark:text-gray-300 mb-6">${message}</p>
+                <button id="close-message-btn-custom" class="w-24 px-6 py-2 bg-sky-800 text-white rounded-lg hover:bg-sky-900 transition-colors duration-200 font-medium">Tutup</button>
+            </div>
+        `;
                 document.body.appendChild(messageBox);
-
                 document.getElementById('close-message-btn-custom').addEventListener('click', () => {
                     document.body.removeChild(messageBox);
                 });
             };
 
-            // Fungsi untuk konfirmasi kustom (mengganti confirm)
+            // Fungsi untuk konfirmasi kustom
             const showCustomConfirm = (message, onConfirm) => {
                 const confirmBox = document.createElement('div');
-                confirmBox.className = 'fixed inset-0 bg-gray-900/50 flex items-center justify-center z-[9999]';
+                confirmBox.className =
+                    'fixed inset-0 bg-gray-900/60 flex items-center justify-center z-[9999] animate-fade-in';
                 confirmBox.innerHTML = `
-                <div class="bg-white dark:bg-gray-800 rounded-lg p-8 shadow-xl border border-gray-200 dark:border-gray-600 text-center max-w-sm mx-auto">
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Konfirmasi</h3>
-                    <p class="text-base text-gray-700 dark:text-gray-300 mb-6">${message}</p>
-                    <div class="flex justify-center gap-4">
-                        <button id="confirm-yes-btn" class="px-6 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors duration-200 font-medium">Ya</button>
-                        <button id="confirm-no-btn" class="px-6 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition-colors duration-200 font-medium">Tidak</button>
-                    </div>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-2xl border border-gray-200 dark:border-gray-600 text-center max-w-sm mx-auto relative animate-pop-in">
+                <div class="flex justify-center mb-4">
+                    <x-heroicon-o-information-circle class="h-16 w-16 text-sky-600 dark:text-sky-700" />
                 </div>
-            `;
+                <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Konfirmasi</h3>
+                <p class="text-base text-gray-700 dark:text-gray-300 mb-6">${message}</p>
+                <div class="flex justify-center gap-4">
+                    <button id="confirm-no-btn" class="w-24 px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 transition-colors duration-200 font-semibold">Tidak</button>
+                    <button id="confirm-yes-btn" class="w-24 px-6 py-2 bg-sky-800 text-white rounded-lg hover:bg-sky-900 transition-colors duration-200 font-semibold">Ya</button>
+                </div>
+            </div>
+        `;
                 document.body.appendChild(confirmBox);
-
                 document.getElementById('confirm-yes-btn').addEventListener('click', () => {
                     document.body.removeChild(confirmBox);
                     onConfirm(true);
                 });
-
                 document.getElementById('confirm-no-btn').addEventListener('click', () => {
                     document.body.removeChild(confirmBox);
                     onConfirm(false);
@@ -330,37 +325,36 @@
             // Fungsi untuk memuat semua data dan merender tabel
             const initializeDataAndRenderTable = async () => {
                 tableBody.innerHTML = `
-                <tr>
-                    <td colspan="9" class="px-4 py-3 sm:px-6 text-center">
-                        <div class="flex flex-col items-center justify-center py-8">
-                            <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-sky-500"></div>
-                            <p class="mt-3 text-gray-700 dark:text-gray-300">Memuat data instrumen...</p>
-                        </div>
-                    </td>
-                </tr>
-            `;
+            <tr>
+                <td colspan="9" class="px-4 py-3 sm:px-6 text-center">
+                    <div class="flex flex-col items-center justify-center py-8">
+                        <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-sky-500"></div>
+                        <p class="mt-3 text-gray-700 dark:text-gray-300">Memuat data instrumen...</p>
+                    </div>
+                </td>
+            </tr>
+        `;
                 try {
                     const [auditingResult, instrumenResult, responseResult] = await Promise.all([
                         fetch(`http://127.0.0.1:5000/api/auditings/${auditingId}`).then(res => {
                             if (!res.ok) throw new Error('Gagal mengambil data auditing');
                             return res.json();
                         }),
-                        fetch(`http://127.0.0.1:5000/api/set-instrumen/${unitKerjaId}`).then(res =>
-                            res.json()),
+                        fetch(`http://127.0.0.1:5000/api/set-instrumen`).then(res => res.json()),
                         fetch(`http://127.0.0.1:5000/api/responses/auditing/${auditingId}`)
                         .then(res => res.json())
                         .catch(() => ({
                             data: []
-                        })) // Menangani kasus di mana tidak ada respons
+                        }))
                     ]);
 
                     if (instrumenResult.data) {
                         if (Array.isArray(instrumenResult.data)) {
                             allInstrumenData = instrumenResult.data.filter(item => item.jenis_unit_id ===
-                                2);
+                                1);
                         } else if (typeof instrumenResult.data === 'object' && instrumenResult.data !==
                             null) {
-                            if (instrumenResult.data.jenis_unit_id === 2) {
+                            if (instrumenResult.data.jenis_unit_id === 1) {
                                 allInstrumenData = [instrumenResult.data];
                             }
                         }
@@ -371,16 +365,69 @@
                 } catch (error) {
                     console.error('Gagal memuat data:', error);
                     tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="9" class="px-4 py-3 sm:px-6 text-center text-red-600 dark:text-red-400">
-                            Gagal memuat data instrumen. Silakan coba lagi.
-                        </td>
-                    </tr>
-                `;
+                <tr>
+                    <td colspan="9" class="px-4 py-3 sm:px-6 text-center text-red-600 dark:text-red-400">
+                        Gagal memuat data instrumen. Silakan coba lagi.
+                    </td>
+                </tr>
+            `;
                 }
             };
 
-            // Fungsi untuk merender tabel dengan data yang difilter dan dipaginasi
+            // Fungsi untuk menghitung rowspan per halaman
+            const calculatePageRowspan = (data, startIndex, endIndex) => {
+                const rowspanMap = {};
+                let currentNumber = 1;
+                data.forEach((item, index) => {
+                    const sasaran = item.sasaran;
+                    const indikator = item.indikator;
+                    if (!rowspanMap[sasaran]) {
+                        rowspanMap[sasaran] = {
+                            count: 0,
+                            startIndex: index,
+                            number: currentNumber++,
+                            indikators: {}
+                        };
+                    }
+                    if (!rowspanMap[sasaran].indikators[indikator]) {
+                        rowspanMap[sasaran].indikators[indikator] = {
+                            count: 0,
+                            startIndex: index
+                        };
+                    }
+                    rowspanMap[sasaran].count += 1;
+                    rowspanMap[sasaran].indikators[indikator].count += 1;
+                });
+
+                // Sesuaikan rowspan untuk halaman saat ini
+                const pageRowspanMap = {};
+                data.slice(startIndex, endIndex).forEach((item, index) => {
+                    const globalIndex = startIndex + index;
+                    const sasaran = item.sasaran;
+                    const indikator = item.indikator;
+
+                    if (!pageRowspanMap[sasaran]) {
+                        pageRowspanMap[sasaran] = {
+                            count: 0,
+                            startIndex: globalIndex,
+                            number: rowspanMap[sasaran].number,
+                            indikators: {}
+                        };
+                    }
+                    if (!pageRowspanMap[sasaran].indikators[indikator]) {
+                        pageRowspanMap[sasaran].indikators[indikator] = {
+                            count: 0,
+                            startIndex: globalIndex
+                        };
+                    }
+                    pageRowspanMap[sasaran].count += 1;
+                    pageRowspanMap[sasaran].indikators[indikator].count += 1;
+                });
+
+                return pageRowspanMap;
+            };
+
+            // Fungsi untuk merender tabel
             const renderTable = (page = 1) => {
                 currentPage = page;
                 tableBody.innerHTML = ''; // Bersihkan tabel
@@ -398,7 +445,7 @@
                     );
                 });
 
-                // Grouping logic (tetap sama)
+                // Logika pengelompokan
                 const grouped = {};
                 filteredData.forEach(item => {
                     const sasaran = item.aktivitas.indikator_kinerja.sasaran_strategis.nama_sasaran;
@@ -440,78 +487,100 @@
                 const endIndex = Math.min(startIndex + perPage, totalFilteredItems);
                 const paginatedData = flatGroupedData.slice(startIndex, endIndex);
 
+                // Hitung rowspan untuk halaman saat ini
+                const pageRowspanMap = calculatePageRowspan(flatGroupedData, startIndex, endIndex);
+
                 if (paginatedData.length === 0) {
                     tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="9" class="px-4 py-3 sm:px-6 text-center text-gray-500 dark:text-gray-400">
-                            Tidak ada data ditemukan.
-                        </td>
-                    </tr>
-                `;
+                <tr>
+                    <td colspan="9" class="px-4 py-3 sm:px-6 text-center text-gray-500 dark:text-gray-400">
+                        Tidak ada data instrumen untuk unit ini.
+                    </td>
+                </tr>
+            `;
                 } else {
-                    let currentItemIndex = startIndex + 1;
-                    for (const groupedItem of paginatedData) {
+                    paginatedData.forEach((groupedItem, index) => {
                         const item = groupedItem.item;
-                        const response = allResponseData.find(res => res.set_instrumen_unit_kerja_id === item
-                            .set_instrumen_unit_kerja_id) || {};
+                        const response = allResponseData.find(res => res.set_instrumen_unit_kerja_id ===
+                            item.set_instrumen_unit_kerja_id) || {};
                         const row = document.createElement('tr');
                         row.className = 'hover:bg-gray-50 dark:hover:bg-gray-700';
 
-                        // Rekonstruksi rowspan logic for display
-                        let html = `
-                        <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${currentItemIndex++}</td>
-                        <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${groupedItem.sasaran}</td>
-                        <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${groupedItem.indikator}</td>
-                        <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${groupedItem.aktivitas}</td>
-                        <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center">${item.aktivitas.satuan || '-'}</td>
-                        <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center">${item.aktivitas.target || '-'}</td>
-                        <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center">${response.capaian || '-'}</td>
-                        <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${response.lokasi_bukti_dukung || '-'}</td>
-                        <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center">
-                            ${auditStatus != 1 ? `
-                                                                                                                        <span class="text-gray-500 dark:text-gray-400 text-sm">Jawaban Terkunci</span>
-                                                                                                                    ` : `
-                                                                                                                        <div class="flex items-center justify-center gap-2">
-                                                                                                                            ${response.response_id ? `
-                                        <x-button type="button" color="yellow" icon="heroicon-o-pencil" class="edit-btn text-sm font-medium" data-id="${response.response_id}" data-capaian="${response.capaian || ''}" data-lokasi="${response.lokasi_bukti_dukung || ''}" data-sasaran="${groupedItem.sasaran}" data-indikator="${groupedItem.indikator}" data-aktivitas="${groupedItem.aktivitas}" data-satuan="${item.aktivitas.satuan || ''}" data-target="${item.aktivitas.target || ''}" data-set-instrumen-id="${item.set_instrumen_unit_kerja_id}">
-                                            Edit
-                                        </x-button>
-                                        <x-button type="button" color="red" icon="heroicon-o-trash" class="delete-btn text-sm font-medium" data-id="${response.response_id}">
-                                            Hapus
-                                        </x-button>
-                                    ` : `
-                                        <x-button type="button" color="sky" icon="heroicon-o-plus" class="add-btn text-sm font-medium" data-id="${item.set_instrumen_unit_kerja_id}" data-sasaran="${groupedItem.sasaran}" data-indikator="${groupedItem.indikator}" data-aktivitas="${groupedItem.aktivitas}" data-satuan="${item.aktivitas.satuan || ''}" data-target="${item.aktivitas.target || ''}">
-                                            Jawab
-                                        </x-button>
-                                    `}
-                                                                                                                        </div>
-                                                                                                                    `}
-                        </td>
-                    `;
+                        const globalIndex = startIndex + index;
+                        const sasaran = groupedItem.sasaran;
+                        const indikator = groupedItem.indikator;
+
+                        let html = '';
+                        // Kolom No dengan rowspan berdasarkan sasaran
+                        if (globalIndex === pageRowspanMap[sasaran].startIndex) {
+                            html +=
+                                `<td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center" rowspan="${pageRowspanMap[sasaran].count}">${pageRowspanMap[sasaran].number}</td>`;
+                        }
+
+                        // Kolom Sasaran Strategis dengan rowspan
+                        if (globalIndex === pageRowspanMap[sasaran].startIndex) {
+                            html +=
+                                `<td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600" rowspan="${pageRowspanMap[sasaran].count}">${sasaran}</td>`;
+                        }
+
+                        // Kolom Indikator Kinerja dengan rowspan
+                        if (globalIndex === pageRowspanMap[sasaran].indikators[indikator].startIndex) {
+                            html +=
+                                `<td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600" rowspan="${pageRowspanMap[sasaran].indikators[indikator].count}">${indikator}</td>`;
+                        }
+
+                        // Kolom lainnya
+                        html += `
+                    <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${groupedItem.aktivitas}</td>
+                    <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center">${item.aktivitas.satuan || '-'}</td>
+                    <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center">${item.aktivitas.target || '-'}</td>
+                    <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center">${response.capaian || '-'}</td>
+                    <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center">${response.lokasi_bukti_dukung || '-'}</td>
+                    <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center">
+                        ${auditStatus != 1 ? `
+                                            <span class="text-gray-500 dark:text-gray-400 text-sm">Jawaban Terkunci</span>
+                                        ` : `
+                                            <div class="flex items-center justify-center gap-2">
+                                                ${response.response_id ? `
+                                    <x-button type="button" color="yellow" icon="heroicon-o-pencil" class="edit-btn text-sm font-medium" data-id="${response.response_id}" data-capaian="${response.capaian || ''}" data-lokasi="${response.lokasi_bukti_dukung || ''}" data-sasaran="${sasaran}" data-indikator="${indikator}" data-aktivitas="${groupedItem.aktivitas}" data-satuan="${item.aktivitas.satuan || ''}" data-target="${item.aktivitas.target || ''}" data-set-instrumen-id="${item.set_instrumen_unit_kerja_id}">
+                                        Edit
+                                    </x-button>
+                                    <x-button type="button" color="red" icon="heroicon-o-trash" class="delete-btn text-sm font-medium" data-id="${response.response_id}">
+                                        Hapus
+                                    </x-button>
+                                ` : `
+                                    <x-button type="button" color="sky" icon="heroicon-o-plus" class="add-btn text-sm font-medium" data-id="${item.set_instrumen_unit_kerja_id}" data-sasaran="${sasaran}" data-indikator="${indikator}" data-aktivitas="${groupedItem.aktivitas}" data-satuan="${item.aktivitas.satuan || ''}" data-target="${item.aktivitas.target || ''}">
+                                        Jawab
+                                    </x-button>
+                                `}
+                                            </div>
+                                        `}
+                    </td>
+                `;
                         row.innerHTML = html;
                         tableBody.appendChild(row);
-                    }
+                    });
                 }
 
-                // Update pagination info
+                // Perbarui informasi paginasi
                 const currentStart = totalFilteredItems === 0 ? 0 : startIndex + 1;
                 const currentEnd = endIndex;
                 paginationInfo.innerHTML =
                     `Menampilkan <strong>${currentStart}</strong> hingga <strong>${currentEnd}</strong> dari <strong>${totalFilteredItems}</strong> hasil`;
 
-                // Render pagination buttons
+                // Render tombol paginasi
                 pageNumbersContainer.innerHTML = '';
                 for (let i = 1; i <= totalPages; i++) {
                     const pageLink = document.createElement('li');
                     pageLink.innerHTML = `
-                    <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-gray-200 transition-all duration-200 ${i === currentPage ? 'text-sky-600 bg-sky-50 dark:bg-gray-700 dark:text-sky-200' : ''}" data-page="${i}">
-                        ${i}
-                    </a>
-                `;
+                <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-gray-200 transition-all duration-200 ${i === currentPage ? 'text-sky-600 bg-sky-50 dark:bg-gray-700 dark:text-sky-200' : ''}" data-page="${i}">
+                    ${i}
+                </a>
+            `;
                     pageNumbersContainer.appendChild(pageLink);
                 }
 
-                // Disable/enable prev/next buttons
+                // Aktifkan/nonaktifkan tombol prev/next
                 prevPageBtn.classList.toggle('opacity-50', currentPage === 1);
                 prevPageBtn.classList.toggle('pointer-events-none', currentPage === 1);
                 nextPageBtn.classList.toggle('opacity-50', currentPage === totalPages || totalPages === 0);
@@ -519,25 +588,24 @@
                     0);
             };
 
-            // Inisialisasi status tombol "Submit dan Kunci Jawaban" saat halaman dimuat
+            // Inisialisasi status tombol "Submit dan Kunci Jawaban"
             if (auditStatus !== 1) {
                 submitLockBtn.disabled = true;
                 submitLockBtn.classList.add('opacity-50', 'cursor-not-allowed');
             }
 
             // Event Listeners
-            perPageSelect.addEventListener('change', function() {
-                perPage = parseInt(this.value);
-                renderTable(1); // Reset ke halaman 1 saat perPage berubah
-            });
-
             searchForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 searchQuery = searchInput.value.trim();
                 renderTable(1); // Reset ke halaman 1 saat pencarian
             });
 
-            // Event listener untuk klik tombol paginasi (nomor halaman)
+            perPageSelect.addEventListener('change', function() {
+                perPage = parseInt(perPageSelect.value);
+                renderTable(1); // Reset ke halaman 1 saat perPage berubah
+            });
+
             pageNumbersContainer.addEventListener('click', function(e) {
                 const pageLink = e.target.closest('a[data-page]');
                 if (pageLink) {
@@ -547,7 +615,6 @@
                 }
             });
 
-            // Event listener untuk tombol Previous Page
             prevPageBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 if (currentPage > 1) {
@@ -555,7 +622,6 @@
                 }
             });
 
-            // Event listener untuk tombol Next Page
             nextPageBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 if (currentPage < totalPages) {
@@ -563,7 +629,6 @@
                 }
             });
 
-            // Event listener untuk modal (add/edit/delete)
             tableBody.addEventListener('click', function(e) {
                 const addBtn = e.target.closest('.add-btn');
                 const editBtn = e.target.closest('.edit-btn');
@@ -585,7 +650,6 @@
                         capaian: editBtn.getAttribute('data-capaian') || '',
                         lokasi_bukti_dukung: editBtn.getAttribute('data-lokasi') || '',
                     };
-                    // Pastikan data-set-instrumen-id diambil dari tombol edit
                     const setInstrId = editBtn.getAttribute('data-set-instrumen-id');
                     const instrumen = {
                         sasaran: editBtn.getAttribute('data-sasaran'),
@@ -603,7 +667,7 @@
                             'Penghapusan jawaban hanya diperbolehkan pada status Pengisian Instrumen.');
                         return;
                     }
-                    showCustomConfirm('Hapus jawaban ini?', (confirmed) => {
+                    showCustomConfirm('Apakah Anda yakin ingin menghapus jawaban ini?', (confirmed) => {
                         if (confirmed) {
                             fetch(`http://127.0.0.1:5000/api/responses/${responseId}`, {
                                     method: 'DELETE',
@@ -619,8 +683,7 @@
                                 })
                                 .then(() => {
                                     showCustomMessage('Jawaban berhasil dihapus!');
-                                    initializeDataAndRenderTable
-                                        (); // Muat ulang data setelah hapus
+                                    initializeDataAndRenderTable();
                                 })
                                 .catch(error => {
                                     console.error('Gagal menghapus:', error);
@@ -632,7 +695,6 @@
                 }
             });
 
-            // Event listener untuk tombol tutup modal utama
             closeModalBtn.addEventListener('click', closeModal);
             cancelBtn.addEventListener('click', closeModal);
 
@@ -664,12 +726,12 @@
 
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = `
-                <svg class="animate-spin h-4 w-4 mr-2 text-white" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8h8a8 8 0 01-16 0z"></path>
-                </svg>
-                Menyimpan...
-            `;
+            <svg class="animate-spin h-4 w-4 mr-2 text-white" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8h8a8 8 0 01-16 0z"></path>
+            </svg>
+            Menyimpan...
+        `;
 
                 fetch(endpoint, {
                         method: method,
@@ -687,8 +749,8 @@
                     .then(() => {
                         showCustomMessage(isEdit ? 'Jawaban berhasil diperbarui!' :
                             'Jawaban berhasil disimpan!');
-                        closeModal(); // Tutup modal setelah sukses
-                        initializeDataAndRenderTable(); // Muat ulang data setelah simpan/perbarui
+                        closeModal();
+                        initializeDataAndRenderTable();
                     })
                     .catch(error => {
                         const errorEl = document.getElementById('capaian-error');
@@ -707,10 +769,8 @@
                     });
             });
 
-            // Submit dan kunci jawaban
-            document.getElementById('submit-lock-btn').addEventListener('click', function(e) {
+            submitLockBtn.addEventListener('click', function(e) {
                 e.preventDefault();
-                // Validasi langsung tanpa alert, tombol sudah dinonaktifkan di awal jika status tidak 1
                 if (auditStatus !== 1) {
                     return;
                 }
@@ -740,11 +800,10 @@
                                                 `<span class="text-gray-500 dark:text-gray-400 text-sm">Jawaban Terkunci</span>`;
                                             row.lastElementChild.classList.add('text-center');
                                         });
-                                    this.disabled = true;
-                                    this.classList.add('opacity-50', 'cursor-not-allowed');
+                                    submitLockBtn.disabled = true;
+                                    submitLockBtn.classList.add('opacity-50', 'cursor-not-allowed');
                                     showCustomMessage('Jawaban berhasil dikunci!');
-                                    window.location.href =
-                                        '/auditee/audit'; // Redirect setelah kunci
+                                    window.location.href = '/auditee/audit';
                                 })
                                 .catch(error => {
                                     console.error('Gagal mengunci jawaban:', error);
@@ -754,7 +813,7 @@
                     });
             });
 
-            // Panggil fungsi inisialisasi saat DOM siap
+            // Panggil fungsi inisialisasi
             initializeDataAndRenderTable();
         });
     </script>

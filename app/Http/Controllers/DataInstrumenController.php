@@ -64,6 +64,10 @@ class DataInstrumenController extends Controller
     {
         return view('auditee.data-instrumen.editprodi', compact('response_id'));
     }
+    public function auditeejurusan()
+    {
+        return view('auditee.data-instrumen.instrumenjurusan');
+    }
     public function export()
     {
         return Excel::download(new DataInstrumenExport, 'data-instrumen-' . date('YmdHis') . '.xlsx');
