@@ -7,7 +7,7 @@
         <!-- Breadcrumb -->
         <x-breadcrumb :items="[
             ['label' => 'Dashboard', 'url' => route('auditor.dashboard.index')],
-            ['label' => 'Laporan', 'url' => route('auditor.laporan.index')],
+            ['label' => 'Audit', 'url' => route('auditor.audit.index')],
             ['label' => 'Edit Laporan'],
         ]" />
 
@@ -75,6 +75,24 @@
                 @error('saran_perbaikan')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
+            </div>
+
+            <div class="mt-6 p-4 bg-gray-100 rounded-md dark:bg-gray-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-200 mb-3">Keterangan Kategori Temuan</h3>
+                <ul class="list-disc pl-5 text-gray-700 dark:text-gray-300 space-y-3">
+                    <li>
+                        <strong>NC (Non-Conformity)</strong>: Temuan ketidaksesuaian mayor yang berdampak luas/kritikal terhadap persyaratan mutu produk/pelayanan dan sistem manajemen mutu.
+                        <br><em>Contoh: Pelanggaran sistem secara total (sistem tidak dilaksanakan).</em>
+                    </li>
+                    <li>
+                        <strong>AOC (Area of Concern)</strong>: Temuan ketidaksesuaian minor yang berdampak kecil/terbatas terhadap persyaratan mutu produk/pelayanan dan sistem manajemen mutu.
+                        <br><em>Contoh: Ketidaksempurnaan dan ketidakkonsistenan dalam penerapan sistem.</em>
+                    </li>
+                    <li>
+                        <strong>OFI (Opportunity for Improvement)</strong>: Temuan bukan ketidaksesuaian, dimaksudkan untuk penyempurnaan.
+                        <br><strong>** Hanya diisi bila auditor memastikan saran perbaikannya efektif.</strong>
+                    </li>
+                </ul>
             </div>
 
             <!-- Tombol Submit -->

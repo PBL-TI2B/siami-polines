@@ -1,7 +1,6 @@
-```blade
 @extends('layouts.app')
 
-@section('title', 'Laporan')
+@section('title', 'Laporan Temuan')
 
 @section('content')
     <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
@@ -28,6 +27,7 @@
         <!-- Breadcrumb -->
         <x-breadcrumb :items="[
             ['label' => 'Dashboard', 'url' => route('auditor.dashboard.index')],
+            ['label' => 'Audit', 'url' => route('auditor.audit.index')],
             ['label' => 'Laporan', 'url' => route('auditor.laporan.index')],
         ]" />
 
@@ -73,9 +73,17 @@
                     </td>
                     <x-table-row-actions :actions="[
                         [
-                            'label' => '+',
+                            'label' => 'Edit',
                             'color' => 'sky',
-                            'icon' => 'heroicon-o-plus',
+                            'icon' => 'heroicon-o-pencil',
+                            'href' => !empty($report['id']) ? route('auditor.laporan.edit', $report['id']) : 'javascript:void(0)',
+                            'disabled' => empty($report['id']),
+                        ],
+                        [
+                            'label' => 'Hapus',
+                            'color' => 'red',
+                            'icon' => 'heroicon-o-trash',
+                            'modalId' => 'delete-report-modal-' . ($report['id'] ?? 'invalid'),
                             'href' => !empty($report['id']) ? route('auditor.laporan.edit', $report['id']) : 'javascript:void(0)',
                             'disabled' => empty($report['id']),
                         ],

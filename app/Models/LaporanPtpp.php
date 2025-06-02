@@ -10,10 +10,9 @@ class LaporanPtpp extends Model
 
     protected $fillable = [
         'standar',
-        'uraian_temuan',                        
+        'uraian_temuan',
         'kategori_temuan',
         'saran_perbaikan',
-        'status',
     ];
 
     public $timestamps = false; // Menonaktifkan timestamps
