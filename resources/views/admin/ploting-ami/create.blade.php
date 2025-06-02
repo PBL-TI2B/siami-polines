@@ -14,6 +14,9 @@
             Tambah Jadwal Audit
         </h1>
 
+        <!-- Tambahkan Tom Select CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
+
         <form id="jadwalForm" class="space-y-6 rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
             @csrf
             <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -88,8 +91,40 @@
         </form>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async function() {
+            // Inisialisasi Tom Select setelah data dimuat
+            function initTomSelect(id) {
+    if (window.TomSelect) {
+        const selectEl = document.getElementById(id);
+        if (selectEl.tomselect) {
+            selectEl.tomselect.destroy();
+        }
+        const tom = new TomSelect(`#${id}`, {
+            create: false,
+            sortField: {
+                field: "text",
+                direction: "asc"
+            },
+            allowEmptyOption: true,
+            placeholder: 'Ketik untuk mencari...'
+        });
+        // Hapus opsi default saat user mulai mengetik atau membuka dropdown
+        function removeDefaultOption() {
+            const option = selectEl.querySelector('option[value=""]');
+            if(option) option.remove();
+        }
+        tom.on('type', removeDefaultOption);
+        tom.on('dropdown_open', function() {
+            removeDefaultOption();
+            // Kosongkan input search Tom Select saat dropdown dibuka
+            const searchInput = tom.control_input;
+            if (searchInput) searchInput.value = '';
+        });
+    }
+}
+
             // Fetch Unit Kerja
             fetch('http://127.0.0.1:5000/api/unit-kerja')
                 .then(res => res.json())
@@ -99,13 +134,14 @@
                         select.innerHTML +=
                             `<option value="${item.unit_kerja_id}">${item.nama_unit_kerja}</option>`;
                     });
+                    initTomSelect('unit_kerja_id');
                 });
 
             fetch('http://127.0.0.1:5000/api/periode-audits')
                 .then(res => res.json())
                 .then(data => {
                     const select = document.getElementById('periode_id');
-                    const periodeList = data.data.data; // <- di sinilah perbaikannya
+                    const periodeList = data.data.data;
                     if (periodeList && periodeList.length > 0) {
                         periodeList.forEach(item => {
                             select.innerHTML +=
@@ -114,29 +150,27 @@
                     } else {
                         select.innerHTML += `<option value="">Data tidak tersedia</option>`;
                     }
+                    initTomSelect('periode_id');
                 })
                 .catch(() => {
                     const select = document.getElementById('periode_id');
                     select.innerHTML += `<option value="">Gagal mengambil data</option>`;
+                    initTomSelect('periode_id');
                 });
-
 
             // Fetch Users
             fetch('http://127.0.0.1:5000/api/data-user')
                 .then(res => res.json())
                 .then(data => {
-                    // Filter user sesuai kebutuhan, misal berdasarkan role_id
-                    const auditees = data.data.filter(u => u.role_id == 3); // ganti sesuai kebutuhan
-                    const auditors = data.data.filter(u => u.role_id == 2); // ganti sesuai kebutuhan
-                    const admin = data.data.filter(u => u.role_id == 1); // ganti sesuai kebutuhan
-                    const kepala = data.data.filter(u => u.role_id == 4); // ganti sesuai kebutuhan
-
+                    const auditees = data.data.filter(u => u.role_id == 3);
+                    const auditors = data.data.filter(u => u.role_id == 2);
                     ['user_id_1_auditee', 'user_id_2_auditee'].forEach(id => {
                         const select = document.getElementById(id);
                         auditees.forEach(user => {
                             select.innerHTML +=
                                 `<option value="${user.user_id}">${user.nama}</option>`;
                         });
+                        initTomSelect(id);
                     });
                     ['user_id_1_auditor', 'user_id_2_auditor'].forEach(id => {
                         const select = document.getElementById(id);
@@ -144,6 +178,7 @@
                             select.innerHTML +=
                                 `<option value="${user.user_id}">${user.nama}</option>`;
                         });
+                        initTomSelect(id);
                     });
                 });
 
