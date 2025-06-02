@@ -140,7 +140,7 @@ Route::prefix('auditor')->middleware('auth.ami:auditor')->group(function () {
 
     // Rute untuk data-instrumen
     Route::get('/data-instrumen', [DataInstrumenControllerAuditor::class, 'index'])->name('auditor.data-instrumen.index');
-    Route::get('/data-instrumen/upt', [DataInstrumenControllerAuditor::class, 'auditorInsUpt'])->name('auditor.data-instrumen.upt');
+    Route::get('/data-instrumen/upt', [DataInstrumenControllerAuditor::class, 'auditorInsUpt'])->name('auditor.data-instrumen.instrumenupt');
     Route::get('/data-instrumen/prodi', [DataInstrumenControllerAuditor::class, 'auditorinsprodi'])->name('auditor.data-instrumen.instrumenprodi');
     Route::get('/data-instrumen/jurusan', [DataInstrumenControllerAuditor::class, 'auditorinsjurusan'])->name('auditor.data-instrumen.instrumenjurusan');
 
@@ -188,12 +188,13 @@ Route::prefix('auditee')->middleware('auth.ami:auditee')->group(function () {
     // Data Instrumen
     Route::prefix('data-instrumen')->group(function () {
         Route::get('/', [DataInstrumenController::class, 'index'])->name('auditee.data-instrumen.index');
+        Route::get('/create/responses/upt/{response_id}', [DataInstrumenController::class, 'auditeeuptresponse'])->name('auditee.data-instrumen.tambahupt');
         Route::get('/create/responses/prodi/{response_id}', [DataInstrumenController::class, 'auditeeprodiresponse'])->name('auditee.data-instrumen.tambahprodi');
         Route::get('/create', [DataInstrumenController::class, 'store'])->name('auditee.data-instrumen.tambah');
         Route::get('/{sasaran_strategis_id}/edit', [DataInstrumenController::class, 'edit'])->name('auditee.data-instrumen.edit');
         Route::get('/prodi/{response_id}/edit', [DataInstrumenController::class, 'auditeeeditprodiresponse'])->name('auditee.data-instrumen.editprodi');
         //Route::get('/edit/{type?}', [DataInstrumenController::class, 'edit'])->name('auditee.data-instrumen.edit');
-        Route::get('/upt', [DataInstrumenController::class, 'upt'])->name('auditee.data-instrumen.instrumenupt');
+        Route::get('/upt', [DataInstrumenController::class, 'auditeeupt'])->name('auditee.data-instrumen.instrumenupt');
         Route::get('/prodi', [DataInstrumenController::class, 'auditeeprodi'])->name('auditee.data-instrumen.instrumenprodi');
         Route::get('/jurusan', [DataInstrumenController::class, 'jurusan'])->name('auditee.data-instrumen.instrumenjurusan');
         Route::get('/export', [DataInstrumenController::class, 'export'])->name('auditee.data-instrumen.export');
@@ -213,7 +214,7 @@ Route::prefix('kepala-pmpp')->middleware('auth.ami:kepala-pmpp')->group(function
     Route::get('/ploting-ami', fn() => view('kepala-pmpp.ploting-ami.index'))->name('kepala-pmpp.ploting-ami.index');
     Route::get('/daftar-tilik', fn() => view('kepala-pmpp.daftar-tilik.index'))->name('kepala-pmpp.daftar-tilik.index');
     Route::get('/data-instrumen', fn() => view('kepala-pmpp.data-instrumen.index'))->name('kepala-pmpp.data-instrumen.index');
-    Route::get('/data-instrumen/upt', fn() => view('kepala-pmpp.data-instrumen.upt'))->name('kepala-pmpp.data-instrumen.upt');
+    Route::get('/data-instrumen/upt', fn() => view('kepala-pmpp.data-instrumen.upt'))->name('kepala-pmpp.data-instrumen.instrumenupt');
     Route::get('/data-instrumen/prodi', fn() => view('kepala-pmpp.data-instrumen.prodi'))->name('kepala-pmpp.data-instrumen.instrumenprodi');
     Route::get('/data-instrumen/jurusan', fn() => view('kepala-pmpp.data-instrumen.jurusan'))->name('kepala-pmpp.data-instrumen.instrumenjurusan');
     Route::get('/ptpp', fn() => view('kepala-pmpp.ptpp.index'))->name('kepala-pmpp.ptpp.index');
@@ -224,6 +225,6 @@ Route::prefix('admin-unit')->middleware('auth.ami:admin-unit')->group(function (
     Route::get('/ploting-ami', fn() => view('admin-unit.ploting-ami.index'))->name('admin-unit.ploting-ami.index');
     Route::get('/unit-kerja', fn() => view('admin-unit.unit-kerja.index'))->name('admin-unit.unit-kerja.index');
     Route::get('/data-instrumen', fn() => view('admin-unit.data-instrumen.index'))->name('admin-unit.data-instrumen.index');
-    Route::get('/data-instrumen/upt', fn() => view('admin-unit.data-instrumen.upt'))->name('admin-unit.data-instrumen.upt');
+    Route::get('/data-instrumen/upt', fn() => view('admin-unit.data-instrumen.upt'))->name('admin-unit.data-instrumen.instrumenupt');
     Route::get('/data-instrumen/prodi', fn() => view('admin-unit.data-instrumen.prodi'))->name('admin-unit.data-instrumen.instrumenprodi');
 });

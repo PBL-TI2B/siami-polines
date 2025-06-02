@@ -44,8 +44,8 @@
         @php
             $jenisUnitId = session('jenis_unit_id');
             $instrumenRoute = match ($jenisUnitId) {
-                1 => route('auditor.data-instrumen.index'),
-                // 2 => route('auditee.data-instrumen.index2'),
+                1 => route('auditor.data-instrumen.instrumenupt'),
+                2 => route('auditor.data-instrumen.instrumenjurusan'),
                 3 => route('auditor.data-instrumen.instrumenprodi'),
                 default => '#', // fallback kalau tidak ditemukan
             };
