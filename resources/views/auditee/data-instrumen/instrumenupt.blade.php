@@ -18,7 +18,7 @@
         @if (session('status') != 1)
             <div class="bg-yellow-100 dark:bg-yellow-800 border border-yellow-400 dark:border-yellow-600 text-yellow-700 dark:text-yellow-200 px-4 py-3 rounded-lg relative mb-6">
                 <strong class="font-bold">Informasi:</strong>
-                <span class="block sm:inline">Halaman ini hanya dapat diakses untuk melihat data. Pengisian dan penguncian jawaban hanya diperbolehkan pada status "Pengisian Instrumen". Status saat ini: <span class="font-semibold">{{ session('status_text') ?? 'Tidak Diketahui' }}</span>.</span>
+                <span class="block sm:inline">Halaman ini hanya dapat diakses untuk melihat data. Pengisian dan penguncian jawaban hanya diperbolehkan pada status "Pengisian Instrumen".</span>
             </div>
         @endif
 
