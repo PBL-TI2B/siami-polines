@@ -28,7 +28,7 @@ class DataInstrumenControllerAuditor extends Controller
     public function auditorInsUpt()
     {
         // Tampilan untuk /auditor/data-instrumen/upt
-        return view('auditor.data-instrumen.instrumen-upt');
+        return view('auditor.data-instrumen.instrumenupt');
     }
 
     public function auditorinsprodi()
