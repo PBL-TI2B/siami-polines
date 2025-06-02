@@ -43,6 +43,21 @@
             </div>
         </div>
 
+        @php
+            $statusLabels = [
+                1 => 'Pengisian Instrumen',
+                2 => 'Desk Evaluation',
+                3 => 'Penjadwalan AL',
+                4 => 'Pertanyaan Tilik',
+                5 => 'Tilik Dijawab',
+                6 => 'Laporan Temuan',
+                7 => 'Revisi',
+                8 => 'Sudah revisi',
+                9 => 'Closing',
+                10 => 'Selesai',
+            ];
+        @endphp
+
         <x-table id="jadwalAuditTable" :headers="[
             '',
             'No',
@@ -85,8 +100,8 @@
                     </td>
                     <td class="border border-gray-200 px-4 py-4">
                         <span
-                            class="{{ $auditing->status == 'Selesai' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300' : 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300' }} inline-flex rounded-full px-2 py-1 text-xs font-semibold">
-                            {{ $auditing->status ?? 'Menunggu' }}
+                            class="{{ $auditing->status == 10 ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300' : 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300' }} inline-flex rounded-full px-2 py-1 text-xs font-semibold">
+                            {{ $statusLabels[$auditing->status] ?? 'Menunggu' }}
                         </span>
                     </td>
 
