@@ -79,6 +79,11 @@ class AuditController extends Controller
         return view('auditor.audit.index');
     }
 
+     public function auditorAuditPage()
+    {
+        return view('auditor.audit.audit');
+    }
+
     /**
      * Show the form for creating a new resource.
      */
