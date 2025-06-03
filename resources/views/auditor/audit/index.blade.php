@@ -6,7 +6,7 @@
 <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
     <x-breadcrumb :items="[
         ['label' => 'Dashboard', 'url' => route('auditor.dashboard.index')],
-        ['label' => 'Audit,'],
+        ['label' => 'Audit'],
     ]" />
 
     <h1 class="mb-8 text-3xl font-bold text-gray-900 dark:text-gray-200">
