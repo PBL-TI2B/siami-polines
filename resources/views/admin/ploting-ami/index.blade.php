@@ -84,7 +84,7 @@
                         {{ $auditing->unitKerja->nama_unit_kerja ?? 'N/A' }}
                     </td>
                     <td class="border border-gray-200 px-4 py-4">
-                        {{ $auditing->periode->tanggal_mulai ? \Carbon\Carbon::parse($auditing->periode->waktu_audit)->format('d F Y') : 'N/A' }}
+                        {{ $auditing->jadwal_audit ? \Carbon\Carbon::parse($auditing->jadwal_audit)->format('d F Y') : 'N/A' }}
                     </td>
                     <td class="border border-gray-200 px-4 py-4">
                         {{ $auditing->auditee1->nama ?? 'N/A' }}
@@ -98,7 +98,7 @@
                     <td class="border border-gray-200 px-4 py-4">
                         {{ $auditing->auditor2->nama ?? '-' }}
                     </td>
-                    <td class="border border-gray-200 px-4 py-4">
+                    <td class="border border-gray-200 px-4 py-4 text-center">
                         <span
                             class="{{ $auditing->status == 10 ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300' : 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300' }} inline-flex rounded-full px-2 py-1 text-xs font-semibold">
                             {{ $statusLabels[$auditing->status] ?? 'Menunggu' }}

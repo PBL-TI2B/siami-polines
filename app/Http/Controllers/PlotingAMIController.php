@@ -196,14 +196,26 @@ public function download()
     ])->get();
 
     $data = $auditings->map(function ($auditing) {
+        $statusLabels = [
+            1 => 'Pengisian Instrumen',
+            2 => 'Desk Evaluation',
+            3 => 'Penjadwalan AL',
+            4 => 'Pertanyaan Tilik',
+            5 => 'Tilik Dijawab',
+            6 => 'Laporan Temuan',
+            7 => 'Revisi',
+            8 => 'Sudah revisi',
+            9 => 'Closing',
+            10 => 'Selesai',
+        ];
         return [
             'Unit Kerja' => $auditing->unitKerja->nama_unit_kerja ?? 'N/A',
-            'Waktu Audit' => $auditing->periode->tanggal_mulai ? \Carbon\Carbon::parse($auditing->periode->tanggal_mulai)->format('d F Y') : 'N/A',
+            'Waktu Audit' => $auditing->jadwal_audit ? \Carbon\Carbon::parse($auditing->jadwal_audit)->format('d F Y') : 'N/A',
             'Auditee 1' => $auditing->auditee1->nama ?? 'N/A',
             'Auditee 2' => $auditing->auditee2->nama ?? '-',
             'Auditor 1' => $auditing->auditor1->nama ?? 'N/A',
             'Auditor 2' => $auditing->auditor2->nama ?? '-',
-            'Status' => $auditing->status ?? 'Menunggu',
+            'Status' => $statusLabels[$auditing->status] ?? 'Menunggu',
         ];
     });
 
