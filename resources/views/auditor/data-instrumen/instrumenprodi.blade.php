@@ -7,15 +7,13 @@
         <!-- Breadcrumb -->
         <x-breadcrumb :items="[
             ['label' => 'Dashboard', 'url' => route('auditor.dashboard.index')],
-            ['label' => 'Audit', 'url' => route('auditor.audit.index')],
-            ['label' => 'Response Instrumen'],
+            ['label' => 'Data Instrumen Prodi', 'url' => route('auditor.data-instrumen.instrumenprodi')],
         ]" />
 
         <!-- Heading -->
         <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-200 mb-8">
-            Lihat Response Instrumen
+            Data Instrumen Prodi
         </h1>
-
         <!-- Table and Pagination -->
         <div class="bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 rounded-2xl">
             <!-- Table Controls -->
@@ -60,6 +58,7 @@
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Daya Saing Nasional</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Daya Saing Internasional</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Keterangan</th>
+                            {{-- <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Aksi</th> --}}
                         </tr>
                     </thead>
                     <tbody id="instrumen-table-body" class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -100,90 +99,34 @@
                 </div>
             </div>
         </div>
-        <div class="flex gap-4 mt-8">
-            <x-button id="back-btn" type="button" color="red" icon="heroicon-o-arrow-left">
-                Kembali
-            </x-button>
-            @if (session('status') == 2)
-            <x-button id="complete-correction-btn" type="button" color="sky" icon="heroicon-o-check">
-                Koreksi Selesai
-            </x-button>
-            @elseif (session('status') == 7)
-            <x-button id="complete-revision-btn" type="button" color="sky" icon="heroicon-o-check">
-                Koreksi Revisi Selesai
-            </x-button>
-            @endif
-        </div>
     </div>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    // Fetch both set-instrumen and responses data
-    const auditingId = {{ session('auditing_id') ?? 'null' }}; // Fallback to null if undefined
-    const auditStatus = {{ session('status') ?? 1 }}; // Default to 1 if undefined
-
-    if (!auditingId) {
-        const tableBody = document.getElementById('instrumen-table-body');
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="11" class="px-4 py-3 sm:px-6 text-center text-red-500">
-                    ID auditing tidak tersedia. Silakan coba lagi.
-                </td>
-            </tr>
-        `;
-        return;
-    }
-
-    Promise.all([
-        fetch('http://127.0.0.1:5000/api/set-instrumen').then(res => {
-            if (!res.ok) throw new Error('Gagal mengambil data set-instrumen');
-            return res.json();
-        }),
-        fetch(`http://127.0.0.1:5000/api/responses/auditing/${auditingId}`).then(res => {
-            if (!res.ok) throw new Error('Gagal mengambil data responses');
-            return res.json();
-        }).catch(() => ({ data: [] })) // Return empty data array if responses fetch fails
-    ])
-        .then(([instrumenResult, responseResult]) => {
-            const instrumenData = (instrumenResult.data || []).filter(item => item.jenis_unit_id === 3);
-            const responseData = responseResult.data || [];
-
-            // Create a map of responses by set_instrumen_unit_kerja_id
-            const responseMap = {};
-            responseData.forEach(response => {
-                responseMap[response.set_instrumen_unit_kerja_id] = response;
-            });
-
+    fetch('http://127.0.0.1:5000/api/set-instrumen') // Ganti URL jika perlu
+        .then(response => response.json())
+        .then(result => {
+            const data = result.data;
             const tableBody = document.getElementById('instrumen-table-body');
-            let index = 1; // Nomor urut berdasarkan standar
 
-            // If no instrumen data, show empty message
-            if (!instrumenData.length) {
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="11" class="px-4 py-3 sm:px-6 text-center text-red-500">
-                            Tidak ada data instrumen tersedia untuk Prodi.
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
+            let index = 1;
 
             const grouped = {};
             const rowspanStandar = {};
 
-            // Group instrumen data
-            instrumenData.forEach(item => {
-                const standar = item.unsur?.deskripsi?.kriteria?.nama_kriteria || 'Tidak Diketahui';
-                const deskripsi = item.unsur?.deskripsi?.isi_deskripsi || 'Tidak Diketahui';
-                const unsur = item.unsur?.isi_unsur || 'Tidak Diketahui';
+            data.forEach(item => {
+                const standar = item.unsur.deskripsi.kriteria.nama_kriteria;
+                const deskripsi = item.unsur.deskripsi.isi_deskripsi;
+                const unsur = item.unsur.isi_unsur;
 
                 if (!grouped[standar]) {
                     grouped[standar] = {};
                     rowspanStandar[standar] = 0;
                 }
+
                 if (!grouped[standar][deskripsi]) {
                     grouped[standar][deskripsi] = {};
                 }
+
                 if (!grouped[standar][deskripsi][unsur]) {
                     grouped[standar][deskripsi][unsur] = [];
                 }
@@ -192,19 +135,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 rowspanStandar[standar]++;
             });
 
-            // Helper function to render checklist
-            const renderChecklist = (value) => {
-                return value === '1' ? `
-                    <svg class="w-5 h-5 text-green-600 dark:text-green-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                ` : '-';
-            };
-
-            // Iterate through grouped data
             for (const standar in grouped) {
                 let standarDisplayed = false;
-                let nomorDisplayed = false;
 
                 const totalRowsForStandar = Object.values(grouped[standar])
                     .map(desc => Object.values(desc).reduce((sum, arr) => sum + arr.length, 0))
@@ -212,6 +144,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 for (const deskripsi in grouped[standar]) {
                     let deskripsiDisplayed = false;
+
                     const totalRowsForDeskripsi = Object.values(grouped[standar][deskripsi])
                         .reduce((sum, arr) => sum + arr.length, 0);
 
@@ -221,136 +154,46 @@ document.addEventListener('DOMContentLoaded', function () {
                         const totalRowsForUnsur = items.length;
 
                         items.forEach(item => {
-                            const response = responseMap[item.set_instrumen_unit_kerja_id] || {};
                             const row = document.createElement('tr');
-                            let html = '';
+                            let html = `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600">${index++}</td>`;
 
-                            // Kolom No
-                            if (!nomorDisplayed) {
-                                html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600" rowspan="${totalRowsForStandar}">${index}</td>`;
-                                nomorDisplayed = true;
-                            }
-
-                            // Kolom Standar
                             if (!standarDisplayed) {
                                 html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600" rowspan="${totalRowsForStandar}">${standar}</td>`;
                                 standarDisplayed = true;
                             }
 
-                            // Kolom Deskripsi
                             if (!deskripsiDisplayed) {
                                 html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600" rowspan="${totalRowsForDeskripsi}">${deskripsi}</td>`;
                                 deskripsiDisplayed = true;
                             }
 
-                            // Kolom Unsur
                             if (!unsurDisplayed) {
                                 html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600" rowspan="${totalRowsForUnsur}">${unsur}</td>`;
                                 unsurDisplayed = true;
                             }
 
-                            // Response columns
-                            html += `
-                                <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600">${response.ketersediaan_standar_dan_dokumen || '-'}</td>
-                                <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">${renderChecklist(response.spt_pt)}</td>
-                                <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">${renderChecklist(response.sn_dikti)}</td>
-                                <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">${renderChecklist(response.lokal)}</td>
-                                <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">${renderChecklist(response.nasional)}</td>
-                                <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">${renderChecklist(response.internasional)}</td>
-                                <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600">${response.keterangan || '-'}</td>
-                            `;
+                            // Kolom lain (kosong diisi "-")
+                            for (let i = 0; i < 7; i++) {
+                                html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">-</td>`;
+                            }
+
+                            // Kolom aksi
+                            // html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">-</td>`;
 
                             row.innerHTML = html;
                             tableBody.appendChild(row);
                         });
                     }
                 }
-                index++;
-            }
-
-            // Handle "Kembali" button click
-            const backBtn = document.getElementById('back-btn');
-            if (backBtn) {
-                backBtn.addEventListener('click', function () {
-                    window.location.href = "{{ route('auditor.audit.index') }}";
-                });
-            }
-
-            // Handle "Koreksi Selesai" button click (only if auditStatus is 2)
-            if (auditStatus === 2) {
-                const completeCorrectionBtn = document.getElementById('complete-correction-btn');
-                if (completeCorrectionBtn) {
-                    completeCorrectionBtn.addEventListener('click', function () {
-                        if (confirm('Apakah Anda yakin ingin menyelesaikan koreksi? Tindakan ini tidak dapat dibatalkan.')) {
-                            fetch(`http://127.0.0.1:5000/api/auditings/${auditingId}`, {
-                                method: 'PUT',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({ status: 3 })
-                            })
-                                .then(response => {
-                                    if (!response.ok) {
-                                        throw new Error('Gagal menyelesaikan koreksi');
-                                    }
-                                    return response.json();
-                                })
-                                .then(result => {
-                                    alert('Koreksi berhasil diselesaikan!');
-                                    completeCorrectionBtn.disabled = true;
-                                    completeCorrectionBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                                    window.location.href = "{{ route('auditor.audit.index') }}";
-                                })
-                                .catch(error => {
-                                    console.error('Gagal menyelesaikan koreksi:', error);
-                                    alert('Gagal menyelesaikan koreksi. Silakan coba lagi.');
-                                });
-                        }
-                    });
-                }
-            }
-
-            // Handle "Koreksi Revisi Selesai" button click (only if auditStatus is 7)
-            if (auditStatus === 7) {
-                const completeRevisionBtn = document.getElementById('complete-revision-btn');
-                if (completeRevisionBtn) {
-                    completeRevisionBtn.addEventListener('click', function () {
-                        if (confirm('Apakah Anda yakin ingin menyelesaikan koreksi revisi? Tindakan ini tidak dapat dibatalkan.')) {
-                            fetch(`http://127.0.0.1:5000/api/auditings/${auditingId}`, {
-                                method: 'PUT',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({ status: 8 })
-                            })
-                                .then(response => {
-                                    if (!response.ok) {
-                                        throw new Error('Gagal menyelesaikan koreksi revisi');
-                                    }
-                                    return response.json();
-                                })
-                                .then(result => {
-                                    alert('Koreksi revisi berhasil diselesaikan!');
-                                    completeRevisionBtn.disabled = true;
-                                    completeRevisionBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                                    window.location.href = "{{ route('auditor.audit.index') }}";
-                                })
-                                .catch(error => {
-                                    console.error('Gagal menyelesaikan koreksi revisi:', error);
-                                    alert('Gagal menyelesaikan koreksi revisi. Silakan coba lagi.');
-                                });
-                        }
-                    });
-                }
             }
         })
         .catch(error => {
-            console.error('Gagal mengambil data instrumen:', error);
+            console.error('Gagal mengambil data:', error);
             const tableBody = document.getElementById('instrumen-table-body');
             tableBody.innerHTML = `
                 <tr>
-                    <td colspan="11" class="px-4 py-3 sm:px-6 text-center text-red-500">
-                        Gagal memuat data instrumen. Silakan coba lagi.
+                    <td colspan="12" class="px-4 py-3 sm:px-6 text-center text-red-500">
+                        Gagal memuat data. Silakan coba lagi.
                     </td>
                 </tr>
             `;

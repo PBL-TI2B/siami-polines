@@ -38,7 +38,6 @@ class AuditController extends Controller
                 $jenisUnitId = $data['data'][0]['unit_kerja']['jenis_unit_id'] ?? null;
                 $auditingId = $data['data'][0]['auditing_id'] ?? null;
                 $status = $data['data'][0]['status'] ?? null;
-                $unitKerjaId = $data['data'][0]['unit_kerja']['unit_kerja_id'] ?? null;
 
                 // Simpan ke session (opsional)
                 if ($jenisUnitId !== null) {
@@ -49,9 +48,6 @@ class AuditController extends Controller
                 }
                 if ($status !== null) {
                     session(['status' => $status]);
-                }
-                if ($unitKerjaId !== null) {
-                    session(['unit_kerja_id' => $unitKerjaId]);
                 }
 
                 // Kembalikan respons seperti biasa, bisa juga sertakan jenis_unit_id
@@ -72,16 +68,6 @@ class AuditController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
-    }
-
-    public function auditorIndexPage()
-    {
-        return view('auditor.audit.index');
-    }
-
-     public function auditorAuditPage()
-    {
-        return view('auditor.audit.audit');
     }
 
     /**

@@ -19,7 +19,7 @@
         </div>
 
         <!-- Statistik Audit -->
-        <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3" id="statsContainer">
+        <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             <!-- Audit Aktif -->
             <div
                 class="rounded-2xl border border-sky-200 bg-sky-100 p-6 shadow-sm hover:shadow-md dark:border-sky-600 dark:bg-sky-900">
@@ -29,7 +29,7 @@
                     </div>
                     <div>
                         <p class="text-sm text-gray-700 dark:text-gray-300">Audit Aktif</p>
-                        <p class="text-2xl font-bold text-gray-900 dark:text-white" id="activeAudits">0</p>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white">3</p>
                     </div>
                 </div>
             </div>
@@ -43,7 +43,7 @@
                     </div>
                     <div>
                         <p class="text-sm text-gray-700 dark:text-gray-300">Audit Selesai</p>
-                        <p class="text-2xl font-bold text-gray-900 dark:text-white" id="completedAudits">0</p>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white">5</p>
                     </div>
                 </div>
             </div>
@@ -57,7 +57,7 @@
                     </div>
                     <div>
                         <p class="text-sm text-gray-700 dark:text-gray-300">Tindak Lanjut</p>
-                        <p class="text-2xl font-bold text-gray-900 dark:text-white" id="followupAudits">0</p>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white">2</p>
                     </div>
                 </div>
             </div>
@@ -144,86 +144,60 @@
             <h3 class="mb-4 text-xl font-bold text-gray-900 dark:text-gray-200">Grafik Jumlah Audit per Periode</h3>
             <canvas id="auditChart" class="h-64 w-full"></canvas>
         </div>
+
+
     </div>
 
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Fungsi untuk mengambil data dari API
-        async function fetchAuditData() {
-            try {
-                const response = await fetch('http://127.0.0.1:5000/api/auditings');
-                const data = await response.json();
-
-                // Hitung statistik
-                const activeAudits = data.filter(audit => audit.periode_id === 3).length;
-                const completedAudits = data.filter(audit => audit.status === 9).length;
-                const followupAudits = data.filter(audit => audit.status === 8).length;
-
-                // Update statistik di DOM
-                document.getElementById('activeAudits').textContent = activeAudits;
-                document.getElementById('completedAudits').textContent = completedAudits;
-                document.getElementById('followupAudits').textContent = followupAudits;
-
-                // Siapkan data untuk grafik dengan periode tetap (1, 2, 3)
-                const periods = [1, 2, 3].map(id => `Periode ${id}`);
-                const activeData = [1, 2, 3].map(periodId => data.filter(audit => audit.periode_id === periodId && audit.periode_id === 3).length);
-                const completedData = [1, 2, 3].map(periodId => data.filter(audit => audit.periode_id === periodId && audit.status === 9).length);
-                const followupData = [1, 2, 3].map(periodId => data.filter(audit => audit.periode_id === periodId && audit.status === 8).length);
-
-                // Buat grafik
-                const ctx = document.getElementById('auditChart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: periods,
-                        datasets: [{
-                                label: 'Audit Aktif',
-                                data: activeData,
-                                backgroundColor: 'rgba(14, 165, 233, 0.6)', // sky
-                                borderColor: 'rgba(14, 165, 233, 1)',
-                                borderWidth: 1
-                            },
-                            {
-                                label: 'Audit Selesai',
-                                data: completedData,
-                                backgroundColor: 'rgba(34, 197, 94, 0.6)', // green
-                                borderColor: 'rgba(34, 197, 94, 1)',
-                                borderWidth: 1
-                            },
-                            {
-                                label: 'Tindak Lanjut',
-                                data: followupData,
-                                backgroundColor: 'rgba(253, 224, 71, 0.6)', // yellow
-                                borderColor: 'rgba(253, 224, 71, 1)',
-                                borderWidth: 1
-                            }
-                        ]
+        const ctx = document.getElementById('auditChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['2023/1', '2023/2', '2024/1'],
+                datasets: [{
+                        label: 'Audit Aktif',
+                        data: [1, 2, 3],
+                        backgroundColor: 'rgba(14, 165, 233, 0.6)', // sky
+                        borderColor: 'rgba(14, 165, 233, 1)',
+                        borderWidth: 1
                     },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Jumlah Audit'
-                                }
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                position: 'top'
-                            }
+                    {
+                        label: 'Audit Selesai',
+                        data: [2, 3, 4],
+                        backgroundColor: 'rgba(34, 197, 94, 0.6)', // green
+                        borderColor: 'rgba(34, 197, 94, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Tindak Lanjut',
+                        data: [1, 1, 2],
+                        backgroundColor: 'rgba(253, 224, 71, 0.6)', // yellow
+                        borderColor: 'rgba(253, 224, 71, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Jumlah Audit'
                         }
                     }
-                });
-            } catch (error) {
-                console.error('Error fetching audit data:', error);
+                },
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                }
             }
-        }
-
-        // Panggil fungsi saat halaman dimuat
-        document.addEventListener('DOMContentLoaded', fetchAuditData);
+        });
     </script>
+
+
 @endsection

@@ -97,9 +97,7 @@ document.addEventListener("click", (event) => {
         link &&
         link.href &&
         !link.target &&
-        link.href.includes(window.location.origin) &&
-        link.href !== "#" && // Pastikan href bukan hanya "#"
-        !link.href.endsWith("#") // Pastikan href tidak diakhiri dengan "#"
+        link.href.includes(window.location.origin)
     ) {
         event.preventDefault();
         ProgressBarManager.startProgress();
