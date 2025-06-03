@@ -169,61 +169,61 @@
     <script>
         const userId = {{ session('user.user_id', 0) }};
 
-        // Data dummy untuk simulasi
-        const dummyData = [{
-                instrumen_response_id: 1,
-                auditing: {
-                    user_id_auditee: userId
-                },
-                set_instrumen_unit_kerja: {
-                    aktivitas: {
-                        indikator_kinerja: {
-                            sasaran_strategis: {
-                                nama_sasaran: "Meningkatkan Kualitas Pelayanan"
-                            },
-                            isi_indikator_kinerja: "Persentase kepuasan pelanggan"
-                        },
-                        nama_aktivitas: "Survei Kepuasan Pelanggan",
-                        satuan: "Persen",
-                        target: "90"
-                    }
-                },
-                response: {
-                    capaian: "85",
-                    lokasi_bukti_dukung: "/dokumen/survei.pdf"
-                }
-            },
-            {
-                instrumen_response_id: 2,
-                auditing: {
-                    user_id_auditee: userId
-                },
-                set_instrumen_unit_kerja: {
-                    aktivitas: {
-                        indikator_kinerja: {
-                            sasaran_strategis: {
-                                nama_sasaran: "Optimalisasi Proses Bisnis"
-                            },
-                            isi_indikator_kinerja: "Waktu penyelesaian proses"
-                        },
-                        nama_aktivitas: "Peningkatan Efisiensi Prosedur",
-                        satuan: "Hari",
-                        target: "5"
-                    }
-                },
-                response: {
-                    capaian: "4",
-                    lokasi_bukti_dukung: "/dokumen/prosedur.pdf"
-                }
-            }
-        ];
+        // // Data dummy untuk simulasi
+        // const dummyData = [{
+        //         instrumen_response_id: 1,
+        //         auditing: {
+        //             user_id_auditee: userId
+        //         },
+        //         set_instrumen_unit_kerja: {
+        //             aktivitas: {
+        //                 indikator_kinerja: {
+        //                     sasaran_strategis: {
+        //                         nama_sasaran: "Meningkatkan Kualitas Pelayanan"
+        //                     },
+        //                     isi_indikator_kinerja: "Persentase kepuasan pelanggan"
+        //                 },
+        //                 nama_aktivitas: "Survei Kepuasan Pelanggan",
+        //                 satuan: "Persen",
+        //                 target: "90"
+        //             }
+        //         },
+        //         response: {
+        //             capaian: "85",
+        //             lokasi_bukti_dukung: "/dokumen/survei.pdf"
+        //         }
+        //     },
+        //     {
+        //         instrumen_response_id: 2,
+        //         auditing: {
+        //             user_id_auditee: userId
+        //         },
+        //         set_instrumen_unit_kerja: {
+        //             aktivitas: {
+        //                 indikator_kinerja: {
+        //                     sasaran_strategis: {
+        //                         nama_sasaran: "Optimalisasi Proses Bisnis"
+        //                     },
+        //                     isi_indikator_kinerja: "Waktu penyelesaian proses"
+        //                 },
+        //                 nama_aktivitas: "Peningkatan Efisiensi Prosedur",
+        //                 satuan: "Hari",
+        //                 target: "5"
+        //             }
+        //         },
+        //         response: {
+        //             capaian: "4",
+        //             lokasi_bukti_dukung: "/dokumen/prosedur.pdf"
+        //         }
+        //     }
+        // ];
 
-        // // Kode fetch asli (dikomentar untuk penggunaan dummy data)
-        // fetch('http://127.0.0.1:5000/api/instrumen-response')
-        //     .then(response => response.json())
-        //     .then(result => {
-        //         const allData = result.data;
-        //         const tableBody = document.getElementById('instrumen-upt-table-body');
+        // Kode fetch asli (dikomentar untuk penggunaan dummy data)
+        fetch('http://127.0.0.1:5000/api/instrumen-response')
+            .then(response => response.json())
+            .then(result => {
+                const allData = result.data;
+                const tableBody = document.getElementById('instrumen-upt-table-body');
 
         // Ambil dan isi data tabel menggunakan dummy data
         const tableBody = document.getElementById('instrumen-upt-table-body');
@@ -411,29 +411,29 @@
             // Tutup modal
             closeModal();
 
-            // // Kode fetch asli untuk menyimpan data (dikomentar)
-            // fetch('http://127.0.0.1:5000/api/instrumen-response/' + id, {
-            //     method: 'PUT',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     },
-            //     body: JSON.stringify({
-            //         capaian: capaian,
-            //         lokasi_bukti_dukung: lokasiBuktiDukung
-            //     })
-            // })
-            // .then(response => response.json())
-            // .then(result => {
-            //     if (result.success) {
-            //         alert('Data berhasil disimpan!');
-            //     } else {
-            //         alert('Gagal menyimpan data: ' + result.message);
-            //     }
-            // })
-            // .catch(error => {
-            //     console.error('Gagal menyimpan data:', error);
-            //     alert('Gagal menyimpan data. Silakan coba lagi.');
-            // });
+            // Kode fetch asli untuk menyimpan data (dikomentar)
+            fetch('http://127.0.0.1:5000/api/instrumen-response/' + id, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    capaian: capaian,
+                    lokasi_bukti_dukung: lokasiBuktiDukung
+                })
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert('Data berhasil disimpan!');
+                } else {
+                    alert('Gagal menyimpan data: ' + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Gagal menyimpan data:', error);
+                alert('Gagal menyimpan data. Silakan coba lagi.');
+            });
         });
 
         // // Kode fetch untuk unit kerja (dikomentar)

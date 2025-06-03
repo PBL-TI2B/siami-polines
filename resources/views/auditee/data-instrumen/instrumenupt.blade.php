@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Data Instrumen Jurusan')
+@section('title', 'Data Instrumen UPT')
 
 @section('content')
     <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
@@ -351,10 +351,10 @@
                     if (instrumenResult.data) {
                         if (Array.isArray(instrumenResult.data)) {
                             allInstrumenData = instrumenResult.data.filter(item => item.jenis_unit_id ===
-                                2);
+                                1);
                         } else if (typeof instrumenResult.data === 'object' && instrumenResult.data !==
                             null) {
-                            if (instrumenResult.data.jenis_unit_id === 2) {
+                            if (instrumenResult.data.jenis_unit_id === 1) {
                                 allInstrumenData = [instrumenResult.data];
                             }
                         }
@@ -494,7 +494,7 @@
                     tableBody.innerHTML = `
                 <tr>
                     <td colspan="9" class="px-4 py-3 sm:px-6 text-center text-gray-500 dark:text-gray-400">
-                        Tidak ada data instrumen untuk jurusan ini.
+                        Tidak ada data instrumen untuk unit ini.
                     </td>
                 </tr>
             `;
@@ -538,10 +538,10 @@
                     <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center">${response.lokasi_bukti_dukung || '-'}</td>
                     <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center">
                         ${auditStatus != 1 ? `
-                                    <span class="text-gray-500 dark:text-gray-400 text-sm">Jawaban Terkunci</span>
-                                ` : `
-                                    <div class="flex items-center justify-center gap-2">
-                                        ${response.response_id ? `
+                                            <span class="text-gray-500 dark:text-gray-400 text-sm">Jawaban Terkunci</span>
+                                        ` : `
+                                            <div class="flex items-center justify-center gap-2">
+                                                ${response.response_id ? `
                                     <x-button type="button" color="yellow" icon="heroicon-o-pencil" class="edit-btn text-sm font-medium" data-id="${response.response_id}" data-capaian="${response.capaian || ''}" data-lokasi="${response.lokasi_bukti_dukung || ''}" data-sasaran="${sasaran}" data-indikator="${indikator}" data-aktivitas="${groupedItem.aktivitas}" data-satuan="${item.aktivitas.satuan || ''}" data-target="${item.aktivitas.target || ''}" data-set-instrumen-id="${item.set_instrumen_unit_kerja_id}">
                                         Edit
                                     </x-button>
@@ -553,8 +553,8 @@
                                         Jawab
                                     </x-button>
                                 `}
-                                    </div>
-                                `}
+                                            </div>
+                                        `}
                     </td>
                 `;
                         row.innerHTML = html;

@@ -43,9 +43,10 @@
         </h2>
         @php
             $jenisUnitId = session('jenis_unit_id');
+
             $instrumenRoute = match ($jenisUnitId) {
-                1 => route('auditee.data-instrumen.index'),
-                // 2 => route('auditee.data-instrumen.index2'),
+                1 => route('auditee.data-instrumen.instrumenupt'),
+                2 => route('auditee.data-instrumen.instrumenjurusan'),
                 3 => route('auditee.data-instrumen.instrumenprodi'),
                 default => '#', // fallback kalau tidak ditemukan
             };
@@ -104,7 +105,23 @@ document.addEventListener("DOMContentLoaded", async function () {
                     <td class="px-4 py-2">${item.auditor1?.nama ?? 'Belum diatur'}</td>
                     <td class="px-4 py-2">${item.auditor2?.nama ?? '-'}</td>
                     <td class="px-4 py-2">
-                        <span class="${statusClass} inline-flex rounded-full px-2 py-1 text-xs font-semibold">${item.status}</span>
+                        <!-- Status mapping -->
+                        <span class="${statusClass} inline-flex rounded-full px-2 py-1 text-xs font-semibold">
+                            ${
+                                {
+                                    1: 'Pengisian Instrumen',
+                                    2: 'Desk Evaluation',
+                                    3: 'Penjadwalan AL',
+                                    4: 'Pertanyaan Tilik',
+                                    5: 'Tilik Dijawab',
+                                    6: 'Laporan Temuan',
+                                    7: 'Revisi',
+                                    8: 'Sudah Revisi',
+                                    9: 'Closing',
+                                    10: 'Selesai'
+                                }[item.status] ?? item.status
+                            }
+                        </span>
                     </td>
                 </tr>`;
         });

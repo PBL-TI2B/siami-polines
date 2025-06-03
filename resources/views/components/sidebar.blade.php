@@ -11,7 +11,7 @@
     if (session('token') && session('role_id')) {
         try {
             $roleId = session('role_id');
-            $response = Http::timeout(5)->get('http://localhost:5000/api/sidebar-menu', [
+            $response = Http::get('http://localhost:5000/api/sidebar-menu', [
                 'role_id' => $roleId,
             ]);
 
