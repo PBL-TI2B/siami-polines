@@ -82,7 +82,7 @@
                     3 => route('auditee.data-instrumen.instrumenprodi'),
                     default => '#',
                 };
-                $assessmentScheduleRoute = '#';
+                $assessmentScheduleRoute = route('auditee.assesmen-lapangan.index');
                 $tilikResponseRoute = '#';
             @endphp
 

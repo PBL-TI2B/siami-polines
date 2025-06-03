@@ -186,6 +186,9 @@ Route::prefix('auditee')->middleware('auth.ami:auditee')->group(function () {
         Route::get('/', [AuditController::class, 'auditeeIndexPage'])->name('auditee.audit.index');
         Route::get('/auditings', [AuditController::class, 'getAuditingsByUser'])->name('auditee.auditings');
     });
+
+    Route::get('/assesmen-lapangan', [PlotingAMIController::class, 'lihatJadwal'])->name('auditee.assesmen-lapangan.index');
+
     // Data Instrumen
     Route::prefix('data-instrumen')->group(function () {
         Route::get('/', [DataInstrumenController::class, 'index'])->name('auditee.data-instrumen.index');
