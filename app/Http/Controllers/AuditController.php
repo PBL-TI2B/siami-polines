@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use App\Models\Auditing;
 
 class AuditController extends Controller
 {
@@ -79,10 +80,12 @@ class AuditController extends Controller
         return view('auditor.audit.index');
     }
 
-     public function auditorAuditPage()
-    {
-        return view('auditor.audit.audit');
-    }
+     public function auditorAuditPage($id)
+{
+    $auditing = Auditing::with(['unitKerja', 'auditor1', 'auditor2', 'auditee1', 'auditee2', 'periode'])
+        ->findOrFail($id);
+    return view('auditor.audit.audit', compact('auditing'));
+}
 
     /**
      * Show the form for creating a new resource.

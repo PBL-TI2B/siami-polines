@@ -129,7 +129,7 @@ Route::prefix('auditor')->middleware('auth.ami:auditor')->group(function () {
 
     Route::prefix('audit')->group(function () {
         Route::get('/', [AuditController::class, 'auditorIndexPage'])->name('auditor.audit.index');
-        Route::get('/detail', [AuditController::class, 'auditorAuditPage'])->name('auditor.audit.audit');
+        Route::get('/detail/{id}', [AuditController::class, 'auditorAuditPage'])->name('auditor.audit.audit');
         Route::get('/auditings', [AuditController::class, 'getAuditingsByUser'])->name('auditor.auditings');
     });
 
@@ -156,6 +156,8 @@ Route::prefix('auditor')->middleware('auth.ami:auditor')->group(function () {
     Route::get('/laporan/{id}/edit', [LaporanPtppController::class, 'edit'])->name('auditor.laporan.edit');
     Route::put('/laporan/{id}', [LaporanPtppController::class, 'update'])->name('auditor.laporan.update');
     Route::delete('/laporan/{id}', [LaporanPtppController::class, 'destroy'])->name('auditor.laporan.destroy');
+    Route::post('/laporan/submit', [LaporanController::class, 'submit'])->name('auditor.laporan.submit');
+
 
     Route::get('/ptpp', function () {
         return view('auditor.ptpp.index');

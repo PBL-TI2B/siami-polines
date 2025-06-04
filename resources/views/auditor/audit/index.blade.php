@@ -117,7 +117,7 @@
                         <span class="${statusClass} inline-flex rounded-full px-2 py-1 text-xs font-semibold">${statusName}</span>
                     </td>
                     <td class="p-2">
-                        <a href="audit/detail"
+                        <a href="{{ url('auditor/audit/detail') }}/${item.auditing_id}"
                         class="inline-flex items-center rounded bg-sky-800 p-2 text-sm font-medium text-white hover:bg-sky-900">
                         Lihat Detail
                          </a>
