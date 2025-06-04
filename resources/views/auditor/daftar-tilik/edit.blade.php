@@ -84,9 +84,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const kriteriaList = [
         { id: 1, nama: "1. Visi,  Misi, Tujuan, Strategi" },
         { id: 2, nama: "2. Tata Kelola, Tata Pamong, dan Kerjasama" },
-        { id: 3, nama: "3. Kurikulum dan Pembelajaran" },
-        { id: 4, nama: "4. Penelitian" },
-        { id: 5, nama: "5. Luaran Tridharma" }
+        { id: 3, nama: "3. Mahasiswa" },
+        { id: 4, nama: "4. Sumber Daya Manusia" },
+        { id: 5, nama: "5. Keuangan, Sarana, dan Prasarana" },
+        { id: 6, nama: "6. Pendidikan / Kurikulum dan Pembelajaran" },
+        { id: 7, nama: "7. Penelitian" },
+        { id: 8, nama: "8. Pengabdian Kepada Masyarakat" },
+        { id: 9, nama: "9. Luaran Tridharma" }
     ];
 
     kriteriaList.forEach(k => {

@@ -10,8 +10,8 @@
 <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
     <!-- Breadcrumb -->
     <x-breadcrumb :items="[
-        ['label' => 'Dashboard', 'url' => route('auditor.dashboard.index')],
-        ['label' => 'Audit', 'url' => route('auditor.audit.index')],
+        ['label' => 'Dashboard', 'url' => route('auditee.dashboard.index')],
+        ['label' => 'Audit', 'url' => route('auditee.audit.index')],
         ['label' => 'Lihat Assesmen Lapangan'],
     ]" />
 
@@ -32,6 +32,16 @@
     <h1 class="text-2xl font-semibold text-gray-900 dark:text-white mb-6">
         Lihat Jadwal Asesmen Lapangan
     </h1>
+<!-- 
+    <h1>
+        Jadwal Asesmen Lapangan: 
+        @if(isset($auditing['jadwal_audit']))
+            {{ \Carbon\Carbon::parse($auditing['jadwal_audit'])->format('d F Y') }}
+        @else
+            <span class="text-red-500">Belum ada jadwal yang ditetapkan</span>
+        @endif
+    </h1>
+     -->
     <form action="{{ route('auditor.assesmen-lapangan.update', $auditing['auditing_id']) }}" method="POST" class="bg-white dark:bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
         @csrf
         @method('PUT')
