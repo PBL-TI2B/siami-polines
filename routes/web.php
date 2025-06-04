@@ -186,6 +186,7 @@ Route::prefix('auditee')->middleware('auth.ami:auditee')->group(function () {
 
     Route::prefix('audit')->group(function () {
         Route::get('/', [AuditController::class, 'auditeeIndexPage'])->name('auditee.audit.index');
+        Route::get('detail/{auditingId}', [AuditController::class, 'showAuditeeAuditProgress'])->name('auditee.audit.progress-detail');
         Route::get('/auditings', [AuditController::class, 'getAuditingsByUser'])->name('auditee.auditings');
     });
 

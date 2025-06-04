@@ -84,8 +84,9 @@
                                 <th scope="col"
                                     class="w-24 border-r border-gray-200 px-4 py-3 text-center sm:px-6 dark:border-gray-600">
                                     Capaian</th>
-                                <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">
-                                    Lokasi Bukti Dukung</th>
+                                <th scope="col"
+                                    class="border-r border-gray-200 px-4 py-3 text-center sm:px-6 dark:border-gray-600">
+                                    Link Bukti Dukung</th>
                                 <th scope="col"
                                     class="w-48 border-r border-gray-200 px-4 py-3 text-center sm:px-6 dark:border-gray-600">
                                     Aksi</th>
@@ -188,7 +189,7 @@
                         </div>
                         <div>
                             <label for="lokasi_bukti_dukung"
-                                class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Lokasi Bukti
+                                class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Link Bukti
                                 Dukung</label>
                             <input type="text" name="lokasi_bukti_dukung" id="lokasi_bukti_dukung"
                                 class="block w-full rounded-lg border border-gray-300 px-3 py-2.5 focus:border-sky-500 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
@@ -535,13 +536,13 @@
                     <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center">${item.aktivitas.satuan || '-'}</td>
                     <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center">${item.aktivitas.target || '-'}</td>
                     <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center">${response.capaian || '-'}</td>
-                    <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center">${response.lokasi_bukti_dukung || '-'}</td>
+                    <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center"><a href="${response.lokasi_bukti_dukung || '#'}" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline">${response.lokasi_bukti_dukung || '-'}</td>
                     <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center">
                         ${auditStatus != 1 ? `
-                                                <span class="text-gray-500 dark:text-gray-400 text-sm">Jawaban Terkunci</span>
-                                            ` : `
-                                                <div class="flex items-center justify-center gap-2">
-                                                    ${response.response_id ? `
+                                                    <span class="text-gray-500 dark:text-gray-400 text-sm">Jawaban Terkunci</span>
+                                                ` : `
+                                                    <div class="flex items-center justify-center gap-2">
+                                                        ${response.response_id ? `
                                     <x-button type="button" color="yellow" icon="heroicon-o-pencil" class="edit-btn text-sm font-medium" data-id="${response.response_id}" data-capaian="${response.capaian || ''}" data-lokasi="${response.lokasi_bukti_dukung || ''}" data-sasaran="${sasaran}" data-indikator="${indikator}" data-aktivitas="${groupedItem.aktivitas}" data-satuan="${item.aktivitas.satuan || ''}" data-target="${item.aktivitas.target || ''}" data-set-instrumen-id="${item.set_instrumen_unit_kerja_id}">
                                         Edit
                                     </x-button>
@@ -553,8 +554,8 @@
                                         Jawab
                                     </x-button>
                                 `}
-                                                </div>
-                                            `}
+                                                    </div>
+                                                `}
                     </td>
                 `;
                         row.innerHTML = html;
