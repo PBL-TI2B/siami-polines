@@ -125,6 +125,7 @@
                     titleColorClasses = ['text-green-700', 'dark:text-green-400'];
                     statusTextColorClasses = ['text-green-600', 'dark:text-green-500'];
                     link.href = routes[stepNumber];
+                    linkClasses.push('opacity-50', 'pointer-events-none');
                     // Link completed tetap dengan style default (tidak diwarnai khusus)
                 } else if (state === "current") {
                     iconHtml = getIconHtml(`step${stepNumber}`);
