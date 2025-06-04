@@ -228,7 +228,7 @@
             const prevLi = document.createElement('li');
             prevLi.innerHTML = `
                 <a href="?per_page=${perPage}&page=${currentPage > 1 ? currentPage - 1 : 1}"
-                   class="flex h-8 items-center justify-center border ${currentPage === 1 ? 'border-gray-300 bg-white text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400' : 'border-gray-300 bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200'} px-3 leading-tight transition-all duration-200">
+                    class="flex h-8 items-center justify-center border ${currentPage === 1 ? 'border-gray-300 bg-white text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400' : 'border-gray-300 bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200'} px-3 leading-tight transition-all duration-200">
                     Previous
                 </a>
             `;
@@ -247,7 +247,7 @@
                 const li = document.createElement('li');
                 li.innerHTML = `
                     <a href="?per_page=${perPage}&page=${page}"
-                    class="flex h-8 items-center justify-center border ${page === currentPage ? 'border-sky-300 bg-sky-50 text-sky-800 dark:border-sky-700 dark:bg-sky-900 dark:text-sky-200' : 'border-gray-300 bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200'} px-3 leading-tight transition-all duration-200">
+                        class="flex h-8 items-center justify-center border ${page === currentPage ? 'border-sky-300 bg-sky-50 text-sky-800 dark:border-sky-700 dark:bg-sky-900 dark:text-sky-200' : 'border-gray-300 bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200'} px-3 leading-tight transition-all duration-200">
                         ${page}
                     </a>
                 `;
@@ -258,7 +258,7 @@
             const nextLi = document.createElement('li');
             nextLi.innerHTML = `
                 <a href="?per_page=${perPage}&page=${currentPage < totalPages ? currentPage + 1 : totalPages}"
-                class="flex h-8 items-center justify-center border ${currentPage === totalPages ? 'border-gray-300 bg-white text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400' : 'border-gray-300 bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200'} px-3 leading-tight transition-all duration-200">
+                    class="flex h-8 items-center justify-center border ${currentPage === totalPages ? 'border-gray-300 bg-white text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400' : 'border-gray-300 bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200'} px-3 leading-tight transition-all duration-200">
                     Next
                 </a>
             `;
