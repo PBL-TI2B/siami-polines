@@ -835,7 +835,7 @@
 
 
                                     setTimeout(() => {
-                                        window.location.href = `/auditee/audit`;
+                                        window.location.href = `/auditee/audit/detail/${auditingId}`; // Redirect ke halaman detail auditing setelah 2 detik
                                     }, 2000); // Delay 2 detik agar user sempat baca pesan
                                 })
                                 .catch(error => {
