@@ -129,7 +129,7 @@ Route::prefix('auditor')->middleware('auth.ami:auditor')->group(function () {
 
     Route::prefix('audit')->group(function () {
         Route::get('/', [AuditController::class, 'auditorIndexPage'])->name('auditor.audit.index');
-        Route::get('/detail', [AuditController::class, 'auditorAuditPage'])->name('auditor.audit.audit');
+        Route::get('/detail/{id}', [AuditController::class, 'auditorAuditPage'])->name('auditor.audit.audit');
         Route::get('/auditings', [AuditController::class, 'getAuditingsByUser'])->name('auditor.auditings');
     });
 
