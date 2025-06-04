@@ -19,21 +19,19 @@ class PlotingAMIController extends Controller
 {
     public function index(Request $request)
     {
-        $response = Http::get('http://127.0.0.1:5000/api/auditings');
-        $auditings = $response->json()['data'] ?? [];
-        // Ambil jumlah entri dari query string, default ke 10
         $entries = $request->get('per_page', 10);
-
-        // Ambil kata kunci pencarian
         $search = $request->get('search', '');
+        $periodeId = $request->get('periode_id'); // Ambil periode_id dari request
 
-        // query data dengan pencarian
+        // Ambil semua periode untuk dropdown
+        $periodes = PeriodeAudit::all();
+
         $auditings = Auditing::with([
             'auditor1', 'auditor2',
             'auditee1', 'auditee2',
             'unitKerja', 'periode'
         ])
-        -> when($search, function ($query, $search) {
+        ->when($search, function ($query, $search) {
             $query->whereHas('unitKerja', function ($q) use ($search) {
                 $q->where('nama_unit_kerja', 'like', "%{$search}%");
             })
@@ -53,8 +51,12 @@ class PlotingAMIController extends Controller
                 $q->where('tanggal_mulai', 'like', "%{$search}%");
             });
         })
+        ->when($periodeId, function ($query, $periodeId) {
+            $query->where('periode_id', $periodeId);
+        })
         ->paginate($entries);
-        return view('admin.ploting-ami.index', compact('auditings'));
+
+        return view('admin.ploting-ami.index', compact('auditings', 'periodes', 'periodeId'));
     }
 
     public function indexAssesmen(Request $request) {

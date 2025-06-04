@@ -33,13 +33,18 @@
             </a>
 
             <div class="ml-auto">
-                <select id="periodeFilter"
-                    class="appearance-none rounded-md border border-gray-300 px-4 py-2 pr-10 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">Pilih Periode AMI</option>
-                    <option value="">Periode 2023</option>
-                    <option value="">Periode 2024</option>
-                    <option value="">Periode 2025</option>
-                </select>
+                <form method="GET" action="{{ route('admin.ploting-ami.index') }}" id="periodeFilterForm">
+                    <select name="periode_id" id="periodeFilter"
+                        class="appearance-none rounded-md border border-gray-300 px-4 py-2 pr-10 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        onchange="document.getElementById('periodeFilterForm').submit()">
+                        <option value="">Pilih Periode AMI</option>
+                        @foreach ($periodes as $periode)
+                            <option value="{{ $periode->periode_id }}" {{ (isset($periodeId) && $periodeId == $periode->periode_id) ? 'selected' : '' }}>
+                                {{ $periode->nama_periode ?? 'Periode '.$periode->periode_id }}
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
             </div>
         </div>
 
