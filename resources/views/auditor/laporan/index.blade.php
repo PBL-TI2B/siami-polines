@@ -105,6 +105,19 @@
                 </tr>
             @endforelse
         </x-table>
+
+        <!-- Submit dan Kunci Jawaban Button -->
+        <div class="flex justify-end mt-6">
+            <form id="submit-laporan-form" action="{{ route('auditor.laporan.submit') }}" method="POST">
+                @csrf
+                <x-button id="submit-laporan-btn" type="submit" color="sky" icon="heroicon-o-lock-closed"
+                    disabled aria-disabled="true" class="opacity-50 cursor-not-allowed"
+                    aria-label="Submit dan Kunci Jawaban">
+                    <span class="submit-text">Submit dan Kunci Jawaban</span>
+                    <span class="loading-text hidden">Memproses...</span>
+                </x-button>
+            </form>
+        </div>
     </div>
 
     <!-- JavaScript untuk Toast -->
@@ -127,6 +140,19 @@
                         }, 5000);
                     }
                 });
+
+                // Handle Submit dan Kunci Jawaban Button
+                    if (submitBtn) {
+                        submitBtn.addEventListener('click', function (event) {
+                            if (!confirm('Apakah Anda yakin ingin submit dan kunci jawaban? Tindakan ini tidak dapat dibatalkan.')) {
+                                event.preventDefault();
+                                return;
+                            }
+                            submitBtn.querySelector('.submit-text').classList.add('hidden');
+                            submitBtn.querySelector('.loading-text').classList.remove('hidden');
+                            submitBtn.disabled = true;
+                        });
+                    }
             });
         </script>
     @endpush
