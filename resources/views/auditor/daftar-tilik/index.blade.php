@@ -1,18 +1,19 @@
 @extends('layouts.app')
 
-@section('title', 'Daftar Tilik')
+@section('title', 'Pertanyaan Daftar Tilik')
 
 @section('content')
     <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
         <!-- Breadcrumb -->
         <x-breadcrumb :items="[
             ['label' => 'Dashboard', 'url' => route('auditor.dashboard.index')],
-            ['label' => 'Daftar Tilik', 'url' => route('auditor.daftar-tilik.index')],
+            ['label' => 'Audit', 'url' => route('auditor.audit.index')],
+            ['label' => 'Buat Pertanyaan Daftar Tilik'],
         ]" />
 
         <!-- Heading -->
         <h1 class="mb-4 text-3xl font-bold text-gray-900 dark:text-gray-200">
-            Daftar Tilik
+            Pertanyaan Daftar Tilik
         </h1>
 
         <div class="mb-6 flex gap-2">
@@ -32,10 +33,10 @@
                         <select name="per_page"
                             class="w-18 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 transition-all duration-200 focus:border-sky-500 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                             onchange="this.form.submit()">
-                            <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
-                            <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
-                            <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
-                            <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
                         </select>
                     </form>
                     <span class="text-sm text-gray-700 dark:text-gray-300">entri</span>
@@ -78,7 +79,7 @@
                             <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">
                                 Realisasi</th>
                             <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">
-                                Standar Nasional POLINES</th>
+                                Standar Nasional / POLINES</th>
                             <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">
                                 Uraian Isian</th>
                             <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">Akar
@@ -96,18 +97,57 @@
             </div>
 
             <!-- Pagination -->
-<div class="p-4">
-    <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
-        <span id="pagination-info" class="text-sm text-gray-700 dark:text-gray-300">
-            <!-- akan diisi via JS -->
-        </span>
-        <nav aria-label="Navigasi Paginasi">
-            <ul id="pagination-buttons" class="inline-flex -space-x-px text-sm">
-                <!-- tombol halaman akan dimuat via JS -->
-            </ul>
-        </nav>
+            <div class="p-4">
+                <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
+                    <span class="text-sm text-gray-700 dark:text-gray-300">
+                        Menampilkan <strong>1</strong> hingga <strong>2</strong> dari <strong>1000</strong> hasil
+                    </span>
+                    <nav aria-label="Navigasi Paginasi">
+                        <ul class="inline-flex -space-x-px text-sm">
+                            <li>
+                                <a href="#"
+                                    class="flex h-8 cursor-not-allowed items-center justify-center rounded-l-lg border border-gray-300 bg-white px-3 leading-tight text-gray-500 opacity-50 transition-all duration-200 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200">
+                                    <x-heroicon-s-chevron-left class="mr-1 h-4 w-4" />
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#"
+                                    class="flex h-8 items-center justify-center border border-sky-300 bg-sky-50 px-3 leading-tight text-sky-800 transition-all duration-200 dark:border-sky-700 dark:bg-sky-900 dark:text-sky-200">
+                                    1
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#"
+                                    class="flex h-8 items-center justify-center border border-gray-300 bg-white px-3 leading-tight text-gray-500 transition-all duration-200 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200">
+                                    2
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#"
+                                    class="flex h-8 items-center justify-center rounded-r-lg border border-gray-300 bg-white px-3 leading-tight text-gray-500 transition-all duration-200 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200">
+                                    <x-heroicon-s-chevron-right class="ml-1 h-4 w-4" />
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        <div class="flex gap-4 mt-8">
+            <x-button id="back-btn" type="button" color="red" icon="heroicon-o-arrow-left">
+                Kembali
+            </x-button>
+            @if (session('status') == 3)
+            <x-button id="complete-correction-btn" type="button" color="sky" icon="heroicon-o-check">
+                Kunci Pertanyaan
+            </x-button>
+            @elseif (session('status') == 5)
+            <x-button id="complete-revision-btn" type="button" color="sky" icon="heroicon-o-check">
+                Selesai Koreksi
+            </x-button>
+            @endif
+        </div>
     </div>
-</div>
 
     <!-- Pass route to JavaScript -->
     <script>
@@ -122,30 +162,74 @@
         document.addEventListener("DOMContentLoaded", function () {
             // Static mapping for kriteria_id to name
             const kriteriaMap = {
-                1: '1. Visi,  Misi, Tujuan, Strategi',
-                2: '2. Tata Kelola, Tata Pamong, dan Kerjasama',
-                3: '3. Kurikulum dan Pembelajaran',
-                4: '4. Penelitian',
-                5: '5. Luaran Tridharma',
+                1: '1. Visi, Misi, Tujuan, Strategi',
+                2: '2. Tata kelola, Tata pamong, dan Kerjasama',
+                3: '3. Mahasiswa',
+                4: '4. Sumber Daya Manusia',
+                5: '5. Keuangan, Sarana, dan Prasarana',
+                6: '6. Pendidikan / Kurikulum dan Pembelajaran',
+                7: '7. Penelitian',
+                8: '8. Pengabdian Kepada Masyarakat',
+                9: '9. Luaran Tridharma',
             };
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const perPage = urlParams.get('per_page') || 5;
-        const page = parseInt(urlParams.get('page')) || 1;
+            const auditingId = {{ session('auditing_id') ?? 'null' }};
+            const auditStatus = {{ session('status') ?? 'null' }};
+            const tbody = document.getElementById('tilik-table-body');
+            tbody.innerHTML = ''; // Clear existing rows
 
-            fetch(`http://127.0.0.1:5000/api/tilik?per_page=${perPage}&page=${page}`)
+            // Fetch tilik data
+            fetch('http://127.0.0.1:5000/api/tilik')
                 .then(response => response.json())
-                .then(result => {
-                    if (result.success && Array.isArray(result.data)) {
-                        const tbody = document.getElementById('tilik-table-body');
-                        tbody.innerHTML = ''; // Clear existing rows if any
+                .then(tilikResult => {
+                    if (!tilikResult.success || !Array.isArray(tilikResult.data)) {
+                        console.error("Gagal mendapatkan data tilik.");
+                        return;
+                    }
 
-                        result.data.forEach((item, index) => {
+                    // Fetch response-tilik data if auditingId is valid
+                    const responsePromise = auditingId && auditingId !== 'null'
+                        ? fetch(`http://127.0.0.1:5000/api/response-tilik/auditing/${auditingId}`)
+                            .then(response => response.json())
+                            .catch(error => {
+                                console.error("Error fetching response-tilik data:", error);
+                                return { success: false, data: [] };
+                            })
+                        : Promise.resolve({ success: true, data: [] });
+
+                    responsePromise.then(responseResult => {
+                        // Create a lookup for response-tilik data by tilik_id
+                        const responseMap = {};
+                        if (responseResult.success && Array.isArray(responseResult.data)) {
+                            responseResult.data.forEach(item => {
+                                responseMap[item.tilik_id] = {
+                                    response_tilik_id: item.response_tilik_id,
+                                    realisasi: item.realisasi ?? '-',
+                                    standar_nasional: item.standar_nasional ?? '-',
+                                    uraian_isian: item.uraian_isian ?? '-',
+                                    akar_penyebab_penunjang: item.akar_penyebab_penunjang ?? '-',
+                                    rencana_perbaikan_tindak_lanjut: item.rencana_perbaikan_tindak_lanjut ?? '-'
+                                };
+                            });
+                        }
+
+                        // Render table rows
+                        tilikResult.data.forEach((item, index) => {
                             const row = document.createElement('tr');
                             row.className = "transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700";
 
                             // Resolve kriteria name or fallback to kriteria_id
                             const kriteriaName = kriteriaMap[item.kriteria_id] || item.kriteria_id;
+
+                            // Get response data for this tilik_id, if available
+                            const response = responseMap[item.tilik_id] || {
+                                response_tilik_id: null,
+                                realisasi: '-',
+                                standar_nasional: '-',
+                                uraian_isian: '-',
+                                akar_penyebab_penunjang: '-',
+                                rencana_perbaikan_tindak_lanjut: '-'
+                            };
 
                             row.innerHTML = `
                                 <td class="px-4 py-3 sm:px-6">${index + 1}</td>
@@ -155,24 +239,28 @@
                                 <td class="px-4 py-3 sm:px-6">${item.sumber_data ?? '-'}</td>
                                 <td class="px-4 py-3 sm:px-6">${item.metode_perhitungan ?? '-'}</td>
                                 <td class="px-4 py-3 sm:px-6">${item.target ?? '-'}</td>
-                                <td class="px-4 py-3 sm:px-6">-</td>
-                                <td class="px-4 py-3 sm:px-6">-</td>
-                                <td class="px-4 py-3 sm:px-6">-</td>
-                                <td class="px-4 py-3 sm:px-6">-</td>
-                                <td class="px-4 py-3 sm:px-6">-</td>
+                                <td class="px-4 py-3 sm:px-6">${response.realisasi}</td>
+                                <td class="px-4 py-3 sm:px-6">${response.standar_nasional}</td>
+                                <td class="px-4 py-3 sm:px-6">${response.uraian_isian}</td>
+                                <td class="px-4 py-3 sm:px-6">${response.akar_penyebab_penunjang}</td>
+                                <td class="px-4 py-3 sm:px-6">${response.rencana_perbaikan_tindak_lanjut}</td>
                                 <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">
-                                    <div class="flex items-center gap-2 justify-center">
-                                        <a href="/auditor/daftar-tilik/${item.tilik_id}/edit" class="text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-200 transition-colors duration-200">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L16.732 3.732z"></path>
-                                            </svg>
-                                        </a>
-                                        <button data-id="${item.tilik_id}" class="delete-btn text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 transition-colors duration-200">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4m-4 0a2 2 0 00-2 2v1h8V5a2 2 0 00-2-2zm-3 4h6"></path>
-                                            </svg>
-                                        </button>
-                                    </div>
+                                    ${auditStatus !== 3 ? `
+                                        <span class="text-gray-500 dark:text-gray-400">Belum sampai proses ini</span>
+                                    ` : `
+                                        <div class="flex items-center gap-2 justify-center">
+                                            <a href="/auditor/daftar-tilik/${item.tilik_id}/edit" class="text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-200 transition-colors duration-200">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L16.732 3.732z"></path>
+                                                </svg>
+                                            </a>
+                                            <button data-id="${item.tilik_id}" class="delete-btn text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 transition-colors duration-200">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4m-4 0a2 2 0 00-2 2v1h8V5a2 2 0 00-2-2zm-3 4h6"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    `}
                                 </td>
                             `;
                             tbody.appendChild(row);
@@ -193,7 +281,6 @@
                                     .then(result => {
                                         if (result.success) {
                                             alert('Data berhasil dihapus!');
-                                            // Reload the table data
                                             location.reload();
                                         } else {
                                             alert('Gagal menghapus data: ' + (result.message || 'Unknown error'));
@@ -206,65 +293,80 @@
                                 }
                             });
                         });
-                        renderPagination(result.total, page, perPage);
-                    } else {
-                        console.error("Gagal mendapatkan data tilik.");
-                    }
+
+                        const backBtn = document.getElementById('back-btn');
+                            if (backBtn) {
+                                backBtn.addEventListener('click', function () {
+                                    window.location.href = "{{ route('auditor.audit.index') }}";
+                                });
+                            }
+
+                        // Add event listener for "Kunci Pertanyaan" button (status 3)
+                        const completeCorrectionBtn = document.getElementById('complete-correction-btn');
+                        if (completeCorrectionBtn && auditingId && auditingId !== 'null' && auditStatus == 3) {
+                            completeCorrectionBtn.addEventListener('click', function () {
+                                if (confirm('Apakah Anda yakin ingin mengunci pertanyaan?')) {
+                                    fetch(`http://127.0.0.1:5000/api/auditings/${auditingId}`, {
+                                        method: 'PUT',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({ status: 4 }),
+                                    })
+                                    .then(response => response.json())
+                                    .then(result => {
+                                        if (result.success) {
+                                            alert('Pertanyaan berhasil dikunci!');
+                                            completeCorrectionBtn.disabled = true;
+                                            completeCorrectionBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                                            window.location.href = "{{ route('auditor.audit.index') }}";
+                                        } else {
+                                            alert('Gagal mengunci pertanyaan: ' + (result.message || 'Unknown error'));
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error updating audit status:', error);
+                                        alert('Terjadi kesalahan saat mengunci pertanyaan.');
+                                    });
+                                }
+                            });
+                        }
+
+                        // Add event listener for "Selesai Koreksi" button (status 5)
+                        const completeRevisionBtn = document.getElementById('complete-revision-btn');
+                        if (completeRevisionBtn && auditingId && auditingId !== 'null' && auditStatus == 5) {
+                            completeRevisionBtn.addEventListener('click', function () {
+                                if (confirm('Apakah Anda yakin ingin menyelesaikan koreksi?')) {
+                                    fetch(`http://127.0.0.1:5000/api/auditings/${auditingId}`, {
+                                        method: 'PUT',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({ status: 6 }),
+                                    })
+                                    .then(response => response.json())
+                                    .then(result => {
+                                        if (result.success) {
+                                            alert('Koreksi berhasil diselesaikan!');
+                                            completeCorrectionBtn.disabled = true;
+                                            completeCorrectionBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                                            window.location.href = "{{ route('auditor.audit.index') }}";
+                                        } else {
+                                            alert('Gagal menyelesaikan koreksi: ' + (result.message || 'Unknown error'));
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error updating audit status:', error);
+                                        alert('Terjadi kesalahan saat menyelesaikan koreksi.');
+                                    });
+                                }
+                            });
+                        }
+                    });
                 })
                 .catch(error => {
-            console.error("Error fetching tilik data:", error);
+                    console.error("Error fetching tilik data:", error);
+                });
         });
-
-        function renderPagination(totalItems, currentPage, perPage) {
-            const totalPages = Math.ceil(totalItems / perPage);
-            const pagination = document.getElementById("pagination-buttons");
-            const info = document.getElementById("pagination-info");
-            const visiblePages = 5; // Jumlah tombol halaman yang ditampilkan
-
-            pagination.innerHTML = '';
-            info.innerHTML = `Menampilkan <strong>${(currentPage - 1) * perPage + 1}</strong> hingga <strong>${Math.min(currentPage * perPage, totalItems)}</strong> dari <strong>${totalItems}</strong> hasil`;
-
-            // Tombol Previous
-            const prevLi = document.createElement('li');
-            prevLi.innerHTML = `
-                <a href="?per_page=${perPage}&page=${currentPage > 1 ? currentPage - 1 : 1}"
-                    class="flex h-8 items-center justify-center border ${currentPage === 1 ? 'border-gray-300 bg-white text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400' : 'border-gray-300 bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200'} px-3 leading-tight transition-all duration-200">
-                    Previous
-                </a>
-            `;
-            pagination.appendChild(prevLi);
-
-            // Hitung rentang halaman yang ditampilkan
-            let startPage = Math.max(1, currentPage - Math.floor(visiblePages / 2));
-            let endPage = Math.min(totalPages, startPage + visiblePages - 1);
-
-            if (endPage - startPage + 1 < visiblePages) {
-                startPage = Math.max(1, endPage - visiblePages + 1);
-            }
-
-            // Tambahkan tombol halaman
-            for (let page = startPage; page <= endPage; page++) {
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <a href="?per_page=${perPage}&page=${page}"
-                        class="flex h-8 items-center justify-center border ${page === currentPage ? 'border-sky-300 bg-sky-50 text-sky-800 dark:border-sky-700 dark:bg-sky-900 dark:text-sky-200' : 'border-gray-300 bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200'} px-3 leading-tight transition-all duration-200">
-                        ${page}
-                    </a>
-                `;
-                pagination.appendChild(li);
-            }
-
-            // Tombol Next
-            const nextLi = document.createElement('li');
-            nextLi.innerHTML = `
-                <a href="?per_page=${perPage}&page=${currentPage < totalPages ? currentPage + 1 : totalPages}"
-                    class="flex h-8 items-center justify-center border ${currentPage === totalPages ? 'border-gray-300 bg-white text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400' : 'border-gray-300 bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200'} px-3 leading-tight transition-all duration-200">
-                    Next
-                </a>
-            `;
-            pagination.appendChild(nextLi);
-        }
-
-    });
-</script>
+    </script>
 @endsection
