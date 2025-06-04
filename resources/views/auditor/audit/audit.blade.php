@@ -20,7 +20,6 @@
             <ol class="pl-5 relative text-gray-500 border-s border-gray-200 dark:border-gray-700 dark:text-gray-400">
                 {{-- Koreksi Respon Instrumen --}}
                 @php
-                $jenisUnitId = session('jenis_unit_id');
                 $instrumenRoute = match ($jenisUnitId) {
                 1 => route('auditor.data-instrumen.instrumenupt'),
                 2 => route('auditor.data-instrumen.instrumenjurusan', ['id' => $auditing->auditing_id]),

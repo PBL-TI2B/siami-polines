@@ -143,7 +143,8 @@ Route::prefix('auditor')->middleware('auth.ami:auditor')->group(function () {
     Route::get('/data-instrumen', [DataInstrumenControllerAuditor::class, 'index'])->name('auditor.data-instrumen.index');
     Route::get('/data-instrumen/upt', [DataInstrumenControllerAuditor::class, 'auditorInsUpt'])->name('auditor.data-instrumen.instrumenupt');
     Route::get('/data-instrumen/prodi', [DataInstrumenControllerAuditor::class, 'auditorinsprodi'])->name('auditor.data-instrumen.instrumenprodi');
-    Route::get('/data-instrumen/jurusan/{id}', [DataInstrumenControllerAuditor::class, 'auditorinsjurusan'])->name('auditor.data-instrumen.instrumenjurusan');
+    Route::get('/data-instrumen/jurusan/{id}', [AuditController::class, 'auditorShowInstrumenJurusan'])->name('auditor.data-instrumen.instrumenjurusan');
+    Route::patch('/data-instrumen/jurusan/update/{id}', [AuditController::class, 'auditorUpdateInstrumenResponse'])->name('auditor.instrumen.update')->where('id', '[0-9]+');
 
     Route::get('/laporan', function () {
         return view('auditor.laporan.index');

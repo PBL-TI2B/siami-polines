@@ -385,21 +385,119 @@ class AuditController extends Controller
     {
         $auditing = Auditing::with(['unitKerja', 'auditor1', 'auditor2', 'auditee1', 'auditee2', 'periode'])
             ->findOrFail($id);
-        return view('auditor.audit.audit', compact('auditing'));
+        $jenisUnitId = $auditing->unitKerja->jenis_unit_id ?? null;
+        return view('auditor.audit.audit', compact('auditing', 'jenisUnitId'));
     }
-    public function showInstrumenJurusan($id)
+    public function auditorShowInstrumenJurusan($id)
 {
+    // Validasi ID
+    if (!is_numeric($id) || $id <= 0) {
+        \Log::warning("ID audit tidak valid: {$id}");
+        return redirect()->route('auditor.audit.index')->with('error', 'ID audit tidak valid.');
+    }
+
+    // Periksa sesi pengguna
+    $userId = session('user')['user_id'] ?? null;
+    if (!$userId) {
+        \Log::warning("Pengguna belum login untuk mengakses audit ID: {$id}");
+        return redirect()->route('login')->with('error', 'Silakan login untuk mengakses instrumen jurusan.');
+    }
+
     try {
+        // Ambil data audit dengan relasi
         $auditing = Auditing::with(['unitKerja', 'auditor1', 'auditor2', 'auditee1', 'auditee2', 'periode'])
             ->findOrFail($id);
 
-        return view('auditor.data-instrumen.instrumenjurusan', compact('auditing'));
+        // Validasi bahwa pengguna adalah auditor untuk audit ini
+        if ($auditing->user_id_1_auditor != $userId && $auditing->user_id_2_auditor != $userId) {
+            \Log::warning("Akses tidak sah ke audit ID: {$id} oleh pengguna ID: {$userId}");
+            return redirect()->route('auditor.audit.index')->with('error', 'Anda tidak memiliki hak akses untuk audit ini.');
+        }
+
+        // Validasi jenis unit (harus jurusan, jenis_unit_id = 2)
+        $jenisUnitId = $auditing->unitKerja->jenis_unit_id ?? null;
+        if ($jenisUnitId !== 2) {
+            \Log::warning("Jenis unit tidak valid untuk audit ID: {$id}. Ditemukan jenis_unit_id: {$jenisUnitId}");
+            return redirect()->route('auditor.audit.index')->with('error', 'Halaman ini hanya untuk jurusan.');
+        }
+
+        // Ambil data dari API
+        $response = Http::get("http://127.0.0.1:5000/api/instrumen-response");
+        if ($response->successful()) {
+            $allData = $response->json()['data'] ?? [];
+            $filteredData = array_filter($allData, function ($item) use ($userId, $id) {
+                return isset($item['auditing_id']) && $item['auditing_id'] === (int)$id &&
+                       (isset($item['auditing']['user_id_1_auditor']) && $item['auditing']['user_id_1_auditor'] === $userId ||
+                        isset($item['auditing']['user_id_2_auditor']) && $item['auditing']['user_id_2_auditor'] === $userId);
+            });
+            $instrumenData = array_values($filteredData);
+        } else {
+            \Log::error("Gagal mengambil data instrumen-response dari API: {$response->status()}", ['response' => $response->body()]);
+            $instrumenData = [];
+        }
+
+        return view('auditor.data-instrumen.instrumenjurusan', compact('auditing', 'instrumenData'));
     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-        \Log::error("Audit record not found for ID: {$id}", ['exception' => $e->getMessage()]);
+        \Log::error("Data audit tidak ditemukan untuk ID: {$id}", ['exception' => $e->getMessage()]);
         return redirect()->route('auditor.audit.index')->with('error', 'Data audit tidak ditemukan.');
     } catch (\Exception $e) {
-        \Log::error("Error fetching audit data for ID: {$id}", ['exception' => $e->getMessage()]);
+        \Log::error("Kesalahan saat mengambil data audit untuk ID: {$id}", ['exception' => $e->getMessage()]);
         return redirect()->route('auditor.audit.index')->with('error', 'Terjadi kesalahan saat mengambil data audit.');
+    }
+}
+public function auditorUpdateInstrumenResponse(Request $request, $id)
+{
+    // Validasi ID audit
+    if (!is_numeric($id) || $id <= 0) {
+        \Log::warning("ID audit tidak valid: {$id}");
+        return response()->json(['message' => 'ID audit tidak valid'], 400);
+    }
+
+    // Periksa sesi pengguna
+    $userId = session('user')['user_id'] ?? null;
+    if (!$userId) {
+        \Log::warning("Pengguna belum login untuk memperbarui respons instrumen response ID: {$response_id}");
+        return response()->json(['message' => 'Silakan login terlebih dahulu'], 401);
+    }
+
+    // Validasi input
+    $request->validate([
+        'audit_id' => 'required|integer',
+        'minor' => 'nullable|string|max:1000',
+        'mayor' => 'nullable|string|max:1000',
+        'ofi' => 'nullable|string|max:1000',
+    ]);
+
+    try {
+        // Periksa apakah audit ada dan pengguna adalah auditor
+        $auditing = Auditing::with(['unitKerja', 'auditor1', 'auditor2'])
+            ->findOrFail($request->audit_id);
+
+        if ($auditing->user_id_1_auditor != $userId && $auditing->user_id_2_auditor != $userId) {
+            \Log::warning("Akses tidak sah ke audit ID: {$request->audit_id} oleh pengguna ID: {$userId}");
+            return response()->json(['message' => 'Anda tidak memiliki hak akses untuk audit ini'], 403);
+        }
+
+        // Kirim data ke API
+        $response = Http::patch("http://127.0.0.1:5000/api/responses/{$response_id}", [
+            'minor' => $request->minor,
+            'mayor' => $request->mayor,
+            'ofi' => $request->ofi,
+        ]);
+
+        if ($response->successful()) {
+            \Log::info("Berhasil memperbarui respons instrumen untuk response ID: {$response_id}", ['data' => $request->all()]);
+            return response()->json(['message' => 'Data berhasil diperbarui'], 200);
+        } else {
+            \Log::error("Gagal memperbarui respons instrumen untuk response ID: {$response_id}", ['response' => $response->body()]);
+            return response()->json(['message' => 'Gagal memperbarui data di API', 'error' => $response->body()], $response->status());
+        }
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        \Log::error("Data audit tidak ditemukan untuk ID: {$request->audit_id}", ['exception' => $e->getMessage()]);
+        return response()->json(['message' => 'Data audit tidak ditemukan'], 404);
+    } catch (\Exception $e) {
+        \Log::error("Kesalahan saat memperbarui respons instrumen untuk response ID: {$response_id}", ['exception' => $e->getMessage()]);
+        return response()->json(['message' => 'Terjadi kesalahan saat memperbarui data'], 500);
     }
 }
     /**
