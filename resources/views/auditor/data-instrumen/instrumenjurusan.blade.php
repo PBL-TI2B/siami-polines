@@ -98,6 +98,7 @@
                             Sesuai (Mayor)</th>
                         <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">OFI
                             (Saran Tindak Lanjut)</th>
+                        <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700" id="instrumen-jurusan-table-body">
@@ -145,10 +146,7 @@
         </div>
     </div>
     <div class="pt-5 flex justify-end gap-5">
-        <a href="{{ route('auditor.audit.audit') }}"
-            class="text-white bg-sky-800 hover:bg-sky-900 focus:ring-4 focus:ring-gray-300 text-sm font-medium rounded-lg px-4 py-2 flex items-center transition-all duration-200">
-            Kembali
-        </a>
+        
         <button class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-gray-300 text-sm font-medium rounded-lg px-4 py-2 flex items-center transition-all duration-200">
             Selesai
         </button>

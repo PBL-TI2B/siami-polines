@@ -9,17 +9,16 @@
         ['label' => 'Audit'],
     ]" />
 
-    <h1 class="mb-8 text-3xl font-bold text-gray-900 dark:text-gray-200">
+    <h1 class="mb-5 text-3xl font-bold text-gray-900 dark:text-gray-200">
         Audit AMI
     </h1>
 
     <div class="ml-auto">
-        <h2 id="namaPeriode" class="text-sm font-medium text-gray-700 dark:text-gray-300">
+        <h2 id="namaPeriode" class="text-sm font-medium text-white bg-blue-900 p-2 rounded-full w-36">
             <!-- Nama periode akan dimuat via JavaScript -->
         </h2>
     </div>
-
-    <div class="overflow-x-auto">
+    <div class="overflow-x-auto mt-5">
         <table id="jadwalAuditTable" class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
             <thead class="border-b border-t border-gray-200 bg-gray-50 text-xs uppercase text-gray-700 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
                 <tr>
@@ -40,15 +39,6 @@
                 </tr>
             </tbody>
         </table>
-        @php
-        $jenisUnitId = session('jenis_unit_id');
-        $instrumenRoute = match ($jenisUnitId) {
-        1 => route('auditor.data-instrumen.instrumenupt'),
-        2 => route('auditor.data-instrumen.instrumenjurusan'),
-        3 => route('auditor.data-instrumen.instrumenprodi'),
-        default => '#', // fallback kalau tidak ditemukan
-        };
-        @endphp
     </div>
     <script>
         document.addEventListener("DOMContentLoaded", async function() {

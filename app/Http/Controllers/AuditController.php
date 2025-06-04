@@ -145,7 +145,6 @@ class AuditController extends Controller
                     'assessmentScheduleRoute' => $assessmentScheduleRoute,
                     'tilikResponseRoute' => $tilikResponseRoute,
                 ]);
-
             } else if ($response->status() == 404) {
                 return back()->with('error', 'Tidak ada data audit yang ditemukan untuk user Anda dari sistem eksternal.');
             } else {
@@ -164,13 +163,27 @@ class AuditController extends Controller
         return view('auditor.audit.index');
     }
 
-     public function auditorAuditPage($id)
+    public function auditorAuditPage($id)
+    {
+        $auditing = Auditing::with(['unitKerja', 'auditor1', 'auditor2', 'auditee1', 'auditee2', 'periode'])
+            ->findOrFail($id);
+        return view('auditor.audit.audit', compact('auditing'));
+    }
+    public function showInstrumenJurusan($id)
 {
-    $auditing = Auditing::with(['unitKerja', 'auditor1', 'auditor2', 'auditee1', 'auditee2', 'periode'])
-        ->findOrFail($id);
-    return view('auditor.audit.audit', compact('auditing'));
+    try {
+        $auditing = Auditing::with(['unitKerja', 'auditor1', 'auditor2', 'auditee1', 'auditee2', 'periode'])
+            ->findOrFail($id);
+        
+        return view('auditor.data-instrumen.instrumenjurusan', compact('auditing'));
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        \Log::error("Audit record not found for ID: {$id}", ['exception' => $e->getMessage()]);
+        return redirect()->route('auditor.audit.index')->with('error', 'Data audit tidak ditemukan.');
+    } catch (\Exception $e) {
+        \Log::error("Error fetching audit data for ID: {$id}", ['exception' => $e->getMessage()]);
+        return redirect()->route('auditor.audit.index')->with('error', 'Terjadi kesalahan saat mengambil data audit.');
+    }
 }
-
     /**
      * Show the form for creating a new resource.
      */
