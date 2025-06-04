@@ -157,6 +157,152 @@ class AuditController extends Controller
         }
     }
 
+        public function showAuditeeInstrumenUPT(Request $request, $auditingId)
+    {
+        $userId = session('user')['user_id'] ?? null;
+        $unitKerjaId = session('unit_kerja_id') ?? null;
+        $status = session('status') ?? null;
+
+        if (!$userId) {
+            return redirect()->route('login')->with('error', 'Silakan login untuk mengakses instrumen jurusan.');
+        }
+
+        try {
+            // Ambil data audit dari API berdasarkan userId
+            $response = Http::get("http://127.0.0.1:5000/api/auditings/userID={$userId}");
+
+            if (!$response->successful()) {
+                \Log::error("Gagal mengambil data audit untuk user {$userId}: " . $response->body());
+                return back()->with('error', 'Gagal mengambil data audit dari sistem eksternal.');
+            }
+
+            $apiData = $response->json();
+            $allUserAudits = $apiData['data'] ?? [];
+
+            // Cari audit spesifik berdasarkan auditingId
+            $audit = null;
+            foreach ($allUserAudits as $item) {
+                if (is_array($item) && isset($item['auditing_id']) && (string)$item['auditing_id'] === (string)$auditingId) {
+                    $audit = $item;
+                    break;
+                }
+            }
+
+            if (!$audit) {
+                \Log::warning("Audit dengan ID {$auditingId} tidak ditemukan untuk user {$userId}.");
+                return back()->with('error', 'Data audit tidak ditemukan.');
+            }
+
+            // Validasi auditee
+            $isAuditee1 = isset($audit['user_id_1_auditee']) && $audit['user_id_1_auditee'] == $userId;
+            $isAuditee2 = isset($audit['user_id_2_auditee']) && $audit['user_id_2_auditee'] == $userId;
+
+            if (!$isAuditee1 && !$isAuditee2) {
+                \Log::warning("Akses ditolak untuk user {$userId} ke audit ID {$auditingId}.");
+                abort(403, 'Anda tidak memiliki hak akses untuk audit ini.');
+            }
+
+            // Validasi jenis unit (harus jurusan, jenis_unit_id = 1)
+            $jenisUnitId = (int)($audit['unit_kerja']['jenis_unit_id'] ?? 0);
+            if ($jenisUnitId !== 1) {
+                \Log::warning("Jenis unit tidak valid untuk audit ID {$auditingId}. Ditemukan jenis_unit_id: {$jenisUnitId}");
+                return back()->with('error', 'Halaman ini hanya untuk unit.');
+            }
+
+            // Simpan data ke session jika belum ada
+            session([
+                'auditing_id' => $audit['auditing_id'],
+                'unit_kerja_id' => $audit['unit_kerja']['unit_kerja_id'] ?? $unitKerjaId,
+                'status' => $audit['status'] ?? $status,
+                'jenis_unit_id' => $jenisUnitId,
+            ]);
+
+            // Render view dengan data yang diperlukan
+            return view('auditee.data-instrumen.instrumenupt', [
+                'auditingId' => $auditingId,
+                'unitKerjaId' => session('unit_kerja_id'),
+                'status' => session('status'),
+            ]);
+        } catch (\Exception $e) {
+            \Log::error("Gagal memuat halaman instrumen unit untuk audit ID {$auditingId}: " . $e->getMessage());
+            return back()->with('error', 'Terjadi masalah saat memuat halaman instrumen unit.');
+        }
+    }
+
+
+        public function showAuditeeInstrumenJurusan(Request $request, $auditingId)
+    {
+        $userId = session('user')['user_id'] ?? null;
+        $unitKerjaId = session('unit_kerja_id') ?? null;
+        $status = session('status') ?? null;
+
+        if (!$userId) {
+            return redirect()->route('login')->with('error', 'Silakan login untuk mengakses instrumen jurusan.');
+        }
+
+        try {
+            // Ambil data audit dari API berdasarkan userId
+            $response = Http::get("http://127.0.0.1:5000/api/auditings/userID={$userId}");
+
+            if (!$response->successful()) {
+                \Log::error("Gagal mengambil data audit untuk user {$userId}: " . $response->body());
+                return back()->with('error', 'Gagal mengambil data audit dari sistem eksternal.');
+            }
+
+            $apiData = $response->json();
+            $allUserAudits = $apiData['data'] ?? [];
+
+            // Cari audit spesifik berdasarkan auditingId
+            $audit = null;
+            foreach ($allUserAudits as $item) {
+                if (is_array($item) && isset($item['auditing_id']) && (string)$item['auditing_id'] === (string)$auditingId) {
+                    $audit = $item;
+                    break;
+                }
+            }
+
+            if (!$audit) {
+                \Log::warning("Audit dengan ID {$auditingId} tidak ditemukan untuk user {$userId}.");
+                return back()->with('error', 'Data audit tidak ditemukan.');
+            }
+
+            // Validasi auditee
+            $isAuditee1 = isset($audit['user_id_1_auditee']) && $audit['user_id_1_auditee'] == $userId;
+            $isAuditee2 = isset($audit['user_id_2_auditee']) && $audit['user_id_2_auditee'] == $userId;
+
+            if (!$isAuditee1 && !$isAuditee2) {
+                \Log::warning("Akses ditolak untuk user {$userId} ke audit ID {$auditingId}.");
+                abort(403, 'Anda tidak memiliki hak akses untuk audit ini.');
+            }
+
+            // Validasi jenis unit (harus jurusan, jenis_unit_id = 2)
+            $jenisUnitId = (int)($audit['unit_kerja']['jenis_unit_id'] ?? 0);
+            if ($jenisUnitId !== 2) {
+                \Log::warning("Jenis unit tidak valid untuk audit ID {$auditingId}. Ditemukan jenis_unit_id: {$jenisUnitId}");
+                return back()->with('error', 'Halaman ini hanya untuk jurusan.');
+            }
+
+            // Simpan data ke session jika belum ada
+            session([
+                'auditing_id' => $audit['auditing_id'],
+                'unit_kerja_id' => $audit['unit_kerja']['unit_kerja_id'] ?? $unitKerjaId,
+                'status' => $audit['status'] ?? $status,
+                'jenis_unit_id' => $jenisUnitId,
+            ]);
+
+            // Render view dengan data yang diperlukan
+            return view('auditee.data-instrumen.instrumenjurusan', [
+                'auditingId' => $auditingId,
+                'unitKerjaId' => session('unit_kerja_id'),
+                'status' => session('status'),
+            ]);
+        } catch (\Exception $e) {
+            \Log::error("Gagal memuat halaman instrumen jurusan untuk audit ID {$auditingId}: " . $e->getMessage());
+            return back()->with('error', 'Terjadi masalah saat memuat halaman instrumen jurusan.');
+        }
+    }
+
+
 
     public function auditorIndexPage()
     {
@@ -174,7 +320,7 @@ class AuditController extends Controller
     try {
         $auditing = Auditing::with(['unitKerja', 'auditor1', 'auditor2', 'auditee1', 'auditee2', 'periode'])
             ->findOrFail($id);
-        
+
         return view('auditor.data-instrumen.instrumenjurusan', compact('auditing'));
     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
         \Log::error("Audit record not found for ID: {$id}", ['exception' => $e->getMessage()]);
