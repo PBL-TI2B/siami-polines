@@ -11,7 +11,7 @@
         ]" />
 
         <h1 class="mb-6 text-2xl font-semibold text-gray-900 dark:text-gray-200">
-            Pengisian Instrumen
+            Pengisian Instrumen Jurusan
         </h1>
 
         {{-- Pesan Informasi Akses Dibatasi (akan selalu tampil jika status bukan 1) --}}
@@ -251,7 +251,7 @@
                     showCustomMessage('Pengisian jawaban hanya diperbolehkan pada status Pengisian Instrumen.');
                     return;
                 }
-                modalTitle.textContent = isEdit ? 'Edit Jawaban Jurusan' : 'Jawab Instrumen Jurusan';
+                modalTitle.textContent = isEdit ? 'Edit Jawaban Instrumen' : 'Jawab Instrumen Jurusan';
                 document.getElementById('capaian').value = response.capaian || '';
                 document.getElementById('lokasi_bukti_dukung').value = response.lokasi_bukti_dukung || '';
                 document.getElementById('set_instrumen_unit_kerja_id').value = setInstrumenId; // set_instrumen_unit_kerja_id dari data tabel

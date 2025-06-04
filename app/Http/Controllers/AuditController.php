@@ -137,7 +137,7 @@ class AuditController extends Controller
                     default => '#',
                 };
                 $assessmentScheduleRoute = route('auditee.assesmen-lapangan.index', ['auditingId' => $currentAuditingIdForRoutes]);
-                $tilikResponseRoute = '#';
+                $tilikResponseRoute = route('auditee.daftar-tilik.index', ['auditingId' => $currentAuditingIdForRoutes]);
 
                 return view('auditee.audit.progress-detail', [
                     'audit' => $audit,
