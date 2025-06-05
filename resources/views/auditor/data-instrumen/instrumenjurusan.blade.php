@@ -13,7 +13,7 @@
 
     <!-- Heading -->
     <h1 class="mb-6 text-3xl font-bold text-gray-900 dark:text-gray-200">
-        Instrumen Jurusan
+        Instrumen {{ $auditing->unitKerja->nama_unit_kerja ?? '-' }}
     </h1>
 
     <!-- Toolbar -->
@@ -78,57 +78,109 @@
                         <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">Target</th>
                         <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">Capaian</th>
                         <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">Keterangan</th>
-                        <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">Sesuai</th>
                         <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">Lokasi Bukti Dukung</th>
+                        <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">Sesuai</th>
                         <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">Tidak Sesuai (Minor)</th>
                         <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">Tidak Sesuai (Mayor)</th>
                         <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">OFI (Saran Tindak Lanjut)</th>
                         <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">Aksi</th>
                     </tr>
                 </thead>
+                @php
+                // Hitung jumlah baris per sasaran strategis dan indikator kinerja
+                $rowspanSasaran = [];
+                $rowspanIndikator = [];
+                foreach ($instrumenData as $item) {
+                $sasaranId = $item['set_instrumen_unit_kerja']['aktivitas']['indikator_kinerja']['sasaran_strategis']['sasaran_strategis_id'] ?? null;
+                $indikatorId = $item['set_instrumen_unit_kerja']['aktivitas']['indikator_kinerja']['indikator_kinerja_id'] ?? null;
+                if ($sasaranId) {
+                if (!isset($rowspanSasaran[$sasaranId])) $rowspanSasaran[$sasaranId] = 0;
+                $rowspanSasaran[$sasaranId]++;
+                }
+                if ($indikatorId) {
+                if (!isset($rowspanIndikator[$indikatorId])) $rowspanIndikator[$indikatorId] = 0;
+                $rowspanIndikator[$indikatorId]++;
+                }
+                }
+                $printedSasaran = [];
+                $printedIndikator = [];
+                @endphp
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700" id="instrumen-jurusan-table-body">
                     @forelse ($instrumenData as $index => $item)
+                    @php
+                    $sasaran = $item['set_instrumen_unit_kerja']['aktivitas']['indikator_kinerja']['sasaran_strategis'] ?? [];
+                    $indikator = $item['set_instrumen_unit_kerja']['aktivitas']['indikator_kinerja'] ?? [];
+                    $sasaranId = $sasaran['sasaran_strategis_id'] ?? null;
+                    $indikatorId = $indikator['indikator_kinerja_id'] ?? null;
+                    @endphp
                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
-                        <td class="whitespace-nowrap border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">{{ $index + 1 }}</td>
-                        <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
-                            {{ $item['set_instrumen_unit_kerja']['aktivitas']['indikator_kinerja']['sasaran_strategis']['nama_sasaran'] ?? '-' }}
+                        {{-- No --}}
+                        @if (!isset($printedSasaran[$sasaranId]))
+                        <td rowspan="{{ $rowspanSasaran[$sasaranId] ?? 1 }}" class="whitespace-nowrap border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600 align-top">{{ $loop->iteration }}</td>
+                        @php $printedSasaran[$sasaranId] = true; @endphp
+                        @endif
+
+                        {{-- Sasaran Strategis --}}
+                        @if (!isset($printedSasaran['label_'.$sasaranId]))
+                        <td rowspan="{{ $rowspanSasaran[$sasaranId] ?? 1 }}" class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600 align-top">
+                            {{ $sasaran['nama_sasaran'] ?? '-' }}
                         </td>
-                        <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
-                            {{ $item['set_instrumen_unit_kerja']['aktivitas']['indikator_kinerja']['isi_indikator_kinerja'] ?? '-' }}
+                        @php $printedSasaran['label_'.$sasaranId] = true; @endphp
+                        @endif
+
+                        {{-- Indikator Kinerja --}}
+                        @if (!isset($printedIndikator[$indikatorId]))
+                        <td rowspan="{{ $rowspanIndikator[$indikatorId] ?? 1 }}" class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600 align-top">
+                            {{ $indikator['isi_indikator_kinerja'] ?? '-' }}
                         </td>
+                        @php $printedIndikator[$indikatorId] = true; @endphp
+                        @endif
+
+                        {{-- Aktivitas --}}
                         <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
                             {{ $item['set_instrumen_unit_kerja']['aktivitas']['nama_aktivitas'] ?? '-' }}
                         </td>
+                        {{-- Satuan --}}
                         <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
                             {{ $item['set_instrumen_unit_kerja']['aktivitas']['satuan'] ?? '-' }}
                         </td>
+                        {{-- Target --}}
                         <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
                             {{ $item['set_instrumen_unit_kerja']['aktivitas']['target'] ?? '-' }}
                         </td>
+                        {{-- Capaian --}}
                         <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
                             {{ $item['response']['capaian'] ?? '-' }}
                         </td>
+                        {{-- Keterangan --}}
                         <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
                             {{ $item['status_instrumen'] ?? '-' }}
                         </td>
+                        {{-- Lokasi Bukti Dukung --}}
                         <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
-                            {{ $item['response']['sesuai'] ?? '-' }}
+                            <a href="{{ $item['response']['lokasi_bukti_dukung'] ?? '-' }}" target="_blank">{{ $item['response']['lokasi_bukti_dukung'] ?? '-' }}</a>
                         </td>
-                        <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
-                            {{ $item['response']['lokasi_bukti_dukung'] ?? '-' }}
+                        {{-- Sesuai --}}
+                        <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600 text-center">
+                            @if(isset($item['response']['sesuai']))
+                            @if($item['response']['sesuai'] == "1")
+                            <span class="text-green-600 font-bold">&#10003;</span>
+                            @elseif($item['response']['sesuai'] == "0")
+                            <span class="text-red-600 font-bold">&#10007;</span>
+                            @else
+                            {{ $item['response']['sesuai'] }}
+                            @endif
+                            @else
+                            -
+                            @endif
                         </td>
+                        {{-- Minor --}}
                         <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600 text-center">
                             @if(isset($item['response']['minor']))
                             @if($item['response']['minor'] == "1")
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                            </svg>
-
+                            <span class="text-green-600 font-bold">&#10003;</span>
                             @elseif($item['response']['minor'] == "0")
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                            </svg>
-
+                            <span class="text-red-600 font-bold">&#10007;</span>
                             @else
                             {{ $item['response']['minor'] }}
                             @endif
@@ -136,16 +188,13 @@
                             -
                             @endif
                         </td>
+                        {{-- Mayor --}}
                         <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600 text-center">
                             @if(isset($item['response']['mayor']))
                             @if($item['response']['mayor'] == "1")
-                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                            </svg>
+                            <span class="text-green-600 font-bold">&#10003;</span>
                             @elseif($item['response']['mayor'] == "0")
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                            </svg>
+                            <span class="text-red-600 font-bold">&#10007;</span>
                             @else
                             {{ $item['response']['mayor'] }}
                             @endif
@@ -153,16 +202,13 @@
                             -
                             @endif
                         </td>
+                        {{-- OFI --}}
                         <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600 text-center">
                             @if(isset($item['response']['ofi']))
                             @if($item['response']['ofi'] == "1")
-                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                            </svg>
+                            <span class="text-green-600 font-bold">&#10003;</span>
                             @elseif($item['response']['ofi'] == "0")
-                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                            </svg>
+                            <span class="text-red-600 font-bold">&#10007;</span>
                             @else
                             {{ $item['response']['ofi'] }}
                             @endif
@@ -170,6 +216,7 @@
                             -
                             @endif
                         </td>
+                        {{-- Aksi --}}
                         <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
                             <button type="button"
                                 class="text-blue-600 hover:text-blue-800 edit-response-btn"
@@ -177,6 +224,7 @@
                                 data-minor="{{ $item['response']['minor'] ?? '' }}"
                                 data-mayor="{{ $item['response']['mayor'] ?? '' }}"
                                 data-ofi="{{ $item['response']['ofi'] ?? '' }}"
+                                data-sesuai="{{ $item['response']['sesuai'] ?? '' }}"
                                 data-audit-id="{{ $auditing->auditing_id }}"
                                 data-modal-target="editResponseModal"
                                 data-modal-toggle="editResponseModal">
@@ -252,70 +300,59 @@
     <div id="editResponseModal" tabindex="-1" aria-hidden="true" class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full overflow-y-auto overflow-x-hidden p-4 md:inset-0">
         <div class="relative max-h-full w-full max-w-md">
             <!-- Modal content -->
-            <div class="relative rounded-lg bg-white shadow dark:bg-gray-700">
+            <div class="relative rounded-lg bg-white shadow-lg dark:bg-gray-800">
                 <!-- Modal header -->
-                <div class="flex items-center justify-between rounded-t border-b p-4 dark:border-gray-600">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                <div class="flex items-center justify-between rounded-t border-b border-gray-200 p-5 dark:border-gray-700">
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
                         Edit Respons Instrumen
                     </h3>
-                    <button type="button" class="ms-auto inline-flex h-8 w-8 items-center justify-center rounded-lg bg-transparent text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="editResponseModal">
-                        <svg class="h-3 w-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                    <button type="button" class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-transparent text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="editResponseModal">
+                        <svg class="h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
                         </svg>
                         <span class="sr-only">Close modal</span>
                     </button>
                 </div>
                 <!-- Modal body -->
-                <form id="editResponseForm" class="p-4">
+                <form id="editResponseForm" class="p-6 space-y-6">
                     @csrf
                     <input type="hidden" name="response_id" id="response_id">
                     <input type="hidden" name="audit_id" id="audit_id">
-                    <div class="mb-4">
-                        <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Tidak Sesuai (Minor)</label>
-                        <div class="flex gap-4">
-                            <label class="inline-flex items-center">
-                                <input type="radio" name="minor" value="1" id="minor_1" class="form-radio" />
-                                <span class="ml-2 text-green-600 font-bold">&#10003;</span>
-                            </label>
-                            <label class="inline-flex items-center">
-                                <input type="radio" name="minor" value="0" id="minor_0" class="form-radio" />
-                                <span class="ml-2 text-red-600 font-bold">&#10007;</span>
-                            </label>
+                    <div class="flex items-center justify-between">
+                        <label for="sesuai_1" class="text-sm font-medium text-gray-900 dark:text-white">Sesuai</label>
+                        <div class="flex items-center">
+                            <input type="checkbox" name="sesuai" value="1" id="sesuai_1" class="form-checkbox status-checkbox w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
+                            <label for="sesuai_1" class="ml-2 text-sm font-medium text-gray-500 dark:text-gray-400">Aktif</label>
                         </div>
                     </div>
-                    <div class="mb-4">
-                        <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Tidak Sesuai (Mayor)</label>
-                        <div class="flex gap-4">
-                            <label class="inline-flex items-center">
-                                <input type="radio" name="mayor" value="1" id="mayor_1" class="form-radio" />
-                                <span class="ml-2 text-green-600 font-bold">&#10003;</span>
-                            </label>
-                            <label class="inline-flex items-center">
-                                <input type="radio" name="mayor" value="0" id="mayor_0" class="form-radio" />
-                                <span class="ml-2 text-red-600 font-bold">&#10007;</span>
-                            </label>
+                    <div class="flex items-center justify-between">
+                        <label for="minor_1" class="text-sm font-medium text-gray-900 dark:text-white">Tidak Sesuai (Minor)</label>
+                        <div class="flex items-center">
+                            <input type="checkbox" name="minor" value="1" id="minor_1" class="form-checkbox status-checkbox w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
+                            <label for="minor_1" class="ml-2 text-sm font-medium text-gray-500 dark:text-gray-400">Aktif</label>
                         </div>
                     </div>
-                    <div class="mb-4">
-                        <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">OFI (Saran Tindak Lanjut)</label>
-                        <div class="flex gap-4">
-                            <label class="inline-flex items-center">
-                                <input type="radio" name="ofi" value="1" id="ofi_1" class="form-radio" />
-                                <span class="ml-2 text-green-600 font-bold">&#10003;</span>
-                            </label>
-                            <label class="inline-flex items-center">
-                                <input type="radio" name="ofi" value="0" id="ofi_0" class="form-radio" />
-                                <span class="ml-2 text-red-600 font-bold">&#10007;</span>
-                            </label>
+                    <div class="flex items-center justify-between">
+                        <label for="mayor_1" class="text-sm font-medium text-gray-900 dark:text-white">Tidak Sesuai (Mayor)</label>
+                        <div class="flex items-center">
+                            <input type="checkbox" name="mayor" value="1" id="mayor_1" class="form-checkbox status-checkbox w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
+                            <label for="mayor_1" class="ml-2 text-sm font-medium text-gray-500 dark:text-gray-400">Aktif</label>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <label for="ofi_1" class="text-sm font-medium text-gray-900 dark:text-white">OFI (Saran Tindak Lanjut)</label>
+                        <div class="flex items-center">
+                            <input type="checkbox" name="ofi" value="1" id="ofi_1" class="form-checkbox status-checkbox w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
+                            <label for="ofi_1" class="ml-2 text-sm font-medium text-gray-500 dark:text-gray-400">Aktif</label>
                         </div>
                     </div>
                     <!-- Modal footer -->
-                    <div class="flex items-center space-x-2 rounded-b border-t border-gray-200 p-4 dark:border-gray-600">
-                        <button type="submit" class="rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                            Simpan
-                        </button>
-                        <button type="button" class="rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-600" data-modal-hide="editResponseModal">
+                    <div class="flex items-center justify-end space-x-3 rounded-b border-t border-gray-200 p-5 dark:border-gray-700">
+                        <button type="button" class="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-600" data-modal-hide="editResponseModal">
                             Batal
+                        </button>
+                        <button type="submit" class="rounded-lg bg-sky-800 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            Simpan
                         </button>
                     </div>
                 </form>
@@ -326,6 +363,60 @@
 
 <script>
     // Tangani tombol Edit untuk membuka modal
+    // Hanya boleh satu checkbox yang aktif
+    document.querySelectorAll('.status-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                // Uncheck semua kecuali yang ini
+                document.querySelectorAll('.status-checkbox').forEach(cb => {
+                    if (cb !== this) cb.checked = false;
+                });
+            }
+        });
+    });
+
+    // Saat submit, jika tidak dicentang, kirim "0"
+    document.getElementById('editResponseForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+        const responseId = formData.get('response_id');
+        const data = {
+            auditing_id: formData.get('audit_id'),
+            sesuai: document.getElementById('sesuai_1').checked ? "1" : "0",
+            minor: document.getElementById('minor_1').checked ? "1" : "0",
+            mayor: document.getElementById('mayor_1').checked ? "1" : "0",
+            ofi: document.getElementById('ofi_1').checked ? "1" : "0",
+        };
+        try {
+            const response = await fetch(`http://127.0.0.1:5000/api/responses/${responseId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert('Data berhasil diperbarui!');
+                // Sembunyikan modal menggunakan Flowbite
+                const modal = document.getElementById('editResponseModal');
+                modal.classList.add('hidden');
+                modal.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('overflow-hidden');
+                window.location.reload();
+            } else {
+                alert(`Gagal memperbarui data: ${result.message}`);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat menyimpan data.');
+        }
+    });
+
+    // Isi modal saat klik edit
     document.querySelectorAll('.edit-response-btn').forEach(button => {
         button.addEventListener('click', () => {
             const responseId = button.dataset.responseId;
@@ -333,41 +424,16 @@
             const minor = button.dataset.minor;
             const mayor = button.dataset.mayor;
             const ofi = button.dataset.ofi;
+            const sesuai = button.dataset.sesuai;
 
-            // Isi form dengan data
             document.getElementById('response_id').value = responseId;
             document.getElementById('audit_id').value = auditId;
-            if (minor === "1" || minor === 1) {
-                document.getElementById('minor_1').checked = true;
-            } else if (minor === "0" || minor === 0) {
-                document.getElementById('minor_0').checked = true;
-            } else {
-                document.getElementById('minor_1').checked = false;
-                document.getElementById('minor_0').checked = false;
-            }
-
-            // Set radio for mayor
-            if (mayor === "1" || mayor === 1) {
-                document.getElementById('mayor_1').checked = true;
-            } else if (mayor === "0" || mayor === 0) {
-                document.getElementById('mayor_0').checked = true;
-            } else {
-                document.getElementById('mayor_1').checked = false;
-                document.getElementById('mayor_0').checked = false;
-            }
-
-            // Set radio for ofi
-            if (ofi === "1" || ofi === 1) {
-                document.getElementById('ofi_1').checked = true;
-            } else if (ofi === "0" || ofi === 0) {
-                document.getElementById('ofi_0').checked = true;
-            } else {
-                document.getElementById('ofi_1').checked = false;
-                document.getElementById('ofi_0').checked = false;
-            }
+            document.getElementById('minor_1').checked = minor === "1";
+            document.getElementById('mayor_1').checked = mayor === "1";
+            document.getElementById('ofi_1').checked = ofi === "1";
+            document.getElementById('sesuai_1').checked = sesuai === "1";
         });
     });
-
     // Tangani submit form
     document.getElementById('editResponseForm').addEventListener('submit', async (e) => {
         e.preventDefault();

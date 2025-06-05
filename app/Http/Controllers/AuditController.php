@@ -463,6 +463,7 @@ public function auditorUpdateInstrumenResponse(Request $request, $id)
     // Validasi input
     $request->validate([
         'audit_id' => 'required|integer',
+        'sesuai' => 'nullable|string|max:1000',
         'minor' => 'nullable|string|max:1000',
         'mayor' => 'nullable|string|max:1000',
         'ofi' => 'nullable|string|max:1000',
@@ -480,6 +481,7 @@ public function auditorUpdateInstrumenResponse(Request $request, $id)
 
         // Kirim data ke API
         $response = Http::patch("http://127.0.0.1:5000/api/responses/{$response_id}", [
+            'sesuai' => $request->sesuai,
             'minor' => $request->minor,
             'mayor' => $request->mayor,
             'ofi' => $request->ofi,
