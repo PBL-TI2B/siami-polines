@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Auditee AMI')
+@section('title', 'Auditor AMI')
 
 @section('content')
 <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
@@ -20,6 +20,7 @@
             <ol class="pl-5 relative text-gray-500 border-s border-gray-200 dark:border-gray-700 dark:text-gray-400">
                 {{-- Koreksi Respon Instrumen --}}
                 @php
+                $jenisUnitId = session('jenis_unit_id');
                 $instrumenRoute = match ($jenisUnitId) {
                 1 => route('auditor.data-instrumen.instrumenupt'),
                 2 => route('auditor.data-instrumen.instrumenjurusan', ['id' => $auditing->auditing_id]),
@@ -71,9 +72,9 @@
                 {{-- Daftar Tilik --}}
                 <li class="mb-10 ms-6">
                     <span class="absolute flex items-center justify-center w-8 h-8
-            {{ $status >= 5 ? 'bg-green-200 dark:bg-green-900' : 'bg-gray-100 dark:bg-gray-700' }}
+            {{ $status >= 4 ? 'bg-green-200 dark:bg-green-900' : 'bg-gray-100 dark:bg-gray-700' }}
             rounded-full -start-4 ring-4 ring-white dark:ring-gray-900">
-                        @if($status >= 5)
+                        @if($status >= 4)
                         <svg class="w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5" />
                         </svg>
@@ -84,7 +85,7 @@
                         @endif
                     </span>
                     <h3 class="font-medium leading-tight">Daftar Tilik</h3>
-                    @if($status == 4)
+                    @if($status == 3)
                     <a href="{{ route('auditor.daftar-tilik.index') }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Step details here</a>
                     @endif
                 </li>

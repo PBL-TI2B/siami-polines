@@ -17,9 +17,11 @@
         </h1>
 
         <div class="mb-6 flex gap-2">
+            @if (session('status') == 3)
             <x-button href="{{ route('auditor.daftar-tilik.create') }}" color="sky" icon="heroicon-o-plus">
                 Tambah Pertanyaan
             </x-button>
+            @endif
         </div>
 
         <!-- Table and Pagination -->
@@ -138,13 +140,9 @@
                 Kembali
             </x-button>
             @if (session('status') == 3)
-            <x-button id="complete-correction-btn" type="button" color="sky" icon="heroicon-o-check">
-                Kunci Pertanyaan
-            </x-button>
-            @elseif (session('status') == 5)
-            <x-button id="complete-revision-btn" type="button" color="sky" icon="heroicon-o-check">
-                Selesai Koreksi
-            </x-button>
+                <x-button id="lock-btn" type="button" color="sky" icon="heroicon-o-lock-closed">
+                    Kunci Pertanyaan
+                </x-button>
             @endif
         </div>
     </div>
@@ -160,213 +158,203 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Static mapping for kriteria_id to name
-            const kriteriaMap = {
-                1: '1. Visi, Misi, Tujuan, Strategi',
-                2: '2. Tata kelola, Tata pamong, dan Kerjasama',
-                3: '3. Mahasiswa',
-                4: '4. Sumber Daya Manusia',
-                5: '5. Keuangan, Sarana, dan Prasarana',
-                6: '6. Pendidikan / Kurikulum dan Pembelajaran',
-                7: '7. Penelitian',
-                8: '8. Pengabdian Kepada Masyarakat',
-                9: '9. Luaran Tridharma',
-            };
+        // Static mapping for kriteria_id to name
+        const kriteriaMap = {
+            1: '1. Visi, Misi, Tujuan, Strategi',
+            2: '2. Tata kelola, Tata pamong, dan Kerjasama',
+            3: '3. Mahasiswa',
+            4: '4. Sumber Daya Manusia',
+            5: '5. Keuangan, Sarana, dan Prasarana',
+            6: '6. Pendidikan / Kurikulum dan Pembelajaran',
+            7: '7. Penelitian',
+            8: '8. Pengabdian Kepada Masyarakat',
+            9: '9. Luaran Tridharma',
+        };
 
-            const auditingId = {{ session('auditing_id') ?? 'null' }};
-            const auditStatus = {{ session('status') ?? 'null' }};
-            const tbody = document.getElementById('tilik-table-body');
-            tbody.innerHTML = ''; // Clear existing rows
+        const auditingId = {{ session('auditing_id') ?? 'null' }};
+        let auditStatus = {{ session('status') ?? 'null' }}; // Make let to allow reassignment
+        const tbody = document.getElementById('tilik-table-body');
+        tbody.innerHTML = ''; // Clear existing rows
 
-            // Fetch tilik data
-            fetch('http://127.0.0.1:5000/api/tilik')
-                .then(response => response.json())
-                .then(tilikResult => {
-                    if (!tilikResult.success || !Array.isArray(tilikResult.data)) {
-                        console.error("Gagal mendapatkan data tilik.");
-                        return;
+        // Fetch tilik data
+        fetch('http://127.0.0.1:5000/api/tilik')
+            .then(response => response.json())
+            .then(tilikResult => {
+                if (!tilikResult.success || !Array.isArray(tilikResult.data)) {
+                    console.error("Gagal mendapatkan data tilik.");
+                    return;
+                }
+
+                // Fetch response-tilik data if auditingId is valid
+                const responsePromise = auditingId && auditingId !== 'null'
+                    ? fetch(`http://127.0.0.1:5000/api/response-tilik/auditing/${auditingId}`)
+                        .then(response => response.json())
+                        .catch(error => {
+                            console.error("Error fetching response-tilik data:", error);
+                            return { success: false, data: [] };
+                        })
+                    : Promise.resolve({ success: true, data: [] });
+
+                responsePromise.then(responseResult => {
+                    // Create a lookup for response-tilik data by tilik_id
+                    const responseMap = {};
+                    if (responseResult.success && Array.isArray(responseResult.data)) {
+                        responseResult.data.forEach(item => {
+                            responseMap[item.tilik_id] = {
+                                response_tilik_id: item.response_tilik_id,
+                                realisasi: item.realisasi ?? '-',
+                                standar_nasional: item.standar_nasional ?? '-',
+                                uraian_isian: item.uraian_isian ?? '-',
+                                akar_penyebab_penunjang: item.akar_penyebab_penunjang ?? '-',
+                                rencana_perbaikan_tindak_lanjut: item.rencana_perbaikan_tindak_lanjut ?? '-'
+                            };
+                        });
                     }
 
-                    // Fetch response-tilik data if auditingId is valid
-                    const responsePromise = auditingId && auditingId !== 'null'
-                        ? fetch(`http://127.0.0.1:5000/api/response-tilik/auditing/${auditingId}`)
-                            .then(response => response.json())
-                            .catch(error => {
-                                console.error("Error fetching response-tilik data:", error);
-                                return { success: false, data: [] };
-                            })
-                        : Promise.resolve({ success: true, data: [] });
+                    // Render table rows
+                    tilikResult.data.forEach((item, index) => {
+                        const row = document.createElement('tr');
+                        row.className = "transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700";
 
-                    responsePromise.then(responseResult => {
-                        // Create a lookup for response-tilik data by tilik_id
-                        const responseMap = {};
-                        if (responseResult.success && Array.isArray(responseResult.data)) {
-                            responseResult.data.forEach(item => {
-                                responseMap[item.tilik_id] = {
-                                    response_tilik_id: item.response_tilik_id,
-                                    realisasi: item.realisasi ?? '-',
-                                    standar_nasional: item.standar_nasional ?? '-',
-                                    uraian_isian: item.uraian_isian ?? '-',
-                                    akar_penyebab_penunjang: item.akar_penyebab_penunjang ?? '-',
-                                    rencana_perbaikan_tindak_lanjut: item.rencana_perbaikan_tindak_lanjut ?? '-'
-                                };
-                            });
-                        }
+                        // Resolve kriteria name or fallback to kriteria_id
+                        const kriteriaName = kriteriaMap[item.kriteria_id] || item.kriteria_id;
 
-                        // Render table rows
-                        tilikResult.data.forEach((item, index) => {
-                            const row = document.createElement('tr');
-                            row.className = "transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700";
+                        // Get response data for this tilik_id, if available
+                        const response = responseMap[item.tilik_id] || {
+                            response_tilik_id: null,
+                            realisasi: '-',
+                            standar_nasional: '-',
+                            uraian_isian: '-',
+                            akar_penyebab_penunjang: '-',
+                            rencana_perbaikan_tindak_lanjut: '-'
+                        };
 
-                            // Resolve kriteria name or fallback to kriteria_id
-                            const kriteriaName = kriteriaMap[item.kriteria_id] || item.kriteria_id;
+                        row.innerHTML = `
+                            <td class="px-4 py-3 sm:px-6">${index + 1}</td>
+                            <td class="px-4 py-3 sm:px-6">${kriteriaName}</td>
+                            <td class="px-4 py-3 sm:px-6">${item.pertanyaan}</td>
+                            <td class="px-4 py-3 sm:px-6">${item.indikator ?? '-'}</td>
+                            <td class="px-4 py-3 sm:px-6">${item.sumber_data ?? '-'}</td>
+                            <td class="px-4 py-3 sm:px-6">${item.metode_perhitungan ?? '-'}</td>
+                            <td class="px-4 py-3 sm:px-6">${item.target ?? '-'}</td>
+                            <td class="px-4 py-3 sm:px-6">${response.realisasi}</td>
+                            <td class="px-4 py-3 sm:px-6">${response.standar_nasional}</td>
+                            <td class="px-4 py-3 sm:px-6">${response.uraian_isian}</td>
+                            <td class="px-4 py-3 sm:px-6">${response.akar_penyebab_penunjang}</td>
+                            <td class="px-4 py-3 sm:px-6">${response.rencana_perbaikan_tindak_lanjut}</td>
+                            <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">
+                                ${auditStatus !== 3 ? `
+                                    <span class="text-gray-500 dark:text-gray-400">
+                                        Pertanyaan dikunci
+                                    </span>
+                                ` : `
+                                    <div class="flex items-center gap-2 justify-center">
+                                        <a href="/auditor/daftar-tilik/${item.tilik_id}/edit" class="text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-200 transition-colors duration-200">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L16.732 3.732z"></path>
+                                            </svg>
+                                        </a>
+                                        <button data-id="${item.tilik_id}" class="delete-btn text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 transition-colors duration-200">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4m-4 0a2 2 0 00-2 2v1h8V5a2 2 0 00-2-2zm-3 4h6"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                `}
+                            </td>
+                        `;
+                        tbody.appendChild(row);
+                    });
 
-                            // Get response data for this tilik_id, if available
-                            const response = responseMap[item.tilik_id] || {
-                                response_tilik_id: null,
-                                realisasi: '-',
-                                standar_nasional: '-',
-                                uraian_isian: '-',
-                                akar_penyebab_penunjang: '-',
-                                rencana_perbaikan_tindak_lanjut: '-'
-                            };
-
-                            row.innerHTML = `
-                                <td class="px-4 py-3 sm:px-6">${index + 1}</td>
-                                <td class="px-4 py-3 sm:px-6">${kriteriaName}</td>
-                                <td class="px-4 py-3 sm:px-6">${item.pertanyaan}</td>
-                                <td class="px-4 py-3 sm:px-6">${item.indikator ?? '-'}</td>
-                                <td class="px-4 py-3 sm:px-6">${item.sumber_data ?? '-'}</td>
-                                <td class="px-4 py-3 sm:px-6">${item.metode_perhitungan ?? '-'}</td>
-                                <td class="px-4 py-3 sm:px-6">${item.target ?? '-'}</td>
-                                <td class="px-4 py-3 sm:px-6">${response.realisasi}</td>
-                                <td class="px-4 py-3 sm:px-6">${response.standar_nasional}</td>
-                                <td class="px-4 py-3 sm:px-6">${response.uraian_isian}</td>
-                                <td class="px-4 py-3 sm:px-6">${response.akar_penyebab_penunjang}</td>
-                                <td class="px-4 py-3 sm:px-6">${response.rencana_perbaikan_tindak_lanjut}</td>
-                                <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">
-                                    ${auditStatus !== 3 ? `
-                                        <span class="text-gray-500 dark:text-gray-400">Belum sampai proses ini</span>
-                                    ` : `
-                                        <div class="flex items-center gap-2 justify-center">
-                                            <a href="/auditor/daftar-tilik/${item.tilik_id}/edit" class="text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-200 transition-colors duration-200">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L16.732 3.732z"></path>
-                                                </svg>
-                                            </a>
-                                            <button data-id="${item.tilik_id}" class="delete-btn text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 transition-colors duration-200">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4m-4 0a2 2 0 00-2 2v1h8V5a2 2 0 00-2-2zm-3 4h6"></path>
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    `}
-                                </td>
-                            `;
-                            tbody.appendChild(row);
-                        });
-
-                        // Add event listeners for delete buttons
-                        document.querySelectorAll('.delete-btn').forEach(button => {
-                            button.addEventListener('click', function () {
-                                const tilikId = this.getAttribute('data-id');
-                                if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-                                    fetch(`http://127.0.0.1:5000/api/tilik/${tilikId}`, {
-                                        method: 'DELETE',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                        },
-                                    })
-                                    .then(response => response.json())
-                                    .then(result => {
-                                        if (result.success) {
-                                            alert('Data berhasil dihapus!');
-                                            location.reload();
-                                        } else {
-                                            alert('Gagal menghapus data: ' + (result.message || 'Unknown error'));
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.error('Error deleting tilik data:', error);
-                                        alert('Terjadi kesalahan saat menghapus data.');
-                                    });
-                                }
-                            });
-                        });
-
-                        const backBtn = document.getElementById('back-btn');
-                            if (backBtn) {
-                                backBtn.addEventListener('click', function () {
-                                    window.location.href = "{{ route('auditor.audit.index') }}";
+                    // Add event listeners for delete buttons
+                    document.querySelectorAll('.delete-btn').forEach(button => {
+                        button.addEventListener('click', function () {
+                            const tilikId = this.getAttribute('data-id');
+                            if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                                fetch(`http://127.0.0.1:5000/api/tilik/${tilikId}`, {
+                                    method: 'DELETE',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                })
+                                .then(response => response.json())
+                                .then(result => {
+                                    if (result.success) {
+                                        alert('Data berhasil dihapus!');
+                                        location.reload();
+                                    } else {
+                                        alert('Gagal menghapus data: ' + (result.message || 'Unknown error'));
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error deleting tilik data:', error);
+                                    alert('Terjadi kesalahan saat menghapus data.');
                                 });
                             }
-
-                        // Add event listener for "Kunci Pertanyaan" button (status 3)
-                        const completeCorrectionBtn = document.getElementById('complete-correction-btn');
-                        if (completeCorrectionBtn && auditingId && auditingId !== 'null' && auditStatus == 3) {
-                            completeCorrectionBtn.addEventListener('click', function () {
-                                if (confirm('Apakah Anda yakin ingin mengunci pertanyaan?')) {
-                                    fetch(`http://127.0.0.1:5000/api/auditings/${auditingId}`, {
-                                        method: 'PUT',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                        },
-                                        body: JSON.stringify({ status: 4 }),
-                                    })
-                                    .then(response => response.json())
-                                    .then(result => {
-                                        if (result.success) {
-                                            alert('Pertanyaan berhasil dikunci!');
-                                            completeCorrectionBtn.disabled = true;
-                                            completeCorrectionBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                                            window.location.href = "{{ route('auditor.audit.index') }}";
-                                        } else {
-                                            alert('Gagal mengunci pertanyaan: ' + (result.message || 'Unknown error'));
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.error('Error updating audit status:', error);
-                                        alert('Terjadi kesalahan saat mengunci pertanyaan.');
-                                    });
-                                }
-                            });
-                        }
-
-                        // Add event listener for "Selesai Koreksi" button (status 5)
-                        const completeRevisionBtn = document.getElementById('complete-revision-btn');
-                        if (completeRevisionBtn && auditingId && auditingId !== 'null' && auditStatus == 5) {
-                            completeRevisionBtn.addEventListener('click', function () {
-                                if (confirm('Apakah Anda yakin ingin menyelesaikan koreksi?')) {
-                                    fetch(`http://127.0.0.1:5000/api/auditings/${auditingId}`, {
-                                        method: 'PUT',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                        },
-                                        body: JSON.stringify({ status: 6 }),
-                                    })
-                                    .then(response => response.json())
-                                    .then(result => {
-                                        if (result.success) {
-                                            alert('Koreksi berhasil diselesaikan!');
-                                            completeCorrectionBtn.disabled = true;
-                                            completeCorrectionBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                                            window.location.href = "{{ route('auditor.audit.index') }}";
-                                        } else {
-                                            alert('Gagal menyelesaikan koreksi: ' + (result.message || 'Unknown error'));
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.error('Error updating audit status:', error);
-                                        alert('Terjadi kesalahan saat menyelesaikan koreksi.');
-                                    });
-                                }
-                            });
-                        }
+                        });
                     });
-                })
-                .catch(error => {
-                    console.error("Error fetching tilik data:", error);
+
+                    // Add event listener for lock button
+                    const lockBtn = document.getElementById('lock-btn');
+                    if (lockBtn && auditingId && auditingId !== 'null') {
+                        lockBtn.addEventListener('click', function () {
+                            if (confirm('Apakah Anda yakin ingin mengunci pertanyaan? Tindakan ini tidak dapat dibatalkan.')) {
+                                lockBtn.disabled = true; // Disable button immediately
+                                fetch(`http://127.0.0.1:5000/api/auditings/${auditingId}`, {
+                                    method: 'PUT',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({ status: '4' })
+                                })
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error(`HTTP error! Status: ${response.status}`);
+                                    }
+                                    return response.json();
+                                })
+                                .then(result => {
+                                    console.log('API Response:', result);
+                                    if (result.success || result.message === 'Data auditing berhasil diperbarui') {
+                                        alert('Pertanyaan berhasil dikunci!');
+                                        auditStatus = 4; // Update local variable
+                                        // Update Aksi column for all rows
+                                        const rows = tbody.querySelectorAll('tr');
+                                        rows.forEach(row => {
+                                            const actionCell = row.querySelector('td:last-child');
+                                            actionCell.innerHTML = `
+                                                <span class="text-gray-500 dark:text-gray-400">
+                                                    Pertanyaan dikunci
+                                                </span>
+                                            `;
+                                        });
+                                        window.location.href = "{{ route('auditor.audit.index') }}";
+                                    } else {
+                                        lockBtn.disabled = false; // Re-enable on failure
+                                        alert('Gagal mengunci pertanyaan: ' + (result.message || 'Unknown error'));
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error locking questions:', error);
+                                    lockBtn.disabled = false; // Re-enable on error
+                                    alert('Terjadi kesalahan saat mengunci pertanyaan: ' + (error.message || 'Unknown error'));
+                                });
+                            }
+                        });
+                    }
+
+                    // Add event listener for back button
+                    const backBtn = document.getElementById('back-btn');
+                    if (backBtn) {
+                        backBtn.addEventListener('click', function () {
+                            window.location.href = "{{ route('auditor.audit.index') }}";
+                        });
+                    }
                 });
-        });
+            })
+            .catch(error => {
+                console.error("Error fetching tilik data:", error);
+            });
+    });
     </script>
 @endsection

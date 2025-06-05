@@ -42,23 +42,19 @@
         @endif
     </h1>
      -->
-    <form action="{{ route('auditor.assesmen-lapangan.update', $auditing['auditing_id']) }}" method="POST" class="bg-white dark:bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        @csrf
-        @method('PUT')
+    <form class="bg-white dark:bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <div class="mb-4">
             <label for="jadwal_audit" class="block text-gray-700 dark:text-gray-200 text-sm font-bold mb-2">
                 Jadwal Asesmen Lapangan
             </label>
-            <input type="date" id="jadwal_audit" name="jadwal_audit" required
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight dark:bg-gray-700 dark:text-white focus:outline-none focus:shadow-outline"
+            <input type="date" id="jadwal_audit" name="jadwal_audit" disabled
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight dark:bg-gray-700 dark:text-white focus:outline-none focus:shadow-outline cursor-not-allowed"
                 value="{{ isset($auditing['jadwal_audit']) ? \Carbon\Carbon::parse($auditing['jadwal_audit'])->format('Y-m-d') : '' }}"
             >
         </div>
-        <div class="flex items-center justify-between">
-            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                Simpan Jadwal
-            </button>
-        </div>
     </form>
+    <x-button id="back-btn" type="button" color="red" icon="heroicon-o-arrow-left" onclick="history.back()">
+        Kembali
+    </x-button>
 </div>
 @endsection

@@ -108,7 +108,7 @@ class PlotingAMIController extends Controller
             'jadwal_audit' => 'nullable|date',
         ]);
 
-        // Kirim update ke API
+        // Kirim update ke API untuk jadwal_audit
         $response = Http::asJson()->put("http://127.0.0.1:5000/api/auditings/$id", [
             'jadwal_audit' => $validated['jadwal_audit'],
         ]);
@@ -116,6 +116,26 @@ class PlotingAMIController extends Controller
         if (!$response->successful()) {
             $errorMessage = $response->json()['message'] ?? 'Gagal memperbarui data audit di API.';
             return redirect()->back()->with('error', $errorMessage);
+        }
+
+        // Update status di endpoint responses/auditing jika status di session adalah 3 atau 4
+        $auditingId = session('auditing_id');
+        $auditStatus = session('status');
+
+        if (in_array($auditStatus, [3, 4])) {
+            Log::info('Updating status', ['auditingId' => $auditingId, 'auditStatus' => $auditStatus]);
+            $statusResponse = Http::asJson()->put("http://127.0.0.1:5000/api/auditings/$auditingId", [
+                'status' => 3,
+            ]);
+
+            if (!$statusResponse->successful()) {
+                Log::error('Status update failed', [
+                    'status_code' => $statusResponse->status(),
+                    'response_body' => $statusResponse->body(),
+                ]);
+                $errorMessage = $statusResponse->json()['message'] ?? 'Gagal memperbarui status audit di API.';
+                return redirect()->back()->with('error', $errorMessage);
+            }
         }
 
         // Fetch the updated auditing record
