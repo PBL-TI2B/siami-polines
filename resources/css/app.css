@@ -35,3 +35,42 @@
 
 /* Defaults hover styles on all devices */
 @custom-variant hover (&:hover);
+
+#response-modal .max-w-2xl {
+    scrollbar-width: thin; /* Untuk Firefox */
+    scrollbar-color: #6b7280 #e5e7eb; /* Warna thumb dan track untuk Firefox */
+}
+
+#response-modal .max-w-2xl::-webkit-scrollbar {
+    width: 8px; /* Lebar scrollbar untuk browser berbasis Webkit */
+}
+
+#response-modal .max-w-2xl::-webkit-scrollbar-track {
+    background: #e5e7eb; /* Warna latar scrollbar */
+    border-radius: 4px;
+}
+
+#response-modal .max-w-2xl::-webkit-scrollbar-thumb {
+    background: #6b7280; /* Warna thumb scrollbar */
+    border-radius: 4px;
+}
+
+#response-modal .max-w-2xl::-webkit-scrollbar-thumb:hover {
+    background: #4b5563; /* Warna thumb saat hover */
+}
+
+.dark #response-modal .max-w-2xl {
+    scrollbar-color: #4b5563 #1f2937; /* Warna untuk dark mode */
+}
+
+.dark #response-modal .max-w-2xl::-webkit-scrollbar-track {
+    background: #1f2937; /* Warna latar scrollbar untuk dark mode */
+}
+
+.dark #response-modal .max-w-2xl::-webkit-scrollbar-thumb {
+    background: #4b5563; /* Warna thumb untuk dark mode */
+}
+
+.dark #response-modal .max-w-2xl::-webkit-scrollbar-thumb:hover {
+    background: #6b7280; /* Warna thumb saat hover untuk dark mode */
+}

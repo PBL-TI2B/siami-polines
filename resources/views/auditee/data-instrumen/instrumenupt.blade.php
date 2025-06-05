@@ -69,11 +69,14 @@
                             <tr>
                                 <th scope="col"
                                     class="w-12 border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">No</th>
-                                <th scope="col" class="min-w-[300px] border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">
+                                <th scope="col"
+                                    class="min-w-[300px] border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">
                                     Sasaran Strategis</th>
-                                <th scope="col" class="min-w-[300px] border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">
+                                <th scope="col"
+                                    class="min-w-[300px] border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">
                                     Indikator Kinerja</th>
-                                <th scope="col" class="min-w-[250px] border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">
+                                <th scope="col"
+                                    class="min-w-[250px] border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">
                                     Aktivitas</th>
                                 <th scope="col"
                                     class="w-20 border-r border-gray-200 px-4 py-3 text-center sm:px-6 dark:border-gray-600">
@@ -85,8 +88,11 @@
                                     class="w-24 border-r border-gray-200 px-4 py-3 text-center sm:px-6 dark:border-gray-600">
                                     Capaian</th>
                                 <th scope="col"
-                                    class="min-w-[200px] border-r border-gray-200 px-4 py-3 text-center sm:px-6 dark:border-gray-600">
+                                    class="min-w-[250px] border-r border-gray-200 px-4 py-3 text-center sm:px-6 dark:border-gray-600">
                                     Link Bukti Dukung</th>
+                                <th scope="col"
+                                    class="min-w-[250px] border-r border-gray-200 px-4 py-3 text-center sm:px-6 dark:border-gray-600">
+                                    Keterangan</th>
                                 <th scope="col"
                                     class="w-48 border-r border-gray-200 px-4 py-3 text-center sm:px-6 dark:border-gray-600">
                                     Aksi</th>
@@ -143,7 +149,7 @@
 
     <div id="response-modal"
         class="fixed inset-0 z-50 flex hidden items-center justify-center bg-gray-900/50 transition-opacity duration-300">
-        <div class="relative w-full max-w-2xl rounded-lg bg-white p-6 dark:bg-gray-800">
+        <div class="relative max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white p-6 pb-6 dark:bg-gray-800">
             <button type="button" id="close-modal-btn"
                 class="absolute right-4 top-4 text-gray-400 transition-colors duration-200 hover:text-gray-600 dark:hover:text-gray-300">
                 <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -184,7 +190,7 @@
                                 class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Capaian</label>
                             <input type="text" name="capaian" id="capaian"
                                 class="block w-full rounded-lg border border-gray-300 px-3 py-2.5 focus:border-sky-500 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
-                                required>
+                                placeholder="Masukkan nilai capaian (contoh: 85)" required>
                             <span id="capaian-error" class="mt-1 hidden text-sm font-medium text-red-600"></span>
                         </div>
                         <div>
@@ -192,9 +198,18 @@
                                 class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Link Bukti
                                 Dukung</label>
                             <input type="text" name="lokasi_bukti_dukung" id="lokasi_bukti_dukung"
-                                class="block w-full rounded-lg border border-gray-300 px-3 py-2.5 focus:border-sky-500 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                                class="block w-full rounded-lg border border-gray-300 px-3 py-2.5 focus:border-sky-500 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                                placeholder="Masukkan URL bukti dukung (contoh: https://example.com/bukti)">
                             <span id="lokasi_bukti_dukung-error"
                                 class="mt-1 hidden text-sm font-medium text-red-600"></span>
+                        </div>
+                        <div>
+                            <label for="keterangan"
+                                class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Keterangan</label>
+                            <textarea name="keterangan" id="keterangan"
+                                class="block w-full rounded-lg border border-gray-300 px-3 py-2.5 focus:border-sky-500 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                                rows="4" placeholder="Masukkan keterangan tambahan (opsional)"></textarea>
+                            <span id="keterangan-error" class="mt-1 hidden text-sm font-medium text-red-600"></span>
                         </div>
                     </div>
                 </div>
@@ -254,7 +269,9 @@
                 modalTitle.textContent = isEdit ? 'Edit Jawaban Instrumen' : 'Jawab Instrumen Unit';
                 document.getElementById('capaian').value = response.capaian || '';
                 document.getElementById('lokasi_bukti_dukung').value = response.lokasi_bukti_dukung || '';
-                document.getElementById('set_instrumen_unit_kerja_id').value = setInstrumenId; // set_instrumen_unit_kerja_id dari data tabel
+                document.getElementById('keterangan').value = response.keterangan || '';
+                document.getElementById('set_instrumen_unit_kerja_id').value =
+                    setInstrumenId; // set_instrumen_unit_kerja_id dari data tabel
                 document.getElementById('response_id').value = response.response_id || '';
                 document.getElementById('modal-sasaran').textContent = instrumen.sasaran || '-';
                 document.getElementById('modal-indikator').textContent = instrumen.indikator || '-';
@@ -263,6 +280,7 @@
                 document.getElementById('modal-target').textContent = instrumen.target || '-';
                 document.getElementById('capaian-error').classList.add('hidden');
                 document.getElementById('lokasi_bukti_dukung-error').classList.add('hidden');
+                document.getElementById('keterangan-error').classList.add('hidden');
                 modal.classList.remove('hidden');
                 setTimeout(() => {
                     modal.querySelector('div').classList.remove('scale-95');
@@ -339,16 +357,23 @@
                     // auditingId sudah ada dari session
                     // set_instrumen_unit_kerja_id didapat saat membuka modal dari atribut data tombol
                     const [instrumenResult, responseResult] = await Promise.all([
-                        fetch(`http://127.0.0.1:5000/api/set-instrumen`).then(res => res.json()), // Untuk data instrumen umum
-                        fetch(`http://127.0.0.1:5000/api/responses/auditing/${auditingId}`) // Untuk response yang sudah ada
+                        fetch(`http://127.0.0.1:5000/api/set-instrumen`).then(res => res
+                            .json()), // Untuk data instrumen umum
+                        fetch(
+                            `http://127.0.0.1:5000/api/responses/auditing/${auditingId}`
+                        ) // Untuk response yang sudah ada
                         .then(res => res.json())
-                        .catch(() => ({ data: [] }))
+                        .catch(() => ({
+                            data: []
+                        }))
                     ]);
 
                     if (instrumenResult.data) {
                         if (Array.isArray(instrumenResult.data)) {
-                            allInstrumenData = instrumenResult.data.filter(item => item.jenis_unit_id === 1);
-                        } else if (typeof instrumenResult.data === 'object' && instrumenResult.data !== null) {
+                            allInstrumenData = instrumenResult.data.filter(item => item.jenis_unit_id ===
+                                1);
+                        } else if (typeof instrumenResult.data === 'object' && instrumenResult.data !==
+                            null) {
                             if (instrumenResult.data.jenis_unit_id === 1) {
                                 allInstrumenData = [instrumenResult.data];
                             }
@@ -379,15 +404,25 @@
                     const indikator = gItem.indikator;
 
                     if (!globalRowspanMap[sasaran]) {
-                        globalRowspanMap[sasaran] = { count: 0, startIndex: -1, number: globalCurrentNumber++, indikators: {} };
+                        globalRowspanMap[sasaran] = {
+                            count: 0,
+                            startIndex: -1,
+                            number: globalCurrentNumber++,
+                            indikators: {}
+                        };
                     }
-                    if (globalRowspanMap[sasaran].startIndex === -1) globalRowspanMap[sasaran].startIndex = index;
+                    if (globalRowspanMap[sasaran].startIndex === -1) globalRowspanMap[sasaran]
+                        .startIndex = index;
                     globalRowspanMap[sasaran].count++;
 
                     if (!globalRowspanMap[sasaran].indikators[indikator]) {
-                        globalRowspanMap[sasaran].indikators[indikator] = { count: 0, startIndex: -1 };
+                        globalRowspanMap[sasaran].indikators[indikator] = {
+                            count: 0,
+                            startIndex: -1
+                        };
                     }
-                    if (globalRowspanMap[sasaran].indikators[indikator].startIndex === -1) globalRowspanMap[sasaran].indikators[indikator].startIndex = index;
+                    if (globalRowspanMap[sasaran].indikators[indikator].startIndex === -1)
+                        globalRowspanMap[sasaran].indikators[indikator].startIndex = index;
                     globalRowspanMap[sasaran].indikators[indikator].count++;
                 });
 
@@ -403,14 +438,15 @@
                             count: 0,
                             // Tentukan apakah ini baris pertama untuk sasaran ini DI HALAMAN SAAT INI
                             // dan apakah index globalnya cocok dengan startIndex global untuk sasaran ini
-                            isFirstSasaranRowOnPage: globalIndex === globalRowspanMap[sasaran].startIndex,
+                            isFirstSasaranRowOnPage: globalIndex === globalRowspanMap[sasaran]
+                                .startIndex,
                             number: globalRowspanMap[sasaran].number, // Ambil nomor dari map global
                             indikators: {}
                         };
                     }
-                     // Hitung berapa banyak baris sasaran ini yang ada di halaman saat ini
-                    for(let i = startIndex; i < endIndex; i++) {
-                        if(data[i].sasaran === sasaran) {
+                    // Hitung berapa banyak baris sasaran ini yang ada di halaman saat ini
+                    for (let i = startIndex; i < endIndex; i++) {
+                        if (data[i].sasaran === sasaran) {
                             pageRowspanMap[sasaran].count++;
                         }
                     }
@@ -419,25 +455,32 @@
                     if (!pageRowspanMap[sasaran].indikators[indikator]) {
                         pageRowspanMap[sasaran].indikators[indikator] = {
                             count: 0,
-                            isFirstIndikatorRowOnPage: globalIndex === globalRowspanMap[sasaran].indikators[indikator].startIndex
+                            isFirstIndikatorRowOnPage: globalIndex === globalRowspanMap[sasaran]
+                                .indikators[indikator].startIndex
                         };
                     }
-                    for(let i = startIndex; i < endIndex; i++) {
-                        if(data[i].sasaran === sasaran && data[i].indikator === indikator) {
-                             pageRowspanMap[sasaran].indikators[indikator].count++;
+                    for (let i = startIndex; i < endIndex; i++) {
+                        if (data[i].sasaran === sasaran && data[i].indikator === indikator) {
+                            pageRowspanMap[sasaran].indikators[indikator].count++;
                         }
                     }
                 });
-                 // Untuk memastikan count di pageRowspanMap adalah jumlah aktual di halaman itu
+                // Untuk memastikan count di pageRowspanMap adalah jumlah aktual di halaman itu
                 for (const sasaranKey in pageRowspanMap) {
-                    pageRowspanMap[sasaranKey].count = data.slice(startIndex, endIndex).filter(it => it.sasaran === sasaranKey).length;
+                    pageRowspanMap[sasaranKey].count = data.slice(startIndex, endIndex).filter(it => it
+                        .sasaran === sasaranKey).length;
                     for (const indikatorKey in pageRowspanMap[sasaranKey].indikators) {
-                         pageRowspanMap[sasaranKey].indikators[indikatorKey].count = data.slice(startIndex, endIndex).filter(it => it.sasaran === sasaranKey && it.indikator === indikatorKey).length;
+                        pageRowspanMap[sasaranKey].indikators[indikatorKey].count = data.slice(startIndex,
+                            endIndex).filter(it => it.sasaran === sasaranKey && it.indikator ===
+                            indikatorKey).length;
                     }
                 }
 
 
-                return { pageRowspanMap, globalRowspanMap };
+                return {
+                    pageRowspanMap,
+                    globalRowspanMap
+                };
             };
 
 
@@ -452,7 +495,10 @@
                         (item.aktivitas.indikator_kinerja.isi_indikator_kinerja || '').toLowerCase().includes(searchTerm) ||
                         (item.aktivitas.nama_aktivitas || '').toLowerCase().includes(searchTerm) ||
                         (item.aktivitas.satuan || '').toLowerCase().includes(searchTerm) ||
-                        (item.aktivitas.target || '').toLowerCase().includes(searchTerm)
+                        (item.aktivitas.target || '').toLowerCase().includes(searchTerm) ||
+                        (allResponseData.find(res => res.set_instrumen_unit_kerja_id === item.set_instrumen_unit_kerja_id)?.capaian || '').toLowerCase().includes(searchTerm) ||
+                        (allResponseData.find(res => res.set_instrumen_unit_kerja_id === item.set_instrumen_unit_kerja_id)?.lokasi_bukti_dukung || '').toLowerCase().includes(searchTerm) ||
+                        (allResponseData.find(res => res.set_instrumen_unit_kerja_id === item.set_instrumen_unit_kerja_id)?.keterangan || '').toLowerCase().includes(searchTerm)
                     );
                 });
 
@@ -464,7 +510,9 @@
 
                     if (!grouped[sasaran]) grouped[sasaran] = {};
                     if (!grouped[sasaran][indikator]) grouped[sasaran][indikator] = {};
-                    if (!grouped[sasaran][indikator][aktivitas]) grouped[sasaran][indikator][aktivitas] = [];
+                    if (!grouped[sasaran][indikator][aktivitas]) grouped[sasaran][indikator][
+                        aktivitas
+                    ] = [];
                     grouped[sasaran][indikator][aktivitas].push(item);
                 });
 
@@ -473,7 +521,12 @@
                     for (const indikator in grouped[sasaran]) {
                         for (const aktivitas in grouped[sasaran][indikator]) {
                             grouped[sasaran][indikator][aktivitas].forEach(item => {
-                                flatGroupedData.push({ sasaran, indikator, aktivitas, item });
+                                flatGroupedData.push({
+                                    sasaran,
+                                    indikator,
+                                    aktivitas,
+                                    item
+                                });
                             });
                         }
                     }
@@ -488,16 +541,22 @@
                 const endIndex = Math.min(startIndex + perPage, totalFilteredItems);
                 const paginatedData = flatGroupedData.slice(startIndex, endIndex);
 
-                const { pageRowspanMap, globalRowspanMap } = calculatePageRowspan(flatGroupedData, startIndex, endIndex);
+                const {
+                    pageRowspanMap,
+                    globalRowspanMap
+                } = calculatePageRowspan(flatGroupedData, startIndex, endIndex);
 
                 if (paginatedData.length === 0) {
-                    tableBody.innerHTML = `<tr><td colspan="9" class="px-4 py-3 sm:px-6 text-center text-gray-500 dark:text-gray-400">Tidak ada data instrumen untuk unit ini.</td></tr>`;
+                    tableBody.innerHTML =
+                        `<tr><td colspan="9" class="px-4 py-3 sm:px-6 text-center text-gray-500 dark:text-gray-400">Tidak ada data instrumen untuk Unit ini.</td></tr>`;
                 } else {
-                    let firstRowFlags = {}; // Untuk melacak apakah TD sudah dirender untuk sasaran/indikator tertentu di halaman ini
+                    let
+                        firstRowFlags = {}; // Untuk melacak apakah TD sudah dirender untuk sasaran/indikator tertentu di halaman ini
 
                     paginatedData.forEach((groupedItem, localIndex) => {
                         const item = groupedItem.item;
-                        const response = allResponseData.find(res => res.set_instrumen_unit_kerja_id === item.set_instrumen_unit_kerja_id) || {};
+                        const response = allResponseData.find(res => res.set_instrumen_unit_kerja_id ===
+                            item.set_instrumen_unit_kerja_id) || {};
                         const row = document.createElement('tr');
                         row.className = 'hover:bg-gray-50 dark:hover:bg-gray-700';
 
@@ -509,20 +568,24 @@
 
                         // Kolom No & Sasaran Strategis (rowspan berdasarkan sasaran)
                         if (!firstRowFlags[sasaran]) {
-                             const sasaranInfo = globalRowspanMap[sasaran];
-                             if (sasaranInfo) {
-                                html += `<td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center" rowspan="${pageRowspanMap[sasaran]?.count || 1}">${sasaranInfo.number}</td>`;
-                                html += `<td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600" rowspan="${pageRowspanMap[sasaran]?.count || 1}">${sasaran}</td>`;
+                            const sasaranInfo = globalRowspanMap[sasaran];
+                            if (sasaranInfo) {
+                                html +=
+                                    `<td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center" rowspan="${pageRowspanMap[sasaran]?.count || 1}">${sasaranInfo.number}</td>`;
+                                html +=
+                                    `<td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600" rowspan="${pageRowspanMap[sasaran]?.count || 1}">${sasaran}</td>`;
                                 firstRowFlags[sasaran] = true;
-                                firstRowFlags[`${sasaran}-${indikator}`] = false; // Reset flag indikator saat sasaran baru
-                             }
+                                firstRowFlags[`${sasaran}-${indikator}`] =
+                                    false; // Reset flag indikator saat sasaran baru
+                            }
                         }
 
                         // Kolom Indikator Kinerja (rowspan berdasarkan indikator dalam sasaran)
                         if (!firstRowFlags[`${sasaran}-${indikator}`]) {
                             const indikatorInfo = globalRowspanMap[sasaran]?.indikators[indikator];
                             if (indikatorInfo) {
-                                html += `<td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600" rowspan="${pageRowspanMap[sasaran]?.indikators[indikator]?.count || 1}">${indikator}</td>`;
+                                html +=
+                                    `<td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600" rowspan="${pageRowspanMap[sasaran]?.indikators[indikator]?.count || 1}">${indikator}</td>`;
                                 firstRowFlags[`${sasaran}-${indikator}`] = true;
                             }
                         }
@@ -536,10 +599,11 @@
                             <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center">
                                 ${response.lokasi_bukti_dukung ? `<a href="${response.lokasi_bukti_dukung}" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline break-all">${response.lokasi_bukti_dukung}</a>` : '-'}
                             </td>
+                            <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center">${response.keterangan || '-'}</td>
                             <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center">
                                 ${auditStatus != 1 ? `<span class="text-gray-500 dark:text-gray-400 text-sm">Jawaban Terkunci</span>` : `
-                                    <div class="flex items-center justify-center gap-2">
-                                        ${response.response_id ? `
+                                                        <div class="flex items-center justify-center gap-2">
+                                                            ${response.response_id ? `
                                             <button type="button" class="edit-btn text-sm font-medium text-white bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:ring-yellow-300 dark:bg-yellow-500 dark:hover:bg-yellow-600 dark:focus:ring-yellow-600 rounded-lg px-3 py-1.5 flex items-center" data-id="${response.response_id}" data-capaian="${response.capaian || ''}" data-lokasi="${response.lokasi_bukti_dukung || ''}" data-sasaran="${sasaran}" data-indikator="${indikator}" data-aktivitas="${groupedItem.aktivitas}" data-satuan="${item.aktivitas.satuan || ''}" data-target="${item.aktivitas.target || ''}" data-set-instrumen-id="${item.set_instrumen_unit_kerja_id}">
                                                 <svg class="w-3 h-3 mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" /></svg>
                                                 Edit
@@ -554,8 +618,8 @@
                                                 Jawab
                                             </button>
                                         `}
-                                    </div>
-                                `}
+                                                        </div>
+                                                    `}
                             </td>
                         `;
                         row.innerHTML = html;
@@ -565,19 +629,22 @@
 
                 const currentStart = totalFilteredItems === 0 ? 0 : startIndex + 1;
                 const currentEnd = endIndex;
-                paginationInfo.innerHTML = `Menampilkan <strong>${currentStart}</strong> hingga <strong>${currentEnd}</strong> dari <strong>${totalFilteredItems}</strong> hasil`;
+                paginationInfo.innerHTML =
+                    `Menampilkan <strong>${currentStart}</strong> hingga <strong>${currentEnd}</strong> dari <strong>${totalFilteredItems}</strong> hasil`;
 
                 pageNumbersContainer.innerHTML = '';
                 for (let i = 1; i <= totalPages; i++) {
                     const pageLink = document.createElement('li');
-                    pageLink.innerHTML = `<a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-gray-200 transition-all duration-200 ${i === currentPage ? 'text-sky-600 bg-sky-50 dark:bg-gray-700 dark:text-sky-200' : ''}" data-page="${i}">${i}</a>`;
+                    pageLink.innerHTML =
+                        `<a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-gray-200 transition-all duration-200 ${i === currentPage ? 'text-sky-600 bg-sky-50 dark:bg-gray-700 dark:text-sky-200' : ''}" data-page="${i}">${i}</a>`;
                     pageNumbersContainer.appendChild(pageLink);
                 }
 
                 prevPageBtn.classList.toggle('opacity-50', currentPage === 1);
                 prevPageBtn.classList.toggle('pointer-events-none', currentPage === 1);
                 nextPageBtn.classList.toggle('opacity-50', currentPage === totalPages || totalPages === 0);
-                nextPageBtn.classList.toggle('pointer-events-none', currentPage === totalPages || totalPages === 0);
+                nextPageBtn.classList.toggle('pointer-events-none', currentPage === totalPages || totalPages ===
+                    0);
             };
 
             if (auditStatus !== 1) {
@@ -648,14 +715,22 @@
                     e.preventDefault();
                     const responseId = deleteBtn.getAttribute('data-id');
                     if (auditStatus !== 1) {
-                        showCustomMessage('Penghapusan jawaban hanya diperbolehkan pada status Pengisian Instrumen.');
+                        showCustomMessage(
+                            'Penghapusan jawaban hanya diperbolehkan pada status Pengisian Instrumen.');
                         return;
                     }
                     showCustomConfirm('Apakah Anda yakin ingin menghapus jawaban ini?', (confirmed) => {
                         if (confirmed) {
-                            fetch(`http://127.0.0.1:5000/api/responses/${responseId}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' } })
+                            fetch(`http://127.0.0.1:5000/api/responses/${responseId}`, {
+                                    method: 'DELETE',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    }
+                                })
                                 .then(response => {
-                                    if (!response.ok) return response.json().then(err => { throw err; });
+                                    if (!response.ok) return response.json().then(err => {
+                                        throw err;
+                                    });
                                     return response.json();
                                 })
                                 .then(() => {
@@ -664,7 +739,8 @@
                                 })
                                 .catch(error => {
                                     console.error('Gagal menghapus:', error);
-                                    showCustomMessage('Gagal menghapus jawaban. Silakan coba lagi.');
+                                    showCustomMessage(
+                                        'Gagal menghapus jawaban. Silakan coba lagi.');
                                 });
                         }
                     });
@@ -678,6 +754,8 @@
                 e.preventDefault();
                 const capaianInput = document.getElementById('capaian');
                 const capaianError = document.getElementById('capaian-error');
+                const keteranganInput = document.getElementById('keterangan'); // Tambahan
+                const keteranganError = document.getElementById('keterangan-error'); // Tambahan
 
                 if (!capaianInput.value.trim()) {
                     capaianError.textContent = 'Capaian wajib diisi';
@@ -688,10 +766,11 @@
 
                 const formData = new FormData(form);
                 const dataToSave = {
-                    set_instrumen_unit_kerja_id: formData.get('set_instrumen_unit_kerja_id'), // Diambil dari hidden input di modal
-                    auditing_id: formData.get('auditing_id'), // Diambil dari hidden input di modal (dari session)
+                    set_instrumen_unit_kerja_id: formData.get('set_instrumen_unit_kerja_id'),
+                    auditing_id: formData.get('auditing_id'),
                     capaian: formData.get('capaian'),
-                    lokasi_bukti_dukung: formData.get('lokasi_bukti_dukung') || ''
+                    lokasi_bukti_dukung: formData.get('lokasi_bukti_dukung') || '',
+                    keterangan: formData.get('keterangan') || '' // Tambahan untuk keterangan
                 };
 
                 const isEdit = !!formData.get('response_id');
@@ -702,88 +781,116 @@
 
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = `
-                <svg class="animate-spin h-4 w-4 mr-2 text-white" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8h8a8 8 0 01-16 0z"></path>
-                </svg>
-                Menyimpan...`;
+        <svg class="animate-spin h-4 w-4 mr-2 text-white" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8h8a8 8 0 01-16 0z"></path>
+        </svg>
+        Menyimpan...`;
 
                 fetch(endpoint, {
                         method: method,
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
                         body: JSON.stringify(dataToSave)
                     })
                     .then(response => {
-                        if (!response.ok) return response.json().then(err => { throw err; });
+                        if (!response.ok) return response.json().then(err => {
+                            throw err;
+                        });
                         return response.json();
                     })
                     .then(savedResponseData => {
-                        showCustomMessage(isEdit ? 'Jawaban berhasil diperbarui!' : 'Jawaban berhasil disimpan!');
+                        showCustomMessage(isEdit ? 'Jawaban berhasil diperbarui!' :
+                            'Jawaban berhasil disimpan!');
                         closeModal();
 
-                        // --- MODIFIKASI UNTUK PAYLOAD BARU DAN ENDPOINT ---
-                        const currentAuditingId = parseInt(document.getElementById('auditing_id').value); // Nilai dari session
-                        const currentSetInstrumenUnitKerjaId = parseInt(document.getElementById('set_instrumen_unit_kerja_id').value); // Nilai dari form modal
+                        const currentAuditingId = parseInt(document.getElementById('auditing_id')
+                            .value);
+                        const currentSetInstrumenUnitKerjaId = parseInt(document.getElementById(
+                            'set_instrumen_unit_kerja_id').value);
 
                         let actualResponseId;
                         if (isEdit) {
                             actualResponseId = parseInt(formData.get('response_id'));
                         } else {
-                            // Sesuaikan dengan struktur respons API Anda untuk mendapatkan ID dari item yang baru dibuat
-                            actualResponseId = savedResponseData.data ? (savedResponseData.data.id || savedResponseData.data.response_id) : savedResponseData.id;
-                             if (!actualResponseId && savedResponseData.response_id) { // Fallback jika ID ada di root object
+                            actualResponseId = savedResponseData.data ? (savedResponseData.data.id ||
+                                savedResponseData.data.response_id) : savedResponseData.id;
+                            if (!actualResponseId && savedResponseData.response_id) {
                                 actualResponseId = savedResponseData.response_id;
                             }
                         }
 
                         if (!actualResponseId) {
-                             console.error('Error: Gagal mendapatkan response_id setelah menyimpan/memperbarui jawaban utama. Respons:', savedResponseData);
-                             showCustomMessage('Gagal mendapatkan ID jawaban untuk status instrumen. Silakan cek konsol.');
-                             initializeDataAndRenderTable();
-                             return;
+                            console.error(
+                                'Error: Gagal mendapatkan response_id setelah menyimpan/memperbarui jawaban utama. Respons:',
+                                savedResponseData);
+                            showCustomMessage(
+                                'Gagal mendapatkan ID jawaban untuk status instrumen. Silakan cek konsol.'
+                            );
+                            initializeDataAndRenderTable();
+                            return;
                         }
 
                         const instrumentResponsePayload = {
                             auditing_id: currentAuditingId,
                             set_instrumen_unit_kerja_id: currentSetInstrumenUnitKerjaId,
                             response_id: actualResponseId,
-                            status_instrumen: "Baru Ditambahkan" // Sesuai permintaan
+                            status_instrumen: "Baru Ditambahkan"
                         };
 
-                        return fetch('http://127.0.0.1:5000/api/instrumen-response', { // Endpoint diperbarui
+                        return fetch('http://127.0.0.1:5000/api/instrumen-response', {
                                 method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
                                 body: JSON.stringify(instrumentResponsePayload)
                             })
                             .then(instrResp => {
                                 if (!instrResp.ok) {
                                     return instrResp.json().then(err => {
-                                        console.error('Gagal mengirim data ke /api/instrumen-response:', err);
-                                        throw new Error(`Gagal mengirim status instrumen: ${(err.message || JSON.stringify(err))}`);
+                                        console.error(
+                                            'Gagal mengirim data ke /api/instrumen-response:',
+                                            err);
+                                        throw new Error(
+                                            `Gagal mengirim status instrumen: ${(err.message || JSON.stringify(err))}`
+                                        );
                                     });
                                 }
                                 return instrResp.json();
                             })
                             .then(instrResponseData => {
-                                console.log('Status instrumen berhasil dikirim ke /api/instrumen-response:', instrResponseData);
+                                console.log(
+                                    'Status instrumen berhasil dikirim ke /api/instrumen-response:',
+                                    instrResponseData);
                                 initializeDataAndRenderTable();
                             })
                             .catch(instrError => {
                                 console.error('Error saat mengirim status instrumen:', instrError);
-                                showCustomMessage('Jawaban utama disimpan, namun terjadi kesalahan saat mengirim status instrumen tambahan.');
+                                showCustomMessage(
+                                    'Jawaban utama disimpan, namun terjadi kesalahan saat mengirim status instrumen tambahan.'
+                                );
                                 initializeDataAndRenderTable();
                             });
-                        // --- AKHIR MODIFIKASI ---
                     })
                     .catch(error => {
                         const errorEl = document.getElementById('capaian-error');
+                        const keteranganErrorEl = document.getElementById(
+                            'keterangan-error'); // Tambahan
                         if (error.errors) {
-                            errorEl.textContent = error.errors.capaian?.join(', ') || 'Terjadi kesalahan validasi';
-                            errorEl.classList.remove('hidden');
+                            if (error.errors.capaian) {
+                                errorEl.textContent = error.errors.capaian.join(', ');
+                                errorEl.classList.remove('hidden');
+                            }
+                            if (error.errors.keterangan) { // Tambahan untuk validasi keterangan
+                                keteranganErrorEl.textContent = error.errors.keterangan.join(', ');
+                                keteranganErrorEl.classList.remove('hidden');
+                            }
                         } else {
-                            showCustomMessage('Terjadi kesalahan: ' + (error.message || 'Tidak dapat menyimpan jawaban'));
+                            showCustomMessage('Terjadi kesalahan: ' + (error.message ||
+                                'Tidak dapat menyimpan jawaban'));
                         }
-                         initializeDataAndRenderTable();
+                        initializeDataAndRenderTable();
                     })
                     .finally(() => {
                         submitBtn.disabled = false;
@@ -794,13 +901,17 @@
             submitLockBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 if (auditStatus !== 1) { // Pemeriksaan status yang ketat
-                    showCustomMessage('Penguncian jawaban hanya diperbolehkan pada status "Pengisian Instrumen".', 'error');
+                    showCustomMessage(
+                        'Penguncian jawaban hanya diperbolehkan pada status "Pengisian Instrumen".',
+                        'error');
                     return;
                 }
                 showCustomConfirm(
-                    'Apakah Anda yakin ingin mengunci jawaban? Tindakan ini tidak dapat dibatalkan.', (confirmed) => {
+                    'Apakah Anda yakin ingin mengunci jawaban? Tindakan ini tidak dapat dibatalkan.', (
+                        confirmed) => {
                         if (confirmed) {
-                            const originalButtonHtml = submitLockBtn.innerHTML; // Simpan HTML asli tombol
+                            const originalButtonHtml = submitLockBtn
+                                .innerHTML; // Simpan HTML asli tombol
                             submitLockBtn.disabled = true;
                             submitLockBtn.innerHTML = `
                                 <svg class="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -812,37 +923,53 @@
 
                             fetch(`http://127.0.0.1:5000/api/auditings/${auditingId}`, {
                                     method: 'PUT',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ status: 2 }) // Mengunci, status menjadi 2
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        status: 2
+                                    }) // Mengunci, status menjadi 2
                                 })
                                 .then(response => {
-                                    if (!response.ok) return response.json().then(err => { throw err; });
+                                    if (!response.ok) return response.json().then(err => {
+                                        throw err;
+                                    });
                                     return response.json();
                                 })
                                 .then(() => {
-                                    auditStatus = 2; // Update status di client-side untuk konsistensi UI langsung
+                                    auditStatus =
+                                        2; // Update status di client-side untuk konsistensi UI langsung
                                     showCustomMessage('Jawaban berhasil dikunci!', 'success');
                                     // Update UI secara langsung
-                                    renderTable(currentPage); // Re-render tabel dengan status terkunci
+                                    renderTable(
+                                        currentPage); // Re-render tabel dengan status terkunci
                                     submitLockBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                                    submitLockBtn.innerHTML = originalButtonHtml; // Kembalikan HTML asli setelah proses (meski sudah disabled)
+                                    submitLockBtn.innerHTML =
+                                        originalButtonHtml; // Kembalikan HTML asli setelah proses (meski sudah disabled)
 
                                     // Update pesan informasi di atas
-                                    const infoMessageDiv = document.querySelector('.border-yellow-400');
-                                    if (infoMessageDiv && infoMessageDiv.querySelector('span.block')) {
-                                         infoMessageDiv.querySelector('span.block').innerHTML = 'Halaman ini hanya dapat diakses untuk melihat data. Jawaban telah dikunci.';
+                                    const infoMessageDiv = document.querySelector(
+                                        '.border-yellow-400');
+                                    if (infoMessageDiv && infoMessageDiv.querySelector(
+                                            'span.block')) {
+                                        infoMessageDiv.querySelector('span.block').innerHTML =
+                                            'Halaman ini hanya dapat diakses untuk melihat data. Jawaban telah dikunci.';
                                     }
 
 
                                     setTimeout(() => {
-                                        window.location.href = `/auditee/audit/detail/${auditingId}`; // Redirect ke halaman detail auditing setelah 2 detik
+                                        window.location.href =
+                                            `/auditee/audit/detail/${auditingId}`; // Redirect ke halaman detail auditing setelah 2 detik
                                     }, 2000); // Delay 2 detik agar user sempat baca pesan
                                 })
                                 .catch(error => {
                                     console.error('Gagal mengunci jawaban:', error);
-                                    showCustomMessage(`Gagal mengunci jawaban: ${error.message || 'Silakan coba lagi.'}`, 'error');
+                                    showCustomMessage(
+                                        `Gagal mengunci jawaban: ${error.message || 'Silakan coba lagi.'}`,
+                                        'error');
                                     submitLockBtn.disabled = false; // Aktifkan kembali jika gagal
-                                    submitLockBtn.innerHTML = originalButtonHtml; // Kembalikan HTML/teks asli tombol
+                                    submitLockBtn.innerHTML =
+                                        originalButtonHtml; // Kembalikan HTML/teks asli tombol
                                 });
                         }
                     });
