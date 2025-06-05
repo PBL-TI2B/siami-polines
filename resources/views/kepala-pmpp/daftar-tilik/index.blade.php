@@ -148,18 +148,50 @@
             const totalPages = Math.ceil(totalItems / perPage);
             const pagination = document.getElementById("pagination-buttons");
             const info = document.getElementById("pagination-info");
+            const visiblePages = 5; // Jumlah tombol halaman yang ditampilkan
 
             pagination.innerHTML = '';
             info.innerHTML = `Menampilkan <strong>${(currentPage - 1) * perPage + 1}</strong> hingga <strong>${Math.min(currentPage * perPage, totalItems)}</strong> dari <strong>${totalItems}</strong> hasil`;
 
-            for (let page = 1; page <= totalPages; page++) {
+            // Tombol Previous
+            const prevLi = document.createElement('li');
+            prevLi.innerHTML = `
+                <a href="?per_page=${perPage}&page=${currentPage > 1 ? currentPage - 1 : 1}"
+                   class="flex h-8 items-center justify-center border ${currentPage === 1 ? 'border-gray-300 bg-white text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400' : 'border-gray-300 bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200'} px-3 leading-tight transition-all duration-200">
+                    Previous
+                </a>
+            `;
+            pagination.appendChild(prevLi);
+
+            // Hitung rentang halaman yang ditampilkan
+            let startPage = Math.max(1, currentPage - Math.floor(visiblePages / 2));
+            let endPage = Math.min(totalPages, startPage + visiblePages - 1);
+
+            if (endPage - startPage + 1 < visiblePages) {
+                startPage = Math.max(1, endPage - visiblePages + 1);
+            }
+
+            // Tambahkan tombol halaman
+            for (let page = startPage; page <= endPage; page++) {
                 const li = document.createElement('li');
-                li.innerHTML = `<a href="?per_page=${perPage}&page=${page}"
+                li.innerHTML = `
+                    <a href="?per_page=${perPage}&page=${page}"
                     class="flex h-8 items-center justify-center border ${page === currentPage ? 'border-sky-300 bg-sky-50 text-sky-800 dark:border-sky-700 dark:bg-sky-900 dark:text-sky-200' : 'border-gray-300 bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200'} px-3 leading-tight transition-all duration-200">
-                    ${page}
-                </a>`;
+                        ${page}
+                    </a>
+                `;
                 pagination.appendChild(li);
             }
+
+            // Tombol Next
+            const nextLi = document.createElement('li');
+            nextLi.innerHTML = `
+                <a href="?per_page=${perPage}&page=${currentPage < totalPages ? currentPage + 1 : totalPages}"
+                class="flex h-8 items-center justify-center border ${currentPage === totalPages ? 'border-gray-300 bg-white text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400' : 'border-gray-300 bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200'} px-3 leading-tight transition-all duration-200">
+                    Next
+                </a>
+            `;
+            pagination.appendChild(nextLi);
         }
 
     });
