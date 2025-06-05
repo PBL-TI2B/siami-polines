@@ -138,7 +138,7 @@
                     </div>
                 </div>
             </div>
-            <div class="mt-6">
+            <div class="mt-6 flex justify-end">
                 <x-button id="submit-lock-btn" type="submit" color="sky" icon="heroicon-o-lock-closed"
                     class="px-4 py-2 text-sm font-medium">
                     Submit dan Kunci Jawaban
@@ -603,7 +603,7 @@
                                 ${auditStatus != 1 ? `<span class="text-gray-500 dark:text-gray-400 text-sm">Jawaban Terkunci</span>` : `
                                                         <div class="flex items-center justify-center gap-2">
                                                             ${response.response_id ? `
-                                            <button type="button" class="edit-btn text-sm font-medium text-white bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:ring-yellow-300 dark:bg-yellow-500 dark:hover:bg-yellow-600 dark:focus:ring-yellow-600 rounded-lg px-3 py-1.5 flex items-center" data-id="${response.response_id}" data-capaian="${response.capaian || ''}" data-lokasi="${response.lokasi_bukti_dukung || ''}" data-sasaran="${sasaran}" data-indikator="${indikator}" data-aktivitas="${groupedItem.aktivitas}" data-satuan="${item.aktivitas.satuan || ''}" data-target="${item.aktivitas.target || ''}" data-set-instrumen-id="${item.set_instrumen_unit_kerja_id}">
+                                            <button type="button" class="edit-btn text-sm font-medium text-white bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:ring-yellow-300 dark:bg-yellow-500 dark:hover:bg-yellow-600 dark:focus:ring-yellow-600 rounded-lg px-3 py-1.5 flex items-center" data-id="${response.response_id}" data-capaian="${response.capaian || ''}" data-lokasi="${response.lokasi_bukti_dukung || ''}" data-keterangan="${response.keterangan || ''}" data-sasaran="${sasaran}" data-indikator="${indikator}" data-aktivitas="${groupedItem.aktivitas}" data-satuan="${item.aktivitas.satuan || ''}" data-target="${item.aktivitas.target || ''}" data-set-instrumen-id="${item.set_instrumen_unit_kerja_id}">
                                                 <svg class="w-3 h-3 mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" /></svg>
                                                 Edit
                                             </button>
@@ -700,6 +700,7 @@
                         response_id: editBtn.getAttribute('data-id'),
                         capaian: editBtn.getAttribute('data-capaian') || '',
                         lokasi_bukti_dukung: editBtn.getAttribute('data-lokasi') || '',
+                        keterangan: editBtn.getAttribute('data-keterangan') || ''
                     };
                     const setInstrId = editBtn.getAttribute('data-set-instrumen-id');
                     const instrumen = {
