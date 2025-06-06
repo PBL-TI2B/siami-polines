@@ -125,11 +125,11 @@
                     <span class="block text-sm font-medium text-gray-700 dark:text-gray-300">Ketersediaan Standar dan Dokumen</span>
                     <label class="inline-flex items-center mt-1">
                         <input type="radio" name="ketersediaan_standar_dan_dokumen" value="Ada" class="form-radio text-sky-600">
-                        <span class="ml-2">Ada</span>
+                        <span class="ml-2 dark:text-gray-300">Ada</span>
                     </label>
                     <label class="inline-flex items-center ml-6">
                         <input type="radio" name="ketersediaan_standar_dan_dokumen" value="Tidak" class="form-radio text-red-600">
-                        <span class="ml-2">Tidak</span>
+                        <span class="ml-2 dark:text-gray-300">Tidak</span>
                     </label>
                 </div>
 
@@ -148,11 +148,11 @@
                         <span class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ $label }}</span>
                         <label class="inline-flex items-center mt-1">
                             <input type="radio" name="{{ $name }}" value="1" class="form-radio text-sky-600">
-                            <span class="ml-2">Ada</span>
+                            <span class="ml-2 dark:text-gray-300">Ada</span>
                         </label>
                         <label class="inline-flex items-center ml-6">
                             <input type="radio" name="{{ $name }}" value="0" class="form-radio text-red-600">
-                            <span class="ml-2">Tidak</span>
+                            <span class="ml-2 dark:text-gray-300">Tidak</span>
                         </label>
                     </div>
                 @endforeach
@@ -172,6 +172,37 @@
 
                 <div id="modalResponseMessage" class="mt-4 hidden text-sm"></div>
             </form>
+        </div>
+    </div>
+
+    <!-- Modal Konfirmasi Kunci -->
+    <div id="lockConfirmModal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-md p-6">
+            <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Konfirmasi Kunci Jawaban</h3>
+            <p class="text-sm text-gray-700 dark:text-gray-300 mb-6">
+                Apakah Anda yakin ingin mengunci jawaban? Tindakan ini tidak dapat dibatalkan.
+            </p>
+            <div class="flex justify-end gap-3">
+                <button id="cancelLockBtn" type="button" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400 transition-all duration-200">
+                    Batal
+                </button>
+                <button id="confirmLockBtn" type="button" class="bg-sky-600 text-white px-4 py-2 rounded-md hover:bg-sky-700 transition-all duration-200">
+                    Ya, Kunci Jawaban
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Notifikasi -->
+    <div id="notifModal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-md p-6">
+            <h3 id="notifTitle" class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100"></h3>
+            <p id="notifMessage" class="text-sm text-gray-700 dark:text-gray-300 mb-6"></p>
+            <div class="flex justify-end">
+                <button id="closeNotifBtn" type="button" class="bg-sky-600 text-white px-4 py-2 rounded-md hover:bg-sky-700 transition-all duration-200">
+                    Tutup
+                </button>
+            </div>
         </div>
     </div>
 
@@ -362,59 +393,92 @@
 
             // Handle "Submit dan Kunci Jawaban" button click
             const submitLockBtn = document.getElementById('submit-lock-btn');
+            const lockConfirmModal = document.getElementById('lockConfirmModal');
+            const notifModal = document.getElementById('notifModal');
+            const notifTitle = document.getElementById('notifTitle');
+            const notifMessage = document.getElementById('notifMessage');
+            const closeNotifBtn = document.getElementById('closeNotifBtn');
+            const cancelLockBtn = document.getElementById('cancelLockBtn');
+            const confirmLockBtn = document.getElementById('confirmLockBtn');
+
+            function showModal(modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+            function hideModal(modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+            function showNotif(title, message) {
+                notifTitle.textContent = title;
+                notifMessage.textContent = message;
+                showModal(notifModal);
+            }
+            closeNotifBtn.addEventListener('click', () => hideModal(notifModal));
+            if (cancelLockBtn) cancelLockBtn.addEventListener('click', () => hideModal(lockConfirmModal));
+
+            let lockAction = null;
+
             if (submitLockBtn) {
-                // Disable button if auditStatus is not 1 or 7
                 if (auditStatus != 1 && auditStatus != 7) {
                     submitLockBtn.disabled = true;
                     submitLockBtn.classList.add('opacity-50', 'cursor-not-allowed');
                 } else {
                     submitLockBtn.addEventListener('click', function (e) {
-                        e.preventDefault(); // Prevent default if button is in a form
-                        if (confirm('Apakah Anda yakin ingin mengunci jawaban? Tindakan ini tidak dapat dibatalkan.')) {
-                            // Tentukan status baru berdasarkan status saat ini
-                            let newStatus = auditStatus === 1 ? 2 : (auditStatus === 7 ? 8 : null);
+                        e.preventDefault();
+                        showModal(lockConfirmModal);
+                        lockAction = () => {
+                            // Ambil jumlah instrumen dan response dari variabel yang sudah ada
+                            const totalInstrumen = document.querySelectorAll('#instrumen-table-body tr').length;
+                            // Hitung response yang sudah diisi (misal: response_id ada di setiap baris)
+                            const totalResponse = Array.from(document.querySelectorAll('#instrumen-table-body tr')).filter(row => {
+                                // Cek jika ada tombol edit (berarti sudah ada response)
+                                return row.querySelector('.edit-response-btn');
+                            }).length;
 
-                            if (newStatus === null) {
-                                alert('Status audit tidak valid untuk dikunci.');
+                            if (totalResponse < totalInstrumen) {
+                                showNotif('Peringatan', 'Anda harus mengisi semua data instrumen response sebelum mengunci jawaban.');
                                 return;
                             }
 
+                            let newStatus = auditStatus === 1 ? 2 : (auditStatus === 7 ? 8 : null);
+                            if (newStatus === null) {
+                                showNotif('Gagal', 'Status audit tidak valid untuk dikunci.');
+                                return;
+                            }
                             fetch(`http://127.0.0.1:5000/api/auditings/${auditingId}`, {
                                 method: 'PUT',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
+                                headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({ status: newStatus })
                             })
                                 .then(response => {
-                                    if (!response.ok) {
-                                        throw new Error('Gagal mengunci jawaban');
-                                    }
+                                    if (!response.ok) throw new Error('Gagal mengunci jawaban');
                                     return response.json();
                                 })
                                 .then(result => {
                                     // Update all "Aksi" columns to "Jawaban Terkunci"
                                     const rows = document.querySelectorAll('#instrumen-table-body tr');
                                     rows.forEach(row => {
-                                        const actionCell = row.lastElementChild; // "Aksi" is the last td
-                                        actionCell.innerHTML = `
-                                            <span class="text-gray-500 dark:text-gray-400">Jawaban Terkunci</span>
-                                        `;
+                                        const actionCell = row.lastElementChild;
+                                        actionCell.innerHTML = `<span class="text-gray-500 dark:text-gray-400">Jawaban Terkunci</span>`;
                                         actionCell.classList.add('text-center');
                                     });
-
-                                    // Disable the submit button
                                     submitLockBtn.disabled = true;
                                     submitLockBtn.classList.add('opacity-50', 'cursor-not-allowed');
-
-                                    alert('Jawaban berhasil dikunci!');
+                                    showNotif('Berhasil', 'Jawaban berhasil dikunci!');
                                 })
                                 .catch(error => {
                                     console.error('Gagal mengunci jawaban:', error);
-                                    alert('Gagal mengunci jawaban. Silakan coba lagi.');
+                                    showNotif('Gagal', 'Gagal mengunci jawaban. Silakan coba lagi.');
                                 });
-                        }
+                        };
                     });
+                    if (confirmLockBtn) {
+                        confirmLockBtn.addEventListener('click', function () {
+                            hideModal(lockConfirmModal);
+                            if (typeof lockAction === 'function') lockAction();
+                        });
+                    }
                 }
             }
 
@@ -561,7 +625,51 @@
                     messageDiv.classList.remove('hidden', 'text-red-500');
                     messageDiv.classList.add('text-green-500');
                     messageDiv.textContent = 'Response berhasil disimpan!';
-                    setTimeout(() => location.reload(), 700);
+
+                    // Ambil response terbaru dari result.data (atau result, tergantung API Anda)
+                    const response = result.data || result;
+
+                    // Temukan baris tabel yang sesuai dengan set_instrumen_unit_kerja_id
+                    const rows = document.querySelectorAll('#instrumen-table-body tr');
+                    rows.forEach(row => {
+                        // Cek apakah tombol edit/tambah pada baris ini punya data-set-id yang sama
+                        const editBtn = row.querySelector('.edit-response-btn');
+                        const tambahBtn = row.querySelector('.tambah-response-btn');
+                        const setId = editBtn?.getAttribute('data-set-id') || tambahBtn?.getAttribute('data-set-id');
+                        if (setId == response.set_instrumen_unit_kerja_id) {
+                            // Update kolom-kolom response pada baris ini
+                            const cells = row.querySelectorAll('td');
+                            // Kolom ke-5 dst: ketersediaan, spt_pt, sn_dikti, lokal, nasional, internasional, keterangan
+                            cells[4].textContent = response.ketersediaan_standar_dan_dokumen || '-';
+                            cells[5].innerHTML = response.spt_pt == 1 ? `<svg class="w-5 h-5 text-green-600 dark:text-green-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>` : '-';
+                            cells[6].innerHTML = response.sn_dikti == 1 ? `<svg class="w-5 h-5 text-green-600 dark:text-green-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>` : '-';
+                            cells[7].innerHTML = response.lokal == 1 ? `<svg class="w-5 h-5 text-green-600 dark:text-green-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>` : '-';
+                            cells[8].innerHTML = response.nasional == 1 ? `<svg class="w-5 h-5 text-green-600 dark:text-green-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>` : '-';
+                            cells[9].innerHTML = response.internasional == 1 ? `<svg class="w-5 h-5 text-green-600 dark:text-green-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>` : '-';
+                            cells[10].textContent = response.keterangan || '-';
+
+                            // Update tombol aksi menjadi tombol edit & delete
+                            cells[11].innerHTML = `
+                                <div class="flex items-center gap-2 justify-center">
+                                    <button type="button" class="edit-response-btn text-sky-600 hover:text-sky-800 dark:text-sky-400 dark:hover:text-sky-200"
+                                        data-id="${response.response_id}" data-set-id="${response.set_instrumen_unit_kerja_id}" title="Edit Response">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M14 4a2.5 2.5 0 113.536 3.536L6.5 21H3v-3.5L14 4z"/>
+                                        </svg>
+                                    </button>
+                                    <button data-id="${response.response_id}" class="delete-btn text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200" title="Hapus">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12A2 2 0 0116.1 21H7.9a2 2 0 01-2-1.9L5 7m5-4h4m-4 0a2 2 0 00-2 2v1h8V5a2 2 0 00-2-2z"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            `;
+                        }
+                    });
+
+                    // Tutup modal setelah update
+                    tambahResponseModal.classList.add('hidden');
+                    tambahResponseModal.classList.remove('flex');
                 })
                 .catch(err => {
                     messageDiv.classList.remove('hidden', 'text-green-500');
