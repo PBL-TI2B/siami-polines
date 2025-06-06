@@ -679,6 +679,7 @@
                                     submitLockBtn.disabled = true;
                                     submitLockBtn.classList.add('opacity-50', 'cursor-not-allowed');
                                     showResponseModal('Jawaban berhasil dikunci!', 'success');
+                                    window.location.href = "{{ route('auditee.audit.index') }}";
                                 })
                                 .catch(error => {
                                     showResponseModal('Gagal mengunci jawaban. Silakan coba lagi.', 'error');

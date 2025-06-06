@@ -42,15 +42,9 @@
                 <label for="email" class="mb-2 block text-sm font-medium text-gray-700">Email</label>
                 <div class="relative">
                     <input type="email" name="email" id="email" required
-                        class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+                        class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
                         placeholder="Enter your email" />
                     <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                        {{-- <!-- Email Icon -->
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5"
-              viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M21.75 7.5v9A2.25 2.25 0 0119.5 18.75H4.5A2.25 2.25 0 012.25 16.5v-9M21.75 7.5l-9.75 6-9.75-6" />
-            </svg> --}}
                     </div>
                 </div>
             </div>
@@ -60,16 +54,18 @@
                 <label for="password" class="mb-2 block text-sm font-medium text-gray-700">Password</label>
                 <div class="relative">
                     <input type="password" name="password" id="password" required
-                        class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 pr-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+                        class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
                         placeholder="Enter your password" />
                     <button type="button" id="togglePassword"
                         class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700">
                         <!-- Eye Icon -->
                         <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                             stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12c0 1.25 3.75 6.75 9.75 6.75S21.75 13.25 21.75 12
-                     18 5.25 12 5.25 2.25 10.75 2.25 12z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M2.25 12c0 1.25 3.75 6.75 9.75 6.75S21.75 13.25 21.75 12
+                                18 5.25 12 5.25 2.25 10.75 2.25 12z" />
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                     </button>
                 </div>

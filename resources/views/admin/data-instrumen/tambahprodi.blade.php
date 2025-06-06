@@ -100,9 +100,72 @@
             </form>
         </div>
     </div>
+    {{-- modal toast --}}
+    <div id="responseModal" class="hidden fixed top-4 end-4 z-50 bg-transparent transition-opacity duration-300">
+        <div class="w-full max-w-md p-4 bg-white rounded-lg shadow-lg dark:bg-gray-800">
+            <div class="flex items-center">
+                <div class="inline-flex items-center justify-center shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-green-200" id="modalIcon">
+                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+                    </svg>
+                    <span class="sr-only">Ikon Sukses</span>
+                </div>
+                <div class="ms-3 text-sm font-normal text-gray-500 dark:text-gray-400" id="modalMessage">
+                    Action completed successfully.
+                </div>
+                <button type="button" id="closeResponseModal" class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700" aria-label="Tutup">
+                    <span class="sr-only">Tutup</span>
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
     <script>
     document.addEventListener('DOMContentLoaded', async function () {
-        // =========================== BAGIAN 1: Inisialisasi Dropdown Unit Kerja ===========================
+        // =========================== BAGIAN 1: Fungsi Toast ===========================
+        function showToast(message, type = 'success') {
+            const modal = document.getElementById('responseModal');
+            const modalMessage = document.getElementById('modalMessage');
+            const modalIcon = document.getElementById('modalIcon');
+            const closeButton = document.getElementById('closeResponseModal');
+
+            modalMessage.textContent = message;
+
+            if (type === 'success') {
+                modalIcon.innerHTML = `
+                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+                    </svg>
+                    <span class="sr-only">Ikon Sukses</span>
+                `;
+                modalIcon.className = 'inline-flex items-center justify-center shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-green-200';
+            } else {
+                modalIcon.innerHTML = `
+                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm0 16a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm1.5-4.5V4a1.5 1.5 0 1 1-3 0v7.5a1.5 1.5 0 1 1 3 0Z"/>
+                    </svg>
+                    <span class="sr-only">Ikon Error</span>
+                `;
+                modalIcon.className = 'inline-flex items-center justify-center shrink-0 w-8 h-8 text-red-500 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200';
+            }
+
+            modal.classList.remove('hidden');
+            const timeout = Math.max(3000, message.length * 50);
+            const timeoutId = setTimeout(() => {
+                modal.classList.add('hidden');
+            }, timeout);
+
+            closeButton.onclick = () => {
+                clearTimeout(timeoutId);
+                modal.classList.add('hidden');
+            };
+
+            closeButton.focus();
+        }
+
+        // =========================== BAGIAN 2: Inisialisasi Dropdown Unit Kerja ===========================
         async function populateUnitKerjaSelect() {
             const selectElement = document.getElementById('unit_kerja');
             try {
@@ -117,27 +180,23 @@
                     selectElement.appendChild(option);
                 });
             } catch (error) {
-                console.error('Gagal memuat unit kerja:', error);
                 selectElement.innerHTML = '<option value="">Gagal memuat unit kerja</option>';
             }
         }
 
-        // Panggil fungsi untuk mengisi dropdown unit kerja
         await populateUnitKerjaSelect();
 
-        // =========================== BAGIAN 2: Inisialisasi Data untuk Dropdown Kriteria ===========================
+        // =========================== BAGIAN 3: Inisialisasi Data untuk Dropdown Kriteria ===========================
         let kriteriaData = [];
 
         try {
             const kriteriaResponse = await fetch('http://127.0.0.1:5000/api/kriteria');
             const kriteriaResult = await kriteriaResponse.json();
             kriteriaData = kriteriaResult.filter(item => item.nama_kriteria.trim() !== '');
-            console.log('Kriteria Data:', kriteriaData);
         } catch (error) {
-            console.error('Gagal memuat kriteria:', error);
+            // Error handling removed
         }
 
-        // Fungsi untuk mengisi dropdown kriteria
         function populateKriteriaSelect(selectElement) {
             selectElement.innerHTML = '<option value="">Pilih Kriteria</option>';
             if (kriteriaData.length === 0) {
@@ -146,22 +205,20 @@
             }
             kriteriaData.forEach(kriteria => {
                 const option = document.createElement('option');
-                option.value = kriteria.kriteria_id; // Menggunakan kriteria_id sebagai value
-                option.textContent = kriteria.nama_kriteria; // Nama kriteria sebagai teks yang ditampilkan
+                option.value = kriteria.kriteria_id;
+                option.textContent = kriteria.nama_kriteria;
                 selectElement.appendChild(option);
             });
         }
 
-        // Inisialisasi dropdown kriteria awal
         const initialKriteriaSelect = document.getElementById('kriteria_0');
         if (initialKriteriaSelect) {
             populateKriteriaSelect(initialKriteriaSelect);
         }
 
-        // =========================== BAGIAN 3: Fungsionalitas Dinamis Form ===========================
+        // =========================== BAGIAN 4: Fungsionalitas Dinamis Form ===========================
         let kriteriaIndex = 0;
 
-        // Tambah Kriteria (dengan dropdown untuk nama_kriteria)
         document.getElementById('add-kriteria').addEventListener('click', function () {
             kriteriaIndex++;
             const kriteriaContainer = document.getElementById('kriteria-container');
@@ -211,7 +268,6 @@
             populateKriteriaSelect(document.getElementById(`kriteria_${kriteriaIndex}`));
         });
 
-        // Tambah Deskripsi (dengan input teks untuk isi_deskripsi)
         document.addEventListener('click', function (e) {
             if (e.target.classList.contains('add-deskripsi')) {
                 const deskripsiContainer = e.target.closest('.kriteria-item').querySelector('.deskripsi-container');
@@ -232,6 +288,8 @@
                             <button type="button" class="mt-2 bg-red-100 text-red-600 hover:text-red-800 text-sm font-medium py-1 px-3 rounded remove-unsur">
                                 Hapus Unsur
                             </button>
+    “
+
                         </div>
                     </div>
                     <button type="button" class="mt-2 bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-medium py-1 px-3 rounded add-unsur">
@@ -245,7 +303,6 @@
             }
         });
 
-        // Tambah Unsur (dengan input teks untuk isi_unsur)
         document.addEventListener('click', function (e) {
             if (e.target.classList.contains('add-unsur')) {
                 const unsurContainer = e.target.closest('.deskripsi-item').querySelector('.unsur-container');
@@ -266,64 +323,58 @@
             }
         });
 
-        // Hapus Kriteria
         document.addEventListener('click', function (e) {
             if (e.target.classList.contains('remove-kriteria')) {
                 const kriteriaItem = e.target.closest('.kriteria-item');
                 if (document.querySelectorAll('.kriteria-item').length > 1) {
                     kriteriaItem.remove();
                 } else {
-                    alert('Setidaknya satu kriteria harus ada.');
+                    showToast('Setidaknya satu kriteria harus ada.', 'error');
                 }
             }
         });
 
-        // Hapus Deskripsi
         document.addEventListener('click', function (e) {
             if (e.target.classList.contains('remove-deskripsi')) {
                 const deskripsiItem = e.target.closest('.deskripsi-item');
                 if (deskripsiItem.closest('.deskripsi-container').querySelectorAll('.deskripsi-item').length > 1) {
                     deskripsiItem.remove();
                 } else {
-                    alert('Setidaknya satu deskripsi harus ada.');
+                    showToast('Setidaknya satu deskripsi harus ada.', 'error');
                 }
             }
         });
 
-        // Hapus Unsur
         document.addEventListener('click', function (e) {
             if (e.target.classList.contains('remove-unsur')) {
                 const unsurItem = e.target.closest('.unsur-item');
                 if (unsurItem.closest('.unsur-container').querySelectorAll('.unsur-item').length > 1) {
                     unsurItem.remove();
                 } else {
-                    alert('Setidaknya satu unsur harus ada.');
+                    showToast('Setidaknya satu unsur harus ada.', 'error');
                 }
             }
         });
 
-        // =========================== BAGIAN 4: Pengiriman Form ===========================
+        // =========================== BAGIAN 5: Pengiriman Form ===========================
         document.getElementById('instrument-form').addEventListener('submit', function (e) {
             e.preventDefault();
 
             const formData = new FormData(this);
             const unitKerjaId = formData.get('unit_kerja_id') ? parseInt(formData.get('unit_kerja_id')) : null;
 
-            // Validasi unit_kerja_id
             if (!unitKerjaId) {
-                alert('Pilih Unit Kerja terlebih dahulu.');
+                showToast('Pilih Unit Kerja terlebih dahulu.', 'error');
                 return;
             }
 
             const data = { kriteria: [] };
-
-            // Mengumpulkan data dari form
             let isValid = true;
             const errors = [];
 
             document.querySelectorAll('.kriteria-item').forEach((kriteriaItem, kIndex) => {
                 const kriteriaSelect = kriteriaItem.querySelector(`select[name="kriteria[${kIndex}][nama_kriteria]"]`);
-                const namaKriteriaId = kriteriaSelect.value; // Ambil kriteria_id dari value
+                const namaKriteriaId = kriteriaSelect.value;
                 const kriteriaName = kriteriaData.find(k => k.kriteria_id == namaKriteriaId)?.nama_kriteria || '';
 
                 if (!namaKriteriaId || namaKriteriaId === '') {
@@ -333,7 +384,7 @@
                 }
 
                 const kriteria = {
-                    nama_kriteria: kriteriaName, // Gunakan nama_kriteria dari kriteriaData
+                    nama_kriteria: kriteriaName,
                     deskripsi: []
                 };
 
@@ -388,20 +439,18 @@
                 isValid = false;
             }
 
-            // Tampilkan semua error sekaligus
             if (!isValid) {
-                alert(errors.join('\n'));
+                showToast(errors.join('\n'), 'error');
                 return;
             }
 
-            // Transformasi data ke format API
             const payload = [];
             data.kriteria.forEach(kriteria => {
                 kriteria.deskripsi.forEach(deskripsi => {
                     deskripsi.unsur.forEach(unsur => {
                         payload.push({
                             jenis_unit_id: unsur.unit_kerja_id,
-                            aktivitas_id: null, // Secara eksplisit menyertakan aktivitas_id
+                            aktivitas_id: null,
                             unsur: {
                                 isi_unsur: unsur.isi_unsur,
                                 deskripsi: {
@@ -416,10 +465,6 @@
                 });
             });
 
-            // Debugging: Log payload sebelum dikirim
-            console.log('Payload yang akan dikirim:', payload);
-
-            // Kirim data ke API
             fetch('http://127.0.0.1:5000/api/set-instrumen', {
                 method: 'POST',
                 headers: {
@@ -435,12 +480,13 @@
                     return response.json();
                 })
                 .then(result => {
-                    alert('Data berhasil disimpan!');
-                    window.location.href = '{{ route("admin.data-instrumen.instrumenprodi") }}';
+                    showToast('Data berhasil disimpan!', 'success');
+                    setTimeout(() => {
+                        window.location.href = '{{ route("admin.data-instrumen.instrumenprodi") }}';
+                    }, 1000);
                 })
                 .catch(error => {
-                    console.error('Gagal menyimpan data:', error);
-                    alert('Gagal menyimpan data. Silakan coba lagi. Periksa konsol untuk detail.');
+                    showToast('Gagal menyimpan data. Silakan coba lagi.', 'error');
                 });
         });
     });
