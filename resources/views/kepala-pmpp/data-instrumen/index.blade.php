@@ -19,13 +19,9 @@
         <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
             <!-- Action Buttons -->
             <div class="flex flex-wrap gap-2">
-
                 <x-button href="{{ route('admin.data-instrumen.export') }}" color="sky" icon="heroicon-o-document-arrow-down" class="shadow-md hover:shadow-lg transition-all">
                     Unduh Data
                 </x-button>
-                <!-- <x-button href="#" color="yellow" icon="heroicon-o-document-arrow-up" class="shadow-md hover:shadow-lg transition-all">
-                    Import Data
-                </x-button> -->
             </div>
 
             <!-- Filter Dropdowns -->
