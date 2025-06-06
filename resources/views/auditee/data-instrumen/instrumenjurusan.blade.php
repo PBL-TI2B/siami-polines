@@ -11,7 +11,7 @@
         ]" />
 
         <h1 class="mb-6 text-2xl font-semibold text-gray-900 dark:text-gray-200">
-            Pengisian Instrumen Jurusan
+            Pengisian Instrumen {{ $audit['unit_kerja']['nama_unit_kerja'] ?? 'Jurusan' }}
         </h1>
 
         {{-- Pesan Informasi Akses Dibatasi (akan selalu tampil jika status bukan 1) --}}
@@ -186,26 +186,38 @@
                     </div>
                     <div class="space-y-4">
                         <div>
-                            <label for="capaian"
-                                class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Capaian</label>
+                            <label for="capaian" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Capaian
+                                <span class="font-semibold text-red-600">*</span>
+                            </label>
                             <input type="text" name="capaian" id="capaian"
                                 class="block w-full rounded-lg border border-gray-300 px-3 py-2.5 focus:border-sky-500 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
-                                placeholder="Masukkan nilai capaian (contoh: 85)" required>
-                            <span id="capaian-error" class="mt-1 hidden text-sm font-medium text-red-600"></span>
+                                placeholder="Masukkan nilai capaian (contoh: 85)" required
+                                oninvalid="this.setCustomValidity('Mohon isi bagian ini')"
+                                oninput="this.setCustomValidity('')">
+                            <span id="capaian-error" class="mt-1 hidden text-sm font-medium text-red-600">Capaian wajib
+                                diisi.</span>
                         </div>
                         <div>
                             <label for="lokasi_bukti_dukung"
-                                class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Link Bukti
-                                Dukung</label>
+                                class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Link Bukti Dukung
+                                <span class="font-semibold text-red-600">*</span>
+                            </label>
                             <input type="text" name="lokasi_bukti_dukung" id="lokasi_bukti_dukung"
                                 class="block w-full rounded-lg border border-gray-300 px-3 py-2.5 focus:border-sky-500 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
-                                placeholder="Masukkan URL bukti dukung (contoh: https://example.com/bukti)">
-                            <span id="lokasi_bukti_dukung-error"
-                                class="mt-1 hidden text-sm font-medium text-red-600"></span>
+                                placeholder="Masukkan URL bukti dukung (contoh: https://example.com/bukti)" required
+                                oninvalid="this.setCustomValidity('Mohon isi bagian ini')"
+                                oninput="this.setCustomValidity('')">
+                            <span id="lokasi_bukti_dukung-error" class="mt-1 hidden text-sm font-medium text-red-600">Link
+                                bukti dukung wajib diisi.</span>
                         </div>
                         <div>
                             <label for="keterangan"
-                                class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Keterangan</label>
+                                class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Keterangan
+                                {{-- <span class="text-gray-400">(opsional)</span> --}}
+                            </label>
                             <textarea name="keterangan" id="keterangan"
                                 class="block w-full rounded-lg border border-gray-300 px-3 py-2.5 focus:border-sky-500 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                                 rows="4" placeholder="Masukkan keterangan tambahan (opsional)"></textarea>
@@ -491,14 +503,22 @@
                 let filteredData = allInstrumenData.filter(item => {
                     const searchTerm = searchQuery.toLowerCase();
                     return (
-                        (item.aktivitas.indikator_kinerja.sasaran_strategis.nama_sasaran || '').toLowerCase().includes(searchTerm) ||
-                        (item.aktivitas.indikator_kinerja.isi_indikator_kinerja || '').toLowerCase().includes(searchTerm) ||
+                        (item.aktivitas.indikator_kinerja.sasaran_strategis.nama_sasaran || '')
+                        .toLowerCase().includes(searchTerm) ||
+                        (item.aktivitas.indikator_kinerja.isi_indikator_kinerja || '').toLowerCase()
+                        .includes(searchTerm) ||
                         (item.aktivitas.nama_aktivitas || '').toLowerCase().includes(searchTerm) ||
                         (item.aktivitas.satuan || '').toLowerCase().includes(searchTerm) ||
                         (item.aktivitas.target || '').toLowerCase().includes(searchTerm) ||
-                        (allResponseData.find(res => res.set_instrumen_unit_kerja_id === item.set_instrumen_unit_kerja_id)?.capaian || '').toLowerCase().includes(searchTerm) ||
-                        (allResponseData.find(res => res.set_instrumen_unit_kerja_id === item.set_instrumen_unit_kerja_id)?.lokasi_bukti_dukung || '').toLowerCase().includes(searchTerm) ||
-                        (allResponseData.find(res => res.set_instrumen_unit_kerja_id === item.set_instrumen_unit_kerja_id)?.keterangan || '').toLowerCase().includes(searchTerm)
+                        (allResponseData.find(res => res.set_instrumen_unit_kerja_id === item
+                            .set_instrumen_unit_kerja_id)?.capaian || '').toLowerCase().includes(
+                            searchTerm) ||
+                        (allResponseData.find(res => res.set_instrumen_unit_kerja_id === item
+                            .set_instrumen_unit_kerja_id)?.lokasi_bukti_dukung || '').toLowerCase()
+                        .includes(searchTerm) ||
+                        (allResponseData.find(res => res.set_instrumen_unit_kerja_id === item
+                            .set_instrumen_unit_kerja_id)?.keterangan || '').toLowerCase().includes(
+                            searchTerm)
 
                     );
                 });
@@ -511,7 +531,9 @@
 
                     if (!grouped[sasaran]) grouped[sasaran] = {};
                     if (!grouped[sasaran][indikator]) grouped[sasaran][indikator] = {};
-                    if (!grouped[sasaran][indikator][aktivitas]) grouped[sasaran][indikator][aktivitas] = [];
+                    if (!grouped[sasaran][indikator][aktivitas]) grouped[sasaran][indikator][
+                        aktivitas
+                    ] = [];
                     grouped[sasaran][indikator][aktivitas].push(item);
                 });
 
@@ -601,8 +623,8 @@
                             <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center">${response.keterangan || '-'}</td>
                             <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center">
                                 ${auditStatus != 1 ? `<span class="text-gray-500 dark:text-gray-400 text-sm">Jawaban Terkunci</span>` : `
-                                                        <div class="flex items-center justify-center gap-2">
-                                                            ${response.response_id ? `
+                                                                    <div class="flex items-center justify-center gap-2">
+                                                                        ${response.response_id ? `
                                             <button type="button" class="edit-btn text-sm font-medium text-white bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:ring-yellow-300 dark:bg-yellow-500 dark:hover:bg-yellow-600 dark:focus:ring-yellow-600 rounded-lg px-3 py-1.5 flex items-center" data-id="${response.response_id}" data-capaian="${response.capaian || ''}" data-lokasi="${response.lokasi_bukti_dukung || ''}" data-keterangan="${response.keterangan || ''}" data-sasaran="${sasaran}" data-indikator="${indikator}" data-aktivitas="${groupedItem.aktivitas}" data-satuan="${item.aktivitas.satuan || ''}" data-target="${item.aktivitas.target || ''}" data-set-instrumen-id="${item.set_instrumen_unit_kerja_id}">
                                                 <svg class="w-3 h-3 mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" /></svg>
                                                 Edit
@@ -617,8 +639,8 @@
                                                 Jawab
                                             </button>
                                         `}
-                                                        </div>
-                                                    `}
+                                                                    </div>
+                                                                `}
                             </td>
                         `;
                         row.innerHTML = html;
@@ -904,6 +926,17 @@
                     showCustomMessage(
                         'Penguncian jawaban hanya diperbolehkan pada status "Pengisian Instrumen".',
                         'error');
+                    return;
+                }
+                // CEK: Semua instrumen harus sudah diisi responsenya
+                const belumDiisi = allInstrumenData.filter(instr =>
+                    !allResponseData.find(res => res.set_instrumen_unit_kerja_id === instr
+                        .set_instrumen_unit_kerja_id)
+                );
+                if (belumDiisi.length > 0) {
+                    showCustomMessage(
+                        `Masih ada ${belumDiisi.length} instrumen yang belum diisi. Silakan lengkapi semua jawaban sebelum mengunci.`
+                    );
                     return;
                 }
                 showCustomConfirm(

@@ -219,6 +219,7 @@ class AuditController extends Controller
 
             // Render view dengan data yang diperlukan
             return view('auditee.data-instrumen.instrumenupt', [
+                'audit' => $audit,
                 'auditingId' => $auditingId,
                 'unitKerjaId' => session('unit_kerja_id'),
                 'status' => session('status'),
@@ -292,6 +293,7 @@ class AuditController extends Controller
 
             // Render view dengan data yang diperlukan
             return view('auditee.data-instrumen.instrumenjurusan', [
+                'audit' => $audit,
                 'auditingId' => $auditingId,
                 'unitKerjaId' => session('unit_kerja_id'),
                 'status' => session('status'),
