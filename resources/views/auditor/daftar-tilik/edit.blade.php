@@ -76,13 +76,39 @@
     <!-- Response Message -->
     <div id="responseMessage" class="mt-4 hidden text-sm"></div>
 </div>
+<!-- Toast Notification -->
+    <div id="responseToast" class="hidden fixed top-4 end-4 z-50 bg-transparent transition-opacity duration-300">
+        <div class="w-full max-w-md p-4 bg-white rounded-lg shadow-lg dark:bg-gray-800">
+            <div class="flex items-center">
+                <div id="toastIcon" class="inline-flex items-center justify-center shrink-0 w-8 h-8 rounded-lg">
+                    <svg id="toastSuccessIcon" class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+                    </svg>
+                    <svg id="toastErrorIcon" class="w-5 h-5 hidden" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m13 7-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    <span class="sr-only">Toast Icon</span>
+                </div>
+                <div class="ms-3 text-sm font-normal text-gray-500 dark:text-gray-400" id="toastMessage">
+                    Action completed.
+                </div>
+                <button type="button" id="closeToast" class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700" aria-label="Tutup">
+                    <span class="sr-only">Tutup</span>
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const select = document.getElementById('kriteria');
 
     const kriteriaList = [
-        { id: 1, nama: "1. Visi,  Misi, Tujuan, Strategi" },
+        { id: 1, nama: "1. Visi, Misi, Tujuan, Strategi" },
         { id: 2, nama: "2. Tata Kelola, Tata Pamong, dan Kerjasama" },
         { id: 3, nama: "3. Mahasiswa" },
         { id: 4, nama: "4. Sumber Daya Manusia" },
@@ -100,6 +126,45 @@ document.addEventListener('DOMContentLoaded', function () {
         select.appendChild(option);
     });
 
+    // Function to show toast notification
+    function showToast(message, type = 'success') {
+        const responseToast = document.getElementById('responseToast');
+        const toastMessage = document.getElementById('toastMessage');
+        const toastIcon = document.getElementById('toastIcon');
+        const toastSuccessIcon = document.getElementById('toastSuccessIcon');
+        const toastErrorIcon = document.getElementById('toastErrorIcon');
+
+        // Update toast message
+        toastMessage.textContent = message;
+
+        // Update styling and icon based on type
+        if (type === 'success') {
+            toastIcon.classList.remove('text-red-500', 'bg-red-100', 'dark:text-red-200', 'dark:bg-red-800');
+            toastIcon.classList.add('text-green-500', 'bg-green-100', 'dark:text-green-200', 'dark:bg-green-800');
+            toastSuccessIcon.classList.remove('hidden');
+            toastErrorIcon.classList.add('hidden');
+        } else {
+            toastIcon.classList.remove('text-green-500', 'bg-green-100', 'dark:text-green-200', 'dark:bg-green-800');
+            toastIcon.classList.add('text-red-500', 'bg-red-100', 'dark:text-red-200', 'dark:bg-red-800');
+            toastSuccessIcon.classList.add('hidden');
+            toastErrorIcon.classList.remove('hidden');
+        }
+
+        // Show toast
+        responseToast.classList.remove('hidden');
+
+        // Auto-hide after 3 seconds
+        setTimeout(() => {
+            responseToast.classList.add('hidden');
+        }, 3000);
+    }
+
+    // Close toast on button click
+    document.getElementById('closeToast').addEventListener('click', () => {
+        document.getElementById('responseToast').classList.add('hidden');
+    });
+
+    // Fetch existing data
     fetch('http://127.0.0.1:5000/api/tilik/{{ $id }}')
         .then(response => {
             if (!response.ok) {
@@ -117,21 +182,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.getElementById('metode_perhitungan').value = tilik.metode_perhitungan || '';
                 document.getElementById('target').value = tilik.target || '';
             } else {
-                showError(data.message || 'Gagal memuat data.');
+                showToast(data.message || 'Gagal memuat data.', 'error');
             }
         })
         .catch(error => {
-            showError('Error fetching data: ' + error.message);
+            showToast('Error fetching data: ' + error.message, 'error');
         });
 
-    function showError(message) {
-        const flash = document.getElementById('flashMessage');
-        flash.classList.remove('hidden');
-        flash.classList.add('bg-red-500', 'text-white');
-        flash.textContent = message;
-    }
-
-    // Kirim PUT saat form disubmit
+    // Handle form submission
     document.getElementById('tilikForm').addEventListener('submit', function (e) {
         e.preventDefault(); // Stop form default
 
@@ -159,14 +217,17 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(data => {
             if (data.success) {
-                // Redirect to the index page to trigger session('success') toast
-                window.location.href = "{{ route('auditor.daftar-tilik.index') }}";
+                showToast(data.message || 'Data berhasil diperbarui.', 'success');
+                // Redirect to trigger session-based toast
+                setTimeout(() => {
+                    window.location.href = "{{ route('auditor.daftar-tilik.index') }}";
+                }, 3000);
             } else {
-                showError('Gagal update: ' + data.message);
+                showToast('Gagal update: ' + data.message, 'error');
             }
         })
         .catch(error => {
-            showError('Terjadi kesalahan: ' + error.message);
+            showToast('Terjadi kesalahan: ' + error.message, 'error');
         });
     });
 });

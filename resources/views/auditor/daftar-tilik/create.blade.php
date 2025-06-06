@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah Pertanyaan')
+@section('title', 'Tambah Pertanyaan Tilik')
 
 @section('content')
     <div class="max-w-3xl mx-auto py-6">
-        <h1 class="text-2xl font-bold mb-4">Tambah Pertanyaan</h1>
+        <h1 class="text-2xl font-bold mb-4">Tambah Pertanyaan Tilik</h1>
 
         <!-- Flash Message Container -->
         <div id="flashMessage" class="hidden fixed top-4 right-4 z-50 p-4 rounded-md shadow-lg"></div>
@@ -72,13 +72,33 @@
         <!-- Response Message -->
         <div id="responseMessage" class="mt-4 hidden text-sm"></div>
     </div>
+    <!-- Modal Toast -->
+    <div id="responseModal" class="hidden fixed top-4 end-4 z-50 bg-transparent transition-opacity duration-300">
+        <div class="w-full max-w-md p-4 bg-white rounded-lg shadow-lg dark:bg-gray-800">
+            <div class="flex items-center">
+                <div id="modalIcon" class="inline-flex items-center justify-center shrink-0 w-8 h-8 rounded-lg">
+                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+                    </svg>
+                    <span class="sr-only">Ikon Sukses</span>
+                </div>
+                <div class="ms-3 text-sm font-normal text-gray-500 dark:text-gray-400" id="modalMessage">
+                    Action completed successfully.
+                </div>
+                <button type="button" id="closeResponseModal" class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700" aria-label="Tutup">
+                    <span class="sr-only">Tutup</span>
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
 
     <script>
         // Fetch Kriteria Data on Page Load
         async function loadKriteria() {
             const kriteriaSelect = document.getElementById('kriteria');
-            const responseMessage = document.getElementById('responseMessage');
-
             try {
                 const response = await fetch('http://127.0.0.1:5000/api/kriteria', {
                     method: 'GET',
@@ -93,8 +113,8 @@
 
                 const kriterias = await response.json();
 
-                // Clear existing options except therape
-                kriteriaSelect.innerHTML = '<option value="" disabled selected class="text-gray-400">Pilih Kriteria</option>';
+                // Clear existing options except the placeholder
+                kriteriaSelect.innerHTML = '<option value="" disabled selected classbtn btn-sm btn-success text-gray-400">Pilih Kriteria</option>';
 
                 // Populate dropdown with kriteria data
                 kriterias.forEach(kriteria => {
@@ -105,26 +125,42 @@
                     kriteriaSelect.appendChild(option);
                 });
             } catch (error) {
-                // Display error message
-                responseMessage.classList.remove('hidden');
-                responseMessage.classList.add('text-red-600');
-                responseMessage.textContent = 'Error loading kriteria: ' + error.message;
+                // Display error message using modal toast
+                showFlashMessage('Error loading kriteria: ' + error.message, 'error');
             }
         }
 
-        // Function to show flash message
+        // Function to show modal toast
         function showFlashMessage(message, type = 'success') {
-            const flashMessage = document.getElementById('flashMessage');
-            flashMessage.classList.remove('hidden');
-            flashMessage.classList.add(type === 'success' ? 'bg-green-500' : 'bg-red-500', 'text-white');
-            flashMessage.textContent = message;
+            const responseModal = document.getElementById('responseModal');
+            const modalMessage = document.getElementById('modalMessage');
+            const modalIcon = document.getElementById('modalIcon');
 
-            // Hide flash message after 3 seconds
+            // Update modal message
+            modalMessage.textContent = message;
+
+            // Update styling based on type
+            if (type === 'success') {
+                modalIcon.classList.remove('text-red-500', 'bg-red-100', 'dark:text-red-200', 'dark:bg-red-800');
+                modalIcon.classList.add('text-green-500', 'bg-green-100', 'dark:text-green-200', 'dark:bg-green-800');
+            } else {
+                modalIcon.classList.remove('text-green-500', 'bg-green-100', 'dark:text-green-200', 'dark:bg-green-800');
+                modalIcon.classList.add('text-red-500', 'bg-red-100', 'dark:text-red-200', 'dark:bg-red-800');
+            }
+
+            // Show modal
+            responseModal.classList.remove('hidden');
+
+            // Auto-hide after 3 seconds
             setTimeout(() => {
-                flashMessage.classList.add('hidden');
-                flashMessage.classList.remove('bg-green-500', 'bg-red-500');
+                responseModal.classList.add('hidden');
             }, 3000);
         }
+
+        // Close modal on button click
+        document.getElementById('closeResponseModal').addEventListener('click', () => {
+            document.getElementById('responseModal').classList.add('hidden');
+        });
 
         // Handle Form Submission
         document.getElementById('tilikForm').addEventListener('submit', async function (event) {
@@ -140,9 +176,6 @@
                 target: document.getElementById('target').value,
             };
 
-            // Response message element
-            const responseMessage = document.getElementById('responseMessage');
-
             try {
                 // Send POST request to the API
                 const response = await fetch('http://127.0.0.1:5000/api/tilik', {
@@ -155,13 +188,8 @@
 
                 const result = await response.json();
 
-                // Display response
-                responseMessage.classList.remove('hidden');
+                // Display response using modal toast
                 if (result.success) {
-                    responseMessage.classList.add('text-green-600');
-                    responseMessage.textContent = result.message;
-
-                    // Show flash message
                     showFlashMessage(result.message);
 
                     // Reset form
@@ -172,15 +200,10 @@
                         window.location.href = "{{ route('auditor.daftar-tilik.index') }}";
                     }, 3000);
                 } else {
-                    responseMessage.classList.add('text-red-600');
-                    responseMessage.textContent = 'Gagal menyimpan data: ' + (result.message || 'Unknown error');
                     showFlashMessage('Gagal menyimpan data: ' + (result.message || 'Unknown error'), 'error');
                 }
             } catch (error) {
                 // Handle network or other errors
-                responseMessage.classList.remove('hidden');
-                responseMessage.classList.add('text-red-600');
-                responseMessage.textContent = 'Error: ' + error.message;
                 showFlashMessage('Error: ' + error.message, 'error');
             }
         });
