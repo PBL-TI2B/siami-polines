@@ -112,13 +112,14 @@
                     1: { label: 'Pengisian Instrumen', color: 'bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-300' },
                     2: { label: 'Desk Evaluation', color: 'bg-sky-100 dark:bg-sky-800 text-sky-700 dark:text-sky-300' },
                     3: { label: 'Penjadwalan AL', color: 'bg-sky-100 dark:bg-sky-800 text-sky-700 dark:text-sky-300' },
-                    4: { label: 'Pertanyaan Tilik', color: 'bg-yellow-100 dark:bg-yellow-800 text-yellow-700 dark:text-yellow-300' },
-                    5: { label: 'Tilik Dijawab', color: 'bg-amber-100 dark:bg-amber-800 text-amber-700 dark:text-amber-300' },
-                    6: { label: 'Laporan Temuan', color: 'bg-orange-100 dark:bg-orange-800 text-orange-700 dark:text-orange-300' },
-                    7: { label: 'Revisi Auditee', color: 'bg-rose-100 dark:bg-rose-800 text-rose-700 dark:text-rose-300' },
-                    8: { label: 'Sudah Revisi', color: 'bg-pink-100 dark:bg-pink-800 text-pink-700 dark:text-pink-300' },
-                    9: { label: 'Closing', color: 'bg-teal-100 dark:bg-teal-800 text-teal-700 dark:text-teal-300' },
-                    10: { label: 'Selesai', color: 'bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-300' }
+                    4: { label: 'Dijadwalkan AL', color: 'bg-yellow-100 dark:bg-yellow-800 text-yellow-700 dark:text-yellow-300' },
+                    5: { label: 'Pertanyaan Tilik', color: 'bg-yellow-100 dark:bg-yellow-800 text-yellow-700 dark:text-yellow-300' },
+                    6: { label: 'Tilik Dijawab', color: 'bg-amber-100 dark:bg-amber-800 text-amber-700 dark:text-amber-300' },
+                    7: { label: 'Laporan Temuan', color: 'bg-orange-100 dark:bg-orange-800 text-orange-700 dark:text-orange-300' },
+                    8: { label: 'Revisi Auditee', color: 'bg-rose-100 dark:bg-rose-800 text-rose-700 dark:text-rose-300' },
+                    9: { label: 'Sudah Revisi', color: 'bg-pink-100 dark:bg-pink-800 text-pink-700 dark:text-pink-300' },
+                    10: { label: 'Closing', color: 'bg-teal-100 dark:bg-teal-800 text-teal-700 dark:text-teal-300' },
+                    11: { label: 'Selesai', color: 'bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-300' }
                 };
 
                 audits.forEach((item, index) => {
