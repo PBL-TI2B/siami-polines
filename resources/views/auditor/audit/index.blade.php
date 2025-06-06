@@ -74,13 +74,14 @@
         1: 'Pengisian Instrumen',
         2: 'Desk Evaluation',
         3: 'Penjadwalan AL',
-        4: 'Pertanyaan Tilik',
-        5: 'Tilik Dijawab',
-        6: 'Laporan Temuan',
-        7: 'Revisi',
-        8: 'Sudah revisi',
-        9: 'Closing',
-        10: 'Selesai'
+        4: 'Dijadwalkan AL',
+        5: 'Pertanyaan Tilik',
+        6: 'Tilik Dijawab',
+        7: 'Laporan Temuan',
+        8: 'Revisi',
+        9: 'Sudah revisi',
+        10: 'Closing',
+        11: 'Selesai'
     };
     const statusName = statusMap[item.status] ?? 'Status Tidak Diketahui';
 

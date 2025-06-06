@@ -125,7 +125,7 @@ class PlotingAMIController extends Controller
         if (in_array($auditStatus, [3, 4])) {
             Log::info('Updating status', ['auditingId' => $auditingId, 'auditStatus' => $auditStatus]);
             $statusResponse = Http::asJson()->put("http://127.0.0.1:5000/api/auditings/$auditingId", [
-                'status' => 3,
+                'status' => 4,
             ]);
 
             if (!$statusResponse->successful()) {
@@ -148,7 +148,7 @@ class PlotingAMIController extends Controller
             return redirect()->route('auditor.assesmen-lapangan.index')->with('error', 'Auditing record not found after update');
         }
 
-        return view('auditor.audit.index');
+        return redirect()->route('auditor.audit.index');
     }
 
     public function getAllJadwalAudit() {
