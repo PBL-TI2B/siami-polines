@@ -170,7 +170,7 @@
 
             function updateOverallProgress(statusAuditGlobal) {
                 const statusGlobal = parseInt(statusAuditGlobal) || 0;
-                if (statusGlobal === 1) updateStepUI(1, 'current');
+                if (statusGlobal === 1 || statusGlobal === 8) updateStepUI(1, 'current');
                 else if (statusGlobal > 1) updateStepUI(1, 'completed');
                 else updateStepUI(1, 'pending');
 

@@ -546,7 +546,7 @@
 
         if (backBtn) {
             backBtn.addEventListener('click', function () {
-                window.location.href = "{{ route('auditor.audit.index') }}";
+                window.history.back();
             });
         }
 

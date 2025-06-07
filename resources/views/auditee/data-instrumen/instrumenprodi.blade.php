@@ -501,7 +501,7 @@
                         <td class="px-6 py-4 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">${renderChecklist(response.internasional)}</td>
                         <td class="px-6 py-4 sm:px-6 border border-gray-200 dark:border-gray-600">${response.keterangan || '-'}</td>
                         <td class="px-6 py-4 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">
-                            ${!(auditStatus == 1 || auditStatus == 7) ?
+                            ${!(auditStatus == 1 || auditStatus == 8) ?
                                 `<span class="text-gray-500 dark:text-gray-400">Jawaban Terkunci</span>` :
                                 `<div class="flex items-center gap-2 justify-center">
                                     ${response.response_id ?
@@ -639,7 +639,7 @@
 
             let lockAction = null;
             if (submitLockBtn) {
-                if (auditStatus != 1 && auditStatus != 7) {
+                if (auditStatus != 1 && auditStatus != 8) {
                     submitLockBtn.disabled = true;
                     submitLockBtn.classList.add('opacity-50', 'cursor-not-allowed');
                 } else {
@@ -655,7 +655,7 @@
                                 return;
                             }
 
-                            const newStatus = auditStatus === 1 ? 2 : (auditStatus === 7 ? 8 : null);
+                            const newStatus = auditStatus === 1 ? 2 : (auditStatus === 8 ? 9 : null);
                             if (newStatus === null) {
                                 showResponseModal('Status audit tidak valid untuk dikunci.', 'error');
                                 return;
