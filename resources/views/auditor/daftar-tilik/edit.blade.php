@@ -4,6 +4,13 @@
 
 @section('content')
 <div class="max-w-3xl mx-auto py-6">
+    <!-- Breadcrumb -->
+    <x-breadcrumb :items="[
+        ['label' => 'Dashboard', 'url' => route('auditor.dashboard.index')],
+        ['label' => 'Audit', 'url' => route('auditor.audit.index')],
+        ['label' => 'Buat Pertanyaan Daftar Tilik', 'url' => route('auditor.daftar-tilik.index')],
+        ['label' => 'Edit Pertanyaan Daftar Tilik'],
+    ]" />
     <h1 class="text-2xl font-bold mb-4">Edit Pertanyaan</h1>
 
     <!-- Flash Message Container -->

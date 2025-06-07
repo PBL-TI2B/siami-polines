@@ -6,8 +6,8 @@
     <div class="max-w-3xl mx-auto py-6">
         <!-- Breadcrumb -->
         <x-breadcrumb :items="[
-            ['label' => 'Dashboard', 'url' => route('auditor.dashboard.index')],
-            ['label' => 'Audit', 'url' => route('auditor.audit.index')],
+            ['label' => 'Dashboard', 'url' => route('auditee.dashboard.index')],
+            ['label' => 'Audit', 'url' => route('auditee.audit.index')],
             ['label' => 'Daftar Tilik', 'url' => route('auditee.daftar-tilik.index')],
             ['label' => 'Edit Response Daftar Tilik'],
         ]" />
