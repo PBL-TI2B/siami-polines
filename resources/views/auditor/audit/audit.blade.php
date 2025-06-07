@@ -13,130 +13,143 @@
         <h2 class="mb-8 text-3xl font-bold text-gray-900 dark:text-gray-200">
             Progress Auditing {{ $auditing->unitKerja->nama_unit_kerja ?? '-' }}
         </h2>
-        <div class="bg-white dark:bg-gray-800 shadow sm:rounded-lg p-8">
-            @php
-            $status = $auditing->status;
-            @endphp
-            <ol class="pl-5 relative text-gray-500 border-s border-gray-200 dark:border-gray-700 dark:text-gray-400">
-                {{-- Koreksi Respon Instrumen --}}
+        <div class="flex flex-row gap-5">
+            <div class="bg-white dark:bg-gray-800 shadow sm:rounded-lg p-8 w-2/3">
                 @php
-                $jenisUnitId = session('jenis_unit_id');
-                $instrumenRoute = match ($jenisUnitId) {
-                1 => route('auditor.data-instrumen.instrumenupt'),
-                2 => route('auditor.data-instrumen.instrumenjurusan', ['id' => $auditing->auditing_id]),
-                3 => route('auditor.data-instrumen.instrumenprodi'),
-                default => '#', // fallback kalau tidak ditemukan
-                };
+                $status = $auditing->status;
                 @endphp
-                <li class="mb-10 ms-6">
-                    <span class="absolute flex items-center justify-center w-8 h-8
-            {{ $status >= 3 ? 'bg-green-200 dark:bg-green-900' : 'bg-gray-100 dark:bg-gray-700' }}
-            rounded-full -start-4 ring-4 ring-white dark:ring-gray-900">
-                        @if($status >= 3)
-                        {{-- Centang --}}
-                        <svg class="w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5" />
-                        </svg>
-                        @else
-                        {{-- Icon default --}}
-                        <svg class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 16">
-                            <path d="M18 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2ZM6.5 3a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3.014 13.021l.157-.625A3.427 3.427 0 0 1 6.5 9.571a3.426 3.426 0 0 1 3.322 2.805l.159.622-6.967.023ZM16 12h-3a1 1 0 0 1 0-2h3a1 1 0 0 1 0 2Zm0-3h-3a1 1 0 1 1 0-2h3a1 1 0 1 1 0 2Zm0-3h-3a1 1 0 1 1 0-2h3a1 1 0 1 1 0 2Z" />
-                        </svg>
+                <ol class="pl-5 relative text-gray-500 border-s border-gray-200 dark:border-gray-700 dark:text-gray-400">
+                    {{-- Koreksi Respon Instrumen --}}
+                    @php
+                    $jenisUnitId = session('jenis_unit_id');
+                    $instrumenRoute = match ($jenisUnitId) {
+                    1 => route('auditor.data-instrumen.instrumenupt'),
+                    2 => route('auditor.data-instrumen.instrumenjurusan', ['id' => $auditing->auditing_id]),
+                    3 => route('auditor.data-instrumen.instrumenprodi'),
+                    default => '#', // fallback kalau tidak ditemukan
+                    };
+                    @endphp
+                    <li class="mb-10 ms-6">
+                        <span class="absolute flex items-center justify-center w-8 h-8
+                {{ $status >= 3 ? 'bg-green-200 dark:bg-green-900' : 'bg-gray-100 dark:bg-gray-700' }}
+                rounded-full -start-4 ring-4 ring-white dark:ring-gray-900">
+                            @if($status >= 3)
+                            {{-- Centang --}}
+                            <svg class="w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5" />
+                            </svg>
+                            @else
+                            {{-- Icon default --}}
+                            <svg class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 16">
+                                <path d="M18 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2ZM6.5 3a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3.014 13.021l.157-.625A3.427 3.427 0 0 1 6.5 9.571a3.426 3.426 0 0 1 3.322 2.805l.159.622-6.967.023ZM16 12h-3a1 1 0 0 1 0-2h3a1 1 0 0 1 0 2Zm0-3h-3a1 1 0 1 1 0-2h3a1 1 0 1 1 0 2Zm0-3h-3a1 1 0 1 1 0-2h3a1 1 0 1 1 0 2Z" />
+                            </svg>
+                            @endif
+                        </span>
+                        <h3 class="font-medium leading-tight">Koreksi Respon Instrumen</h3>
+                        @if($status == 2)
+                        {{-- Link ke instrumen sesuai jenis unit --}}
+                        <a href="{{ $instrumenRoute }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Koreksi Jawaban Instrumen</a>
+                        @elseif($status == 6 || $status == 9)
+                        {{-- Link ke instrumen sesuai jenis unit --}}
+                        <a href="{{ $instrumenRoute }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Cek Jawaban Instrumen</a>
                         @endif
-                    </span>
-                    <h3 class="font-medium leading-tight">Koreksi Respon Instrumen</h3>
-                    @if($status == 2)
-                    {{-- Link ke instrumen sesuai jenis unit --}}
-                    <a href="{{ $instrumenRoute }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Koreksi Jawaban Instrumen</a>
-                    @elseif($status == 6 || $status == 9)
-                    {{-- Link ke instrumen sesuai jenis unit --}}
-                    <a href="{{ $instrumenRoute }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Cek Jawaban Instrumen</a>
-                    @endif
-                </li>
-                {{-- Jadwalkan Assesmen Lapangan --}}
-                <li class="mb-10 ms-6">
-                    <span class="absolute flex items-center justify-center w-8 h-8
-            {{ $status >= 4 ? 'bg-green-200 dark:bg-green-900' : 'bg-gray-100 dark:bg-gray-700' }}
-            rounded-full -start-4 ring-4 ring-white dark:ring-gray-900">
-                        @if($status >= 4)
-                        <svg class="w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5" />
-                        </svg>
-                        @else
-                        <svg class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
-                            <path d="M16 1h-3.278A1.992 1.992 0 0 0 11 0H7a1.993 1.993 0 0 0-1.722 1H2a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2Zm-3 14H5a1 1 0 0 1 0-2h8a1 1 0 0 1 0 2Zm0-4H5a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2Zm0-5H5a1 1 0 0 1 0-2h2V2h4v2h2a1 1 0 1 1 0 2Z" />
-                        </svg>
+                    </li>
+                    {{-- Jadwalkan Assesmen Lapangan --}}
+                    <li class="mb-10 ms-6">
+                        <span class="absolute flex items-center justify-center w-8 h-8
+                {{ $status >= 4 ? 'bg-green-200 dark:bg-green-900' : 'bg-gray-100 dark:bg-gray-700' }}
+                rounded-full -start-4 ring-4 ring-white dark:ring-gray-900">
+                            @if($status >= 4)
+                            <svg class="w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5" />
+                            </svg>
+                            @else
+                            <svg class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
+                                <path d="M16 1h-3.278A1.992 1.992 0 0 0 11 0H7a1.993 1.993 0 0 0-1.722 1H2a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2Zm-3 14H5a1 1 0 0 1 0-2h8a1 1 0 0 1 0 2Zm0-4H5a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2Zm0-5H5a1 1 0 0 1 0-2h2V2h4v2h2a1 1 0 1 1 0 2Z" />
+                            </svg>
+                            @endif
+                        </span>
+                        <h3 class="font-medium leading-tight">Jadwalkan Assesmen Lapangan</h3>
+                        @if($status == 3)
+                        <a href="{{ route('auditor.assesmen-lapangan.index') }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Set Jadwal Assesmen Lapangan</a>
                         @endif
-                    </span>
-                    <h3 class="font-medium leading-tight">Jadwalkan Assesmen Lapangan</h3>
-                    @if($status == 3)
-                    <a href="{{ route('auditor.assesmen-lapangan.index') }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Set Jadwal Assesmen Lapangan</a>
-                    @endif
-                </li>
-                {{-- Daftar Tilik --}}
-                <li class="mb-10 ms-6">
-                    <span class="absolute flex items-center justify-center w-8 h-8
-            {{ $status >= 5 ? 'bg-green-200 dark:bg-green-900' : 'bg-gray-100 dark:bg-gray-700' }}
-            rounded-full -start-4 ring-4 ring-white dark:ring-gray-900">
-                        @if($status >= 5)
-                        <svg class="w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5" />
-                        </svg>
-                        @else
-                        <svg class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
-                            <path d="M16 1h-3.278A1.992 1.992 0 0 0 11 0H7a1.993 1.993 0 0 0-1.722 1H2a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2Zm-3 14H5a1 1 0 0 1 0-2h8a1 1 0 0 1 0 2Zm0-4H5a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2Zm0-5H5a1 1 0 0 1 0-2h2V2h4v2h2a1 1 0 1 1 0 2Z" />
-                        </svg>
+                    </li>
+                    {{-- Daftar Tilik --}}
+                    <li class="mb-10 ms-6">
+                        <span class="absolute flex items-center justify-center w-8 h-8
+                {{ $status >= 5 ? 'bg-green-200 dark:bg-green-900' : 'bg-gray-100 dark:bg-gray-700' }}
+                rounded-full -start-4 ring-4 ring-white dark:ring-gray-900">
+                            @if($status >= 5)
+                            <svg class="w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5" />
+                            </svg>
+                            @else
+                            <svg class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
+                                <path d="M16 1h-3.278A1.992 1.992 0 0 0 11 0H7a1.993 1.993 0 0 0-1.722 1H2a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2Zm-3 14H5a1 1 0 0 1 0-2h8a1 1 0 0 1 0 2Zm0-4H5a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2Zm0-5H5a1 1 0 0 1 0-2h2V2h4v2h2a1 1 0 1 1 0 2Z" />
+                            </svg>
+                            @endif
+                        </span>
+                        <h3 class="font-medium leading-tight">Daftar Tilik</h3>
+                        @if($status == 4)
+                        <a href="{{ route('auditor.daftar-tilik.index') }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Buat Pertanyaan Daftar Tilik</a>
+                        @elseif($status == 6)
+                        <a href="{{ route('auditor.daftar-tilik.index') }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Cek Jawaban Daftar Tilik</a>
                         @endif
-                    </span>
-                    <h3 class="font-medium leading-tight">Daftar Tilik</h3>
-                    @if($status == 4)
-                    <a href="{{ route('auditor.daftar-tilik.index') }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Buat Pertanyaan Daftar Tilik</a>
-                    @elseif($status == 6)
-                    <a href="{{ route('auditor.daftar-tilik.index') }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Cek Jawaban Daftar Tilik</a>
-                    @endif
-                </li>
-                {{-- Laporan Temuan --}}
-                <li class="mb-10 ms-6">
-                    <span class="absolute flex items-center justify-center w-8 h-8
-            {{ $status >= 7 ? 'bg-green-200 dark:bg-green-900' : 'bg-gray-100 dark:bg-gray-700' }}
-            rounded-full -start-4 ring-4 ring-white dark:ring-gray-900">
-                        @if($status >= 7)
-                        <svg class="w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5" />
-                        </svg>
-                        @else
-                        <svg class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
-                            <path d="M16 1h-3.278A1.992 1.992 0 0 0 11 0H7a1.993 1.993 0 0 0-1.722 1H2a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2Zm-3 14H5a1 1 0 0 1 0-2h8a1 1 0 0 1 0 2Zm0-4H5a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2Zm0-5H5a1 1 0 0 1 0-2h2V2h4v2h2a1 1 0 1 1 0 2Z" />
-                        </svg>
-
+                    </li>
+                    {{-- Laporan Temuan --}}
+                    <li class="mb-10 ms-6">
+                        <span class="absolute flex items-center justify-center w-8 h-8
+                {{ $status >= 7 ? 'bg-green-200 dark:bg-green-900' : 'bg-gray-100 dark:bg-gray-700' }}
+                rounded-full -start-4 ring-4 ring-white dark:ring-gray-900">
+                            @if($status >= 7)
+                            <svg class="w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5" />
+                            </svg>
+                            @else
+                            <svg class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
+                                <path d="M16 1h-3.278A1.992 1.992 0 0 0 11 0H7a1.993 1.993 0 0 0-1.722 1H2a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2Zm-3 14H5a1 1 0 0 1 0-2h8a1 1 0 0 1 0 2Zm0-4H5a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2Zm0-5H5a1 1 0 0 1 0-2h2V2h4v2h2a1 1 0 1 1 0 2Z" />
+                            </svg>
+    
+                            @endif
+                        </span>
+                        <h3 class="font-medium leading-tight">Laporan Temuan</h3>
+                        @if($status == 6)
+                        <a href="{{ route('auditor.laporan.index') }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Step details here</a>
                         @endif
-                    </span>
-                    <h3 class="font-medium leading-tight">Laporan Temuan</h3>
-                    @if($status == 6)
-                    <a href="{{ route('auditor.laporan.index') }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Step details here</a>
-                    @endif
-                </li>
-                {{-- Closing Audit --}}
-                <li class="ms-6">
-                    <span class="absolute flex items-center justify-center w-8 h-8
-            {{ $status >= 10 ? 'bg-green-200 dark:bg-green-900' : 'bg-gray-100 dark:bg-gray-700' }}
-            rounded-full -start-4 ring-4 ring-white dark:ring-gray-900">
-                        @if($status >= 10)
-                        <svg class="w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5" />
-                        </svg>
-                        @else
-                        <svg class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
-                            <path d="M16 1h-3.278A1.992 1.992 0 0 0 11 0H7a1.993 1.993 0 0 0-1.722 1H2a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2ZM7 2h4v3H7V2Zm5.7 8.289-3.975 3.857a1 1 0 0 1-1.393 0L5.3 12.182a1.002 1.002 0 1 1 1.4-1.436l1.328 1.289 3.28-3.181a1 1 0 1 1 1.392 1.435Z" />
-                        </svg>
+                    </li>
+                    {{-- Closing Audit --}}
+                    <li class="ms-6">
+                        <span class="absolute flex items-center justify-center w-8 h-8
+                {{ $status >= 10 ? 'bg-green-200 dark:bg-green-900' : 'bg-gray-100 dark:bg-gray-700' }}
+                rounded-full -start-4 ring-4 ring-white dark:ring-gray-900">
+                            @if($status >= 10)
+                            <svg class="w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5" />
+                            </svg>
+                            @else
+                            <svg class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
+                                <path d="M16 1h-3.278A1.992 1.992 0 0 0 11 0H7a1.993 1.993 0 0 0-1.722 1H2a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2ZM7 2h4v3H7V2Zm5.7 8.289-3.975 3.857a1 1 0 0 1-1.393 0L5.3 12.182a1.002 1.002 0 1 1 1.4-1.436l1.328 1.289 3.28-3.181a1 1 0 1 1 1.392 1.435Z" />
+                            </svg>
+                            @endif
+                        </span>
+                        <h3 class="font-medium leading-tight">Closing Audit</h3>
+                        @if($status == 9)
+                        <a href="javascript:void(0)" onclick="showCloseConfirmModal()" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Closing Proses Audit</a>
                         @endif
-                    </span>
-                    <h3 class="font-medium leading-tight">Closing Audit</h3>
-                    @if($status == 9)
-                    <a href="javascript:void(0)" onclick="showCloseConfirmModal()" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Closing Proses Audit</a>
-                    @endif
-                </li>
-            </ol>
+                    </li>
+                </ol>
+            </div>
+            <div class="bg-white dark:bg-gray-800 shadow sm:rounded-lg p-8 flex-1 text-left items-center">
+                <div>
+                    <p class="font-bold text-2xl dark:text-gray-300 mb-4">
+                        Informasi Progress
+                    </p>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">
+                        Progress akan berubah secara otomatis sesuai dengan tahapan yang telah dilalui dalam proses audit.
+                    </p>
+                </div>
+            </div>
+            
         </div>
     </div>
 </div>

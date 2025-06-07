@@ -164,9 +164,9 @@
                         <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600 text-center">
                             @if(isset($item['response']['sesuai']))
                             @if($item['response']['sesuai'] == "1")
-                            <span class="text-green-600 font-bold">&#10003;</span>
+                            <span class="text-green-600 font-bold"><x-heroicon-s-check class="h-10 w-10" /></span>
                             @elseif($item['response']['sesuai'] == "0")
-                            <span class="text-red-600 font-bold">&#10007;</span>
+                            <span class="text-red-600 font-bold"><x-heroicon-s-x-mark class="h-10 w-10" /></span>
                             @else
                             {{ $item['response']['sesuai'] }}
                             @endif
@@ -178,9 +178,9 @@
                         <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600 text-center">
                             @if(isset($item['response']['minor']))
                             @if($item['response']['minor'] == "1")
-                            <span class="text-green-600 font-bold">&#10003;</span>
+                            <span class="text-green-600 font-bold"><x-heroicon-s-check class="h-10 w-10" /></span>
                             @elseif($item['response']['minor'] == "0")
-                            <span class="text-red-600 font-bold">&#10007;</span>
+                            <span class="text-red-600 font-bold"><x-heroicon-s-x-mark class="h-10 w-10" /></span>
                             @else
                             {{ $item['response']['minor'] }}
                             @endif
@@ -192,9 +192,9 @@
                         <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600 text-center">
                             @if(isset($item['response']['mayor']))
                             @if($item['response']['mayor'] == "1")
-                            <span class="text-green-600 font-bold">&#10003;</span>
+                            <span class="text-green-600 font-bold"><x-heroicon-s-check class="h-10 w-10" /></span>
                             @elseif($item['response']['mayor'] == "0")
-                            <span class="text-red-600 font-bold">&#10007;</span>
+                            <span class="text-red-600 font-bold"><x-heroicon-s-x-mark class="h-10 w-10" /></span>
                             @else
                             {{ $item['response']['mayor'] }}
                             @endif
@@ -206,9 +206,9 @@
                         <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600 text-center">
                             @if(isset($item['response']['ofi']))
                             @if($item['response']['ofi'] == "1")
-                            <span class="text-green-600 font-bold">&#10003;</span>
+                            <span class="text-green-600 font-bold"><x-heroicon-s-check class="h-10 w-10" /></span>
                             @elseif($item['response']['ofi'] == "0")
-                            <span class="text-red-600 font-bold">&#10007;</span>
+                            <span class="text-red-600 font-bold"><x-heroicon-s-x-mark class="h-10 w-10" /></span>
                             @else
                             {{ $item['response']['ofi'] }}
                             @endif
@@ -292,9 +292,42 @@
             Kembali
         </a>
         @endif
-        <button class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-gray-300 text-sm font-medium rounded-lg px-4 py-2 flex items-center transition-all duration-200">
-            Selesai
-        </button>
+      <!-- Tombol Selesai Audit -->
+    <button id="btnSelesaiAudit" data-modal-target="confirmModal" data-modal-toggle="confirmModal" class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-gray-300 text-sm font-medium rounded-lg px-4 py-2 flex items-center transition-all duration-200">
+        Selesai
+    </button>
+
+    <!-- Modal Konfirmasi -->
+    <div id="confirmModal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        <div class="relative p-4 w-full max-w-md max-h-full">
+            <!-- Modal content -->
+            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                <!-- Modal header -->
+                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                        Konfirmasi Selesai Koreksi 
+                    </h3>
+                    <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="confirmModal">
+                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                        </svg>
+                        <span class="sr-only">Tutup modal</span>
+                    </button>
+                </div>
+                <!-- Modal body -->
+                <div class="p-4 md:p-5">
+                    <p class="text-gray-500 dark:text-gray-400 mb-4">Apakah Anda yakin ingin menyelesaikan Koreksi ini?</p>
+                    <div class="flex justify-end gap-4">
+                        <button data-modal-hide="confirmModal" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">
+                            Batal
+                        </button>
+                        <button id="confirmButton" type="button" class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5">
+                            Selesai
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <!-- Modal untuk Edit Respons (Flowbite) -->
     <div id="editResponseModal" tabindex="-1" aria-hidden="true" class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full overflow-y-auto overflow-x-hidden p-4 md:inset-0">
@@ -351,8 +384,9 @@
                         <button type="button" class="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-600" data-modal-hide="editResponseModal">
                             Batal
                         </button>
-                        <button type="submit" class="rounded-lg bg-sky-800 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                            Simpan
+                        <button 
+                            class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-gray-300 text-sm font-medium rounded-lg px-4 py-2 flex items-center transition-all duration-200">
+                            Selesai
                         </button>
                     </div>
                 </form>
@@ -362,6 +396,111 @@
 </div>
 
 <script>
+   // Fungsi untuk menampilkan toast
+        function showToast(type, message) {
+            const toastId = `toast-${Date.now()}`; // ID unik berdasarkan timestamp
+            const toastContainer = document.createElement('div');
+            toastContainer.className = 'fixed top-5 right-5 z-50 animate-slide-in-right';
+            toastContainer.innerHTML = `
+                <div id="${toastId}" class="flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow-lg dark:text-gray-400 dark:bg-gray-800 border ${type === 'success' ? 'border-green-200' : 'border-red-200'}">
+                    <div class="inline-flex items-center justify-center shrink-0 w-8 h-8 ${type === 'success' ? 'text-green-500 bg-green-100 dark:bg-green-800 dark:text-green-200' : 'text-red-500 bg-red-100 dark:bg-red-800 dark:text-red-200'} rounded-lg">
+                        ${type === 'success' ? `
+                            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                            </svg>
+                            <span class="sr-only">Ikon Sukses</span>
+                        ` : `
+                            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 11.793a1 1 0 1 1-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L8.586 10 6.293 7.707a1 1 0 0 1 1.414-1.414L10 8.586l2.293-2.293a1 1 0 0 1 1.414 1.414L11.414 10l2.293 2.293Z"/>
+                            </svg>
+                            <span class="sr-only">Ikon Error</span>
+                        `}
+                    </div>
+                    <div class="ms-3 text-sm font-normal text-gray-800 dark:text-gray-200">${message}</div>
+                    <button type="button" class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700" data-dismiss-target="#${toastId}" onclick="this.closest('.animate-slide-in-right').classList.add('animate-slide-out-right'); setTimeout(() => this.closest('.animate-slide-in-right').remove(), 300);">
+                        <span class="sr-only">Tutup</span>
+                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                        </svg>
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(toastContainer);
+
+            // Otomatis menghilangkan toast setelah 5 detik
+            setTimeout(() => {
+                const toast = document.getElementById(toastId);
+                if (toast) {
+                    toast.parentElement.classList.add('animate-slide-out-right');
+                    setTimeout(() => {
+                        toast.parentElement.remove();
+                    }, 300);
+                }
+            }, 3000);
+        }
+
+        // Animasi TailwindCSS untuk toast
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes slide-in-right {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slide-out-right {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+            .animate-slide-in-right {
+                animation: slide-in-right 0.3s ease-out;
+            }
+            .animate-slide-out-right {
+                animation: slide-out-right 0.3s ease-in;
+            }
+        `;
+        document.head.appendChild(style);
+
+        document.getElementById('btnSelesaiAudit').addEventListener('click', function() {
+            // Modal konfirmasi akan ditampilkan otomatis melalui data-modal-toggle
+        });
+
+        document.getElementById('confirmButton').addEventListener('click', async function() {
+            const confirmModal = document.getElementById('confirmModal');
+            const auditingId = {{$auditing -> auditing_id}};
+
+            try {
+                const response = await fetch(`http://127.0.0.1:5000/api/auditings/${auditingId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        status: "3"
+                    }),
+                });
+                const result = await response.json();
+
+                // Sembunyikan modal konfirmasi
+                confirmModal.classList.add('hidden');
+
+                if (response.ok) {
+                    // Tampilkan toast sukses
+                    showToast('success', 'Koreksi instrumen berhasil disimpan.');
+                    // Refresh halaman setelah 3 detik untuk memberikan waktu toast terlihat
+                    setTimeout(() => {
+                        window.location.href = "{{ route('auditor.audit.audit', ['id' => $auditing->auditing_id]) }}";
+                    }, 3000);
+                } else {
+                    // Tampilkan toast error
+                    showToast('error', 'Gagal menyimpan koreksi instrumen: ' + (result.message || 'Unknown error'));
+                }
+            } catch (error) {
+                // Sembunyikan modal konfirmasi
+                confirmModal.classList.add('hidden');
+                // Tampilkan toast error
+                showToast('error', 'Terjadi kesalahan saat menyimpan koreksi.');
+                console.error(error);
+            }
+        });
     // Tangani tombol Edit untuk membuka modal
     // Hanya boleh satu checkbox yang aktif
     document.querySelectorAll('.status-checkbox').forEach(checkbox => {
@@ -474,5 +613,6 @@
             alert('Terjadi kesalahan saat menyimpan data.');
         }
     });
+    
 </script>
 @endsection

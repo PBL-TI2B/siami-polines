@@ -12,12 +12,17 @@
     <h1 class="mb-5 text-3xl font-bold text-gray-900 dark:text-gray-200">
         Audit AMI
     </h1>
-
-    <div class="ml-auto">
-        <h2 id="namaPeriode" class="text-sm font-medium text-white bg-blue-900 p-2 rounded-full w-36">
-            <!-- Nama periode akan dimuat via JavaScript -->
-        </h2>
-    </div>
+     <div class="mb-4 flex">
+            <div id="periodeDisplayContainer" class="flex items-center gap-x-2">
+                
+                <div class="inline-flex items-center gap-x-2 rounded-2xl bg-sky-100 px-3 py-1.5 text-xs sm:text-sm dark:bg-sky-800">
+                    <x-heroicon-o-calendar-days class="h-4 w-4 shrink-0 text-sky-600 sm:h-5 sm:w-5 dark:text-sky-300" />
+                    <span id="namaPeriode" class="font-semibold text-sky-600 dark:text-sky-300">
+                        Memuat periode...
+                    </span>
+                </div>
+            </div>
+        </div>
     <div class="overflow-x-auto mt-5">
         <table id="jadwalAuditTable" class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
             <thead class="border-b border-t border-gray-200 bg-gray-50 text-xs uppercase text-gray-700 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
