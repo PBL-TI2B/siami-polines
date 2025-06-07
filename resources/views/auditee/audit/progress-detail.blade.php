@@ -175,11 +175,11 @@
                 else updateStepUI(1, 'pending');
 
                 if (statusGlobal === 4) updateStepUI(2, 'current');
-                else if (statusGlobal > 3) updateStepUI(2, 'completed');
+                else if (statusGlobal > 4) updateStepUI(2, 'completed');
                 else updateStepUI(2, 'pending');
 
-                if (statusGlobal >= 5 && statusGlobal <= 8) updateStepUI(3, 'current');
-                else if (statusGlobal > 8) updateStepUI(3, 'completed');
+                if (statusGlobal === 5) updateStepUI(3, 'current');
+                else if (statusGlobal > 5) updateStepUI(3, 'completed');
                 else updateStepUI(3, 'pending');
             }
 
