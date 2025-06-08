@@ -1,6 +1,6 @@
 @props(['items'])
 
-<nav class="mb-6 flex" aria-label="Breadcrumb">
+<nav class="mb-3 flex" aria-label="Breadcrumb">
     <ol class="flex flex-wrap items-center gap-1 md:gap-2">
         @foreach ($items as $index => $item)
             <li class="flex items-center">
