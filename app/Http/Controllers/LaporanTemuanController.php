@@ -4,37 +4,66 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use App\Http\Controllers\Controller;
-use App\Models\LaporanPtpp;
+use App\Models\LaporanTemuan;
 use App\Models\Auditing;
 use Illuminate\Http\Request;
 
-class LaporanPtppController extends Controller
+class LaporanTemuanController extends Controller
 {
-    private const API_BASE_URL = 'http://127.0.0.1:5000/api/laporan-ptpp';
+    private const API_BASE_URL = 'http://127.0.0.1:5000/api/laporan-temuan';
     private const AUDITING_API_URL = 'http://127.0.0.1:5000/api/auditings';
+    private const KRITERIA_API_URL = 'http://127.0.0.1:5000/api/kriteria';
 
     public function __construct()
     {
-        //$this->middleware('auth');
+        // $this->middleware('auth');
+        // $this->middleware(function ($request, $next) {
+        //     if (!$request->session()->has('auditing_id')) {
+        //         return redirect()->route('auditor.dashboard.index')->with('error', 'Pilih audit terlebih dahulu.');
+        //     }
+        //     return $next($request);
+        // })->only(['index', 'create', 'store', 'submit']);
     }
 
     /**
      * Mengambil daftar kategori temuan dari API.
      */
-    public function getKategoriTemuanFromApi()
+    private function getKategoriTemuanFromApi()
     {
         try {
-            $response = Http::timeout(10)->get(self::API_BASE_URL . '/kategori-temuan');
+            $response = Http::timeout(10)->retry(3, 1000)->get(self::API_BASE_URL . '/kategori-temuan');
             if ($response->successful()) {
                 return $response->json()['data'] ?? ['NC', 'AOC', 'OFI'];
-            } else {
-                Log::error('Gagal mengambil kategori temuan dari API: ' . $response->status());
-                return ['NC', 'AOC', 'OFI'];
             }
+            Log::error('Gagal mengambil kategori temuan dari API', [
+                'status' => $response->status(),
+                'response' => $response->body()
+            ]);
+            return ['NC', 'AOC', 'OFI'];
         } catch (\Exception $e) {
             Log::error('Error saat mengambil kategori temuan dari API: ' . $e->getMessage());
             return ['NC', 'AOC', 'OFI'];
+        }
+    }
+
+    /**
+     * Mengambil daftar kriteria dari API.
+     */
+    private function getKriteriaFromApi()
+    {
+        try {
+            $response = Http::timeout(10)->retry(3, 1000)->get(self::KRITERIA_API_URL);
+            if ($response->successful()) {
+                return $response->json()['data'] ?? [];
+            }
+            Log::error('Gagal mengambil kriteria dari API', [
+                'status' => $response->status(),
+                'response' => $response->body()
+            ]);
+            return [];
+        } catch (\Exception $e) {
+            Log::error('Error saat mengambil kriteria dari API: ' . $e->getMessage());
+            return [];
         }
     }
 
@@ -44,8 +73,7 @@ class LaporanPtppController extends Controller
     private function getAuditingStatusFromApi($auditingId)
     {
         try {
-            $response = Http::timeout(30)->get(self::AUDITING_API_URL . "/{$auditingId}");
-            Log::info('API Response for auditing status:', ['response' => $response->json(), 'status' => $response->status()]);
+            $response = Http::timeout(10)->retry(3, 1000)->get(self::AUDITING_API_URL . "/{$auditingId}");
             if ($response->successful()) {
                 $data = $response->json();
                 return [
@@ -53,10 +81,12 @@ class LaporanPtppController extends Controller
                     'name' => $data['data']['name'] ?? 'Belum Ditetapkan',
                     'color' => $data['data']['color'] ?? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
                 ];
-            } else {
-                Log::error('Gagal mengambil status auditing dari API: ' . $response->status());
-                return null;
             }
+            Log::error('Gagal mengambil status auditing dari API', [
+                'status' => $response->status(),
+                'response' => $response->body()
+            ]);
+            return null;
         } catch (\Exception $e) {
             Log::error('Error saat mengambil status auditing dari API: ' . $e->getMessage());
             return null;
@@ -77,26 +107,29 @@ class LaporanPtppController extends Controller
     public function index(Request $request)
     {
         $auditingId = $request->session()->get('auditing_id');
-        if (!$auditingId) {
-            Log::warning('Auditing ID tidak tersedia di session', ['user' => auth()->user()->id]);
-            return redirect()->route('auditor.dashboard.index')->with('error', 'Pilih audit terlebih dahulu.');
-        }
-        $query = LaporanPtpp::select('id', 'standar', 'uraian_temuan', 'kategori_temuan', 'saran_perbaikan');
+        $kriterias = $this->getKriteriaFromApi();
+        $kategori_temuan = $this->getKategoriTemuanFromApi();
+        $audits = Auditing::all();
+        $query = LaporanTemuan::where('auditing_id', $auditingId)
+                            ->select('laporan_temuan_id', 'auditing_id', 'standar', 'uraian_temuan', 'kategori_temuan', 'saran_perbaikan');
         if ($search = $request->input('search')) {
             $query->where('standar', 'like', "%{$search}%")
-                ->orWhere('uraian_temuan', 'like', "%{$search}%");
+                  ->orWhere('uraian_temuan', 'like', "%{$search}%");
         }
         $reports = $query->paginate($request->input('entries', 10));
-        return view('auditor.laporan.index', compact('reports'));
+        return view('auditor.laporan.index', compact('reports', 'auditingId', 'audits', 'kriterias', 'kategori_temuan'));
     }
 
     /**
      * Menampilkan form untuk membuat laporan baru.
      */
-    public function create()
+    public function create(Request $request)
     {
+        $auditingId = $request->session()->get('auditing_id');
         $kategori_temuan = $this->getKategoriTemuanFromApi();
-        return view('auditor.laporan.tambah', compact('kategori_temuan'));
+        $kriterias = $this->getKriteriaFromApi();
+        $audits = Auditing::all();
+        return view('auditor.laporan.tambah', compact('kategori_temuan', 'kriterias', 'audits', 'auditingId'));
     }
 
     /**
@@ -105,31 +138,38 @@ class LaporanPtppController extends Controller
     public function store(Request $request)
     {
         try {
+            $auditingId = $request->session()->get('auditing_id');
             $validated = $request->validate([
-                'standar' => 'required|string|max:255',
+                'auditing_id' => 'required|exists:auditings,auditing_id',
+                'standar' => 'required|integer|exists:kriterias,kriteria_id',
                 'uraian_temuan' => 'required|string',
                 'kategori_temuan' => 'required|in:NC,AOC,OFI',
                 'saran_perbaikan' => 'nullable|string',
             ], [
+                'auditing_id.required' => 'Kolom audit wajib diisi.',
                 'standar.required' => 'Kolom standar wajib diisi.',
+                'standar.integer' => 'Standar harus berupa ID numerik.',
+                'standar.exists' => 'Standar tidak ditemukan.',
                 'uraian_temuan.required' => 'Kolom uraian temuan wajib diisi.',
                 'kategori_temuan.required' => 'Kolom kategori temuan wajib diisi.',
                 'kategori_temuan.in' => 'Kategori temuan harus NC, AOC, atau OFI.',
             ]);
 
-            // Simpan ke database lokal
-            $report = LaporanPtpp::create($validated);
-
-            // Kirim ke API
-            $apiResponse = Http::timeout(10)->post(self::API_BASE_URL, array_merge($validated, ['id' => $report->id]));
+            $report = LaporanTemuan::create($validated);
+            // Pastikan laporan_temuan_id dikirim ke API
+            $apiPayload = array_merge($validated, ['laporan_temuan_id' => $report->laporan_temuan_id]);
+            $apiResponse = Http::timeout(10)->retry(3, 1000)->post(self::API_BASE_URL, $apiPayload);
             if (!$apiResponse->successful()) {
                 $report->delete();
-                Log::error('Gagal mengirim laporan ke API: ' . $apiResponse->status(), ['response' => $apiResponse->body()]);
+                Log::error('Gagal mengirim laporan ke API', [
+                    'status' => $apiResponse->status(),
+                    'response' => $apiResponse->body()
+                ]);
                 return redirect()->back()->with('error', 'Gagal menyimpan laporan ke sistem eksternal.');
             }
 
             Log::info('Laporan dibuat', [
-                'id' => $report->id,
+                'id' => $report->laporan_temuan_id,
                 'user' => auth()->user()->id,
                 'ip' => $request->ip(),
                 'timestamp' => now()->toDateTimeString(),
@@ -149,9 +189,11 @@ class LaporanPtppController extends Controller
     public function edit($id)
     {
         try {
-            $report = LaporanPtpp::findOrFail($id);
+            $report = LaporanTemuan::findOrFail($id);
+            $audits = Auditing::all();
+            $kriterias = $this->getKriteriaFromApi();
             $kategori_temuan = $this->getKategoriTemuanFromApi();
-            return view('auditor.laporan.edit', compact('report', 'kategori_temuan'));
+            return view('auditor.laporan.edit', compact('report', 'audits', 'kriterias', 'kategori_temuan'));
         } catch (\Exception $e) {
             Log::error('Gagal mengambil laporan: ' . $e->getMessage());
             return redirect()->route('auditor.laporan.index')
@@ -166,30 +208,37 @@ class LaporanPtppController extends Controller
     {
         try {
             $validated = $request->validate([
-                'standar' => 'required|string|max:255',
+                'auditing_id' => 'required|exists:auditings,auditing_id',
+                'standar' => 'required|integer|exists:kriterias,kriteria_id',
                 'uraian_temuan' => 'required|string',
                 'kategori_temuan' => 'required|in:NC,AOC,OFI',
                 'saran_perbaikan' => 'nullable|string',
             ], [
+                'auditing_id.required' => 'Kolom audit wajib diisi.',
                 'standar.required' => 'Kolom standar wajib diisi.',
+                'standar.integer' => 'Standar harus berupa ID numerik.',
+                'standar.exists' => 'Standar tidak ditemukan.',
                 'uraian_temuan.required' => 'Kolom uraian temuan wajib diisi.',
                 'kategori_temuan.required' => 'Kolom kategori temuan wajib diisi.',
                 'kategori_temuan.in' => 'Kategori temuan harus NC, AOC, atau OFI.',
             ]);
 
-            $report = LaporanPtpp::findOrFail($id);
+            $report = LaporanTemuan::findOrFail($id);
             $report->update($validated);
 
-            // Kirim update ke API
-            $apiResponse = Http::timeout(10)->put(self::API_BASE_URL . "/{$id}", $validated);
+            $apiPayload = array_merge($validated, ['laporan_temuan_id' => $report->laporan_temuan_id]);
+            $apiResponse = Http::timeout(10)->retry(3, 1000)->put(self::API_BASE_URL . "/{$id}", $apiPayload);
             if (!$apiResponse->successful()) {
-                Log::warning('Gagal memperbarui laporan di API: ' . $apiResponse->status(), ['response' => $apiResponse->body()]);
+                Log::warning('Gagal memperbarui laporan di API', [
+                    'status' => $apiResponse->status(),
+                    'response' => $apiResponse->body()
+                ]);
                 return redirect()->route('auditor.laporan.index')
                                ->with('error', 'Laporan diperbarui di lokal, tetapi gagal disinkronkan ke sistem eksternal.');
             }
 
             Log::info('Laporan diperbarui', [
-                'id' => $report->id,
+                'id' => $report->laporan_temuan_id,
                 'user' => auth()->user()->id,
                 'ip' => $request->ip(),
                 'timestamp' => now()->toDateTimeString(),
@@ -206,16 +255,18 @@ class LaporanPtppController extends Controller
     /**
      * Menghapus laporan dari database dan API.
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         try {
-            $report = LaporanPtpp::findOrFail($id);
+            $report = LaporanTemuan::findOrFail($id);
             $report->delete();
 
-            // Kirim permintaan hapus ke API
-            $apiResponse = Http::timeout(10)->delete(self::API_BASE_URL . "/{$id}");
+            $apiResponse = Http::timeout(10)->retry(3, 1000)->delete(self::API_BASE_URL . "/{$id}");
             if (!$apiResponse->successful()) {
-                Log::warning('Gagal menghapus laporan di API: ' . $apiResponse->status(), ['response' => $apiResponse->body()]);
+                Log::warning('Gagal menghapus laporan di API', [
+                    'status' => $apiResponse->status(),
+                    'response' => $apiResponse->body()
+                ]);
                 return redirect()->route('auditor.laporan.index')
                                ->with('error', 'Laporan dihapus di lokal, tetapi gagal disinkronkan ke sistem eksternal.');
             }
@@ -243,45 +294,40 @@ class LaporanPtppController extends Controller
     {
         try {
             $auditingId = $request->session()->get('auditing_id');
-            if (!$auditingId) {
-                Log::warning('Auditing ID tidak tersedia di session', ['user' => auth()->user()->id]);
-                return back()->with('error', 'ID auditing tidak tersedia.');
-            }
-
-            // Validasi status dari API
             $apiStatus = $this->getAuditingStatusFromApi($auditingId);
-            if ($apiStatus !== 6) {
-                Log::warning('Submit tidak diizinkan untuk status saat ini', ['auditing_id' => $auditingId, 'status' => $apiStatus]);
-                return back()->with('error', 'Submit tidak diizinkan untuk status saat ini.');
+            $auditing = Auditing::findOrFail($auditingId);
+
+            // Sinkronkan status jika tidak sesuai
+            if ($apiStatus['status'] !== $auditing->status) {
+                Log::warning('Status tidak sinkron antara API dan database', [
+                    'auditing_id' => $auditingId,
+                    'api_status' => $apiStatus['status'],
+                    'db_status' => $auditing->status
+                ]);
+                $auditing->update(['status' => $apiStatus['status']]);
             }
 
-            // Validasi status dari database lokal sebagai fallback
-            $auditing = Auditing::findOrFail($auditingId);
             if ($auditing->status != 6) {
-                Log::warning('Status database tidak sesuai dengan API', ['auditing_id' => $auditingId, 'db_status' => $auditing->status, 'api_status' => $apiStatus]);
+                Log::warning('Submit tidak diizinkan untuk status saat ini', [
+                    'auditing_id' => $auditingId,
+                    'status' => $auditing->status
+                ]);
                 return back()->with('error', 'Status auditing tidak valid.');
             }
 
-            // Update status di database lokal
             $auditing->update(['status' => 7]);
-
-            // Update status di API
-            $apiResponse = Http::timeout(10)->put(self::AUDITING_API_URL . "/{$auditingId}", ['status' => 7]);
+            $apiResponse = Http::timeout(10)->retry(3, 1000)->put(self::AUDITING_API_URL . "/{$auditingId}", ['status' => 7]);
             if (!$apiResponse->successful()) {
-                Log::error('Gagal memperbarui status auditing di API: ' . $apiResponse->status(), ['response' => $apiResponse->body()]);
+                Log::error('Gagal memperbarui status auditing di API', [
+                    'status' => $apiResponse->status(),
+                    'response' => $apiResponse->body()
+                ]);
                 return back()->with('error', 'Laporan disubmit di lokal, tetapi gagal disinkronkan ke sistem eksternal.');
             }
 
-            Log::info('Laporan PTPP disubmit', [
-                'auditing_id' => $auditingId,
-                'user' => auth()->user()->id,
-                'ip' => $request->ip(),
-                'timestamp' => now()->toDateTimeString(),
-            ]);
-
             return redirect()->route('auditor.laporan.index')->with('success', 'Laporan berhasil disubmit dan dikunci.');
         } catch (\Exception $e) {
-            Log::error('Gagal submit laporan PTPP: ' . $e->getMessage(), ['auditing_id' => $auditingId ?? null]);
+            Log::error('Gagal submit laporan: ' . $e->getMessage(), ['auditing_id' => $auditingId ?? null]);
             return back()->with('error', 'Terjadi kesalahan saat submit laporan.');
         }
     }
