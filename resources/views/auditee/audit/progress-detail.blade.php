@@ -49,7 +49,7 @@
             </div>
         @endif
 
-        <div class="bg-white dark:bg-gray-800 shadow sm:rounded-lg p-6 sm:p-8">
+        <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 sm:p-8">
             <ol id="auditProgressStepper" class="relative border-s border-gray-300 dark:border-gray-700 ml-4"> {{-- Warna border disesuaikan untuk dark mode --}}
                 {{-- Langkah 1: Response Instrumen --}}
                 <li id="progressStep1" class="mb-10 ms-8">
