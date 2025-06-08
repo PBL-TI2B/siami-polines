@@ -59,6 +59,52 @@ class PlotingAMIController extends Controller
         return view('admin.ploting-ami.index', compact('auditings', 'periodes', 'periodeId'));
     }
 
+    /**
+     * Tampilkan data Ploting AMI untuk kepala-pmpp (tabel saja, tanpa logic tidak perlu)
+     */
+    public function kepalaIndex(Request $request)
+    {
+        $perPage = $request->get('per_page', 10);
+        $periodeId = $request->get('periode_id');
+        $search = $request->get('search', '');
+
+        // Ambil semua periode untuk dropdown
+        $periodes = PeriodeAudit::all();
+
+        $query = Auditing::with([
+            'auditor1', 'auditor2',
+            'auditee1', 'auditee2',
+            'unitKerja', 'periode'
+        ]);
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('unitKerja', function ($q2) use ($search) {
+                    $q2->where('nama_unit_kerja', 'like', "%{$search}%");
+                })
+                ->orWhereHas('auditor1', function ($q2) use ($search) {
+                    $q2->where('nama', 'like', "%{$search}%");
+                })
+                ->orWhereHas('auditor2', function ($q2) use ($search) {
+                    $q2->where('nama', 'like', "%{$search}%");
+                })
+                ->orWhereHas('auditee1', function ($q2) use ($search) {
+                    $q2->where('nama', 'like', "%{$search}%");
+                })
+                ->orWhereHas('auditee2', function ($q2) use ($search) {
+                    $q2->where('nama', 'like', "%{$search}%");
+                });
+            });
+        }
+        if ($periodeId) {
+            $query->where('periode_id', $periodeId);
+        }
+
+        $auditings = $query->paginate($perPage);
+
+        return view('kepala-pmpp.ploting-ami.index', compact('auditings', 'periodes', 'periodeId'));
+    }
+
     public function indexAssesmen(Request $request) {
         $user = session('user')['user_id'];
         $perPage = $request->query('per_page', 5);
