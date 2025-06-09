@@ -12,7 +12,7 @@ use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AuditController;
 use App\Http\Livewire\PeriodeAudit;
-use App\Http\Controllers\LaporanPtppController;
+use App\Http\Controllers\LaporanTemuanController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -150,14 +150,14 @@ Route::prefix('auditor')->middleware('auth.ami:auditor')->group(function () {
         return view('auditor.laporan.index');
     })->name('auditor.laporan.index');
 
-    Route::get('/dashboard', [LaporanPtppController::class, 'dashboard'])->name('auditor.dashboard.index');
-    Route::get('/laporan', [LaporanPtppController::class, 'index'])->name('auditor.laporan.index');
-    Route::get('/laporan/create', [LaporanPtppController::class, 'create'])->name('auditor.laporan.create');
-    Route::post('/laporan', [LaporanPtppController::class, 'store'])->name('auditor.laporan.store');
-    Route::get('/laporan/{id}/edit', [LaporanPtppController::class, 'edit'])->name('auditor.laporan.edit');
-    Route::put('/laporan/{id}', [LaporanPtppController::class, 'update'])->name('auditor.laporan.update');
-    Route::delete('/laporan/{id}', [LaporanPtppController::class, 'destroy'])->name('auditor.laporan.destroy');
-    Route::post('/laporan/submit', [LaporanController::class, 'submit'])->name('auditor.laporan.submit');
+    Route::get('/auditor/laporan', [LaporanTemuanController::class, 'index'])->name('auditor.laporan.index');
+    Route::get('/auditor/laporan/data', [LaporanTemuanController::class, 'data'])->name('auditor.laporan.data'); // Opsional, jika ingin pisah
+    Route::post('/auditor/laporan', [LaporanTemuanController::class, 'store'])->name('auditor.laporan.store');
+    Route::get('/auditor/laporan/create', [LaporanTemuanController::class, 'create'])->name('auditor.laporan.create');
+    Route::get('/auditor/laporan/{id}/edit', [LaporanTemuanController::class, 'edit'])->name('auditor.laporan.edit');
+    Route::put('/auditor/laporan/{id}', [LaporanTemuanController::class, 'update'])->name('auditor.laporan.update');
+    Route::delete('/auditor/laporan/{id}', [LaporanTemuanController::class, 'destroy'])->name('auditor.laporan.destroy');
+    Route::post('/auditor/laporan/submit', [LaporanTemuanController::class, 'submit'])->name('auditor.laporan.submit');
 
 
     Route::get('/ptpp', function () {

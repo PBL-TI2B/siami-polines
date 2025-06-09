@@ -3,158 +3,171 @@
 @section('title', 'Laporan Temuan')
 
 @section('content')
-    <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-        <!-- Toast Notification -->
-        @if (session('success'))
-            <x-toast id="toast-success" type="success" :message="session('success')" />
-        @endif
+<div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+    <x-breadcrumb :items="[
+        ['label' => 'Dashboard', 'url' => route('auditor.dashboard.index')],
+        ['label' => 'Audit', 'url' => route('auditor.audit.index')],
+        ['label' => 'Laporan Temuan', 'url' => route('auditor.laporan.index')],
+    ]" />
 
-        @if (session('error') || $errors->any())
-            <x-toast id="toast-danger" type="danger">
-                @if (session('error'))
-                    <p>{{ session('error') }}</p>
-                @endif
-                @if ($errors->any())
-                    <ul class="list-disc pl-5">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                @endif
-            </x-toast>
-        @endif
-
-        <!-- Breadcrumb -->
-        <x-breadcrumb :items="[
-            ['label' => 'Dashboard', 'url' => route('auditor.dashboard.index')],
-            ['label' => 'Audit', 'url' => route('auditor.audit.index')],
-            ['label' => 'Laporan', 'url' => route('auditor.laporan.index')],
-        ]" />
-
-        <!-- Heading -->
-        <h1 class="mb-6 text-3xl font-bold text-gray-900 dark:text-gray-200">
-            Laporan
-        </h1>
-
-        <!-- Tambah Data Button -->
-        <div class="mb-4 flex flex-wrap gap-2">
-            <x-button href="{{ route('auditor.laporan.create') }}" color="sky" icon="heroicon-o-plus">
-                Tambah Laporan
-            </x-button>
-        </div>
-
-        <!-- Table Section -->
-        <x-table :headers="['No', 'Standar', 'Uraian Temuan', 'Kategori Temuan', 'Saran Perbaikan', 'Status', 'Aksi']" :data="$reports" :perPage="request('entries', 10)" :route="route('auditor.laporan.index')">
-            @forelse ($reports as $index => $report)
-                <tr
-                    class="border-y border-gray-200 bg-white transition-all duration-200 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600">
-                    <td class="border-r border-gray-200 px-4 py-4 sm:px-6 dark:border-gray-700">
-                        {{ $reports->firstItem() + $index }}
-                    </td>
-                    <td
-                        class="border-r border-gray-200 px-4 py-4 text-gray-900 sm:px-6 dark:border-gray-700 dark:text-gray-200">
-                        {{ $report['standar'] ?? 'N/A' }}
-                    </td>
-                    <td
-                        class="border-r border-gray-200 px-4 py-4 text-gray-900 sm:px-6 dark:border-gray-700 dark:text-gray-200">
-                        {{ $report['uraian_temuan'] ?? 'N/A' }}
-                    </td>
-                    <td
-                        class="border-r border-gray-200 px-4 py-4 text-gray-900 sm:px-6 dark:border-gray-700 dark:text-gray-200">
-                        {{ $report['kategori_temuan'] ?? 'N/A' }}
-                    </td>
-                    <td
-                        class="border-r border-gray-200 px-4 py-4 text-gray-900 sm:px-6 dark:border-gray-700 dark:text-gray-200">
-                        {{ $report['saran_perbaikan'] ?? 'N/A' }}
-                    </td>
-                    <td
-                        class="border-r border-gray-200 px-4 py-4 text-gray-900 sm:px-6 dark:border-gray-700 dark:text-gray-200">
-                        {{ $report['status'] ?? 'N/A' }}
-                    </td>
-                    <x-table-row-actions :actions="[
-                        [
-                            'label' => 'Edit',
-                            'color' => 'sky',
-                            'icon' => 'heroicon-o-pencil',
-                            'href' => !empty($report['id']) ? route('auditor.laporan.edit', $report['id']) : 'javascript:void(0)',
-                            'disabled' => empty($report['id']),
-                        ],
-                        [
-                            'label' => 'Hapus',
-                            'color' => 'red',
-                            'icon' => 'heroicon-o-trash',
-                            'modalId' => 'delete-report-modal-' . ($report['id'] ?? 'invalid'),
-                            'href' => !empty($report['id']) ? route('auditor.laporan.edit', $report['id']) : 'javascript:void(0)',
-                            'disabled' => empty($report['id']),
-                        ],
-                    ]" />
-                    @if (empty($report['id']))
-                        <span class="text-xs text-red-500">Missing report ID: {{ json_encode($report) }}</span>
-                    @endif
-                </tr>
-                @if (!empty($report['id']))
-                    <x-confirmation-modal id="delete-report-modal-{{ $report['id'] }}" title="Konfirmasi Hapus Laporan"
-                        :action="route('auditor.laporan.destroy', $report['id'])" method="DELETE" type="delete" formClass="delete-modal-form"
-                        :itemName="$report['uraian_temuan'] ?? 'Laporan'" :warningMessage="'Menghapus laporan ini akan menghapus seluruh data terkait laporan tersebut.'" />
-                @endif
-            @empty
-                <tr>
-                    <td colspan="7" class="px-4 py-4 text-center text-gray-500 sm:px-6 dark:text-gray-400">
-                        Tidak ada data laporan.
-                    </td>
-                </tr>
-            @endforelse
-        </x-table>
-
-        <!-- Submit dan Kunci Jawaban Button -->
-        <div class="flex justify-end mt-6">
-            <form id="submit-laporan-form" action="{{ route('auditor.laporan.submit') }}" method="POST">
-                @csrf
-                <x-button id="submit-laporan-btn" type="submit" color="sky" icon="heroicon-o-lock-closed"
-                    disabled aria-disabled="true" class="opacity-50 cursor-not-allowed"
-                    aria-label="Submit dan Kunci Jawaban">
-                    <span class="submit-text">Submit dan Kunci Jawaban</span>
-                    <span class="loading-text hidden">Memproses...</span>
-                </x-button>
-            </form>
+    <h1 class="mb-5 text-3xl font-bold text-gray-900 dark:text-gray-200">
+        Laporan Temuan
+    </h1>
+    <div class="mb-4 flex">
+        <div id="periodeDisplayContainer" class="flex items-center gap-x-2">
+            <div class="inline-flex items-center gap-x-2 rounded-2xl bg-sky-100 px-3 py-1.5 text-xs sm:text-sm dark:bg-sky-800">
+                <x-heroicon-o-calendar-days class="h-4 w-4 shrink-0 text-sky-600 sm:h-5 sm:w-5 dark:text-sky-300" />
+                <span id="namaPeriode" class="font-semibold text-sky-600 dark:text-sky-300">
+                    Memuat periode...
+                </span>
+            </div>
         </div>
     </div>
+    <div class="overflow-x-auto mt-5">
+        <table id="jadwalAuditTable" class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+            <thead class="border-b border-t border-gray-200 bg-gray-50 text-xs uppercase text-gray-700 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                <tr>
+                    <th scope="col" class="rounded-lg border-l border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">No</th>
+                    <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">No</th>
+                    <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">Standar</th>
+                    <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">Uraian Temuan</th>
+                    <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">Kategori Temuan</th>
+                    <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">Saran Perbaikan</th>
+                    <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">Status</th>
+                    <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-600">
+                <tr>
+                    <td colspan="9" class="text-center py-4 text-gray-500">Memuat data...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    // Template URL routes dari Laravel, dengan placeholder :id
+    const urls = {
+        create: "{{ route('auditor.laporan.create') }}",
+        edit: "{{ route('auditor.laporan.edit', ':id') }}",
+        destroy: "{{ route('auditor.laporan.destroy', ':id') }}"
+    };
 
-    <!-- JavaScript untuk Toast -->
-    @push('scripts')
-        <script>
-            // Otomatis tutup toast setelah 5 detik
-            document.addEventListener('DOMContentLoaded', function() {
-                const toasts = ['toast-success', 'toast-danger'];
-                toasts.forEach(toastId => {
-                    const toast = document.getElementById(toastId);
-                    if (toast) {
-                        toast.classList.remove('opacity-0');
-                        toast.classList.add('opacity-100');
-                        setTimeout(() => {
-                            toast.classList.remove('opacity-100');
-                            toast.classList.add('opacity-0');
-                            setTimeout(() => {
-                                toast.classList.add('hidden');
-                            }, 300);
-                        }, 5000);
+    document.addEventListener("DOMContentLoaded", async function() {
+        const tableBody = document.querySelector("#tableBody");
+        const namaPeriodeElem = document.querySelector("#namaPeriode");
+        let token = null;
+
+        try {
+            const tokenMeta = document.querySelector('meta[name="csrf-token"]');
+            token = tokenMeta ? tokenMeta.getAttribute('content') : '{{ csrf_token() }}'; // Fallback ke token Blade
+
+            const response = await fetch("{{ route('auditor.laporan.index') }}", {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': token
+                }
+            });
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || result.message || 'Gagal memuat data');
+            }
+
+            // Pastikan data ada dan merupakan array
+            const data = Array.isArray(result.data) ? result.data : [];
+            if (data.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="9" class="py-4 text-center text-gray-500">Tidak ada data audit.</td></tr>`;
+                namaPeriodeElem.textContent = 'Periode: -';
+                return;
+            }
+
+            const periodeNama = data[0].periode?.nama_periode ?? 'Tidak diketahui';
+            namaPeriodeElem.textContent = `Periode: ${periodeNama}`;
+
+            tableBody.innerHTML = "";
+
+            const statusMap = {
+                1: 'Pengisian Instrumen',
+                2: 'Desk Evaluation',
+                3: 'Penjadwalan AL',
+                4: 'Dijadwalkan AL',
+                5: 'Pertanyaan Tilik',
+                6: 'Tilik Dijawab',
+                7: 'Laporan Temuan',
+                8: 'Revisi',
+                9: 'Sudah revisi',
+                10: 'Closing',
+                11: 'Selesai'
+            };
+
+            data.forEach((item, index) => {
+                const statusName = statusMap[item.status] ?? 'Status Tidak Diketahui';
+
+                // Pastikan id_laporan_temuan ada
+                const id = item.id_laporan_temuan || item.laporan_temuan_id || index; // Fallback jika nama kolom berbeda
+                const editUrl = urls.edit.replace(':id', id);
+                const destroyUrl = urls.destroy.replace(':id', id);
+                const createUrl = urls.create;
+
+                tableBody.innerHTML += `
+                    <tr>
+                        <td class="px-4 py-2">${index + 1}</td>
+                        <td class="px-4 py-2">${item.auditing_id ?? 'N/A'}</td>
+                        <td class="px-4 py-2">${item.standar ?? 'Belum diatur'}</td>
+                        <td class="px-4 py-2">${item.uraian_temuan ?? 'Belum diatur'}</td>
+                        <td class="px-4 py-2">${item.kategori_perbaikan ?? 'Belum diatur'}</td>
+                        <td class="px-4 py-2">${item.saran_perbaikan ?? 'Belum diatur'}</td>
+                        <td class="px-4 py-2">${statusName}</td>
+                        <td class="p-2  flex gap-2">
+                            <a href="${createUrl}" class="inline-flex items-center rounded bg-sky-800 px-2 py-1 text-xs font-medium text-white hover:bg-sky-900">
+                                Tambah
+                            </a>
+                            <a href="${editUrl}" class="inline-flex items-center rounded bg-yellow-600 px-2 py-1 text-xs font-medium text-white hover:bg-yellow-700">
+                                Edit
+                            </a>
+                            <button
+                                data-url="${destroyUrl}"
+                                class="delete-button inline-flex items-center rounded bg-red-600 px-2 py-1 text-xs font-medium text-white hover:bg-red-700">
+                                Hapus
+                            </button>
+                        </td>
+                    </tr>`;
+            });
+
+            document.querySelectorAll('.delete-button').forEach(button => {
+                button.addEventListener('click', async function() {
+                    if (!confirm('Apakah Anda yakin ingin menghapus laporan ini?')) return;
+
+                    const url = this.getAttribute('data-url');
+
+                    try {
+                        const res = await fetch(url, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': token,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        if (!res.ok) throw new Error('Gagal menghapus data.');
+
+                        alert('Data berhasil dihapus.');
+                        location.reload();
+                    } catch (error) {
+                        alert(error.message);
                     }
                 });
-
-                // Handle Submit dan Kunci Jawaban Button
-                    if (submitBtn) {
-                        submitBtn.addEventListener('click', function (event) {
-                            if (!confirm('Apakah Anda yakin ingin submit dan kunci jawaban? Tindakan ini tidak dapat dibatalkan.')) {
-                                event.preventDefault();
-                                return;
-                            }
-                            submitBtn.querySelector('.submit-text').classList.add('hidden');
-                            submitBtn.querySelector('.loading-text').classList.remove('hidden');
-                            submitBtn.disabled = true;
-                        });
-                    }
             });
-        </script>
-    @endpush
+
+        } catch (err) {
+            console.error('Error fetching data:', err);
+            tableBody.innerHTML = `<tr><td colspan="9" class="py-4 text-center text-red-500">Gagal memuat data: ${err.message}</td></tr>`;
+            namaPeriodeElem.textContent = 'Periode: -';
+        }
+    });
+</script>
 @endsection
-```

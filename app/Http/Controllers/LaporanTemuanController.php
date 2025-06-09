@@ -104,8 +104,12 @@ class LaporanTemuanController extends Controller
     /**
      * Menampilkan daftar laporan dengan paginasi dan pencarian.
      */
+
     public function index(Request $request)
     {
+        if ($request->ajax()) {
+            return $this->data($request);
+        }
         $auditingId = $request->session()->get('auditing_id');
         $kriterias = $this->getKriteriaFromApi();
         $kategori_temuan = $this->getKategoriTemuanFromApi();
@@ -114,11 +118,12 @@ class LaporanTemuanController extends Controller
                             ->select('laporan_temuan_id', 'auditing_id', 'standar', 'uraian_temuan', 'kategori_temuan', 'saran_perbaikan');
         if ($search = $request->input('search')) {
             $query->where('standar', 'like', "%{$search}%")
-                  ->orWhere('uraian_temuan', 'like', "%{$search}%");
+                ->orWhere('uraian_temuan', 'like', "%{$search}%");
         }
         $reports = $query->paginate($request->input('entries', 10));
         return view('auditor.laporan.index', compact('reports', 'auditingId', 'audits', 'kriterias', 'kategori_temuan'));
     }
+
 
     /**
      * Menampilkan form untuk membuat laporan baru.
@@ -286,6 +291,32 @@ class LaporanTemuanController extends Controller
                            ->with('error', 'Terjadi kesalahan saat menghapus laporan.');
         }
     }
+
+    public function data(Request $request)
+    {
+        try {
+            $auditingId = $request->session()->get('auditing_id');
+            if (!$auditingId) {
+                return response()->json([
+                    'error' => 'No auditing_id found in session'
+                ], 400);
+            }
+            $laporan = LaporanTemuan::with('auditing')
+                                ->where('auditing_id', $auditingId)
+                                ->get();
+
+            return response()->json([
+                'data' => $laporan
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error in data method: ' . $e->getMessage());
+            return response()->json([
+                'error' => 'Failed to fetch data',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 
     /**
      * Mengsubmit dan mengunci laporan.
