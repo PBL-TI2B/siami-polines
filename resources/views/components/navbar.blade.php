@@ -99,14 +99,10 @@
                 </div>
                 <ul class="py-1 text-sky-200 dark:text-sky-300" aria-labelledby="dropdown">
                     <li>
-                        <a href="#"
-                            class="block px-4 py-2 text-sm hover:bg-sky-100 hover:text-sky-800 dark:hover:bg-sky-700 dark:hover:text-sky-200">Profil
-                            Saya</a>
+                        <a href="{{ route('profile') }}" class="block px-4 py-2 hover:bg-gray-100">Profil Saya</a>
                     </li>
                     <li>
-                        <a href="#"
-                            class="block px-4 py-2 text-sm hover:bg-sky-100 hover:text-sky-800 dark:hover:bg-sky-700 dark:hover:text-sky-200">Pengaturan
-                            Akun</a>
+                        <a href="{{ route('pengaturan-akun') }}" class="block px-4 py-2 hover:bg-gray-100">Pengaturan Akun</a>
                     </li>
                 </ul>
                 <ul>
