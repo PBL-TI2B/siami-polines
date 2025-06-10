@@ -87,9 +87,64 @@
                         </span>
                     </td>
                     <td class="border border-gray-200 px-4 py-4 text-center">
-                        <a href="#" class="inline-flex items-center px-3 py-1 bg-sky-800 text-white rounded hover:bg-sky-900 text-xs">RTM</a>
+                        <a href="#" 
+                            class="rtm-btn inline-flex items-center px-3 py-1 bg-sky-800 text-white rounded hover:bg-sky-900 text-xs" 
+                            data-auditing-id="{{ $auditing->id }}" 
+                            data-set-id="{{ $auditing->set_instrumen_unit_kerja_id ?? '' }}">
+                            RTM
+                        </a>
                     </td>
                 </tr>
+
+    <div id="response-modal"
+        class="fixed inset-0 z-50 flex hidden items-center justify-center bg-gray-900/50 transition-opacity duration-300">
+        <div class="relative max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white p-6 pb-6 dark:bg-gray-800">
+            <button type="button" id="close-modal-btn"
+                class="absolute right-4 top-4 text-gray-400 transition-colors duration-200 hover:text-gray-600 dark:hover:text-gray-300">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <h2 id="modal-title" class="mb-6 text-xl font-bold text-gray-900 dark:text-gray-100"></h2>
+            <div class="flex justify-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-yellow-500">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                </svg>
+            </div>
+            <h1 class="mb-4 text-center font-semibold text-gray-700 dark:text-gray-300">RTM (Rapat tinjauan Manajemen)</h1>
+            <p class="text-sm text-gray-700 dark:text-gray-300 mb-6 text-center">
+                Klik tombol selesai untuk menyelesaikan proses audit <br>
+                <strong class="text-red-600">Tindakan ini tidak dapat dibatalkan.</strong>
+            </p>
+            <form id="response-form">
+                <div class="space-y-6">
+                    <div class="space-y-4">
+                        <div>
+                            <label for="luaran"
+                                class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Luaran
+                                {{-- <span class="text-gray-400">(Masukan Luaran)</span> --}}
+                            </label>
+                            <textarea required name="luaran" id="luaran"
+                                class="block w-full rounded-lg border border-gray-300 px-3 py-2.5 focus:border-sky-500 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                                rows="4" placeholder="Masukan Luaran"></textarea>
+                            <span id="luaran-error" class="mt-1 hidden text-sm font-medium text-red-600"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-center gap-2">
+                    <x-button id="cancel-btn" type="button" color="gray" class="px-4 py-2 text-sm font-medium">
+                        Batal
+                    </x-button>
+                    <x-button type="submit" id="submit-btn" color="sky" class="px-4 py-2 text-sm font-medium">
+                        Selesai
+                    </x-button>
+                </div>
+            </form>
+        </div>
+    </div>
             @empty
                 <tr>
                     <td colspan="10" class="py-4 text-center text-gray-500">
@@ -99,10 +154,39 @@
             @endforelse
         </x-table>
     </div>
+    
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const modal = document.getElementById('response-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const cancelBtn = document.getElementById('cancel-btn');
+        const rtmButtons = document.querySelectorAll('.rtm-btn');
+
+        rtmButtons.forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                // Ambil data dari tombol
+                const auditingId = 1;
+                const setId = 1;
+
+                // Set data ke input hidden modal (jika dibutuhkan)
+                // document.getElementById('auditing_id').value = auditingId;
+                // document.getElementById('set_instrumen_unit_kerja_id').value = setId;
+
+                // Tampilkan modal
+                modal.classList.remove('hidden');
+            });
+        });
+
+        // Tombol tutup modal
+        [closeModalBtn, cancelBtn].forEach(btn => {
+            btn.addEventListener('click', function () {
+                modal.classList.add('hidden');
+            });
+        });
+    });
+</script>
+
 @endsection
 
-@push('scripts')
-    <script>
-        // Placeholder JS
-    </script>
-@endpush
