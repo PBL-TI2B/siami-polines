@@ -83,17 +83,30 @@
                         {{ $auditing->auditor2->nama ?? '-' }}
                     </td>
                     <td class="border border-gray-200 px-4 py-4 text-center">
-                        <span class="{{ $auditing->status == 10 ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300' : 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300' }} inline-flex rounded-full px-2 py-1 text-xs font-semibold">
+                        <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300 min-w-[80px] justify-center">
                             {{ $statusLabels[$auditing->status] ?? 'Menunggu' }}
                         </span>
                     </td>
                     <td class="border border-gray-200 px-4 py-4 text-center">
-                        <a href="#" 
-                            class="rtm-btn inline-flex items-center px-3 py-1 bg-sky-800 text-white rounded hover:bg-sky-900 text-xs" 
-                            data-auditing-id="{{ $auditing->auditing_id ?? $auditing->auditing_id }}" 
-                            data-set-id="{{ $auditing->set_instrumen_unit_kerja_id ?? '' }}">
-                            RTM
-                        </a>
+                        @if ($auditing->status == 11)
+                            <div class="flex justify-center gap-2">
+                                <button type="button" class="inline-flex items-center px-2.5 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-xs font-semibold">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" /></svg>
+                                    RTM
+                                </button>
+                                <button type="button" class="inline-flex items-center px-2.5 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-xs font-semibold">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" /></svg>
+                                    Laporan
+                                </button>
+                            </div>
+                        @else
+                            <a href="#" 
+                                class="rtm-btn inline-flex items-center px-3 py-1 bg-sky-800 text-white rounded hover:bg-sky-900 text-xs" 
+                                data-auditing-id="{{ $auditing->auditing_id ?? $auditing->auditing_id }}" 
+                                data-set-id="{{ $auditing->set_instrumen_unit_kerja_id ?? '' }}">
+                                RTM
+                            </a>
+                        @endif
                     </td>
                 </tr>
 

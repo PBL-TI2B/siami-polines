@@ -233,7 +233,11 @@ Route::prefix('auditee')->middleware('auth.ami:auditee')->group(function () {
 Route::prefix('kepala-pmpp')->middleware('auth.ami:kepala-pmpp')->group(function () {
     Route::get('/dashboard', fn() => view('kepala-pmpp.dashboard.index'))->name('kepala-pmpp.dashboard.index');
     Route::get('/rapat-tinjauan-manajemen', fn() => view('kepala-pmpp.rapat-tinjauan-manajemen.index'))->name('kepala-pmpp.rapat-tinjauan-manajemen.index');
-    Route::get('/ploting-ami', [\App\Http\Controllers\PlotingAMIController::class, 'kepalaIndex'])->name('kepala-pmpp.ploting-ami.index');
+    Route::prefix('ploting-ami')->group(function () {
+        Route::get('/', [\App\Http\Controllers\PlotingAMIController::class, 'kepalaIndex'])->name('kepala-pmpp.ploting-ami.index');
+        Route::get('/download-rtm/{auditing}', [PlotingAMIController::class, 'downloadRTM'])->name('kepala-pmpp.ploting-ami.download-rtm');
+        Route::get('/download-laporan/{auditing}', [PlotingAMIController::class, 'downloadLaporan'])->name('kepala-pmpp.ploting-ami.download-laporan');
+    });
     Route::get('/daftar-tilik', fn() => view('kepala-pmpp.daftar-tilik.index'))->name('kepala-pmpp.daftar-tilik.index');
     Route::get('/data-instrumen', fn() => view('kepala-pmpp.data-instrumen.index'))->name('kepala-pmpp.data-instrumen.index');
     Route::get('/data-instrumen/upt', fn() => view('kepala-pmpp.data-instrumen.upt'))->name('kepala-pmpp.data-instrumen.instrumenupt');

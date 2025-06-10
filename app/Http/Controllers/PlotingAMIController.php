@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Response;
 
 
 class PlotingAMIController extends Controller
@@ -369,4 +370,30 @@ public function update(Request $request, $id)
 
         return view('auditee.assesmen-lapangan.index', compact('auditing'));
     }
+
+    // public function downloadRTM($auditingId)
+    // {
+    //     // Contoh: generate file RTM (bisa dari storage, atau generate on the fly)
+    //     $filename = 'RTM_'.$auditingId.'.pdf';
+    //     $path = storage_path('app/public/rtm/'.$filename);
+
+    //     if (!file_exists($path)) {
+    //         abort(404, 'File RTM tidak ditemukan');
+    //     }
+
+    //     return Response::download($path, $filename);
+    // }
+
+    // public function downloadLaporan($auditingId)
+    // {
+    //     // Contoh: generate file Laporan (bisa dari storage, atau generate on the fly)
+    //     $filename = 'Laporan_'.$auditingId.'.pdf';
+    //     $path = storage_path('app/public/laporan/'.$filename);
+
+    //     if (!file_exists($path)) {
+    //         abort(404, 'File Laporan tidak ditemukan');
+    //     }
+
+    //     return Response::download($path, $filename);
+    // }
 }
