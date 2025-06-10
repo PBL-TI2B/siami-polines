@@ -24,7 +24,7 @@
             </h1>
         </div>
 
-        <div class="mb-8 flex">
+        <div class="mb-4 flex">
             <div class="flex items-center gap-x-2">
                 <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Periode:</span>
                 <div class="inline-flex items-center gap-x-2 rounded-2xl bg-sky-100 px-3 py-1.5 text-xs sm:text-sm dark:bg-sky-800">

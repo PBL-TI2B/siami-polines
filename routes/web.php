@@ -199,7 +199,7 @@ Route::prefix('auditee')->middleware('auth.ami:auditee')->group(function () {
 
         //route daftar tilik
         Route::prefix('daftar-tilik')->group(function () {
-            Route::get('/{auditingId}', [DaftarTilikController::class, 'auditeetilik'])->name('auditee.daftar-tilik.index');
+            Route::get('/', [DaftarTilikController::class, 'auditeetilik'])->name('auditee.daftar-tilik.index');
             Route::get('/{id}/edit', [DaftarTilikController::class, 'editauditee'])->name('auditee.daftar-tilik.edit');
             Route::get('/{tilik_id}/create', [DaftarTilikController::class, 'createauditee'])->name('auditee.daftar-tilik.create');
         });
