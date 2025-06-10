@@ -159,73 +159,63 @@
     
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-    const modal = document.getElementById('response-modal');
-    const closeModalBtn = document.getElementById('close-modal-btn');
-    const cancelBtn = document.getElementById('cancel-btn');
-    const rtmButtons = document.querySelectorAll('.rtm-btn');
+        const modal = document.getElementById('response-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const cancelBtn = document.getElementById('cancel-btn');
+        const rtmButtons = document.querySelectorAll('.rtm-btn');
 
-    rtmButtons.forEach(button => {
-        button.addEventListener('click', function (e) {
+        rtmButtons.forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const auditingId = this.dataset.auditingId;
+                if (!auditingId) {
+                    alert('Error: Auditing ID is missing.');
+                    return;
+                }
+
+                document.getElementById('auditing_id').value = auditingId;
+                modal.classList.remove('hidden');
+            });
+        });
+
+        [closeModalBtn, cancelBtn].forEach(btn => {
+            btn.addEventListener('click', function () {
+                modal.classList.add('hidden');
+            });
+        });
+
+        const responseForm = document.getElementById('response-form');
+        responseForm.addEventListener('submit', function (e) {
             e.preventDefault();
 
-            const auditingId = this.dataset.auditingId;
+            const auditingId = document.getElementById('auditing_id').value;
+            const luaran = document.getElementById('luaran').value;
+
             if (!auditingId) {
-                console.error('auditingId is undefined or empty');
-                alert('Error: Auditing ID is missing.');
+                alert('Error: Auditing ID is required.');
                 return;
             }
-            console.log('auditingId:', auditingId);
-            document.getElementById('auditing_id').value = auditingId;
 
-            modal.classList.remove('hidden');
-        });
-    });
-
-    [closeModalBtn, cancelBtn].forEach(btn => {
-        btn.addEventListener('click', function () {
-            modal.classList.add('hidden');
-        });
-    });
-
-    // Submit form RTM
-    const responseForm = document.getElementById('response-form');
-    responseForm.addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        const auditingId = document.getElementById('auditing_id').value;
-        const luaran = document.getElementById('luaran').value;
-
-        if (!auditingId) {
-            console.error('auditingId is missing in form submission');
-            alert('Error: Auditing ID is required.');
-            return;
-        }
-
-        fetch(`http://127.0.0.1:5000/api/auditings/${auditingId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                status: 11,
-                luaran: luaran // Include luaran in the payload
+            fetch(`http://127.0.0.1:5000/api/auditings/${auditingId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    status: 11,
+                    rtm: luaran
+                })
             })
-        })
-        .then(res => {
-            if (!res.ok) throw new Error('Gagal menyimpan data');
-            return res.json();
-        })
-        .then(data => {
-            alert('Audit berhasil ditandai sebagai selesai.');
-            modal.classList.add('hidden');
-            window.location.reload();
-        })
-        .catch(err => {
-            console.error('Error:', err);
-            alert('Terjadi kesalahan saat menyimpan.');
+            .then(res => res.json())
+            .then(data => {
+                window.location.reload();
+            })
+            .catch(() => {
+                alert('Terjadi kesalahan saat menyimpan data.');
+            });
         });
     });
-});
 </script>
 
 @endsection
