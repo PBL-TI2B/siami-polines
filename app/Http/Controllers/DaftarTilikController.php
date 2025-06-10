@@ -38,9 +38,9 @@ class DaftarTilikController extends Controller
     {
         return view('admin.daftar-tilik.create');
     }
-    public function auditeetilik()
+    public function auditeetilik($auditingId)
     {
-        return view('auditee.daftar-tilik.index');
+        return view('auditee.daftar-tilik.index', compact('auditingId'));
     }
     public function createauditee($tilik_id)
     {

@@ -143,7 +143,7 @@ Route::prefix('auditor')->middleware('auth.ami:auditor')->group(function () {
     // Rute untuk data-instrumen
     Route::get('/data-instrumen', [DataInstrumenControllerAuditor::class, 'index'])->name('auditor.data-instrumen.index');
     Route::get('/data-instrumen/upt', [DataInstrumenControllerAuditor::class, 'auditorInsUpt'])->name('auditor.data-instrumen.instrumenupt');
-    Route::get('/data-instrumen/prodi', [DataInstrumenControllerAuditor::class, 'auditorinsprodi'])->name('auditor.data-instrumen.instrumenprodi');
+    Route::get('/data-instrumen/prodi/{id}', [AuditController::class, 'auditorShowInstrumenProdi'])->name('auditor.data-instrumen.instrumenprodi');
     Route::get('/data-instrumen/jurusan/{id}', [AuditController::class, 'auditorShowInstrumenJurusan'])->name('auditor.data-instrumen.instrumenjurusan');
     Route::patch('/data-instrumen/jurusan/update/{id}', [AuditController::class, 'auditorUpdateInstrumenResponse'])->name('auditor.instrumen.update')->where('id', '[0-9]+');
 
@@ -190,9 +190,22 @@ Route::prefix('auditee')->middleware('auth.ami:auditee')->group(function () {
         Route::get('/', [AuditController::class, 'auditeeIndexPage'])->name('auditee.audit.index');
         Route::get('detail/{auditingId}', [AuditController::class, 'showAuditeeAuditProgress'])->name('auditee.audit.progress-detail');
         Route::get('/auditings', [AuditController::class, 'getAuditingsByUser'])->name('auditee.auditings');
+
+        Route::get('/instrumen-upt/{auditingId}', [AuditController::class, 'showAuditeeInstrumenUPT'])->name('auditee.data-instrumen.instrumenupt');
+        Route::get('/instrumen-prodi/{auditingId}', [AuditController::class, 'showAuditeeInstrumenProdi'])->name('auditee.data-instrumen.instrumenprodi');
+        Route::get('/instrumen-jurusan/{auditingId}', [AuditController::class, 'showAuditeeInstrumenJurusan'])->name('auditee.data-instrumen.instrumenjurusan');
+
+        Route::get('/assesmen-lapangan', [PlotingAMIController::class, 'lihatJadwal'])->name('auditee.assesmen-lapangan.index');
+
+        //route daftar tilik
+        Route::prefix('daftar-tilik')->group(function () {
+            Route::get('/{auditingId}', [DaftarTilikController::class, 'auditeetilik'])->name('auditee.daftar-tilik.index');
+            Route::get('/{id}/edit', [DaftarTilikController::class, 'editauditee'])->name('auditee.daftar-tilik.edit');
+            Route::get('/{tilik_id}/create', [DaftarTilikController::class, 'createauditee'])->name('auditee.daftar-tilik.create');
+        });
     });
 
-    Route::get('/assesmen-lapangan', [PlotingAMIController::class, 'lihatJadwal'])->name('auditee.assesmen-lapangan.index');
+    // Route::get('/assesmen-lapangan', [PlotingAMIController::class, 'lihatJadwal'])->name('auditee.assesmen-lapangan.index');
 
     // Data Instrumen
     Route::prefix('data-instrumen')->group(function () {
@@ -203,18 +216,18 @@ Route::prefix('auditee')->middleware('auth.ami:auditee')->group(function () {
         Route::get('/{sasaran_strategis_id}/edit', [DataInstrumenController::class, 'edit'])->name('auditee.data-instrumen.edit');
         Route::get('/prodi/{response_id}/edit', [DataInstrumenController::class, 'auditeeeditprodiresponse'])->name('auditee.data-instrumen.editprodi');
         //Route::get('/edit/{type?}', [DataInstrumenController::class, 'edit'])->name('auditee.data-instrumen.edit');
-        Route::get('/upt/{auditingId}', [AuditController::class, 'showAuditeeInstrumenUPT'])->name('auditee.data-instrumen.instrumenupt');
-        Route::get('/prodi/{auditingId}', [AuditController::class, 'showAuditeeInstrumenProdi'])->name('auditee.data-instrumen.instrumenprodi');
-        Route::get('/jurusan/{auditingId}', [AuditController::class, 'showAuditeeInstrumenJurusan'])->name('auditee.data-instrumen.instrumenjurusan');
+        // Route::get('/upt/{auditingId}', [AuditController::class, 'showAuditeeInstrumenUPT'])->name('auditee.data-instrumen.instrumenupt');
+        // Route::get('/prodi/{auditingId}', [AuditController::class, 'showAuditeeInstrumenProdi'])->name('auditee.data-instrumen.instrumenprodi');
+        // Route::get('/jurusan/{auditingId}', [AuditController::class, 'showAuditeeInstrumenJurusan'])->name('auditee.data-instrumen.instrumenjurusan');
         Route::get('/export', [DataInstrumenController::class, 'export'])->name('auditee.data-instrumen.export');
     });
 
-    //route daftar tilik
-    Route::prefix('daftar-tilik')->group(function () {
-        Route::get('/', [DaftarTilikController::class, 'auditeetilik'])->name('auditee.daftar-tilik.index');
-        Route::get('/{id}/edit', [DaftarTilikController::class, 'editauditee'])->name('auditee.daftar-tilik.edit');
-        Route::get('/{tilik_id}/create', [DaftarTilikController::class, 'createauditee'])->name('auditee.daftar-tilik.create');
-    });
+    // //route daftar tilik
+    // Route::prefix('daftar-tilik')->group(function () {
+    //     Route::get('/', [DaftarTilikController::class, 'auditeetilik'])->name('auditee.daftar-tilik.index');
+    //     Route::get('/{id}/edit', [DaftarTilikController::class, 'editauditee'])->name('auditee.daftar-tilik.edit');
+    //     Route::get('/{tilik_id}/create', [DaftarTilikController::class, 'createauditee'])->name('auditee.daftar-tilik.create');
+    // });
 });
 
 Route::prefix('kepala-pmpp')->middleware('auth.ami:kepala-pmpp')->group(function () {

@@ -21,11 +21,10 @@
                 <ol class="pl-5 relative text-gray-500 border-s border-gray-200 dark:border-gray-700 dark:text-gray-400">
                     {{-- Koreksi Respon Instrumen --}}
                     @php
-                    $jenisUnitId = session('jenis_unit_id');
                     $instrumenRoute = match ($jenisUnitId) {
                     1 => route('auditor.data-instrumen.instrumenupt'),
                     2 => route('auditor.data-instrumen.instrumenjurusan', ['id' => $auditing->auditing_id]),
-                    3 => route('auditor.data-instrumen.instrumenprodi'),
+                    3 => route('auditor.data-instrumen.instrumenprodi', ['id' => $auditing->auditing_id]),
                     default => '#', // fallback kalau tidak ditemukan
                     };
                     @endphp
@@ -109,7 +108,7 @@
                             <svg class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
                                 <path d="M16 1h-3.278A1.992 1.992 0 0 0 11 0H7a1.993 1.993 0 0 0-1.722 1H2a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2Zm-3 14H5a1 1 0 0 1 0-2h8a1 1 0 0 1 0 2Zm0-4H5a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2Zm0-5H5a1 1 0 0 1 0-2h2V2h4v2h2a1 1 0 1 1 0 2Z" />
                             </svg>
-    
+
                             @endif
                         </span>
                         <h3 class="font-medium leading-tight">Laporan Temuan</h3>
@@ -149,13 +148,13 @@
                     </p>
                 </div>
             </div>
-            
+
         </div>
     </div>
 </div>
 
 <!-- Modal Closing Proses Audit -->
-<div id="closeConfirmModal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 hidden"> 
+<div id="closeConfirmModal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 hidden">
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-md p-6">
 
         <!-- Icon tanda seru -->
@@ -169,8 +168,8 @@
 
         <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100 text-center">
             Konfirmasi Closing Proses Audit
-        </h3> 
-        
+        </h3>
+
         <p class="text-sm text-gray-700 dark:text-gray-300 mb-6 text-center">
             Apakah Anda yakin ingin menyelesaikan (closing) proses audit? <br>
             <strong class="text-red-600">Tindakan ini tidak dapat dibatalkan.</strong>
@@ -181,7 +180,7 @@
                 Batal
             </button>
             <button id="confirmLockBtn" type="button" class="bg-sky-600 text-white px-4 py-2 rounded-md hover:bg-sky-700 transition-all duration-200">
-                Ya, Closing Proses Audit 
+                Ya, Closing Proses Audit
             </button>
         </div>
     </div>
@@ -208,7 +207,7 @@
         modal.innerHTML = `
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-md p-6">
                 <div class="flex justify-center mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" 
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                          class="w-12 h-12 ${type === 'success' ? 'text-green-500' : 'text-red-500'}">
                         <path stroke-linecap="round" stroke-linejoin="round" d="${type === 'success' ? 'M5 13l4 4L19 7' : 'M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z'}" />
                     </svg>
