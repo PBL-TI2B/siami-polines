@@ -33,13 +33,14 @@
                 1 => 'Pengisian Instrumen',
                 2 => 'Desk Evaluation',
                 3 => 'Penjadwalan AL',
-                4 => 'Pertanyaan Tilik',
-                5 => 'Tilik Dijawab',
-                6 => 'Laporan Temuan',
-                7 => 'Revisi',
-                8 => 'Sudah revisi',
-                9 => 'Closing',
-                10 => 'Selesai',
+                4 => 'Dijadwalkan Tilik' ,
+                5 => 'Pertanyaan Tilik',
+                6 => 'Tilik Dijawab',
+                7 => 'Laporan Temuan',
+                8 => 'Revisi',
+                9 => 'Sudah revisi',
+                10 => 'Closing',
+                11 => 'Selesai',
             ];
         @endphp
 
@@ -89,7 +90,7 @@
                     <td class="border border-gray-200 px-4 py-4 text-center">
                         <a href="#" 
                             class="rtm-btn inline-flex items-center px-3 py-1 bg-sky-800 text-white rounded hover:bg-sky-900 text-xs" 
-                            data-auditing-id="{{ $auditing->id }}" 
+                            data-auditing-id="{{ $auditing->auditing_id ?? $auditing->auditing_id }}" 
                             data-set-id="{{ $auditing->set_instrumen_unit_kerja_id ?? '' }}">
                             RTM
                         </a>
@@ -122,6 +123,7 @@
                 <div class="space-y-6">
                     <div class="space-y-4">
                         <div>
+                            <input type="hidden" name="auditing_id" id="auditing_id">
                             <label for="luaran"
                                 class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
                                 Luaran
@@ -157,35 +159,73 @@
     
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const modal = document.getElementById('response-modal');
-        const closeModalBtn = document.getElementById('close-modal-btn');
-        const cancelBtn = document.getElementById('cancel-btn');
-        const rtmButtons = document.querySelectorAll('.rtm-btn');
+    const modal = document.getElementById('response-modal');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    const cancelBtn = document.getElementById('cancel-btn');
+    const rtmButtons = document.querySelectorAll('.rtm-btn');
 
-        rtmButtons.forEach(button => {
-            button.addEventListener('click', function (e) {
-                e.preventDefault();
+    rtmButtons.forEach(button => {
+        button.addEventListener('click', function (e) {
+            e.preventDefault();
 
-                // Ambil data dari tombol
-                const auditingId = 1;
-                const setId = 1;
+            const auditingId = this.dataset.auditingId;
+            if (!auditingId) {
+                console.error('auditingId is undefined or empty');
+                alert('Error: Auditing ID is missing.');
+                return;
+            }
+            console.log('auditingId:', auditingId);
+            document.getElementById('auditing_id').value = auditingId;
 
-                // Set data ke input hidden modal (jika dibutuhkan)
-                // document.getElementById('auditing_id').value = auditingId;
-                // document.getElementById('set_instrumen_unit_kerja_id').value = setId;
-
-                // Tampilkan modal
-                modal.classList.remove('hidden');
-            });
-        });
-
-        // Tombol tutup modal
-        [closeModalBtn, cancelBtn].forEach(btn => {
-            btn.addEventListener('click', function () {
-                modal.classList.add('hidden');
-            });
+            modal.classList.remove('hidden');
         });
     });
+
+    [closeModalBtn, cancelBtn].forEach(btn => {
+        btn.addEventListener('click', function () {
+            modal.classList.add('hidden');
+        });
+    });
+
+    // Submit form RTM
+    const responseForm = document.getElementById('response-form');
+    responseForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const auditingId = document.getElementById('auditing_id').value;
+        const luaran = document.getElementById('luaran').value;
+
+        if (!auditingId) {
+            console.error('auditingId is missing in form submission');
+            alert('Error: Auditing ID is required.');
+            return;
+        }
+
+        fetch(`http://127.0.0.1:5000/api/auditings/${auditingId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                status: 11,
+                luaran: luaran // Include luaran in the payload
+            })
+        })
+        .then(res => {
+            if (!res.ok) throw new Error('Gagal menyimpan data');
+            return res.json();
+        })
+        .then(data => {
+            alert('Audit berhasil ditandai sebagai selesai.');
+            modal.classList.add('hidden');
+            window.location.reload();
+        })
+        .catch(err => {
+            console.error('Error:', err);
+            alert('Terjadi kesalahan saat menyimpan.');
+        });
+    });
+});
 </script>
 
 @endsection
