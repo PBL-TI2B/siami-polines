@@ -37,6 +37,10 @@
                     <x-heroicon-o-pencil class="w-5 h-5" />
                     Edit
                 </x-button>
+                <x-button id="btnEditPassword" color="sky">
+                    <x-heroicon-o-pencil class="w-5 h-5" />
+                    Edit Password
+                </x-button>
                 <x-button color="gray" icon="heroicon-o-x-mark" href="{{ route('auditor.daftar-tilik.index') }}">
                     Kembali
                 </x-button>
@@ -70,6 +74,31 @@
     </div>
 </div>
 
+<div id="modalEditPassword" class="fixed inset-0 z-50 flex items-center justify-center bg-white/30 backdrop-blur-sm hidden">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
+        <button id="closeModal" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+        <h3 class="text-xl font-bold mb-4">Edit Password</h3>
+        <form id="formEditPassword">
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-1">Password Lama</label>
+                <input type="password" id="old_password" name="password" class="w-full border rounded px-3 py-2" required>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-1">Password Baru</label>
+                <input type="password" id="new_password" name="password" class="w-full border rounded px-3 py-2" required>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-1">Konfirmasi Password</label>
+                <input type="password" id="confirm_password" name="password" class="w-full border rounded px-3 py-2" required>
+            </div>
+            <div class="flex justify-end gap-2">
+                <button type="button" id="cancelPasswordEdit" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Batal</button>
+                <button type="submit" class="px-4 py-2 bg-sky-600 text-white rounded hover:bg-sky-700">Simpan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- Modal Toast -->
 <div id="responseModal" class="hidden fixed top-4 end-4 z-50 bg-transparent transition-opacity duration-300">
     <div class="w-full max-w-md p-4 bg-white rounded-lg shadow-lg dark:bg-gray-800">
@@ -94,6 +123,41 @@
 </div>
 
 <script>
+    // Pindahkan ke paling atas sebelum DOMContentLoaded
+function showToast(message, success = true) {
+    const responseModal = document.getElementById('responseModal');
+    const modalMessage = document.getElementById('modalMessage');
+    const modalIcon = document.getElementById('modalIcon');
+    modalMessage.textContent = message;
+
+    // Ganti ikon dan warna jika error
+    if (success) {
+        modalIcon.classList.remove('text-red-500', 'bg-red-100', 'dark:bg-red-800', 'dark:text-red-200');
+        modalIcon.classList.add('text-green-500', 'bg-green-100', 'dark:bg-green-800', 'dark:text-green-200');
+        modalIcon.innerHTML = `
+            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+            </svg>
+        `;
+    } else {
+        modalIcon.classList.remove('text-green-500', 'bg-green-100', 'dark:bg-green-800', 'dark:text-green-200');
+        modalIcon.classList.add('text-red-500', 'bg-red-100', 'dark:bg-red-800', 'dark:text-red-200');
+        modalIcon.innerHTML = `
+            <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm-1-5h2v2h-2v-2Zm0-8h2v6h-2V5Z"/>
+            </svg>
+        `;
+    }
+
+    responseModal.classList.remove('hidden');
+    responseModal.classList.add('opacity-100');
+
+    // Auto close after 2.5s
+    setTimeout(() => {
+        responseModal.classList.add('hidden');
+    }, 2500);
+}
+
     let userData = {};
     document.addEventListener('DOMContentLoaded', function () {
         const UserId = {{ session('user.user_id') ?? 'null' }};
@@ -122,44 +186,6 @@
                 });
         }
 
-        // Toast logic
-    function showToast(message, success = true) {
-        const responseModal = document.getElementById('responseModal');
-        const modalMessage = document.getElementById('modalMessage');
-        const modalIcon = document.getElementById('modalIcon');
-        modalMessage.textContent = message;
-
-        // Ganti ikon dan warna jika error
-        if (success) {
-            modalIcon.classList.remove('text-red-500', 'bg-red-100', 'dark:bg-red-800', 'dark:text-red-200');
-            modalIcon.classList.add('text-green-500', 'bg-green-100', 'dark:bg-green-800', 'dark:text-green-200');
-            modalIcon.innerHTML = `
-                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
-                </svg>
-            `;
-        } else {
-            modalIcon.classList.remove('text-green-500', 'bg-green-100', 'dark:bg-green-800', 'dark:text-green-200');
-            modalIcon.classList.add('text-red-500', 'bg-red-100', 'dark:bg-red-800', 'dark:text-red-200');
-            modalIcon.innerHTML = `
-                <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm-1-5h2v2h-2v-2Zm0-8h2v6h-2V5Z"/>
-                </svg>
-            `;
-        }
-
-        responseModal.classList.remove('hidden');
-        responseModal.classList.add('opacity-100');
-
-        // Auto close after 2.5s
-        setTimeout(() => {
-            responseModal.classList.add('hidden');
-        }, 2500);
-    }
-
-    document.getElementById('closeResponseModal').addEventListener('click', function() {
-        document.getElementById('responseModal').classList.add('hidden');
-    });
 
         // Modal logic
         const modal = document.getElementById('modalEditProfile');
@@ -226,6 +252,72 @@
             console.error('Error:', error);
             showToast(error.message || 'Gagal menyimpan data!', false);
         });
+        });
+    });
+
+    const modalPassword = document.getElementById('modalEditPassword');
+    const btnEditPassword = document.getElementById('btnEditPassword');
+    const closeModalPassword = modalPassword.querySelector('#closeModal');
+    const cancelEditPassword = modalPassword.querySelector('#cancelPasswordEdit');
+    const formEditPassword = document.getElementById('formEditPassword');
+
+    btnEditPassword.addEventListener('click', function() {
+        // Kosongkan field password
+        formEditPassword.reset();
+        modalPassword.classList.remove('hidden');
+    });
+
+    closeModalPassword.addEventListener('click', function() {
+        modalPassword.classList.add('hidden');
+    });
+    cancelEditPassword.addEventListener('click', function() {
+        modalPassword.classList.add('hidden');
+    });
+
+    formEditPassword.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const passwordLama = document.getElementById('old_password').value;
+        const passwordBaru = document.getElementById('new_password').value;
+        const konfirmasiPassword = document.getElementById('confirm_password').value;
+
+        if (!passwordLama || !passwordBaru || !konfirmasiPassword) {
+            showToast('Semua field password wajib diisi!', false);
+            return;
+        }
+        if (passwordBaru !== konfirmasiPassword) {
+            showToast('Konfirmasi password tidak cocok!', false);
+            return;
+        }
+
+        UserId = {{ session('user.user_id') ?? 'null' }};
+
+        // Kirim ke backend (ganti endpoint sesuai API Anda)
+        fetch(`http://127.0.0.1:5000/api/data-user/${UserId}/change-password`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                old_password: passwordLama,
+                new_password: passwordBaru,
+                new_password_confirmation: konfirmasiPassword
+            })
+        })
+        .then(res => {
+            if (!res.ok) {
+                return res.json().then(err => {
+                    throw new Error(err.message || 'Gagal mengubah password!');
+                });
+            }
+            return res.json();
+        })
+        .then(response => {
+            modalPassword.classList.add('hidden');
+            showToast('Password berhasil diubah!', true);
+        })
+        .catch(error => {
+            showToast(error.message || 'Gagal mengubah password!', false);
         });
     });
 </script>
