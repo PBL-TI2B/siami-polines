@@ -110,24 +110,43 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     async function initializeData() {
-        showLoadingState();
-        try {
-            // PASTIKAN PORT DAN ENDPOINT BENAR (misal: 8000 dan /api/tilik/all)
-            const response = await fetch('http://127.0.0.1:5000/api/tilik/all');
-            if (!response.ok) throw new Error('Network response was not ok.');
-            
-            const result = await response.json();
-            if (result.success) {
-                allTilikData = result.data || [];
-                renderTable();
-            } else {
-                showErrorState(result.message || 'Gagal memuat data.');
-            }
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            showErrorState('Tidak dapat terhubung ke server.');
+    showLoadingState();
+    try {
+        // Mengambil data tilik dan data kriteria secara paralel
+        const [tilikResponse, kriteriaResponse] = await Promise.all([
+            fetch('http://127.0.0.1:5000/api/tilik/all'), 
+            fetch('http://127.0.0.1:5000/api/kriteria')  
+        ]);
+
+        if (!tilikResponse.ok) throw new Error('Gagal mengambil data tilik');
+        if (!kriteriaResponse.ok) throw new Error('Gagal mengambil data kriteria');
+        
+        const tilikResult = await tilikResponse.json();
+        const kriteriaResult = await kriteriaResponse.json();
+
+        // membangun kriteriaMap secara dinamis
+        if (Array.isArray(kriteriaResult)) { 
+             kriteriaResult.forEach(item => {
+                kriteriaMap[item.kriteria_id] = item.nama_kriteria; 
+            });
+        } else if (kriteriaResult.success && Array.isArray(kriteriaResult.data)) { // Jika API dibungkus objek
+            kriteriaResult.data.forEach(item => {
+                kriteriaMap[item.kriteria_id] = item.nama_kriteria;
+            });
         }
+
+        if (tilikResult.success) {
+            allTilikData = tilikResult.data || [];
+            renderTable();
+        } else {
+            showErrorState(tilikResult.message || 'Gagal memuat data tilik.');
+        }
+
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        showErrorState('Tidak dapat terhubung ke server.');
     }
+}
 
     function renderTable() {
         const filteredData = searchQuery.length > 1
