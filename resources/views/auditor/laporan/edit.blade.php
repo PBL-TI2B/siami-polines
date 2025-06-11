@@ -1,4 +1,4 @@
-@extends('layouts.app')
+{{-- @extends('layouts.app')
 
 @section('title', 'Edit Laporan Temuan')
 
@@ -90,4 +90,4 @@
         </div>
     </form>
 </div>
-@endsection
+@endsection --}}

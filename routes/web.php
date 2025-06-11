@@ -151,15 +151,8 @@ Route::prefix('auditor')->middleware('auth.ami:auditor')->group(function () {
         return view('auditor.laporan.index');
     })->name('auditor.laporan.index');
 
-    Route::get('/auditor/laporan', [LaporanTemuanController::class, 'index'])->name('auditor.laporan.index');
-    Route::get('/auditor/laporan/data', [LaporanTemuanController::class, 'data'])->name('auditor.laporan.data'); // Opsional, jika ingin pisah
-    Route::post('/auditor/laporan', [LaporanTemuanController::class, 'store'])->name('auditor.laporan.store');
-    Route::get('/auditor/laporan/create', [LaporanTemuanController::class, 'create'])->name('auditor.laporan.create');
-    Route::get('/auditor/laporan/{id}/edit', [LaporanTemuanController::class, 'edit'])->name('auditor.laporan.edit');
-    Route::put('/auditor/laporan/{id}', [LaporanTemuanController::class, 'update'])->name('auditor.laporan.update');
-    Route::delete('/auditor/laporan/{id}', [LaporanTemuanController::class, 'destroy'])->name('auditor.laporan.destroy');
-    Route::post('/auditor/laporan/submit', [LaporanTemuanController::class, 'submit'])->name('auditor.laporan.submit');
-
+    Route::get('/laporan', [LaporanTemuanController::class, 'index'])->name('auditor.laporan.index');
+    Route::post('/laporan', [LaporanTemuanController::class, 'store'])->name('auditor.laporan.store');
 
     Route::get('/ptpp', function () {
         return view('auditor.ptpp.index');
