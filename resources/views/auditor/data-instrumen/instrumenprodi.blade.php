@@ -95,11 +95,11 @@
             <x-button id="back-btn" type="button" color="red" icon="heroicon-o-arrow-left">
                 Kembali
             </x-button>
-            @if (session('status') == 2)
+            @if (session('status') == 3)
             <x-button id="complete-correction-btn" type="button" color="sky" icon="heroicon-o-check">
                 Koreksi Selesai
             </x-button>
-            @elseif (session('status') == 7)
+            @elseif (session('status') == 8)
             <x-button id="complete-revision-btn" type="button" color="sky" icon="heroicon-o-check">
                 Koreksi Revisi Selesai
             </x-button>
@@ -540,7 +540,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Handle correction and revision buttons
-    if (auditStatus === 2) {
+    if (auditStatus === 3) {
         const completeCorrectionBtn = document.getElementById('complete-correction-btn');
         if (completeCorrectionBtn) {
             completeCorrectionBtn.addEventListener('click', function () {
@@ -550,7 +550,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     () => {
                         handleCompletion(
                             auditingId,
-                            3,
+                            4,
                             'Koreksi berhasil diselesaikan!',
                             completeCorrectionBtn,
                             "{{ route('auditor.audit.index') }}"
@@ -561,7 +561,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    if (auditStatus === 7) {
+    if (auditStatus === 8) {
         const completeRevisionBtn = document.getElementById('complete-revision-btn');
         if (completeRevisionBtn) {
             completeRevisionBtn.addEventListener('click', function () {
@@ -571,7 +571,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     () => {
                         handleCompletion(
                             auditingId,
-                            8,
+                            9,
                             'Koreksi revisi berhasil diselesaikan!',
                             completeRevisionBtn,
                             "{{ route('auditor.audit.index') }}"

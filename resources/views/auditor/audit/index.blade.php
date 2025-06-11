@@ -77,9 +77,9 @@
                 data.forEach((item, index) => {
                    const statusMap = {
         1: 'Pengisian Instrumen',
-        2: 'Desk Evaluation',
-        3: 'Penjadwalan AL',
-        4: 'Dijadwalkan AL',
+        2: 'Penjadwalan AL',
+        3: 'Dijadwalkan AL',
+        4: 'Desk Evaluation',
         5: 'Pertanyaan Tilik',
         6: 'Tilik Dijawab',
         7: 'Laporan Temuan',

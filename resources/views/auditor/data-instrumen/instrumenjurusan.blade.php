@@ -474,7 +474,7 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        status: "3"
+                        status: "4"
                     }),
                 });
                 const result = await response.json();

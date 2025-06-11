@@ -174,8 +174,8 @@
                 else if (statusGlobal > 1) updateStepUI(1, 'completed');
                 else updateStepUI(1, 'pending');
 
-                if (statusGlobal === 4) updateStepUI(2, 'current');
-                else if (statusGlobal > 4) updateStepUI(2, 'completed');
+                if (statusGlobal === 3) updateStepUI(2, 'current');
+                else if (statusGlobal > 3) updateStepUI(2, 'completed');
                 else updateStepUI(2, 'pending');
 
                 if (statusGlobal === 5) updateStepUI(3, 'current');

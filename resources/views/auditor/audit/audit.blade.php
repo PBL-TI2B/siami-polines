@@ -19,6 +19,26 @@
                 $status = $auditing->status;
                 @endphp
                 <ol class="pl-5 relative text-gray-500 border-s border-gray-200 dark:border-gray-700 dark:text-gray-400">
+                    {{-- Jadwalkan Assesmen Lapangan --}}
+                    <li class="mb-10 ms-6">
+                        <span class="absolute flex items-center justify-center w-8 h-8
+                {{ $status >= 3 ? 'bg-green-200 dark:bg-green-900' : 'bg-gray-100 dark:bg-gray-700' }}
+                rounded-full -start-4 ring-4 ring-white dark:ring-gray-900">
+                            @if($status >= 3)
+                            <svg class="w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5" />
+                            </svg>
+                            @else
+                            <svg class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
+                                <path d="M16 1h-3.278A1.992 1.992 0 0 0 11 0H7a1.993 1.993 0 0 0-1.722 1H2a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2Zm-3 14H5a1 1 0 0 1 0-2h8a1 1 0 0 1 0 2Zm0-4H5a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2Zm0-5H5a1 1 0 0 1 0-2h2V2h4v2h2a1 1 0 1 1 0 2Z" />
+                            </svg>
+                            @endif
+                        </span>
+                        <h3 class="font-medium leading-tight">Jadwalkan Assesmen Lapangan</h3>
+                        @if($status == 2)
+                        <a href="{{ route('auditor.assesmen-lapangan.index') }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Set Jadwal Assesmen Lapangan</a>
+                        @endif
+                    </li>
                     {{-- Koreksi Respon Instrumen --}}
                     @php
                     $instrumenRoute = match ($jenisUnitId) {
@@ -30,9 +50,9 @@
                     @endphp
                     <li class="mb-10 ms-6">
                         <span class="absolute flex items-center justify-center w-8 h-8
-                {{ $status >= 3 ? 'bg-green-200 dark:bg-green-900' : 'bg-gray-100 dark:bg-gray-700' }}
+                {{ $status >= 4 ? 'bg-green-200 dark:bg-green-900' : 'bg-gray-100 dark:bg-gray-700' }}
                 rounded-full -start-4 ring-4 ring-white dark:ring-gray-900">
-                            @if($status >= 3)
+                            @if($status >= 4)
                             {{-- Centang --}}
                             <svg class="w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5" />
@@ -45,32 +65,12 @@
                             @endif
                         </span>
                         <h3 class="font-medium leading-tight">Koreksi Respon Instrumen</h3>
-                        @if($status == 2)
+                        @if($status == 3)
                         {{-- Link ke instrumen sesuai jenis unit --}}
                         <a href="{{ $instrumenRoute }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Koreksi Jawaban Instrumen</a>
                         @elseif($status == 6 || $status == 9)
                         {{-- Link ke instrumen sesuai jenis unit --}}
                         <a href="{{ $instrumenRoute }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Cek Jawaban Instrumen</a>
-                        @endif
-                    </li>
-                    {{-- Jadwalkan Assesmen Lapangan --}}
-                    <li class="mb-10 ms-6">
-                        <span class="absolute flex items-center justify-center w-8 h-8
-                {{ $status >= 4 ? 'bg-green-200 dark:bg-green-900' : 'bg-gray-100 dark:bg-gray-700' }}
-                rounded-full -start-4 ring-4 ring-white dark:ring-gray-900">
-                            @if($status >= 4)
-                            <svg class="w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5" />
-                            </svg>
-                            @else
-                            <svg class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
-                                <path d="M16 1h-3.278A1.992 1.992 0 0 0 11 0H7a1.993 1.993 0 0 0-1.722 1H2a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2Zm-3 14H5a1 1 0 0 1 0-2h8a1 1 0 0 1 0 2Zm0-4H5a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2Zm0-5H5a1 1 0 0 1 0-2h2V2h4v2h2a1 1 0 1 1 0 2Z" />
-                            </svg>
-                            @endif
-                        </span>
-                        <h3 class="font-medium leading-tight">Jadwalkan Assesmen Lapangan</h3>
-                        @if($status == 3)
-                        <a href="{{ route('auditor.assesmen-lapangan.index') }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Set Jadwal Assesmen Lapangan</a>
                         @endif
                     </li>
                     {{-- Daftar Tilik --}}

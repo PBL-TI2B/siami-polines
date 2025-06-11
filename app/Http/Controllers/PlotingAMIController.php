@@ -169,10 +169,10 @@ class PlotingAMIController extends Controller
         $auditingId = session('auditing_id');
         $auditStatus = session('status');
 
-        if (in_array($auditStatus, [3, 4])) {
+        if (in_array($auditStatus, [2, 3])) {
             Log::info('Updating status', ['auditingId' => $auditingId, 'auditStatus' => $auditStatus]);
             $statusResponse = Http::asJson()->put("http://127.0.0.1:5000/api/auditings/$auditingId", [
-                'status' => 4,
+                'status' => 3,
             ]);
 
             if (!$statusResponse->successful()) {

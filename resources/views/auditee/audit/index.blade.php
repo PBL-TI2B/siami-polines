@@ -110,9 +110,9 @@
 
                 const statusMap = {
                     1: { label: 'Pengisian Instrumen', color: 'bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-300' },
-                    2: { label: 'Desk Evaluation', color: 'bg-sky-100 dark:bg-sky-800 text-sky-700 dark:text-sky-300' },
-                    3: { label: 'Penjadwalan AL', color: 'bg-sky-100 dark:bg-sky-800 text-sky-700 dark:text-sky-300' },
-                    4: { label: 'Dijadwalkan AL', color: 'bg-yellow-100 dark:bg-yellow-800 text-yellow-700 dark:text-yellow-300' },
+                    2: { label: 'Penjadwalan AL', color: 'bg-sky-100 dark:bg-sky-800 text-sky-700 dark:text-sky-300' },
+                    3: { label: 'Dijadwalkan AL', color: 'bg-sky-100 dark:bg-sky-800 text-sky-700 dark:text-sky-300' },
+                    4: { label: 'Desk Evaluation', color: 'bg-yellow-100 dark:bg-yellow-800 text-yellow-700 dark:text-yellow-300' },
                     5: { label: 'Pertanyaan Tilik', color: 'bg-yellow-100 dark:bg-yellow-800 text-yellow-700 dark:text-yellow-300' },
                     6: { label: 'Tilik Dijawab', color: 'bg-amber-100 dark:bg-amber-800 text-amber-700 dark:text-amber-300' },
                     7: { label: 'Laporan Temuan', color: 'bg-orange-100 dark:bg-orange-800 text-orange-700 dark:text-orange-300' },
