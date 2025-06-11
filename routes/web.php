@@ -237,6 +237,7 @@ Route::prefix('kepala-pmpp')->middleware('auth.ami:kepala-pmpp')->group(function
         Route::get('/', [\App\Http\Controllers\PlotingAMIController::class, 'kepalaIndex'])->name('kepala-pmpp.ploting-ami.index');
         Route::get('/download-rtm/{auditing}', [PlotingAMIController::class, 'downloadRTM'])->name('kepala-pmpp.ploting-ami.download-rtm');
         Route::get('/download-laporan/{auditing}', [PlotingAMIController::class, 'downloadLaporan'])->name('kepala-pmpp.ploting-ami.download-laporan');
+        Route::get('/download-ptpp/{auditing}', [PlotingAMIController::class, 'downloadptpp'])->name('kepala-pmpp.ploting-ami.download-ptpp');
     });
     Route::get('/daftar-tilik', fn() => view('kepala-pmpp.daftar-tilik.index'))->name('kepala-pmpp.daftar-tilik.index');
     Route::get('/data-instrumen', fn() => view('kepala-pmpp.data-instrumen.index'))->name('kepala-pmpp.data-instrumen.index');

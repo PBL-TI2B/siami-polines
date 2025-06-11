@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Response;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 
 class PlotingAMIController extends Controller
@@ -369,6 +370,19 @@ public function update(Request $request, $id)
         }
 
         return view('auditee.assesmen-lapangan.index', compact('auditing'));
+    }
+
+    public function downloadptpp($id)
+    {
+        $audit = Auditing::with(['auditor1', 'auditor2', 'auditee1', 'auditee2', 'periode', 'unitKerja'])->findOrFail($id);
+
+        if ($audit->status != 11) {
+            return redirect()->back()->with('error', 'PTPP hanya tersedia jika status selesai.');
+        }
+
+        $pdf = Pdf::loadView('kepala-pmpp.ploting-ami.ptpp', compact('audit'));
+
+        return $pdf->download('PTPP-'.$audit->unit_kerja.'.pdf');
     }
 
     // public function downloadRTM($auditingId)
