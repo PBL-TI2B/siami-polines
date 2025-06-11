@@ -91,9 +91,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const kriteriaMap = {
         1: '1. Visi, Misi, Tujuan, Strategi',
         2: '2. Tata Kelola, Tata Pamong, dan Kerjasama',
-        3: '3. Kurikulum dan Pembelajaran',
-        4: '4. Penelitian',
-        5: '5. Luaran Tridharma',
+        3: '3. Mahasiswa',
+        4: '4. Sumber Daya Manusia',
+        5: '5. Keuangan, Sarana, dan Prasarana',
+        6: '6. Pendidikan / Kurikulum dan Pembelajaran',
+        7: '7. Penelitian',
+        8: '8. Pengabdian Kepada Masyarakat',
+        9: '9. Luaran Tridharma',
     };
 
     // === DOM ELEMENTS ===
