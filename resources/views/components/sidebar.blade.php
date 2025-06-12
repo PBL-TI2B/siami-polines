@@ -4,7 +4,6 @@
     use Illuminate\Support\Facades\Log;
     use Illuminate\Support\Str;
 
-    // ... blok pengambilan data dari API tidak berubah ...
     $menuItems = [];
     $message = null;
     $error = null;
@@ -31,19 +30,13 @@
         $error = 'Silakan login untuk melihat menu.';
     }
 
-    /**
-     * [FUNGSI FINAL V2]
-     * Logika yang lebih sederhana dan langsung, fokus pada path URL untuk menu Audit.
-     */
     function isRouteActive($menuRoute, $menuParams = [])
     {
         if (empty($menuRoute)) {
             return false;
         }
 
-        // Aturan Khusus untuk Menu Audit:
-        // Jika route dari API adalah 'auditee.audit.index',
-        // maka aktifkan untuk semua URL yang diawali 'auditee/audit/...'
+        // Cek apakah route yang diberikan adalah 'auditee.audit.index' atau 'auditor.audit.index'
         if ($menuRoute === 'auditee.audit.index') {
             return request()->is('auditee/audit', 'auditee/audit/*');
         }
@@ -51,12 +44,22 @@
             return request()->is('auditor/audit', 'auditor/audit/*');
         }
 
-        // Aturan Default untuk menu lainnya (seperti Dashboard):
+        // Jika ada parameter, cek juga parameter route-nya dan query string
+        if (!empty($menuParams)) {
+            foreach ($menuParams as $key => $value) {
+                // Cek parameter dari route atau query string
+                $param = request()->route($key) ?? request()->query($key);
+                if ($param != $value) {
+                    return false;
+                }
+            }
+        }
+
+        // Aturan Default untuk menu lainnya
         // Cek nama route secara persis.
         return request()->routeIs($menuRoute);
     }
 
-    // ... fungsi generateSidebarUrl dan isDropdownOpen tidak perlu diubah ...
     function generateSidebarUrl($item)
     {
         $route = $item['route'];
@@ -150,7 +153,7 @@
 </aside>
 
 <script>
-    // Script Anda tidak berubah
+    // Toggle sidebar visibility on small screens
     document.querySelectorAll('[data-collapse-toggle]').forEach(button => {
         button.addEventListener('click', () => {
             const targetId = button.getAttribute('data-collapse-toggle');
