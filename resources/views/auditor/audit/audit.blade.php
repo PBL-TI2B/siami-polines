@@ -90,9 +90,9 @@
                         </span>
                         <h3 class="font-medium leading-tight">Daftar Tilik</h3>
                         @if($status == 4)
-                        <a href="{{ route('auditor.daftar-tilik.index') }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Buat Pertanyaan Daftar Tilik</a>
+                        <a href="{{ route('auditor.daftar-tilik.index', ['auditingId' => $auditing->auditing_id]) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Buat Pertanyaan Daftar Tilik</a>
                         @elseif($status == 6)
-                        <a href="{{ route('auditor.daftar-tilik.index') }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Cek Jawaban Daftar Tilik</a>
+                        <a href="{{ route('auditor.daftar-tilik.index', ['auditingId' => $auditing->auditing_id]) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Cek Jawaban Daftar Tilik</a>
                         @endif
                     </li>
                     {{-- Laporan Temuan --}}

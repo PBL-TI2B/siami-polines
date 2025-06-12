@@ -122,9 +122,9 @@ Route::prefix('auditor')->middleware('auth.ami:auditor')->group(function () {
 
     //Route::resource('daftar-tilik', DaftarTilikController::class)->only(['index', 'create', 'store']);
 
-    Route::get('/daftar-tilik', [DaftarTilikController::class, 'auditortilik'])->name('auditor.daftar-tilik.index');
-    Route::get('/daftar-tilik/{id}/edit', [DaftarTilikController::class, 'edit'])->name('auditor.daftar-tilik.edit');
-    Route::get('/daftar-tilik/create', [DaftarTilikController::class, 'create'])->name('auditor.daftar-tilik.create');
+    // Route::get('/daftar-tilik', [DaftarTilikController::class, 'auditortilik'])->name('auditor.daftar-tilik.index');
+    // Route::get('/daftar-tilik/{id}/edit', [DaftarTilikController::class, 'edit'])->name('auditor.daftar-tilik.edit');
+    // Route::get('/daftar-tilik/create', [DaftarTilikController::class, 'create'])->name('auditor.daftar-tilik.create');
 
     //Route::post('/daftar-tilik', [DaftarTilikController::class, 'store'])->name('auditor.daftar-tilik.store');
 
@@ -132,6 +132,9 @@ Route::prefix('auditor')->middleware('auth.ami:auditor')->group(function () {
         Route::get('/', [AuditController::class, 'auditorIndexPage'])->name('auditor.audit.index');
         Route::get('/detail/{id}', [AuditController::class, 'auditorAuditPage'])->name('auditor.audit.audit');
         Route::get('/auditings', [AuditController::class, 'getAuditingsByUser'])->name('auditor.auditings');
+        Route::get('/daftar-tilik/{auditingId}', [DaftarTilikController::class, 'auditortilik'])->name('auditor.daftar-tilik.index');
+        Route::get('/daftar-tilik/{id}/edit', [DaftarTilikController::class, 'edit'])->name('auditor.daftar-tilik.edit');
+        Route::get('/daftar-tilik/create', [DaftarTilikController::class, 'create'])->name('auditor.daftar-tilik.create');
     });
 
     Route::prefix('assesmen-lapangan')->group(function () {
