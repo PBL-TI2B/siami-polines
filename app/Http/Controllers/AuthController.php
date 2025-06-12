@@ -27,11 +27,12 @@ class AuthController extends Controller
         ]);
 
         try {
-            $response = Http::asJson()->post('http://localhost:5000/api/login', [
-                'email' => $request->email,
-                'password' => $request->password,
-            ]);
-
+            $response = Http::withHeaders([
+    'Accept' => 'application/json',
+])->asJson()->post('http://127.0.0.1:5000/api/login', [
+    'email' => $request->email,
+    'password' => $request->password,
+]);
             if ($response->successful()) {
                 $result = $response->json();
 

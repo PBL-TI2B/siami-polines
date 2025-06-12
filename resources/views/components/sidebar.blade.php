@@ -11,7 +11,11 @@
     if (session('token') && session('role_id')) {
         try {
             $roleId = session('role_id');
-            $response = Http::get('http://localhost:5000/api/sidebar-menu', ['role_id' => $roleId]);
+            $token = session('token');
+            $response = Http::withHeaders([
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . $token,
+            ])->get('http://127.0.0.1:5000/api/sidebar-menu', ['role_id' => $roleId]);
             if ($response->successful()) {
                 $data = $response->json();
                 if ($data['status'] === 'success') {
