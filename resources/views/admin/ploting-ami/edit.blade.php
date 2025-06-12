@@ -52,6 +52,11 @@
                 <label for="jadwal_audit" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Waktu Audit</label>
                 <input type="date" id="jadwal_audit" name="jadwal_audit" value="{{ $audit->jadwal_audit ?? '' }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:text-white">
             </div>
+            <!-- Link Audit (Baru) -->
+            <div>
+                <label for="link" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Link Audit</label>
+                <input type="url" id="link" name="link" value="{{ $audit->link ?? '' }}" placeholder="https://..." class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:text-white">
+            </div>
             <!-- Auditee 1 -->
             <div>
                 <label for="user_id_1_auditee" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Auditee 1</label>

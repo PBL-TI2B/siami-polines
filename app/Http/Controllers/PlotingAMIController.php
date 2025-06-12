@@ -342,10 +342,16 @@ public function update(Request $request, $id)
         'user_id_2_auditee' => 'nullable|exists:users,user_id',
         'user_id_1_auditor' => 'required|exists:users,user_id',
         'user_id_2_auditor' => 'nullable|exists:users,user_id',
+        'link' => 'nullable|url',
     ]);
 
-    // Kirim update ke API
-    $response = Http::asJson()->put("http://127.0.0.1:5000/api/auditings/{$id}", $validated);
+    // Tambahkan link ke data yang dikirim ke API
+    $data = $validated;
+    if ($request->filled('link')) {
+        $data['link'] = $request->input('link');
+    }
+
+    $response = Http::asJson()->put("http://127.0.0.1:5000/api/auditings/{$id}", $data);
 
     if (!$response->successful()) {
         $errorMessage = $response->json()['message'] ?? 'Gagal memperbarui data audit di API.';
