@@ -73,6 +73,7 @@
             'Auditor 1',
             'Auditor 2',
             'Status',
+            'Link', 
             'Aksi',
         ]" :data="$auditings" :perPage="$auditings->perPage()" :route="route('admin.ploting-ami.index')">
 
@@ -109,7 +110,13 @@
                             {{ $statusLabels[$auditing->status] ?? 'Menunggu' }}
                         </span>
                     </td>
-
+                    <td class="border border-gray-200 px-4 py-4 text-center">
+                        @if (!empty($auditing->link))
+                            <a href="{{ $auditing->link }}" target="_blank" class="text-blue-600 underline">{{ $auditing->link }}</a>
+                        @else
+                            <a href="#" class="text-sky-700 underline add-link-btn" data-id="{{ $auditing->auditing_id }}">Tambahkan Link</a>
+                        @endif
+                    </td>
                     <x-table-row-actions :actions="[
                         [
                             'label' => 'Edit',
@@ -131,16 +138,92 @@
                     :action="route('admin.ploting-ami.destroy', $auditing->auditing_id)" method="DELETE" type="delete" formClass="delete-modal-form" :warningMessage="'Menghapus jadwal ini akan menghapus seluruh data audit yang terkait.'" />
             @empty
                 <tr>
-                    <td colspan="10" class="py-4 text-center text-gray-500">
+                    <td colspan="11" class="py-4 text-center text-gray-500">
                         Tidak ada data audit.
                     </td>
                 </tr>
             @endforelse
         </x-table>
-    @endsection
 
-    @push('scripts')
+        <!-- Modal Input Link -->
+        <div id="modal-link" class="fixed inset-0 z-50 flex hidden items-center justify-center bg-gray-900/50 transition-opacity duration-300">
+            <div class="relative w-full max-w-md rounded-lg bg-white p-6 dark:bg-gray-800">
+                <button type="button" id="close-link-modal" class="absolute right-4 top-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+                <h2 class="mb-4 text-lg font-bold text-gray-900 dark:text-gray-100">Tambahkan Link</h2>
+                <form id="form-link">
+                    <input type="hidden" name="auditing_id" id="input-auditing-id">
+                    <div class="mb-4">
+                        <label for="input-link" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Link</label>
+                        <input type="url" name="link" id="input-link" class="w-full rounded border border-gray-300 px-3 py-2 focus:border-sky-500 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200" required placeholder="https://...">
+                    </div>
+                    <div class="flex justify-end gap-2">
+                        <button type="button" id="cancel-link-btn" class="px-4 py-2 rounded bg-gray-300 text-gray-800 hover:bg-gray-400">Batal</button>
+                        <button type="submit" class="px-4 py-2 rounded bg-sky-700 text-white hover:bg-sky-800">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        @push('scripts')
         <script>
-            // Placeholder JS
+            document.addEventListener('DOMContentLoaded', function () {
+                const modal = document.getElementById('modal-link');
+                const closeModalBtn = document.getElementById('close-link-modal');
+                const cancelBtn = document.getElementById('cancel-link-btn');
+                const form = document.getElementById('form-link');
+                let currentId = null;
+
+                document.querySelectorAll('.add-link-btn').forEach(btn => {
+                    btn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        currentId = this.dataset.id;
+                        document.getElementById('input-auditing-id').value = currentId;
+                        modal.classList.remove('hidden');
+                    });
+                });
+
+                [closeModalBtn, cancelBtn].forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        modal.classList.add('hidden');
+                        form.reset();
+                    });
+                });
+
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const auditingId = document.getElementById('input-auditing-id').value;
+                    const link = document.getElementById('input-link').value;
+                    fetch(`http://127.0.0.1:5000/api/auditings/${auditingId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ link })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success === true) {
+                            // Update tampilan kolom link pada baris yang sesuai
+                            const linkBtn = document.querySelector(`a.add-link-btn[data-id='${auditingId}']`);
+                            if (linkBtn) {
+                                const td = linkBtn.closest('td');
+                                td.innerHTML = `<a href="${data.data.link}" target="_blank" class="text-blue-600 underline">${data.data.link}</a>`;
+                            }
+                            modal.classList.add('hidden');
+                            form.reset();
+                            window.location.reload(); // Reload page to reflect changes
+                        } else {
+                            alert('Gagal menyimpan link');
+                        }
+                    })
+                    .catch(() => alert('Terjadi kesalahan'));
+                });
+            });
         </script>
-    @endpush
+        @endpush
+    </div>
+@endsection
