@@ -385,29 +385,17 @@ public function update(Request $request, $id)
         return $pdf->download('PTPP-'.$audit->unit_kerja.'.pdf');
     }
 
-    // public function downloadRTM($auditingId)
-    // {
-    //     // Contoh: generate file RTM (bisa dari storage, atau generate on the fly)
-    //     $filename = 'RTM_'.$auditingId.'.pdf';
-    //     $path = storage_path('app/public/rtm/'.$filename);
+    public function downloadLaporan($id)
+    {
+        $audit = Auditing::with(['auditor1', 'auditor2', 'auditee1', 'auditee2', 'periode', 'unitKerja'])
+            ->findOrFail($id);
 
-    //     if (!file_exists($path)) {
-    //         abort(404, 'File RTM tidak ditemukan');
-    //     }
+        // Cek status, hanya bisa download jika status >= 7 (Laporan Temuan atau lebih)
+        if ($audit->status < 7) {
+            return redirect()->back()->with('error', 'Laporan Temuan hanya tersedia jika status sudah Laporan Temuan atau lebih.');
+        }
 
-    //     return Response::download($path, $filename);
-    // }
-
-    // public function downloadLaporan($auditingId)
-    // {
-    //     // Contoh: generate file Laporan (bisa dari storage, atau generate on the fly)
-    //     $filename = 'Laporan_'.$auditingId.'.pdf';
-    //     $path = storage_path('app/public/laporan/'.$filename);
-
-    //     if (!file_exists($path)) {
-    //         abort(404, 'File Laporan tidak ditemukan');
-    //     }
-
-    //     return Response::download($path, $filename);
-    // }
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('kepala-pmpp.ploting-ami.laporan-temuan', compact('audit'));
+        return $pdf->download('Laporan-Temuan'.$audit->unit_kerja.'.pdf');
+    }
 }
