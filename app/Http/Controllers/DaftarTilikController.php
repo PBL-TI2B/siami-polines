@@ -10,9 +10,11 @@ class DaftarTilikController extends Controller
     {
         return view('admin.daftar-tilik.index');
     }
-    public function auditortilik()
+    public function auditortilik($auditingId)
     {
-        return view('auditor.daftar-tilik.index');
+        // Ambil data auditing berdasarkan ID
+        $auditing = \App\Models\Auditing::findOrFail($auditingId);
+        return view('auditor.daftar-tilik.index', compact('auditing', 'auditingId'));
     }
     public function create()
     {
