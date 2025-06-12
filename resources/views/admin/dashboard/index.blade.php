@@ -168,30 +168,34 @@
                 color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-800 dark:text-yellow-400'
             },
             4: {
-                label: 'Pertanyaan Tilik',
+                label: 'Dijadwalkan Tilik',
                 color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-800 dark:text-yellow-400'
             },
             5: {
-                label: 'Tilik Dijawab',
+                label: 'Pertanyaan Tilik',
                 color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-800 dark:text-yellow-400'
             },
             6: {
-                label: 'Laporan Temuan',
+                label: 'Tilik Dijawab',
                 color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-800 dark:text-yellow-400'
             },
             7: {
-                label: 'Revisi',
+                label: 'Laporan Temuan',
                 color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-800 dark:text-yellow-400'
             },
             8: {
-                label: 'Sudah revisi',
+                label: 'Revisi',
                 color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-800 dark:text-yellow-400'
             },
             9: {
+                label: 'Sudah revisi',
+                color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-800 dark:text-yellow-400'
+            },
+            10: {
                 label: 'Closing',
                 color: 'bg-green-100 text-green-600 dark:bg-green-800 dark:text-green-400'
             },
-            10: {
+            11: {
                 label: 'Selesai',
                 color: 'bg-green-100 text-green-600 dark:bg-green-800 dark:text-green-400'
             }
