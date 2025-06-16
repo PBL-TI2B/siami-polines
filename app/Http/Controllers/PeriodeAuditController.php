@@ -92,6 +92,33 @@ class PeriodeAuditController extends Controller
         ]);
 
         try {
+            // Ambil semua periode audit untuk cek status "Sedang Berjalan"
+            $checkResponse = Http::withToken(session('token'))
+                ->timeout(5)
+                ->get("{$this->apiBaseUrl}/periode-audits", [
+                    'per_page' => 1000, // ambil semua
+                ]);
+
+            if ($checkResponse->successful()) {
+                $checkData = $checkResponse->json();
+                if (
+                    isset($checkData['data']['data']) &&
+                    collect($checkData['data']['data'])->contains('status', 'Sedang Berjalan')
+                ) {
+                    return redirect()->back()
+                        ->withErrors(['error' => 'Masih ada periode audit yang sedang berjalan. Tutup periode tersebut sebelum membuka yang baru.'])
+                        ->withInput();
+                }
+            } else {
+                Log::error('Gagal memeriksa periode audit berjalan', [
+                    'status' => $checkResponse->status(),
+                    'body' => $checkResponse->body(),
+                ]);
+                return redirect()->back()
+                    ->withErrors(['error' => 'Gagal memeriksa periode audit berjalan.'])
+                    ->withInput();
+            }
+
             $response = Http::withToken(session('token'))
                 ->timeout(5)
                 ->post("{$this->apiBaseUrl}/periode-audits/open", $request->all());

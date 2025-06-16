@@ -11,9 +11,8 @@
 
 <body class="bg-gray-50 antialiased dark:bg-gray-900">
     <div class="flex min-h-screen flex-col">
-        <!-- Page Loading -->
+        <!-- Progress Bar -->
         <x-progress-bar />
-        {{-- <x-page-loading /> --}}
 
         <!-- Navbar -->
         <x-navbar />
@@ -28,7 +27,6 @@
     </div>
 
     @stack('scripts')
-    <!-- <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script> -->
 </body>
 
 </html>
