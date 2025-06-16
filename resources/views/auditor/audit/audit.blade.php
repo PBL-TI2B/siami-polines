@@ -113,7 +113,7 @@
                         </span>
                         <h3 class="font-medium leading-tight">Laporan Temuan</h3>
                         @if($status == 6)
-                        <a href="{{ route('auditor.laporan.index') }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Step details here</a>
+                        <a href="{{ route('auditor.laporan.index', ['auditingId' => $auditing->auditing_id]) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Step details here</a>
                         @endif
                     </li>
                     {{-- Closing Audit --}}
