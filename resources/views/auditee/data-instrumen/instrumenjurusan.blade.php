@@ -11,13 +11,26 @@
         ]" />
 
         <h1 class="mb-6 text-2xl font-semibold text-gray-900 dark:text-gray-200">
-            Pengisian Instrumen {{ $audit['unit_kerja']['nama_unit_kerja'] ?? 'Jurusan' }}
+            {{ $status == 8 ? 'Revisi Instrumen' : 'Pengisian Instrumen' }}
+            {{ $audit['unit_kerja']['nama_unit_kerja'] ?? 'Jurusan' }}
         </h1>
 
-        {{-- Pesan Informasi Akses Dibatasi (akan selalu tampil jika status bukan 1) --}}
-        @if (session('status') != 1)
+
+        @if ($status == 8)
             <div
-                class="relative mb-6 flex items-start gap-3 rounded-lg border border-yellow-400 bg-yellow-100 px-4 py-3 text-yellow-700 dark:border-yellow-600 dark:bg-yellow-800 dark:text-yellow-200">
+                class="relative mb-6 flex items-start gap-3 rounded-lg border border-orange-400 bg-orange-100 px-4 py-3 text-orange-700 dark:border-orange-600 dark:bg-orange-800 dark:text-orange-200">
+                <x-heroicon-s-information-circle class="h-6 w-6 flex-shrink-0" />
+                <div>
+                    <strong class="text-sm font-bold">Revisi Jawaban!</strong>
+                    <span class="block text-sm sm:inline">
+                        Halaman ini dapat diakses untuk merevisi jawaban instrumen. Silakan lakukan revisi sesuai dengan
+                        feedback dari auditor.
+                    </span>
+                </div>
+            </div>
+        @elseif ($status != 1)
+            <div
+                class="relative mb-6 flex items-start gap-3 rounded-lg border border-sky-400 bg-sky-100 px-4 py-3 text-sky-700 dark:border-sky-600 dark:bg-sky-800 dark:text-sky-200">
                 <x-heroicon-s-information-circle class="h-6 w-6 flex-shrink-0" />
                 <div>
                     <strong class="text-sm font-bold">Informasi!</strong>
@@ -139,10 +152,17 @@
                 </div>
             </div>
             <div class="mt-6 flex justify-end">
-                <x-button id="submit-lock-btn" type="submit" color="sky" icon="heroicon-o-lock-closed"
-                    class="px-4 py-2 text-sm font-medium">
-                    Submit dan Kunci Jawaban
-                </x-button>
+                @if ($status == 8)
+                    <x-button id="submit-lock-btn" type="submit" color="sky" icon="heroicon-o-lock-closed"
+                        class="px-4 py-2 text-sm font-medium">
+                        Selesai Revisi dan Kunci Jawaban
+                    </x-button>
+                @else
+                    <x-button id="submit-lock-btn" type="submit" color="sky" icon="heroicon-o-lock-closed"
+                        class="px-4 py-2 text-sm font-medium">
+                        Submit dan Kunci Jawaban
+                    </x-button>
+                @endif
             </div>
         </div> {{-- End of audit-content --}}
     </div>
@@ -242,10 +262,10 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Mengambil ID auditing dan status audit dari session
-            const auditingId = {{ session('auditing_id') }};
-            let auditStatus = {{ session('status') ?? 1 }};
-            const unitKerjaId = {{ session('unit_kerja_id') }};
+            // Mengambil ID auditing dan status audit
+            const auditingId = {{ $auditingId }};
+            let auditStatus = {{ $status ?? 1 }};
+            const unitKerjaId = {{ $unitKerjaId }};
 
             const modal = document.getElementById('response-modal');
             const modalTitle = document.getElementById('modal-title');
@@ -274,8 +294,10 @@
 
             // Fungsi untuk membuka modal
             const openModal = (isEdit, setInstrumenId, response = {}, instrumen = {}) => {
-                if (auditStatus !== 1) {
-                    showCustomMessage('Pengisian jawaban hanya diperbolehkan pada status Pengisian Instrumen.');
+                if (auditStatus !== 1 && auditStatus !== 8) {
+                    showCustomMessage(
+                        'Pengisian jawaban hanya diperbolehkan pada status Pengisian Instrumen atau Revisi Jawaban.'
+                    );
                     return;
                 }
                 modalTitle.textContent = isEdit ? 'Edit Jawaban Instrumen' : 'Jawab Instrumen Jurusan';
@@ -622,25 +644,25 @@
                             </td>
                             <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center">${response.keterangan || '-'}</td>
                             <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center">
-                                ${auditStatus != 1 ? `<span class="text-gray-500 dark:text-gray-400 text-sm">Jawaban Terkunci</span>` : `
-                                                                    <div class="flex items-center justify-center gap-2">
-                                                                        ${response.response_id ? `
-                                            <button type="button" class="edit-btn text-sm font-medium text-white bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:ring-yellow-300 dark:bg-yellow-500 dark:hover:bg-yellow-600 dark:focus:ring-yellow-600 rounded-lg px-3 py-1.5 flex items-center" data-id="${response.response_id}" data-capaian="${response.capaian || ''}" data-lokasi="${response.lokasi_bukti_dukung || ''}" data-keterangan="${response.keterangan || ''}" data-sasaran="${sasaran}" data-indikator="${indikator}" data-aktivitas="${groupedItem.aktivitas}" data-satuan="${item.aktivitas.satuan || ''}" data-target="${item.aktivitas.target || ''}" data-set-instrumen-id="${item.set_instrumen_unit_kerja_id}">
-                                                <svg class="w-3 h-3 mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" /></svg>
-                                                Edit
-                                            </button>
-                                            <button type="button" class="delete-btn text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-300 dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-600 rounded-lg px-3 py-1.5 flex items-center" data-id="${response.response_id}">
-                                                 <svg class="w-3 h-3 mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12.56 0c1.153 0 2.243.096 3.222.261m3.222.261L12 5.291M12 5.291A2.25 2.25 0 0112.75 3h-1.5A2.25 2.25 0 019 5.291m0 0a2.25 2.25 0 001.969.923c1.153 0 2.243-.096 3.222-.261m3.222.261M15 5.291L15 3H9v2.291" /></svg>
-                                                Hapus
-                                            </button>
-                                        ` : `
-                                            <button type="button" class="add-btn text-sm font-medium text-white bg-sky-800 hover:bg-sky-900 focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-600 rounded-lg px-3 py-1.5 flex items-center" data-id="${item.set_instrumen_unit_kerja_id}" data-sasaran="${sasaran}" data-indikator="${indikator}" data-aktivitas="${groupedItem.aktivitas}" data-satuan="${item.aktivitas.satuan || ''}" data-target="${item.aktivitas.target || ''}">
-                                                <svg class="w-3 h-3 mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
-                                                Jawab
-                                            </button>
+                                ${(auditStatus != 1 && auditStatus != 8) ? `<span class="text-gray-500 dark:text-gray-400 text-sm">Jawaban Terkunci</span>` : `
+                                            <div class="flex items-center justify-center gap-2">
+                                                ${response.response_id ? `
+                                        <button type="button" class="edit-btn text-sm font-medium text-white bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:ring-yellow-300 dark:bg-yellow-500 dark:hover:bg-yellow-600 dark:focus:ring-yellow-600 rounded-lg px-3 py-1.5 flex items-center" data-id="${response.response_id}" data-capaian="${response.capaian || ''}" data-lokasi="${response.lokasi_bukti_dukung || ''}" data-keterangan="${response.keterangan || ''}" data-sasaran="${sasaran}" data-indikator="${indikator}" data-aktivitas="${groupedItem.aktivitas}" data-satuan="${item.aktivitas.satuan || ''}" data-target="${item.aktivitas.target || ''}" data-set-instrumen-id="${item.set_instrumen_unit_kerja_id}">
+                                            <svg class="w-3 h-3 mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" /></svg>
+                                            Edit
+                                        </button>
+                                        <button type="button" class="delete-btn text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-300 dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-600 rounded-lg px-3 py-1.5 flex items-center" data-id="${response.response_id}">
+                                            <svg class="w-3 h-3 mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12.56 0c1.153 0 2.243.096 3.222.261m3.222.261L12 5.291M12 5.291A2.25 2.25 0 0112.75 3h-1.5A2.25 2.25 0 019 5.291m0 0a2.25 2.25 0 001.969.923c1.153 0 2.243-.096 3.222-.261m3.222.261M15 5.291L15 3H9v2.291" /></svg>
+                                            Hapus
+                                        </button>
+                                    ` : `
+                                        <button type="button" class="add-btn text-sm font-medium text-white bg-sky-800 hover:bg-sky-900 focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-600 rounded-lg px-3 py-1.5 flex items-center" data-id="${item.set_instrumen_unit_kerja_id}" data-sasaran="${sasaran}" data-indikator="${indikator}" data-aktivitas="${groupedItem.aktivitas}" data-satuan="${item.aktivitas.satuan || ''}" data-target="${item.aktivitas.target || ''}">
+                                            <svg class="w-3 h-3 mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                                            Jawab
+                                        </button>
+                                    `}
+                                            </div>
                                         `}
-                                                                    </div>
-                                                                `}
                             </td>
                         `;
                         row.innerHTML = html;
@@ -668,7 +690,7 @@
                     0);
             };
 
-            if (auditStatus !== 1) {
+            if (auditStatus !== 1 && auditStatus !== 8) {
                 submitLockBtn.disabled = true;
                 submitLockBtn.classList.add('opacity-50', 'cursor-not-allowed');
             }
@@ -736,9 +758,10 @@
                 } else if (deleteBtn) {
                     e.preventDefault();
                     const responseId = deleteBtn.getAttribute('data-id');
-                    if (auditStatus !== 1) {
+                    if (auditStatus !== 1 && auditStatus !== 8) {
                         showCustomMessage(
-                            'Penghapusan jawaban hanya diperbolehkan pada status Pengisian Instrumen.');
+                            'Penghapusan jawaban hanya diperbolehkan pada status Pengisian Instrumen atau Revisi Jawaban.'
+                        );
                         return;
                     }
                     showCustomConfirm('Apakah Anda yakin ingin menghapus jawaban ini?', (confirmed) => {
@@ -858,7 +881,7 @@
                             auditing_id: currentAuditingId,
                             set_instrumen_unit_kerja_id: currentSetInstrumenUnitKerjaId,
                             response_id: actualResponseId,
-                            status_instrumen: "Baru Ditambahkan"
+                            status_instrumen: auditStatus === 8 ? "Direvisi" : "Baru Ditambahkan"
                         };
 
                         return fetch('http://127.0.0.1:5000/api/instrumen-response', {
@@ -922,9 +945,9 @@
 
             submitLockBtn.addEventListener('click', function(e) {
                 e.preventDefault();
-                if (auditStatus !== 1) { // Pemeriksaan status yang ketat
+                if (auditStatus !== 1 && auditStatus !== 8) {
                     showCustomMessage(
-                        'Penguncian jawaban hanya diperbolehkan pada status "Pengisian Instrumen".',
+                        'Penguncian jawaban hanya diperbolehkan pada status "Pengisian Instrumen" atau "Revisi Jawaban".',
                         'error');
                     return;
                 }
@@ -954,14 +977,16 @@
                                 Mengunci...
                             `;
 
+                            const newStatus = auditStatus === 8 ? 9 : 2;
+
                             fetch(`http://127.0.0.1:5000/api/auditings/${auditingId}`, {
                                     method: 'PUT',
                                     headers: {
                                         'Content-Type': 'application/json'
                                     },
                                     body: JSON.stringify({
-                                        status: 2
-                                    }) // Mengunci, status menjadi 2
+                                        status: newStatus
+                                    })
                                 })
                                 .then(response => {
                                     if (!response.ok) return response.json().then(err => {

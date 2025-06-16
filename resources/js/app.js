@@ -200,17 +200,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const toastDuration = 5000;
 
     document.querySelectorAll('[role="alert"]').forEach((toast) => {
+        // Tambahkan animasi masuk
+        toast.classList.add("animate-fade-in");
+
         // Auto-close setelah toastDuration
         setTimeout(() => {
-            toast.classList.add("opacity-0");
-            setTimeout(() => toast.remove(), 300); // animate + remove
+            toast.classList.remove("animate-fade-in");
+            toast.classList.add("animate-fade-out");
+            setTimeout(() => toast.remove(), 400); // waktu sesuai animasi keluar
         }, toastDuration);
 
         // Manual close
         toast.querySelectorAll("[data-dismiss-target]").forEach((btn) => {
             btn.addEventListener("click", () => {
-                toast.classList.add("opacity-0");
-                setTimeout(() => toast.remove(), 300);
+                toast.classList.remove("animate-fade-in");
+                toast.classList.add("animate-fade-out");
+                setTimeout(() => toast.remove(), 400);
             });
         });
     });
