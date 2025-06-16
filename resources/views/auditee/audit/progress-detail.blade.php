@@ -30,7 +30,7 @@
             ],
         ]" />
 
-        <div class="mb-6 mt-5">
+        <div class="mb-6">
             <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">
                 Progress Audit: {{ $audit['unit_kerja']['nama_unit_kerja'] ?? 'Detail Audit' }}
             </h1>
@@ -42,7 +42,7 @@
                 <div
                     class="inline-flex items-center gap-x-2 rounded-2xl bg-sky-100 px-3 py-1.5 text-xs sm:text-sm dark:bg-sky-800">
                     <x-heroicon-o-calendar-days class="h-4 w-4 shrink-0 text-sky-600 sm:h-5 sm:w-5 dark:text-sky-300" />
-                    <span class="font-semibold text-sky-700 dark:text-sky-300">
+                    <span class="font-semibold text-sky-600 dark:text-sky-300">
                         {{ $audit['periode']['nama_periode'] ?? 'Tidak Diketahui' }}
                     </span>
                 </div>

@@ -1,4 +1,4 @@
-@extends('layouts.app') {{-- Pastikan ini sesuai dengan nama layout utama Anda --}}
+@extends('layouts.app')
 
 @section('title', 'Auditee AMI - Daftar Audit')
 
@@ -40,6 +40,7 @@
         @if (session('error'))
             <x-toast id="toast-error" type="danger" :message="session('error')" />
         @endif
+        {{-- Toast notification untuk sukses --}}
         @if (session('success'))
             <x-toast id="toast-success" type="success" :message="session('success')" />
         @endif

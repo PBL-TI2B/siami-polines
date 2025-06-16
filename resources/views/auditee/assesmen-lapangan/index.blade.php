@@ -1,60 +1,79 @@
 @extends('layouts.app')
 
-@section('title', 'Lihat Asesmen Lapangan')
-
-{{-- @if(session('user'))
-    <meta name="user-id" content="{{ session('user')['user_id'] }}">
-@endif --}}
+@section('title', 'Lihat Jadwal Asesmen Lapangan')
 
 @section('content')
-<div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-    <!-- Breadcrumb -->
-    <x-breadcrumb :items="[
-        ['label' => 'Dashboard', 'url' => route('auditee.dashboard.index')],
-        ['label' => 'Audit', 'url' => route('auditee.audit.index')],
-        ['label' => 'Lihat Assesmen Lapangan'],
-    ]" />
+    <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <x-breadcrumb :items="[
+            ['label' => 'Dashboard', 'url' => route('auditee.dashboard.index')],
+            ['label' => 'Audit', 'url' => route('auditee.audit.index')],
+            ['label' => 'Lihat Asesmen Lapangan'],
+        ]" />
 
-    <!-- Display Success Message -->
-    @if (session('success'))
-        <div class="mb-4 rounded-lg bg-green-100 p-4 text-sm text-green-700 dark:bg-green-900 dark:text-green-300">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    <!-- Display Error Message -->
-    @if (session('error'))
-        <div class="mb-4 rounded-lg bg-red-100 p-4 text-sm text-red-700 dark:bg-red-900 dark:text-red-300">
-            {{ session('error') }}
-        </div>
-    @endif
-
-    <h1 class="text-2xl font-semibold text-gray-900 dark:text-white mb-6">
-        Lihat Jadwal Asesmen Lapangan
-    </h1>
-<!-- 
-    <h1>
-        Jadwal Asesmen Lapangan: 
-        @if(isset($auditing['jadwal_audit']))
-            {{ \Carbon\Carbon::parse($auditing['jadwal_audit'])->format('d F Y') }}
-        @else
-            <span class="text-red-500">Belum ada jadwal yang ditetapkan</span>
+        @if (session('success'))
+            <div role="alert"
+                class="mb-4 flex items-start rounded-lg bg-green-100 p-4 text-sm text-green-800 dark:bg-green-900 dark:text-green-300">
+                <x-heroicon-s-check-circle class="mr-3 h-5 w-5 flex-shrink-0" />
+                <div>{{ session('success') }}</div>
+            </div>
         @endif
-    </h1>
-     -->
-    <form class="bg-white dark:bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        <div class="mb-4">
-            <label for="jadwal_audit" class="block text-gray-700 dark:text-gray-200 text-sm font-bold mb-2">
-                Jadwal Asesmen Lapangan
-            </label>
-            <input type="date" id="jadwal_audit" name="jadwal_audit" disabled
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight dark:bg-gray-700 dark:text-white focus:outline-none focus:shadow-outline cursor-not-allowed"
-                value="{{ isset($auditing['jadwal_audit']) ? \Carbon\Carbon::parse($auditing['jadwal_audit'])->format('Y-m-d') : '' }}"
-            >
+
+        @if (session('error'))
+            <div role="alert"
+                class="mb-4 flex items-start rounded-lg bg-red-100 p-4 text-sm text-red-800 dark:bg-red-900 dark:text-red-300">
+                <x-heroicon-s-x-circle class="mr-3 h-5 w-5 flex-shrink-0" />
+                <div>{{ session('error') }}</div>
+            </div>
+        @endif
+
+        <header class="mb-6">
+            <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl dark:text-white">
+                Lihat Jadwal Asesmen Lapangan
+            </h1>
+        </header>
+
+        <div class="overflow-hidden rounded-xl bg-white shadow-md dark:bg-gray-800">
+            {{-- BAGIAN UTAMA KARTU --}}
+            <div class="p-6">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 rounded-lg bg-sky-100 p-3 dark:bg-sky-900">
+                        <x-heroicon-o-calendar-days class="h-6 w-6 text-sky-600 dark:text-sky-300" />
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                            Jadwal yang Ditetapkan oleh Auditor
+                        </p>
+                        <div class="text-xl font-bold text-gray-900 dark:text-white">
+                            @if (isset($auditing['jadwal_audit']) && $auditing['jadwal_audit'])
+                                {{-- Tampilan tanggal --}}
+                                <p>{{ \Carbon\Carbon::parse($auditing['jadwal_audit'])->isoFormat('dddd, D MMMM YYYY') }}
+                                </p>
+                            @else
+                                {{-- State jika jadwal belum ada --}}
+                                <p class="text-lg font-medium italic text-gray-500 dark:text-gray-400">
+                                    Jadwal belum ditentukan
+                                </p>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- BAGIAN KETERANGAN KARTU --}}
+            <div class="border-t border-gray-200 bg-gray-50 px-6 py-4 dark:border-gray-700 dark:bg-gray-800/50">
+                <div class="flex items-center">
+                    <x-heroicon-o-information-circle class="mr-3 h-6 w-6 flex-shrink-0 text-sky-500" />
+                    <p class="text-sm text-gray-700 dark:text-gray-300">
+                        <strong>Pengingat:</strong> Mohon persiapkan dokumen yang diperlukan sebelum tanggal asesmen.
+                    </p>
+                </div>
+            </div>
         </div>
-    </form>
-    <x-button id="back-btn" type="button" color="red" icon="heroicon-o-arrow-left" onclick="history.back()">
-        Kembali
-    </x-button>
-</div>
+
+        <div class="mt-8">
+            <x-button type="button" color="gray" icon="heroicon-o-arrow-left" onclick="history.back()">
+                Kembali
+            </x-button>
+        </div>
+    </div>
 @endsection
