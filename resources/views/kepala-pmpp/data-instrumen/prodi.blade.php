@@ -14,56 +14,40 @@
         <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-200 mb-8">
             Data Instrumen Prodi
         </h1>
-
-        <!-- Toolbar -->
-        <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
-            <!-- Action Buttons -->
-            <!-- <div class="flex flex-wrap gap-2">
-                <x-button href="{{ route('admin.data-instrumen.export') }}" color="sky" icon="heroicon-o-document-arrow-down" class="shadow-md hover:shadow-lg transition-all">
-                    Unduh Data
-                </x-button>
-            </div> -->
-
-            <!-- Filter Dropdowns -->
+        <!-- Filters and Search -->
+        <div class="mb-4 flex justify-between items-center">
             <div class="flex flex-wrap gap-2">
-                <select id="unitKerjaSelect" class="w-40 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 text-sm rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500 focus:outline-none transition-all duration-200">
+                <select id="jenisUnitSelectProdi" class="w-40 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 text-sm rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500 focus:outline-none transition-all duration-200">
                     <option selected disabled>Pilih Jenis Unit</option>
                 </select>
-                <select id="periodeSelect" class="w-40 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 text-sm rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500 focus:outline-none transition-all duration-200">
+                <select id="periodeSelectProdi" class="w-40 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 text-sm rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500 focus:outline-none transition-all duration-200">
                     <option selected disabled>Pilih Periode AMI</option>
                 </select>
             </div>
         </div>
 
-        <!-- Table and Pagination -->
         <div class="bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 rounded-2xl">
-            <!-- Table Controls -->
             <div class="p-4 flex flex-col sm:flex-row justify-between items-center gap-4 bg-white dark:bg-gray-800 rounded-t-2xl border-b border-gray-200 dark:border-gray-700">
                 <div class="flex items-center gap-2">
                     <span class="text-sm text-gray-700 dark:text-gray-300">Tampilkan</span>
-                    <form action="#" method="GET">
-                        <select name="per_page" class="w-18 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 p-2.5 transition-all duration-200" onchange="this.form.submit()">
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                            <option value="25">25</option>
-                            <option value="50">50</option>
-                        </select>
-                    </form>
+                    <select id="perPageSelectProdi" class="w-18 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 p-2.5 transition-all duration-200">
+                        <option value="5">5</option>
+                        <option value="10" selected>10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                    </select>
                     <span class="text-sm text-gray-700 dark:text-gray-300">entri</span>
                 </div>
                 <div class="relative w-full sm:w-auto">
-                    <form action="#" method="GET">
-                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
-                        </div>
-                        <input type="search" name="search" placeholder="Cari" value="" class="block w-full pl-10 p-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 transition-all duration-200">
-                    </form>
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                    <input type="search" id="searchInputProdi" placeholder="Cari" class="block w-full pl-10 p-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 transition-all duration-200">
                 </div>
             </div>
 
-            <!-- Table -->
             <div class="overflow-x-auto">
                 <table class="min-w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-200 border-t border-b border-gray-200 dark:border-gray-600">
@@ -73,282 +57,458 @@
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Deskripsi Area Audit-Sub Butir Standar</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Pemeriksaan Pada Unsur</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Jenis Unit Kerja</th>
-                            {{-- <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Ketersediaan Standar dan Dokumen (Ada/Tidak)</th>
+                            {{-- Additional columns (commented out as in original)
+                            <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Ketersediaan Standar dan Dokumen (Ada/Tidak)</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Pencapaian Standar SPT PT</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Pencapaian Standar SN DIKTI</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Daya Saing Lokal</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Daya Saing Nasional</th>
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Daya Saing Internasional</th>
-                            <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Keterangan</th> --}}
+                            <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Keterangan</th>
+                            --}}
                         </tr>
                     </thead>
-                    <tbody id="instrumen-table-body" class="divide-y divide-gray-200 dark:divide-gray-700">
-                    </tbody>
+                    <tbody id="instrumen-table-body-prodi" class="divide-y divide-gray-200 dark:divide-gray-700">
+                        </tbody>
                 </table>
             </div>
 
-            <!-- Pagination -->
             <div class="p-4">
                 <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <span class="text-sm text-gray-700 dark:text-gray-300">
-                        Menampilkan <strong>1</strong> hingga <strong>2</strong> dari <strong>1000</strong> hasil
+                    <span id="pagination-info-prodi" class="text-sm text-gray-700 dark:text-gray-300">
+                        Menampilkan <strong>1</strong> hingga <strong>10</strong> dari <strong>0</strong> hasil
                     </span>
                     <nav aria-label="Navigasi Paginasi">
-                        <ul class="inline-flex -space-x-px text-sm">
-                            <li>
-                                <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-l-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-gray-200 transition-all duration-200 cursor-not-allowed opacity-50">
-                                    <x-heroicon-s-chevron-left class="w-4 h-4 mr-1" />
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-sky-800 bg-sky-50 dark:bg-sky-900 dark:text-sky-200 border-sky-300 dark:border-sky-700 border transition-all duration-200">
-                                    1
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 border hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-gray-200 transition-all duration-200">
-                                    2
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-r-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-gray-200 transition-all duration-200">
-                                    <x-heroicon-s-chevron-right class="w-4 h-4 ml-1" />
-                                </a>
-                            </li>
+                        <ul id="pagination-buttons-prodi" class="inline-flex -space-x-px text-sm">
+                            {{-- Pagination buttons will be generated by JavaScript --}}
                         </ul>
                     </nav>
                 </div>
             </div>
         </div>
     </div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    // Function to fetch and render the table based on jenis_unit_id
-    function renderTable(jenisUnitId = 3) {
-        const tableBody = document.getElementById('instrumen-table-body');
-        tableBody.innerHTML = ''; // Clear the table before rendering
+    // === DOM ELEMENTS ===
+    const tableBodyProdi = document.getElementById('instrumen-table-body-prodi');
+    const perPageSelectProdi = document.getElementById('perPageSelectProdi');
+    const searchInputProdi = document.getElementById('searchInputProdi');
+    const paginationInfoProdi = document.getElementById('pagination-info-prodi');
+    const paginationButtonsProdi = document.getElementById('pagination-buttons-prodi');
+    const jenisUnitSelectProdi = document.getElementById('jenisUnitSelectProdi');
+    const periodeSelectProdi = document.getElementById('periodeSelectProdi');
 
-        fetch('http://127.0.0.1:5000/api/set-instrumen')
-            .then(response => response.json())
-            .then(result => {
-                // Filter data based on jenis_unit_id (if provided)
-                let data = result.data;
-                if (jenisUnitId) {
-                    data = result.data.filter(item => item.jenis_unit_id === parseInt(jenisUnitId));
-                }
+    // === STATE VARIABLES ===
+    let allInstrumenDataProdiRaw = []; // Stores the raw fetched data
+    let currentFilteredAndGroupedData = {}; // Stores data after filtering, grouped by Standar for pagination
+    let perPageProdi = parseInt(perPageSelectProdi.value, 10) || 10;
+    let currentPageProdi = 1;
+    let searchQueryProdi = '';
+    let selectedJenisUnitProdi = '3'; // Default to Prodi (jenis_unit_id = 3)
+    let selectedPeriodeProdi = null;
 
-                // If no data after filtering, show a message
-                if (data.length === 0) {
-                    tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="12" class="px-4 py-3 sm:px-6 text-center text-gray-500">
-                                Tidak ada data untuk unit kerja yang dipilih.
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-
-                let index = 1; // Nomor urut berdasarkan standar
-                const grouped = {};
-                const rowspanStandar = {};
-
-                // Mengelompokkan data berdasarkan standar, deskripsi, dan unsur
-                data.forEach(item => {
-                    const standar = item.unsur?.deskripsi?.kriteria?.nama_kriteria || 'Tidak Diketahui';
-                    const deskripsi = item.unsur?.deskripsi?.isi_deskripsi || 'Tidak Diketahui';
-                    const unsur = item.unsur?.isi_unsur || 'Tidak Diketahui';
-
-                    if (!grouped[standar]) {
-                        grouped[standar] = {};
-                        rowspanStandar[standar] = 0;
-                    }
-
-                    if (!grouped[standar][deskripsi]) {
-                        grouped[standar][deskripsi] = {};
-                    }
-
-                    if (!grouped[standar][deskripsi][unsur]) {
-                        grouped[standar][deskripsi][unsur] = [];
-                    }
-
-                    grouped[standar][deskripsi][unsur].push(item);
-                    rowspanStandar[standar]++;
-                });
-
-                // Render the table
-                for (const standar in grouped) {
-                    let standarDisplayed = false;
-                    let nomorDisplayed = false;
-
-                    const totalRowsForStandar = Object.values(grouped[standar])
-                        .map(desc => Object.values(desc).reduce((sum, arr) => sum + arr.length, 0))
-                        .reduce((a, b) => a + b, 0);
-
-                    for (const deskripsi in grouped[standar]) {
-                        let deskripsiDisplayed = false;
-                        const totalRowsForDeskripsi = Object.values(grouped[standar][deskripsi])
-                            .reduce((sum, arr) => sum + arr.length, 0);
-
-                        for (const unsur in grouped[standar][deskripsi]) {
-                            let unsurDisplayed = false;
-                            const items = grouped[standar][deskripsi][unsur];
-                            const totalRowsForUnsur = items.length;
-
-                            items.forEach(item => {
-                                const row = document.createElement('tr');
-                                let html = '';
-
-                                if (!nomorDisplayed) {
-                                    html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600" rowspan="${totalRowsForStandar}">${index}</td>`;
-                                    nomorDisplayed = true;
-                                }
-
-                                if (!standarDisplayed) {
-                                    html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600" rowspan="${totalRowsForStandar}">${standar}</td>`;
-                                    standarDisplayed = true;
-                                }
-
-                                if (!deskripsiDisplayed) {
-                                    html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600" rowspan="${totalRowsForDeskripsi}">${deskripsi}</td>`;
-                                    deskripsiDisplayed = true;
-                                }
-
-                                if (!unsurDisplayed) {
-                                    html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600" rowspan="${totalRowsForUnsur}">${unsur}</td>`;
-                                    unsurDisplayed = true;
-                                }
-
-                                html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600">${item.jenisunit?.nama_jenis_unit || 'Tidak Diketahui'}</td>`;
-
-                                // html += `
-                                //     <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">
-                                //         <div class="flex items-center gap-2 justify-center">
-                                //             <a href="/admin/data-instrumen/prodi/${item.set_instrumen_unit_kerja_id}/edit" class="text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-200 transition-colors duration-200">
-                                //                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                //                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L16.732 3.732z"></path>
-                                //                 </svg>
-                                //             </a>
-                                //             <button data-id="${item.set_instrumen_unit_kerja_id}" class="delete-btn text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 transition-colors duration-200">
-                                //                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                //                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4m-4 0a2 2 0 00-2 2v1h8V5a2 2 0 00-2-2zm-3 4h6"></path>
-                                //                 </svg>
-                                //             </button>
-                                //         </div>
-                                //     </td>
-                                // `;
-
-                                row.innerHTML = html;
-                                tableBody.appendChild(row);
-                            });
-                        }
-                    }
-                    index++; // Moved index increment to standar loop
-                }
-            })
-            .catch(error => {
-                console.error('Gagal mengambil data:', error);
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="12" class="px-4 py-3 sm:px-6 text-center text-red-500">
-                            Gagal memuat data. Silakan coba lagi.
-                        </td>
-                    </tr>
-                `;
-            });
+    // === HELPER FUNCTIONS ===
+    function debounce(func, delay) {
+        let timeoutId;
+        return function (...args) {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => func.apply(this, args), delay);
+        };
     }
 
-    // Initial table render with jenis_unit_id = 3
-    renderTable(3);
+    function showLoadingStateProdi() {
+        tableBodyProdi.innerHTML = `<tr><td colspan="6" class="text-center p-4"><div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-sky-500 mx-auto"></div><p class="mt-2">Memuat data...</p></td></tr>`;
+        paginationInfoProdi.textContent = 'Memuat...';
+        paginationButtonsProdi.innerHTML = '';
+    }
 
-    // =========================== BAGIAN 2: Dropdown Unit Kerja ===========================
-    fetch('http://127.0.0.1:5000/api/jenis-units')
-        .then(response => response.json())
-        .then(result => {
+    function showEmptyStateProdi() {
+        tableBodyProdi.innerHTML = `<tr><td colspan="6" class="px-4 py-3 sm:px-6 text-center text-gray-500">Data tidak ditemukan.</td></tr>`;
+        paginationInfoProdi.textContent = 'Menampilkan 0 hingga 0 dari 0 hasil';
+        paginationButtonsProdi.innerHTML = '';
+    }
+
+    function showErrorStateProdi(message) {
+        tableBodyProdi.innerHTML = `<tr><td colspan="6" class="px-4 py-3 sm:px-6 text-center text-red-500">${message}</td></tr>`;
+        paginationInfoProdi.textContent = '';
+        paginationButtonsProdi.innerHTML = '';
+    }
+
+    /**
+     * Filters the raw data based on current search query, selected unit type, and period.
+     * Then groups it by 'Standar' (kriteria) for pagination.
+     * @returns {Object} An object containing the grouped data and its total count for pagination.
+     */
+    function filterAndGroupInstrumenDataProdi() {
+        let filteredData = allInstrumenDataProdiRaw;
+
+        // Apply Jenis Unit filter
+        if (selectedJenisUnitProdi && selectedJenisUnitProdi !== '') {
+            filteredData = filteredData.filter(item =>
+                item.jenis_unit_id === parseInt(selectedJenisUnitProdi)
+            );
+        }
+
+        // Apply Periode filter (if you have a 'periode_id' in your set-instrumen data)
+        // Currently, the set-instrumen API response doesn't show periode_id directly within its items.
+        // If you need to filter by periode, you'll need to ensure the API provides this or filter at the source.
+        // For now, it's just a placeholder for the dropdown selection.
+        if (selectedPeriodeProdi && selectedPeriodeProdi !== '') {
+             // You'll need to adjust this logic based on how `periode_id` is linked in your actual API data.
+            // Example: filteredData = filteredData.filter(item => item.periode_audit_id === parseInt(selectedPeriodeProdi));
+            console.warn("Filtering by Periode AMI is not fully implemented as 'periode_id' is not directly available in `set-instrumen` API response structure. Implement this when the API supports it.");
+        }
+
+
+        // Apply search query filter
+        if (searchQueryProdi) {
+            const searchTerm = searchQueryProdi.toLowerCase();
+            filteredData = filteredData.filter(item => {
+                const standar = item.unsur?.deskripsi?.kriteria?.nama_kriteria || '';
+                const deskripsi = item.unsur?.deskripsi?.isi_deskripsi || '';
+                const unsur = item.unsur?.isi_unsur || '';
+                const jenisUnit = item.jenisunit?.nama_jenis_unit || '';
+
+                return (
+                    standar.toLowerCase().includes(searchTerm) ||
+                    deskripsi.toLowerCase().includes(searchTerm) ||
+                    unsur.toLowerCase().includes(searchTerm) ||
+                    jenisUnit.toLowerCase().includes(searchTerm)
+                );
+            });
+        }
+
+        const groupedByStandar = {};
+        let uniqueStandarOrder = []; // To maintain the order of standards
+
+        filteredData.forEach(item => {
+            const standarKey = item.unsur?.deskripsi?.kriteria?.kriteria_id; // Use kriteria_id as unique key
+            if (standarKey) {
+                if (!groupedByStandar[standarKey]) {
+                    groupedByStandar[standarKey] = {
+                        name: item.unsur.deskripsi.kriteria.nama_kriteria,
+                        items: [],
+                        originalIndex: uniqueStandarOrder.length // Store its original grouping order
+                    };
+                    uniqueStandarOrder.push(standarKey);
+                }
+                groupedByStandar[standarKey].items.push(item);
+            }
+        });
+
+        // Convert the ordered unique keys into an array of grouped objects
+        const orderedGroupedData = uniqueStandarOrder.map(key => groupedByStandar[key]);
+
+        return {
+            groupedData: orderedGroupedData,
+            totalUniqueStandards: orderedGroupedData.length
+        };
+    }
+
+    /**
+     * Renders the table content and updates pagination controls.
+     */
+    function renderProdiTable() {
+        const { groupedData, totalUniqueStandards } = filterAndGroupInstrumenDataProdi();
+
+        const totalPages = Math.ceil(totalUniqueStandards / perPageProdi);
+        currentPageProdi = Math.min(currentPageProdi, totalPages) || 1;
+        currentPageProdi = Math.max(1, currentPageProdi); // Ensure current page is at least 1
+
+        const startGroupIndex = (currentPageProdi - 1) * perPageProdi;
+        const paginatedGroups = groupedData.slice(startGroupIndex, startGroupIndex + perPageProdi);
+
+        tableBodyProdi.innerHTML = '';
+        if (paginatedGroups.length === 0) {
+            showEmptyStateProdi();
+            return;
+        }
+
+        let currentDisplayNo = startGroupIndex + 1; // Tracks the sequential 'No' for standards
+
+        paginatedGroups.forEach(standarGroup => {
+            let isFirstRowOfStandar = true;
+
+            const totalRowsForCurrentStandarGroup = standarGroup.items.length;
+
+            const groupedByDeskripsiInStandar = {};
+            standarGroup.items.forEach(item => {
+                const deskripsiKey = item.unsur?.deskripsi?.deskripsi_id || 'no_desc';
+                if (!groupedByDeskripsiInStandar[deskripsiKey]) {
+                    groupedByDeskripsiInStandar[deskripsiKey] = {
+                        name: item.unsur?.deskripsi?.isi_deskripsi || 'Tidak Diketahui',
+                        items: []
+                    };
+                }
+                groupedByDeskripsiInStandar[deskripsiKey].items.push(item);
+            });
+
+            for (const deskripsiKey in groupedByDeskripsiInStandar) {
+                const deskripsiGroup = groupedByDeskripsiInStandar[deskripsiKey];
+                let isFirstRowOfDeskripsi = true;
+                const totalRowsForCurrentDeskripsiGroup = deskripsiGroup.items.length;
+
+                const groupedByUnsurInDeskripsi = {};
+                deskripsiGroup.items.forEach(item => {
+                    const unsurKey = item.unsur?.unsur_id || 'no_unsur';
+                    if (!groupedByUnsurInDeskripsi[unsurKey]) {
+                        groupedByUnsurInDeskripsi[unsurKey] = {
+                            name: item.unsur?.isi_unsur || 'Tidak Diketahui',
+                            items: []
+                        };
+                    }
+                    groupedByUnsurInDeskripsi[unsurKey].items.push(item);
+                });
+
+                for (const unsurKey in groupedByUnsurInDeskripsi) {
+                    const unsurGroup = groupedByUnsurInDeskripsi[unsurKey];
+                    let isFirstRowOfUnsur = true;
+                    const totalRowsForCurrentUnsurGroup = unsurGroup.items.length;
+
+                    unsurGroup.items.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.className = "transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700";
+                        let html = '';
+
+                        // 'No' and 'Standar' columns (rowspan for entire standard group)
+                        if (isFirstRowOfStandar) {
+                            html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600" rowspan="${totalRowsForCurrentStandarGroup}">${currentDisplayNo}</td>`;
+                            html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600" rowspan="${totalRowsForCurrentStandarGroup}">${standarGroup.name}</td>`;
+                            isFirstRowOfStandar = false;
+                        }
+
+                        // 'Deskripsi Area Audit-Sub Butir Standar' column (rowspan for entire description group within standard)
+                        if (isFirstRowOfDeskripsi) {
+                            html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600" rowspan="${totalRowsForCurrentDeskripsiGroup}">${deskripsiGroup.name}</td>`;
+                            isFirstRowOfDeskripsi = false;
+                        }
+
+                        // 'Pemeriksaan Pada Unsur' column (rowspan for entire unsur group within description)
+                        if (isFirstRowOfUnsur) {
+                            html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600" rowspan="${totalRowsForCurrentUnsurGroup}">${unsurGroup.name}</td>`;
+                            isFirstRowOfUnsur = false;
+                        }
+
+                        // 'Jenis Unit Kerja' column (rendered for each row)
+                        html += `<td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600">${item.jenisunit?.nama_jenis_unit || 'Tidak Diketahui'}</td>`;
+
+                        row.innerHTML = html;
+                        tableBodyProdi.appendChild(row);
+                    });
+                }
+            }
+            currentDisplayNo++; // Increment 'No' for the next distinct standard on the current page
+        });
+
+        renderPaginationInfoProdi(startGroupIndex, totalUniqueStandards);
+        renderPaginationButtonsProdi(totalPages);
+    }
+
+    function renderPaginationInfoProdi(startGroupIndex, totalUniqueStandards) {
+        const startItem = totalUniqueStandards > 0 ? startGroupIndex + 1 : 0;
+        const endItem = Math.min(startGroupIndex + perPageProdi, totalUniqueStandards);
+        paginationInfoProdi.innerHTML = `Menampilkan <strong>${startItem}</strong> hingga <strong>${endItem}</strong> dari <strong>${totalUniqueStandards}</strong> hasil`;
+    }
+
+    function renderPaginationButtonsProdi(totalPages) {
+        paginationButtonsProdi.innerHTML = '';
+        if (totalPages <= 1) return;
+
+        const maxVisibleButtons = 5;
+        let startPage;
+        let endPage;
+
+        if (totalPages <= maxVisibleButtons) {
+            startPage = 1;
+            endPage = totalPages;
+        } else {
+            const sideButtons = Math.floor(maxVisibleButtons / 2);
+            if (currentPageProdi <= sideButtons) {
+                startPage = 1;
+                endPage = maxVisibleButtons;
+            } else if (currentPageProdi + sideButtons >= totalPages) {
+                startPage = totalPages - maxVisibleButtons + 1;
+                endPage = totalPages;
+            } else {
+                startPage = currentPageProdi - sideButtons;
+                endPage = currentPageProdi + sideButtons;
+            }
+        }
+
+        // Previous Button
+        paginationButtonsProdi.appendChild(createPageButtonProdi(currentPageProdi > 1 ? currentPageProdi - 1 : null, 'Previous', currentPageProdi === 1));
+
+        // Page Number Buttons
+        for (let i = startPage; i <= endPage; i++) {
+            paginationButtonsProdi.appendChild(createPageButtonProdi(i, i, false, i === currentPageProdi));
+        }
+
+        // Next Button
+        paginationButtonsProdi.appendChild(createPageButtonProdi(currentPageProdi < totalPages ? currentPageProdi + 1 : null, 'Next', currentPageProdi === totalPages));
+    }
+
+    function createPageButtonProdi(page, text, isDisabled = false, isActive = false) {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = '#';
+        a.dataset.page = page;
+        a.textContent = text;
+
+        let classes = "flex h-8 items-center justify-center border px-3 leading-tight transition-all duration-200 ";
+        if (isDisabled) {
+            classes += "border-gray-300 bg-white text-gray-500 cursor-not-allowed opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400";
+        } else if (isActive) {
+            classes += "border-sky-300 bg-sky-50 text-sky-800 z-10 dark:border-sky-700 dark:bg-sky-900 dark:text-sky-200";
+        } else {
+            classes += "border-gray-300 bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200";
+        }
+        a.className = classes;
+
+        li.appendChild(a);
+        return li;
+    }
+
+    // === DATA FETCHING FUNCTIONS ===
+    async function fetchAllInstrumenDataProdi() {
+        showLoadingStateProdi();
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/set-instrumen');
+            if (!response.ok) throw new Error('Gagal mengambil data instrumen');
+            const result = await response.json();
+            allInstrumenDataProdiRaw = result.data || [];
+            currentPageProdi = 1; // Reset to first page
+            renderProdiTable(); // Re-render table with new data and filters
+        } catch (error) {
+            console.error('Error fetching instrumen data:', error);
+            showErrorStateProdi('Tidak dapat terhubung ke server instrumen.');
+        }
+    }
+
+    async function fetchJenisUnit() {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/jenis-units');
+            const result = await response.json();
             const data = result.data;
-            const select = document.getElementById('unitKerjaSelect');
-
             // Add a default option
             const defaultOption = document.createElement('option');
             defaultOption.value = '';
-            defaultOption.textContent = 'Pilih Unit Kerja';
-            select.appendChild(defaultOption);
+            defaultOption.textContent = 'Semua Jenis Unit';
+            jenisUnitSelectProdi.appendChild(defaultOption);
 
             data.forEach(unit => {
                 const option = document.createElement('option');
                 option.value = unit.jenis_unit_id;
                 option.textContent = unit.nama_jenis_unit;
-                select.appendChild(option);
+                jenisUnitSelectProdi.appendChild(option);
             });
+            // Set default selection to jenis_unit_id = 3 (Prodi)
+            jenisUnitSelectProdi.value = selectedJenisUnitProdi;
+        } catch (error) {
+            console.error('Gagal memuat jenis unit:', error);
+        }
+    }
 
-            // Set default selection to jenis_unit_id = 3
-            select.value = '3';
-
-            // Event listener for dropdown change
-            select.addEventListener('change', function () {
-                const selectedUnitId = select.value;
-                renderTable(selectedUnitId);
-            });
-        })
-        .catch(error => {
-            console.error('Gagal memuat unit kerja:', error);
-        });
-
-    // =========================== BAGIAN 3: Dropdown Periode ===========================
-    fetch('http://127.0.0.1:5000/api/periode-audits')
-        .then(response => response.json())
-        .then(result => {
-            const data = result.data.data;
-            const select = document.getElementById('periodeSelect');
-
+    async function fetchPeriodeAudit() {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/periode-audits');
+            const result = await response.json();
+            const data = result.data.data; // Assuming .data.data as per previous
             // Add a default option
             const defaultOption = document.createElement('option');
             defaultOption.value = '';
-            defaultOption.textContent = 'Pilih Periode';
-            select.appendChild(defaultOption);
+            defaultOption.textContent = 'Semua Periode';
+            periodeSelectProdi.appendChild(defaultOption);
 
-            data.forEach(unit => {
+            data.forEach(periode => {
                 const option = document.createElement('option');
-                option.value = unit.periode_id;
-                option.textContent = unit.nama_periode;
-                select.appendChild(option);
+                option.value = periode.periode_id;
+                option.textContent = periode.nama_periode;
+                periodeSelectProdi.appendChild(option);
             });
-        })
-        .catch(error => {
+        } catch (error) {
             console.error('Gagal memuat periode AMI:', error);
-        });
-});
-// Event listener untuk tombol hapus
-document.getElementById('instrumen-table-body').addEventListener('click', function (e) {
-    const deleteBtn = e.target.closest('.delete-btn');
-    if (deleteBtn) {
-        e.preventDefault();
-        const setInstrumenId = deleteBtn.getAttribute('data-id');
-
-        if (confirm('Apakah Anda yakin ingin menghapus instrumen ini?')) {
-            fetch(`http://127.0.0.1:5000/api/set-instrumen/${setInstrumenId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Gagal menghapus instrumen');
-                    }
-                    return response.json();
-                })
-                .then(result => {
-                    alert('Instrumen berhasil dihapus!');
-                    window.location.href = '/admin/data-instrumen/prodi';
-                })
-                .catch(error => {
-                    console.error('Gagal menghapus instrumen:', error);
-                    alert('Gagal menghapus instrumen. Silakan coba lagi.');
-                });
         }
     }
-});
 
+    // === EVENT LISTENERS ===
+    perPageSelectProdi.addEventListener('change', () => {
+        perPageProdi = parseInt(perPageSelectProdi.value, 10);
+        currentPageProdi = 1; // Reset to first page
+        renderProdiTable();
+    });
+
+    const debouncedSearchProdi = debounce(() => {
+        searchQueryProdi = searchInputProdi.value;
+        currentPageProdi = 1; // Reset to first page
+        renderProdiTable(); // Re-render with new search query
+    }, 300);
+    searchInputProdi.addEventListener('input', debouncedSearchProdi);
+
+    paginationButtonsProdi.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = e.target.closest('a');
+        if (target && target.dataset.page) {
+            const page = parseInt(target.dataset.page);
+            if (!isNaN(page) && page !== currentPageProdi) {
+                currentPageProdi = page;
+                renderProdiTable();
+            }
+        }
+    });
+
+    jenisUnitSelectProdi.addEventListener('change', () => {
+        selectedJenisUnitProdi = jenisUnitSelectProdi.value;
+        currentPageProdi = 1; // Reset to first page
+        renderProdiTable(); // Re-render with new filter
+    });
+
+    periodeSelectProdi.addEventListener('change', () => {
+        selectedPeriodeProdi = periodeSelectProdi.value;
+        currentPageProdi = 1; // Reset to first page
+        renderProdiTable(); // Re-render with new filter
+    });
+
+    // Event listener for delete button (copied from original, ensure route exists)
+    document.getElementById('instrumen-table-body-prodi').addEventListener('click', function (e) {
+        const deleteBtn = e.target.closest('.delete-btn');
+        if (deleteBtn) {
+            e.preventDefault();
+            const setInstrumenId = deleteBtn.getAttribute('data-id');
+
+            if (confirm('Apakah Anda yakin ingin menghapus instrumen ini?')) {
+                fetch(`http://127.0.0.1:5000/api/set-instrumen/${setInstrumenId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Gagal menghapus instrumen');
+                        }
+                        return response.json();
+                    })
+                    .then(result => {
+                        alert('Instrumen berhasil dihapus!');
+                        // Assuming this is a SPA, re-fetch data or remove row
+                        fetchAllInstrumenDataProdi();
+                        // For a full page reload if not SPA:
+                        // window.location.href = '/admin/data-instrumen/prodi';
+                    })
+                    .catch(error => {
+                        console.error('Gagal menghapus instrumen:', error);
+                        alert('Gagal menghapus instrumen. Silakan coba lagi.');
+                    });
+            }
+        }
+    });
+
+    // === INITIALIZATION ===
+    fetchJenisUnit();
+    fetchPeriodeAudit();
+    fetchAllInstrumenDataProdi(); // Initial data fetch and render
+
+});
 </script>
 @endsection
