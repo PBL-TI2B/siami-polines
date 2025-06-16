@@ -240,6 +240,6 @@ Route::prefix('admin-unit')->middleware('auth.ami:admin-unit')->group(function (
     Route::get('/data-instrumen/prodi', fn() => view('admin-unit.data-instrumen.prodi'))->name('admin-unit.data-instrumen.instrumenprodi');
 });
 
-Route::get('/pengaturan-akun', [UserController::class, 'editpassword'])->name('pengaturan-akun');
-Route::get('/edit-profile', [UserController::class, 'editprofile'])->name('profile.editProfile');
+//Route::get('/pengaturan-akun', [UserController::class, 'editpassword'])->name('pengaturan-akun');
+//Route::get('/edit-profile', [UserController::class, 'editprofile'])->name('profile.editProfile');
 Route::get('/profile', [UserController::class, 'profile'])->name('profile');

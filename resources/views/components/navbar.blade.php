@@ -102,7 +102,7 @@
                         <a href="{{ route('profile') }}" class="block px-4 py-2 hover:bg-gray-100">Profil Saya</a>
                     </li>
                     <li>
-                        <a href="{{ route('pengaturan-akun') }}" class="block px-4 py-2 hover:bg-gray-100">Pengaturan Akun</a>
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-100">Pengaturan Akun</a>
                     </li>
                 </ul>
                 <ul>

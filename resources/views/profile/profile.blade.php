@@ -41,9 +41,21 @@
                     <x-heroicon-o-pencil class="w-5 h-5" />
                     Edit Password
                 </x-button>
-                <x-button color="gray" icon="heroicon-o-x-mark" href="{{ route('auditor.daftar-tilik.index') }}">
+                @php
+                    $roleRoutes = [
+                        1 => 'admin.dashboard.index',
+                        2 => 'auditor.dashboard.index',
+                        3 => 'auditee.dashboard.index',
+                        4 => 'kepala-pmpp.dashboard.index',
+                    ];
+
+                    $routeName = $roleRoutes[session('role_id')] ?? 'default.route.name'; // fallback jika role_id tidak dikenali
+                @endphp
+
+                <x-button color="gray" icon="heroicon-o-x-mark" href="{{ route($routeName) }}">
                     Kembali
                 </x-button>
+
             </div>
         </div>
     </div>
