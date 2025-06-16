@@ -222,8 +222,8 @@
             };
 
             // DOM elements
-            const auditingId = {{ session('auditing_id') ?? 'null' }};
-            let auditStatus = {{ session('status') ?? 'null' }};
+            const auditingId = {{ $auditingId ?? 'null' }};
+            let auditStatus = {{ $status ?? 'null' }};
             const tbody = document.getElementById('tilik-table-body');
             const perPageSelect = document.getElementById('per-page-select');
             const searchInput = document.getElementById('search-input');

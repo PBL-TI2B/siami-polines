@@ -182,24 +182,27 @@ Route::prefix('auditee')->middleware('auth.ami:auditee')->group(function () {
     })->name('auditee.riwayat-audit.index');
 
     Route::prefix('audit')->group(function () {
+        // Rute untuk halaman utama audit auditee
         Route::get('/', [AuditController::class, 'auditeeIndexPage'])->name('auditee.audit.index');
         Route::get('detail/{auditingId}', [AuditController::class, 'showAuditeeAuditProgress'])->name('auditee.audit.progress-detail');
         Route::get('/auditings', [AuditController::class, 'getAuditingsByUser'])->name('auditee.auditings');
+
+        // Rute untuk instrumen
         Route::get('/instrumen-upt/{auditingId}', [AuditController::class, 'showAuditeeInstrumenUPT'])->name('auditee.data-instrumen.instrumenupt');
         Route::get('/instrumen-prodi/{auditingId}', [AuditController::class, 'showAuditeeInstrumenProdi'])->name('auditee.data-instrumen.instrumenprodi');
         Route::get('/instrumen-jurusan/{auditingId}', [AuditController::class, 'showAuditeeInstrumenJurusan'])->name('auditee.data-instrumen.instrumenjurusan');
 
+        // Rute untuk Assesmen Lapangan
         Route::get('/assesmen-lapangan', [PlotingAMIController::class, 'lihatJadwal'])->name('auditee.assesmen-lapangan.index');
 
-        //route daftar tilik
+        // Rute untuk daftar tilik
         Route::prefix('daftar-tilik')->group(function () {
-            Route::get('/', [DaftarTilikController::class, 'auditeetilik'])->name('auditee.daftar-tilik.index');
+            Route::get('/{auditingId}', [DaftarTilikController::class, 'auditeetilik'])->name('auditee.daftar-tilik.index');
             Route::get('/{id}/edit', [DaftarTilikController::class, 'editauditee'])->name('auditee.daftar-tilik.edit');
             Route::get('/{tilik_id}/create', [DaftarTilikController::class, 'createauditee'])->name('auditee.daftar-tilik.create');
         });
     });
 
-    // Route::get('/assesmen-lapangan', [PlotingAMIController::class, 'lihatJadwal'])->name('auditee.assesmen-lapangan.index');
 
     // Data Instrumen
     Route::prefix('data-instrumen')->group(function () {
