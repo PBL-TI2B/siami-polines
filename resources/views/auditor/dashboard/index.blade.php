@@ -23,15 +23,12 @@
                             <th class="px-4 py-3 text-left">Status Pengisian Auditee</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr class="border-t border-gray-200 dark:border-slate-600">
-                            <td class="px-4 py-3 text-gray-600 dark:text-white">1</td>
-                            <td class="px-4 py-3 text-gray-600 dark:text-white">Contoh Unit</td>
-                            <td class="px-4 py-3 text-gray-600 dark:text-white">Sudah/Belum Di Set</td>
-                            <td class="px-4 py-3">
-                                <span
-                                    class="inline-block rounded-full bg-yellow-400 px-3 py-1 text-center text-sm text-black">Belum
-                                    diisi</span>
+                    {{-- ID ditambahkan untuk mempermudah seleksi dengan JavaScript --}}
+                    <tbody id="audit-table-body" class="divide-y divide-gray-200 dark:divide-slate-600">
+                        {{-- Data akan diisi secara dinamis oleh JavaScript --}}
+                        <tr>
+                            <td colspan="4" class="px-4 py-10 text-center text-gray-500">
+                                Memuat data audit...
                             </td>
                         </tr>
                     </tbody>
@@ -81,6 +78,78 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            const tbody = document.getElementById('audit-table-body');
+            if (!tbody) {
+                console.error('Element tbody dengan ID "audit-table-body" tidak ditemukan!');
+                return;
+            }
+
+            // Mapping status dari API ke teks dan warna, sama seperti di dashboard admin
+            const statusMap = {
+                1: { label: 'Pengisian Instrumen', color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-800 dark:text-yellow-400' },
+                2: { label: 'Desk Evaluation', color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-800 dark:text-yellow-400' },
+                3: { label: 'Penjadwalan AL', color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-800 dark:text-yellow-400' },
+                4: { label: 'Dijadwalkan Tilik', color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-800 dark:text-yellow-400' },
+                5: { label: 'Pertanyaan Tilik', color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-800 dark:text-yellow-400' },
+                6: { label: 'Tilik Dijawab', color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-800 dark:text-yellow-400' },
+                7: { label: 'Laporan Temuan', color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-800 dark:text-yellow-400' },
+                8: { label: 'Revisi', color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-800 dark:text-yellow-400' },
+                9: { label: 'Sudah revisi', color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-800 dark:text-yellow-400' },
+                10: { label: 'Closing', color: 'bg-green-100 text-green-600 dark:bg-green-800 dark:text-green-400' },
+                11: { label: 'Selesai', color: 'bg-green-100 text-green-600 dark:bg-green-800 dark:text-green-400' }
+            };
+
+            try {
+                // Fetch data dari API
+                const response = await fetch('http://127.0.0.1:5000/api/auditings');
+                const data = await response.json();
+
+                // Kosongkan isi tabel sebelum diisi data baru
+                tbody.innerHTML = '';
+
+                // Cek jika data kosong atau bukan array
+                if (!Array.isArray(data) || data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-10 text-center text-gray-500">Tidak ada data audit yang tersedia.</td></tr>`;
+                    return;
+                }
+
+                // Loop setiap item data dan buat baris tabel baru
+                data.forEach((item, index) => {
+                    const statusInfo = statusMap[item.status] || {
+                        label: 'Status Tidak Dikenali',
+                        color: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'
+                    };
+
+                    // Buat baris tabel (tr) baru
+                    const row = `
+                        <tr class="dark:text-white">
+                            <td class="px-4 py-3">${index + 1}</td>
+                            <td class="px-4 py-3">${item.unit_kerja?.nama_unit_kerja ?? 'N/A'}</td>
+                            <td class="px-4 py-3">
+                                <span class="rounded-full bg-gray-200 px-3 py-1 text-sm dark:bg-gray-600">Belum Diset</span>
+                            </td>
+                            <td class="px-4 py-3">
+                                <span class="inline-block rounded-full px-3 py-1 text-center text-sm ${statusInfo.color}">
+                                    ${statusInfo.label}
+                                </span>
+                            </td>
+                        </tr>
+                    `;
+
+                    // Tambahkan baris baru ke dalam tbody
+                    tbody.innerHTML += row;
+                });
+
+            } catch (error) {
+                console.error('Gagal mengambil data audit:', error);
+                tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-10 text-center text-red-500">Gagal memuat data. Silakan coba lagi nanti.</td></tr>`;
+            }
+        });
+    </script>
+    
     <script>
         // Fungsi untuk update tema chart
         function updateChartTheme(isDark) {
@@ -159,14 +228,6 @@
             attributes: true,
             attributeFilter: ['class']
         });
-
-        // Toggle tema manual
-        function toggleTheme() {
-            const html = document.documentElement;
-            html.classList.toggle('dark');
-            localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
-            updateChartTheme(html.classList.contains('dark'));
-        }
 
         // Inisialisasi tema awal
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia(
