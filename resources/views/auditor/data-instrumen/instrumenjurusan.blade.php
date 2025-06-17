@@ -441,7 +441,7 @@
                         toast.parentElement.remove();
                     }, 300);
                 }
-            }, 3000);
+            }, 2000);
         }
 
         // Animasi TailwindCSS untuk toast
@@ -479,7 +479,7 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        status: "3"
+                        status: "4"
                     }),
                 });
                 const result = await response.json();
@@ -493,7 +493,7 @@
                     // Refresh halaman setelah 3 detik untuk memberikan waktu toast terlihat
                     setTimeout(() => {
                         window.location.href = "{{ route('auditor.audit.audit', ['id' => $auditing->auditing_id]) }}";
-                    }, 3000);
+                    }, 2000);
                 } else {
                     // Tampilkan toast error
                     showToast('error', 'Gagal menyimpan koreksi instrumen: ' + (result.message || 'Unknown error'));
@@ -555,7 +555,7 @@
                     // Refresh halaman setelah 3 detik untuk memberikan waktu toast terlihat
                     setTimeout(() => {
                         window.location.reload();
-                    }, 3000);
+                    }, 2000);
                 } else {
                     // Tampilkan toast error
                     showToast('error', 'Gagal menyimpan response instrumen: ' + (result.message || 'Unknown error'));

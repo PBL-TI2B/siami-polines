@@ -85,7 +85,7 @@
                 id="user-menu-button" aria-expanded="false" data-dropdown-toggle="dropdown">
                 <span class="sr-only">Buka menu pengguna</span>
                 <img class="h-8 w-8 rounded-full"
-                    src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/michael-gough.png"
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6G7fCMB6PcaJ-2N-do059HA3pRP746JM_HvSANwCtasmvwC8PlJEq7vmK&s=10 "
                     alt="Foto pengguna">
             </button>
             <!-- User Dropdown (desktop) -->
@@ -100,9 +100,6 @@
                 <ul class="py-1 text-sky-200 dark:text-sky-300" aria-labelledby="dropdown">
                     <li>
                         <a href="{{ route('profile') }}" class="block px-4 py-2 hover:bg-gray-100">Profil Saya</a>
-                    </li>
-                    <li>
-                        <a href="#" class="block px-4 py-2 hover:bg-gray-100">Pengaturan Akun</a>
                     </li>
                 </ul>
                 <ul>

@@ -3,176 +3,220 @@
 @section('title', 'Auditor AMI')
 
 @section('content')
-<div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-    <!-- Breadcrumb -->
+@php
+  // Definisikan variabel untuk kartu informasi agar lebih bersih
+  $status = $auditing->status;
+  $progressInfo = [
+      'text' => 'Audit Belum Dimulai',
+      'color' => 'gray',
+      'value' => 0,
+  ];
+
+  if ($status >= 10) {
+      $progressInfo = ['text' => 'Selesai', 'color' => 'green', 'value' => 100];
+  } elseif ($status == 9) {
+      $progressInfo = ['text' => 'Menunggu Closing Audit', 'color' => 'sky', 'value' => 90];
+  } elseif ($status >= 7) {
+      $progressInfo = ['text' => 'Menunggu Persetujuan Laporan Temuan', 'color' => 'sky', 'value' => 75];
+  } elseif ($status == 6) {
+      $progressInfo = ['text' => 'Proses Laporan Temuan', 'color' => 'sky', 'value' => 60];
+  } elseif ($status >= 5) {
+      $progressInfo = ['text' => 'Menunggu Jawaban Daftar Tilik', 'color' => 'yellow', 'value' => 50];
+  } elseif ($status == 4) {
+      $progressInfo = ['text' => 'Proses Pembuatan Daftar Tilik', 'color' => 'sky', 'value' => 40];
+  } elseif ($status == 3) {
+      $progressInfo = ['text' => 'Proses Koreksi Instrumen', 'color' => 'sky', 'value' => 30];
+  } elseif ($status == 2) {
+      $progressInfo = ['text' => 'Proses Penjadwalan Asesmen', 'color' => 'sky', 'value' => 20];
+  }
+@endphp
+
+<div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
     <x-breadcrumb :items="[
         ['label' => 'Dashboard', 'url' => route('auditor.dashboard.index')],
         ['label' => 'Audit'],
     ]" />
 
-    <!-- Heading -->
-    <h2 class="mb-8 text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">
-        Progress Auditing {{ $auditing->unitKerja->nama_unit_kerja ?? '-' }}
-    </h2>
+    <div class="mb-5">
+        <h1 class="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl">
+            Progress Audit AMI {{ $auditing->unitKerja->nama_unit_kerja ?? '-' }}
+        </h1>
+    </div>
 
-    <!-- Main Content -->
-    <div class="flex flex-col gap-6 lg:flex-row">
-        <!-- Progress Timeline -->
+
+    <div class="flex flex-col gap-8 lg:flex-row">
         <div class="w-full lg:w-2/3">
-            <div class="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-8 border border-gray-200 dark:border-gray-700">
-                @php
-                    $status = $auditing->status;
-                @endphp
-                <ol class="relative border-l-4 border-gray-200 dark:border-gray-700 pl-8">
-                    <!-- Jadwalkan Assesmen Lapangan -->
-                    <li class="mb-8">
-                        <span class="absolute flex items-center justify-center w-10 h-10 rounded-full -left-5 ring-4 ring-white dark:ring-gray-900 {{ $status >= 3 ? 'bg-green-500' : 'bg-gray-200 dark:bg-gray-600' }}">
-                            @if($status >= 3)
-                                <svg class="w-5 h-5 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5" />
-                                </svg>
-                            @else
-                                <svg class="w-5 h-5 text-gray-500 dark:text-gray-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
-                                    <path d="M16 1h-3.278A1.992 1.992 0 0 0 11 0H7a1.993 1.993 0 0 0-1.722 1H2a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2Zm-3 14H5a1 1 0 0 1 0-2h8a1 1 0 0 1 0 2Zm0-4H5a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2Zm0-5H5a1 1 0 0 1 0-2h2V2h4v2h2a1 1 0 1 1 0 2Z" />
-                                </svg>
-                            @endif
-                        </span>
-                        <h3 class="ml-6 text-lg font-semibold text-gray-900 dark:text-white">Jadwalkan Assesmen Lapangan</h3>
-                        @if($status == 2)
-                            <a href="{{ route('auditor.assesmen-lapangan.index') }}" class="ml-6 text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:underline">Set Jadwal Assesmen Lapangan</a>
-                        @endif
-                    </li>
-                    <!-- Koreksi Respon Instrumen -->
+            <div class="bg-white dark:bg-slate-800/50 shadow-lg rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700">
+                <ol class="ml-5 relative border-l-2 border-slate-200 dark:border-slate-700">
                     @php
-                        $instrumenRoute = match ($jenisUnitId) {
-                            1 => route('auditor.data-instrumen.instrumenupt'),
-                            2 => route('auditor.data-instrumen.instrumenjurusan', ['id' => $auditing->auditing_id]),
-                            3 => route('auditor.data-instrumen.instrumenprodi', ['id' => $auditing->auditing_id]),
-                            default => '#',
-                        };
+                    $instrumenRoute = match ($jenisUnitId) {
+                        1 => route('auditor.data-instrumen.instrumenupt'),
+                        2 => route('auditor.data-instrumen.instrumenjurusan', ['id' => $auditing->auditing_id]),
+                        3 => route('auditor.data-instrumen.instrumenprodi', ['id' => $auditing->auditing_id]),
+                        default => '#',
+                    };
                     @endphp
-                    <li class="mb-8">
-                        <span class="absolute flex items-center justify-center w-10 h-10 rounded-full -left-5 ring-4 ring-white dark:ring-gray-900 {{ $status >= 4 ? 'bg-green-500' : 'bg-gray-200 dark:bg-gray-600' }}">
+
+                    <li class="mb-10 ml-10">
+                        <span class="absolute -left-5 flex h-10 w-10 items-center justify-center rounded-full ring-8 ring-white dark:ring-slate-800/50 {{ $status >= 3 ? 'bg-green-500' : 'bg-slate-200 dark:bg-slate-600' }}">
+                            @if($status >= 3)
+                                <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                            @else
+                                <svg class="h-5 w-5 text-slate-500 dark:text-slate-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" /></svg>
+                            @endif
+                        </span>
+                        <h4 class="mb-1 flex items-center text-lg font-semibold text-slate-900 dark:text-white">Jadwalkan Assesmen Lapangan</h4>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Atur tanggal dan waktu untuk pelaksanaan asesmen lapangan dengan auditee.</p>
+                        @if($status == 2)
+                            <a href="{{ route('auditor.assesmen-lapangan.index') }}" class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800">
+                                Set Jadwal
+                                <svg class="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
+                            </a>
+                        @endif
+                    </li>
+
+                    <li class="mb-10 ml-10">
+                        <span class="absolute -left-5 flex h-10 w-10 items-center justify-center rounded-full ring-8 ring-white dark:ring-slate-800/50 {{ $status >= 4 ? 'bg-green-500' : 'bg-slate-200 dark:bg-slate-600' }}">
                             @if($status >= 4)
-                                <svg class="w-5 h-5 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5" />
-                                </svg>
+                                <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
                             @else
-                                <svg class="w-5 h-5 text-gray-500 dark:text-gray-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 16">
-                                    <path d="M18 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2ZM6.5 3a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3.014 13.021l.157-.625A3.427 3.427 0 0 1 6.5 9.571a3.426 3.426 0 0 1 3.322 2.805l.159.622-6.967.023ZM16 12h-3a1 1 0 0 1 0-2h3a1 1 0 0 1 0 2Zm0-3h-3a1 1 0 1 1 0-2h3a1 1 0 1 1 0 2Zm0-3h-3a1 1 0 1 1 0-2h3a1 1 0 1 1 0 2Z" />
-                                </svg>
+                                <svg class="h-5 w-5 text-slate-500 dark:text-slate-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" /></svg>
                             @endif
                         </span>
-                        <h3 class="ml-6 text-lg font-semibold text-gray-900 dark:text-white">Koreksi Respon Instrumen</h3>
+                        <h4 class="mb-1 text-lg font-semibold text-slate-900 dark:text-white">Koreksi Respon Instrumen</h4>
+                         <p class="text-sm text-slate-500 dark:text-slate-400">Periksa dan berikan skor pada jawaban instrumen yang telah diisi oleh auditee.</p>
                         @if($status == 3)
-                            <a href="{{ $instrumenRoute }}" class="ml-6 text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:underline">Koreksi Jawaban Instrumen</a>
+                            <a href="{{ $instrumenRoute }}" class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800">
+                                Koreksi Jawaban
+                                <svg class="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
+                            </a>
                         @elseif($status == 6 || $status == 9)
-                            <a href="{{ $instrumenRoute }}" class="ml-6 text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:underline">Cek Jawaban Instrumen</a>
+                             <a href="{{ $instrumenRoute }}" class="mt-3 inline-flex items-center rounded-lg bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200 focus:outline-none focus:ring-4 focus:ring-slate-300 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600 dark:focus:ring-slate-800">
+                                Lihat Jawaban
+                            </a>
                         @endif
                     </li>
-                    <!-- Daftar Tilik -->
-                    <li class="mb-8">
-                        <span class="absolute flex items-center justify-center w-10 h-10 rounded-full -left-5 ring-4 ring-white dark:ring-gray-900 {{ $status >= 5 ? 'bg-green-500' : 'bg-gray-200 dark:bg-gray-600' }}">
-                            @if($status >= 5)
-                                <svg class="w-5 h-5 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5" />
-                                </svg>
+
+                    <li class="mb-10 ml-10">
+                        <span class="absolute -left-5 flex h-10 w-10 items-center justify-center rounded-full ring-8 ring-white dark:ring-slate-800/50 {{ $status >= 5 ? 'bg-green-500' : 'bg-slate-200 dark:bg-slate-600' }}">
+                           @if($status >= 5)
+                                <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
                             @else
-                                <svg class="w-5 h-5 text-gray-500 dark:text-gray-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
-                                    <path d="M16 1h-3.278A1.992 1.992 0 0 0 11 0H7a1.993 1.993 0 0 0-1.722 1H2a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2Zm-3 14H5a1 1 0 0 1 0-2h8a1 1 0 0 1 0 2Zm0-4H5a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2Zm0-5H5a1 1 0 0 1 0-2h2V2h4v2h2a1 1 0 1 1 0 2Z" />
-                                </svg>
+                                <svg class="h-5 w-5 text-slate-500 dark:text-slate-300" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" /><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd" /></svg>
                             @endif
                         </span>
-                        <h3 class="ml-6 text-lg font-semibold text-gray-900 dark:text-white">Daftar Tilik</h3>
-                        @if($status == 4)
-                            <a href="{{ route('auditor.daftar-tilik.index', ['auditingId' => $auditing->auditing_id]) }}" class="ml-6 text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:underline">Buat Pertanyaan Daftar Tilik</a>
-                        @elseif($status == 6)
-                            <a href="{{ route('auditor.daftar-tilik.index', ['auditingId' => $auditing->auditing_id]) }}" class="ml-6 text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:underline">Cek Jawaban Daftar Tilik</a>
+                        <h4 class="mb-1 text-lg font-semibold text-slate-900 dark:text-white">Daftar Tilik</h4>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Buat pertanyaan verifikasi untuk asesmen lapangan dan periksa jawabannya.</p>
+                         @if($status == 4)
+                            <a href="{{ route('auditor.daftar-tilik.index', ['auditingId' => $auditing->auditing_id]) }}" class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800">
+                                Buat Daftar Tilik
+                                <svg class="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
+                            </a>
+                        @elseif($status == 6 || $status == 9)
+                             <a href="{{ route('auditor.daftar-tilik.index', ['auditingId' => $auditing->auditing_id]) }}" class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800">
+                                Cek Jawaban Daftar Tilik
+                                <svg class="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
+                            </a>
                         @endif
                     </li>
-                    <!-- Laporan Temuan -->
-                    <li class="mb-8">
-                        <span class="absolute flex items-center justify-center w-10 h-10 rounded-full -left-5 ring-4 ring-white dark:ring-gray-900 {{ $status >= 7 ? 'bg-green-500' : 'bg-gray-200 dark:bg-gray-600' }}">
-                            @if($status >= 7)
-                                <svg class="w-5 h-5 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5" />
-                                </svg>
+
+                    <li class="mb-10 ml-10">
+                        <span class="absolute -left-5 flex h-10 w-10 items-center justify-center rounded-full ring-8 ring-white dark:ring-slate-800/50 {{ $status >= 7 ? 'bg-green-500' : 'bg-slate-200 dark:bg-slate-600' }}">
+                           @if($status >= 7)
+                                <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
                             @else
-                                <svg class="w-5 h-5 text-gray-500 dark:text-gray-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
-                                    <path d="M16 1h-3.278A1.992 1.992 0 0 0 11 0H7a1.993 1.993 0 0 0-1.722 1H2a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2Zm-3 14H5a1 1 0 0 1 0-2h8a1 1 0 0 1 0 2Zm0-4H5a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2Zm0-5H5a1 1 0 0 1 0-2h2V2h4v2h2a1 1 0 1 1 0 2Z" />
-                                </svg>
+                                <svg class="h-5 w-5 text-slate-500 dark:text-slate-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>
                             @endif
                         </span>
-                        <h3 class="ml-6 text-lg font-semibold text-gray-900 dark:text-white">Laporan Temuan</h3>
+                        <h4 class="mb-1 text-lg font-semibold text-slate-900 dark:text-white">Laporan Temuan</h4>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Susun laporan berdasarkan temuan selama proses audit untuk ditinjau oleh auditee.</p>
                         @if($status == 6)
-                            <a href="{{ route('auditor.laporan.index', ['auditingId' => $auditing->auditing_id]) }}" class="ml-6 text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:underline">Buat Laporan Temuan</a>
+                            <a href="{{ route('auditor.laporan.index', ['auditingId' => $auditing->auditing_id]) }}" class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800">
+                                Buat Laporan
+                                <svg class="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
+                            </a>
                         @endif
                     </li>
-                    <!-- Closing Audit -->
-                    <li>
-                        <span class="absolute flex items-center justify-center w-10 h-10 rounded-full -left-5 ring-4 ring-white dark:ring-gray-900 {{ $status >= 10 ? 'bg-green-500' : 'bg-gray-200 dark:bg-gray-600' }}">
+
+                    <li class="ml-10">
+                        <span class="absolute -left-5 flex h-10 w-10 items-center justify-center rounded-full ring-8 ring-white dark:ring-slate-800/50 {{ $status >= 10 ? 'bg-green-500' : 'bg-slate-200 dark:bg-slate-600' }}">
                             @if($status >= 10)
-                                <svg class="w-5 h-5 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5" />
-                                </svg>
+                                <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
                             @else
-                                <svg class="w-5 h-5 text-gray-500 dark:text-gray-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
-                                    <path d="M16 1h-3.278A1.992 1.992 0 0 0 11 0H7a1.993 1.993 0 0 0-1.722 1H2a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2ZM7 2h4v3H7V2Zm5.7 8.289-3.975 3.857a1 1 0 0 1-1.393 0L5.3 12.182a1.002 1.002 0 1 1 1.4-1.436l1.328 1.289 3.28-3.181a1 1 0 1 1 1.392 1.435Z" />
-                                </svg>
+                                <svg class="h-5 w-5 text-slate-500 dark:text-slate-300" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a5 5 0 00-5 5v2a2 2 0 00-2 2v5a2 2 0 002 2h10a2 2 0 002-2v-5a2 2 0 00-2-2H7V7a3 3 0 015.905-.75 1 1 0 001.788-1.15A5.002 5.002 0 0010 2z" /></svg>
                             @endif
                         </span>
-                        <h3 class="ml-6 text-lg font-semibold text-gray-900 dark:text-white">Closing Audit</h3>
-                        @if($status == 9)
-                            <a href="javascript:void(0)" onclick="showCloseConfirmModal()" class="ml-6 text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:underline">Closing Proses Audit</a>
+                        <h4 class="mb-1 text-lg font-semibold text-slate-900 dark:text-white">Closing Audit</h4>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Selesaikan proses audit setelah semua tahapan disetujui.</p>
+                         @if($status == 9)
+                            <button type="button" onclick="showCloseConfirmModal()" class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800">
+                                Closing Proses Audit
+                                <svg class="ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5v2.25a2.25 2.25 0 00-2.25 2.25v4.5A2.25 2.25 0 005.5 19h9a2.25 2.25 0 002.25-2.25v-4.5a2.25 2.25 0 00-2.25-2.25V5.5A4.5 4.5 0 0010 1zm3 8.5a.75.75 0 00-1.5 0v1.5a.75.75 0 001.5 0v-1.5z" clip-rule="evenodd" /></svg>
+                            </button>
                         @endif
                     </li>
                 </ol>
             </div>
         </div>
 
-        <!-- Progress Information -->
         <div class="w-full lg:w-1/3">
-            <div class="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-8 border border-gray-200 dark:border-gray-700">
-                <h4 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Informasi Progress</h4>
-                <p class="text-sm text-gray-600 dark:text-gray-300">
-                    Progress akan berubah secara otomatis sesuai dengan tahapan yang telah dilalui dalam proses audit.
-                </p>
+            <div class="bg-white dark:bg-slate-800/50 shadow-lg rounded-2xl p-6 border border-slate-200 dark:border-slate-700 sticky top-8">
+                <h4 class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4">Status Audit Saat Ini</h4>
+                
+                <div class="mb-4">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold {{
+                        [
+                            'gray' => 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200',
+                            'sky' => 'bg-sky-100 text-sky-800 dark:bg-sky-900/50 dark:text-sky-300',
+                            'yellow' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300',
+                            'green' => 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300',
+                        ][$progressInfo['color']]
+                    }}">
+                        {{ $progressInfo['text'] }}
+                    </span>
+                </div>
+                
+                <div class="w-full bg-slate-200 rounded-full h-2.5 dark:bg-slate-700 mb-2">
+                    <div class="bg-{{ $progressInfo['color'] }}-500 h-2.5 rounded-full" style="width: {{ $progressInfo['value'] }}%"></div>
+                </div>
+                <p class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-6 text-right">{{ $progressInfo['value'] }}% Selesai</p>
+
+                <div class="mt-4 border-t border-slate-200 dark:border-slate-700 pt-4">
+                    <p class="text-sm text-slate-600 dark:text-slate-400">
+                        Progress akan diperbarui secara otomatis setelah Anda menyelesaikan setiap tahapan. Pastikan untuk mengikuti alur yang telah ditentukan.
+                    </p>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal Closing Proses Audit (Flowbite) -->
-<div id="closeConfirmModal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+<div id="closeConfirmModal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full md:inset-0 h-screen bg-black/50 backdrop-blur-sm">
     <div class="relative p-4 w-full max-w-md max-h-full">
-        <div class="relative bg-white rounded-lg shadow dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-            <!-- Modal Header -->
-            <div class="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Konfirmasi Closing Proses Audit</h3>
-                <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="closeConfirmModal">
-                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                    </svg>
+        <div class="relative bg-white rounded-2xl shadow-xl dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-slate-600">
+                <h3 class="text-xl font-semibold text-slate-900 dark:text-white">
+                    Konfirmasi Closing Audit
+                </h3>
+                <button type="button" onclick="hideCloseConfirmModal()" class="text-slate-400 bg-transparent hover:bg-slate-200 hover:text-slate-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-slate-600 dark:hover:text-white">
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/></svg>
                     <span class="sr-only">Tutup modal</span>
                 </button>
             </div>
-            <!-- Modal Body -->
-            <div class="p-6 text-center">
-                <svg class="mx-auto mb-4 w-12 h-12 text-yellow-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+            <div class="p-4 md:p-5 text-center">
+                <svg class="mx-auto mb-4 text-yellow-400 w-14 h-14" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                 </svg>
-                <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                    Apakah Anda yakin ingin menyelesaikan (closing) proses audit? <br>
-                    <strong class="text-red-600 dark:text-red-400">Tindakan ini tidak dapat dibatalkan.</strong>
+                <p class="mb-5 text-base text-slate-600 dark:text-slate-400">
+                    Apakah Anda yakin ingin menyelesaikan proses audit ini?
+                    <br>
+                    <strong class="text-red-600 dark:text-red-500">Tindakan ini tidak dapat dibatalkan.</strong>
                 </p>
             </div>
-            <!-- Modal Footer -->
-            <div class="flex justify-center gap-4 p-4 border-t dark:border-gray-600">
-                <button id="cancelLockBtn" type="button" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="closeConfirmModal">
-                    Batal
-                </button>
-                <button id="confirmLockBtn" type="button" class="px-4 py-2 text-sm font-medium text-white bg-sky-600 rounded-lg hover:bg-sky-700 focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800">
-                    Ya, Closing Proses Audit
+             <div class="flex justify-center items-center p-4 md:p-5 border-t border-slate-200 rounded-b dark:border-slate-600 gap-4">
+                <button id="cancelLockBtn" type="button" class="px-5 py-2.5 text-sm font-medium text-slate-900 focus:outline-none bg-white rounded-lg border border-slate-200 hover:bg-slate-100 hover:text-sky-700 focus:z-10 focus:ring-4 focus:ring-slate-200 dark:focus:ring-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-600 dark:hover:text-white dark:hover:bg-slate-700">Batal</button>
+                <button id="confirmLockBtn" type="button" class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
+                    Ya, Saya Yakin
                 </button>
             </div>
         </div>
@@ -180,37 +224,49 @@
 </div>
 
 <script>
-    const auditingId = {{ session('auditing_id') ?? 'null' }};
-</script>
+    // Definisikan variabel penting dari PHP ke JS
+    const auditingId = {{ $auditing->auditing_id }};
+    const apiUpdateUrl = `http://127.0.0.1:5000/api/auditings/${auditingId}`;
 
-<script>
-    // Modal functions
+    const modalElement = document.getElementById('closeConfirmModal');
+    const modalOptions = {
+        placement: 'center-center',
+        backdrop: 'static',
+        backdropClasses: 'bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40',
+        closable: true,
+    };
+    // Instance modal Flowbite (opsional, jika Anda menggunakan JS Flowbite)
+    // const modal = new Modal(modalElement, modalOptions);
+
     function showCloseConfirmModal() {
-        const modal = document.getElementById('closeConfirmModal');
-        modal.classList.remove('hidden');
-        modal.setAttribute('aria-hidden', 'false');
+        modalElement.classList.remove('hidden');
+        modalElement.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('overflow-hidden'); // Mencegah scroll di background
     }
 
     function hideCloseConfirmModal() {
-        const modal = document.getElementById('closeConfirmModal');
-        modal.classList.add('hidden');
-        modal.setAttribute('aria-hidden', 'true');
+        modalElement.classList.add('hidden');
+        modalElement.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('overflow-hidden');
     }
 
-    // Function to show response modal
-    function showResponseModal(message, type) {
+    // Function untuk menampilkan modal respons (sukses/gagal)
+    function showResponseModal(message, type = 'success') {
+        const iconSuccess = `<path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />`;
+        const iconError = `<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.008v.008H12v-.008Z" />`;
+
         const modal = document.createElement('div');
-        modal.className = `fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50`;
+        modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm';
         modal.innerHTML = `
-            <div class="relative p-4 w-full max-w-md max-h-full">
-                <div class="relative bg-white rounded-lg shadow dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+            <div class="relative p-4 w-full max-w-md">
+                <div class="relative bg-white rounded-2xl shadow-xl dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
                     <div class="p-6 text-center">
-                        <svg class="mx-auto mb-4 w-12 h-12 ${type === 'success' ? 'text-green-500' : 'text-red-500'}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="${type === 'success' ? 'M5 13l4 4L19 7' : 'M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z'}" />
+                        <svg class="mx-auto mb-4 w-14 h-14 ${type === 'success' ? 'text-green-500' : 'text-red-500'}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            ${type === 'success' ? iconSuccess : iconError}
                         </svg>
-                        <p class="text-sm text-gray-600 dark:text-gray-300 mb-6">${message}</p>
+                        <p class="text-lg text-slate-600 dark:text-slate-300 mb-6">${message}</p>
                         <div class="flex justify-center">
-                            <button onclick="this.closest('.fixed').remove()" class="px-4 py-2 text-sm font-medium text-white bg-sky-600 rounded-lg hover:bg-sky-700 focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800">
+                            <button onclick="this.closest('.fixed').remove(); window.location.reload();" class="px-6 py-2 text-sm font-medium text-white bg-sky-600 rounded-lg hover:bg-sky-700 focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800">
                                 OK
                             </button>
                         </div>
@@ -220,41 +276,60 @@
         `;
         document.body.appendChild(modal);
     }
-
-    // Event listeners for modal buttons
+    
     document.addEventListener("DOMContentLoaded", function() {
         const confirmLockBtn = document.getElementById('confirmLockBtn');
         const cancelLockBtn = document.getElementById('cancelLockBtn');
 
-        // Cancel button
-        cancelLockBtn.addEventListener('click', () => {
-            hideCloseConfirmModal();
+        if (cancelLockBtn) {
+            cancelLockBtn.addEventListener('click', hideCloseConfirmModal);
+        }
+        
+        // Listener untuk tombol tutup modal bawaan
+        document.querySelectorAll('[data-modal-hide="closeConfirmModal"]').forEach(button => {
+            button.addEventListener('click', hideCloseConfirmModal);
         });
 
-        // Confirm button
-        confirmLockBtn.addEventListener('click', () => {
-            hideCloseConfirmModal();
-            fetch(`http://127.0.0.1:5000/api/auditings/${auditingId}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ status: 10 })
-            })
+        if (confirmLockBtn) {
+            confirmLockBtn.addEventListener('click', () => {
+                hideCloseConfirmModal();
+                
+                // Tampilkan loading spinner jika ada
+                confirmLockBtn.disabled = true;
+                confirmLockBtn.innerHTML = 'Memproses...';
+
+                fetch(apiUpdateUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}' // Penting untuk keamanan di Laravel
+                    },
+                    body: JSON.stringify({
+                        status: 10
+                    })
+                })
                 .then(response => {
-                    if (!response.ok) throw new Error('Gagal menutup audit');
+                    if (!response.ok) {
+                        return response.json().then(err => { throw new Error(err.message || 'Gagal menutup audit') });
+                    }
                     return response.json();
                 })
                 .then(result => {
-                    showResponseModal('Audit berhasil ditutup!', 'success');
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 2000);
+                    // Tampilkan modal sukses dan reload halaman setelah ditutup
+                    showResponseModal('Proses audit berhasil di-closing!', 'success');
                 })
                 .catch(error => {
-                    showResponseModal('Gagal menutup audit. Silakan coba lagi.', 'error');
+                    console.error('Error:', error);
+                    showResponseModal(error.message || 'Terjadi kesalahan. Silakan coba lagi.', 'error');
+                })
+                .finally(() => {
+                    // Kembalikan tombol ke state semula
+                    confirmLockBtn.disabled = false;
+                    confirmLockBtn.innerHTML = 'Ya, Saya Yakin';
                 });
-        });
-
-        // Remove table rendering logic as it's not relevant to this template
+            });
+        }
     });
 </script>
 @endsection
