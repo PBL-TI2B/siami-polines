@@ -77,12 +77,12 @@
                         <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">Satuan</th>
                         <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">Target</th>
                         <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">Capaian</th>
-                        <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">Keterangan</th>
                         <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">Lokasi Bukti Dukung</th>
                         <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">Sesuai</th>
                         <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">Tidak Sesuai (Minor)</th>
                         <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">Tidak Sesuai (Mayor)</th>
                         <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">OFI (Saran Tindak Lanjut)</th>
+                        <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">Keterangan</th>
                         <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">Aksi</th>
                     </tr>
                 </thead>
@@ -152,10 +152,6 @@
                         <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
                             {{ $item['response']['capaian'] ?? '-' }}
                         </td>
-                        {{-- Keterangan --}}
-                        <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
-                            {{ $item['status_instrumen'] ?? '-' }}
-                        </td>
                         {{-- Lokasi Bukti Dukung --}}
                         <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
                             <a href="{{ $item['response']['lokasi_bukti_dukung'] ?? '-' }}" target="_blank">{{ $item['response']['lokasi_bukti_dukung'] ?? '-' }}</a>
@@ -216,6 +212,10 @@
                             -
                             @endif
                         </td>
+                        {{-- Keterangan --}}
+                        <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
+                           {{ $item['response']['keterangan'] ?? '' }}
+                        </td>
                         {{-- Aksi --}}
                         <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
                             <button type="button"
@@ -225,6 +225,7 @@
                                 data-mayor="{{ $item['response']['mayor'] ?? '' }}"
                                 data-ofi="{{ $item['response']['ofi'] ?? '' }}"
                                 data-sesuai="{{ $item['response']['sesuai'] ?? '' }}"
+                                data-keterangan="{{ $item['response']['keterangan'] ?? '' }}"
                                 data-audit-id="{{ $auditing->auditing_id }}"
                                 data-modal-target="editResponseModal"
                                 data-modal-toggle="editResponseModal">
@@ -379,6 +380,10 @@
                             <label for="ofi_1" class="ml-2 text-sm font-medium text-gray-500 dark:text-gray-400">Aktif</label>
                         </div>
                     </div>
+                    <div class="flex items-start flex-col">
+                        <label for="keterangan" class="text-sm font-medium text-gray-900 dark:text-white">Keterangan</label>
+                        <textarea name="keterangan" id="keterangan" class="form-text w-full h-24  bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">   </textarea>
+                    </div>
                     <!-- Modal footer -->
                     <div class="flex items-center justify-end space-x-3 rounded-b border-t border-gray-200 p-5 dark:border-gray-700">
                         <button type="button" class="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-600" data-modal-hide="editResponseModal">
@@ -526,6 +531,7 @@
             minor: document.getElementById('minor_1').checked ? "1" : "0",
             mayor: document.getElementById('mayor_1').checked ? "1" : "0",
             ofi: document.getElementById('ofi_1').checked ? "1" : "0",
+            keterangan: document.getElementById('keterangan').value,
         };
         try {
             const response = await fetch(`http://127.0.0.1:5000/api/responses/${responseId}`, {
@@ -539,16 +545,21 @@
             const result = await response.json();
 
             if (response.ok) {
-                alert('Data berhasil diperbarui!');
                 // Sembunyikan modal menggunakan Flowbite
                 const modal = document.getElementById('editResponseModal');
                 modal.classList.add('hidden');
                 modal.setAttribute('aria-hidden', 'true');
                 document.body.classList.remove('overflow-hidden');
-                window.location.reload();
-            } else {
-                alert(`Gagal memperbarui data: ${result.message}`);
-            }
+             // Tampilkan toast sukses
+                    showToast('success', 'Koreksi instrumen berhasil disimpan.');
+                    // Refresh halaman setelah 3 detik untuk memberikan waktu toast terlihat
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 3000);
+                } else {
+                    // Tampilkan toast error
+                    showToast('error', 'Gagal menyimpan response instrumen: ' + (result.message || 'Unknown error'));
+                }
         } catch (error) {
             console.error('Error:', error);
             alert('Terjadi kesalahan saat menyimpan data.');
@@ -564,6 +575,7 @@
             const mayor = button.dataset.mayor;
             const ofi = button.dataset.ofi;
             const sesuai = button.dataset.sesuai;
+            const keterangan = button.dataset.keterangan;
 
             document.getElementById('response_id').value = responseId;
             document.getElementById('audit_id').value = auditId;
@@ -571,48 +583,100 @@
             document.getElementById('mayor_1').checked = mayor === "1";
             document.getElementById('ofi_1').checked = ofi === "1";
             document.getElementById('sesuai_1').checked = sesuai === "1";
+            document.getElementById('keterangan').value = keterangan || '';
         });
     });
-    // Tangani submit form
-    document.getElementById('editResponseForm').addEventListener('submit', async (e) => {
+
+    document.addEventListener('DOMContentLoaded', function () {
+    // Ambil semua baris data dari tbody
+    const tableBody = document.querySelector('#instrumen-jurusan-table-body');
+    const allRows = Array.from(tableBody.querySelectorAll('tr'));
+    let pageSize = parseInt(document.querySelector('select[name="per_page"]').value) || 5;
+    let currentPage = 1;
+    let filteredRows = allRows;
+
+    // Fungsi untuk merender tabel berdasarkan halaman dan filter
+    function renderTable() {
+        // Sembunyikan semua baris
+        allRows.forEach(row => row.style.display = 'none');
+
+        // Hitung paginasi
+        const totalRows = filteredRows.length;
+        const totalPages = Math.ceil(totalRows / pageSize);
+        if (currentPage > totalPages) currentPage = totalPages || 1;
+        const start = (currentPage - 1) * pageSize;
+        const end = Math.min(start + pageSize, totalRows);
+
+        // Tampilkan baris sesuai halaman
+        filteredRows.slice(start, end).forEach(row => row.style.display = '');
+
+        // Update informasi paginasi
+        const pageInfo = document.querySelector('.text-sm.text-gray-700.dark\\:text-gray-300');
+        if (pageInfo) {
+            pageInfo.innerHTML = `Menampilkan <strong>${start + 1}</strong> hingga <strong>${end}</strong> dari <strong>${totalRows}</strong> hasil`;
+        }
+
+        // Update tombol paginasi
+        const prevButton = document.querySelector('a[aria-label="Navigasi Paginasi"] li:first-child a');
+        const nextButton = document.querySelector('a[aria-label="Navigasi Paginasi"] li:last-child a');
+        prevButton.classList.toggle('cursor-not-allowed', currentPage === 1);
+        prevButton.classList.toggle('opacity-50', currentPage === 1);
+        nextButton.classList.toggle('cursor-not-allowed', currentPage === totalPages || totalPages === 0);
+        nextButton.classList.toggle('opacity-50', currentPage === totalPages || totalPages === 0);
+
+        // Update nomor halaman aktif
+        const pageLinks = document.querySelectorAll('a[aria-label="Navigasi Paginasi"] li a:not(:first-child):not(:last-child)');
+        pageLinks.forEach((link, index) => {
+            link.classList.toggle('bg-sky-50', index + 1 === currentPage);
+            link.classList.toggle('text-sky-800', index + 1 === currentPage);
+            link.classList.toggle('border-sky-300', index + 1 === currentPage);
+        });
+    }
+
+    // Event listener untuk perubahan jumlah entri per halaman
+    document.querySelector('select[name="per_page"]').addEventListener('change', function () {
+        pageSize = parseInt(this.value);
+        currentPage = 1;
+        renderTable();
+    });
+
+    // Event listener untuk pencarian
+    document.querySelector('input[name="search"]').addEventListener('input', function () {
+        const keyword = this.value.toLowerCase();
+        filteredRows = allRows.filter(row => row.textContent.toLowerCase().includes(keyword));
+        currentPage = 1;
+        renderTable();
+    });
+
+    // Event listener untuk tombol paginasi
+    document.querySelector('a[aria-label="Navigasi Paginasi"] li:first-child a').addEventListener('click', function (e) {
         e.preventDefault();
-        const form = e.target;
-        const formData = new FormData(form);
-        const responseId = formData.get('response_id');
-        const data = {
-            auditing_id: formData.get('audit_id'),
-            minor: formData.get('minor') || null,
-            mayor: formData.get('mayor') || null,
-            ofi: formData.get('ofi') || null,
-        };
-
-        try {
-            const response = await fetch(`http://127.0.0.1:5000/api/responses/${responseId}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                alert('Data berhasil diperbarui!');
-                // Sembunyikan modal menggunakan Flowbite
-                const modal = document.getElementById('editResponseModal');
-                modal.classList.add('hidden');
-                modal.setAttribute('aria-hidden', 'true');
-                document.body.classList.remove('overflow-hidden');
-                window.location.reload();
-            } else {
-                alert(`Gagal memperbarui data: ${result.message}`);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Terjadi kesalahan saat menyimpan data.');
+        if (currentPage > 1) {
+            currentPage--;
+            renderTable();
         }
     });
-    
+
+    document.querySelector('a[aria-label="Navigasi Paginasi"] li:last-child a').addEventListener('click', function (e) {
+        e.preventDefault();
+        const totalPages = Math.ceil(filteredRows.length / pageSize);
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderTable();
+        }
+    });
+
+    // Event listener untuk nomor halaman
+    document.querySelectorAll('a[aria-label="Navigasi Paginasi"] li a:not(:first-child):not(:last-child)').forEach((link, index) => {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+            currentPage = index + 1;
+            renderTable();
+        });
+    });
+
+    // Inisialisasi tabel
+    renderTable();
+});
 </script>
 @endsection
