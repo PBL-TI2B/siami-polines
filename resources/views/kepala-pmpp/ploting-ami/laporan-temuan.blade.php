@@ -2,280 +2,201 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laporan Audit Mutu Internal</title>
     <style>
-        /* General body styling */
         body {
             font-family: Arial, sans-serif;
             font-size: 11pt;
             margin: 20px;
             background-color: #fff;
         }
-
-        /* Header Table Styling */
         .header-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 15px;
+            margin-bottom: 18px;
         }
-
-        .header-table td {
-            border: 1px solid #000;
-            padding: 2px 8px;
-            vertical-align: middle;
+        .header-table td, .header-table th {
+            border: 1.5px solid #444;
+            padding: 0;
         }
-
         .header-logo-cell {
-            width: 100px;
+            width: 90px;
             text-align: center;
+            vertical-align: middle;
+            padding: 6px 0 2px 0;
         }
-
         .header-logo {
             width: 60px;
-            height: auto;
-            margin-bottom: 4px;
+            height: 60px;
+            object-fit: contain;
+            margin-bottom: 2px;
         }
-
         .header-spmi {
             font-weight: bold;
             font-size: 12px;
+            margin-bottom: 2px;
             display: block;
         }
-
         .header-title-cell {
             text-align: center;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 15px;
+            letter-spacing: 1px;
+            padding: 0;
             line-height: 1.2;
         }
-        
-        .header-subtitle-cell {
+        .header-title-main {
             font-size: 15px;
-        }
-
-        .header-info-cell {
-            font-size: 11pt;
-            padding: 4px 8px;
-        }
-        
-        .header-info-cell .label {
-            display: inline-block;
-            width: 60px;
-        }
-
-        /* Main Title */
-        .laporan-title {
-            text-align: center;
             font-weight: bold;
-            font-size: 14pt;
-            margin: 15px 0 15px 0;
-            text-decoration: underline;
+            padding-top: 8px;
         }
-
-        /* Information Table Styling */
-        .laporan-info-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 15px;
+        .header-title-sub {
+            font-size: 15px;
+            font-weight: bold;
+            padding-bottom: 8px;
+        }
+        .header-info-label {
+            width: 65px;
+            background: #fff;
+            font-weight: normal;
             font-size: 11pt;
+            padding: 3px 6px 3px 6px;
+            border-right: 1.5px solid #444;
         }
-
-        .laporan-info-table td {
-            padding: 1px 4px;
-            vertical-align: top;
-        }
-
-        .laporan-info-label {
+        .header-info-value {
             width: 110px;
-        }
-        
-        .laporan-info-colon {
-            width: 10px;
-        }
-
-        /* Main Content Table Styling */
-        .laporan-main-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 10pt; /* Adjusted for more content */
-            margin-top: 10px;
-        }
-
-        .laporan-main-table th, .laporan-main-table td {
-            border: 1px solid #000;
-            padding: 4px;
-            vertical-align: top;
-            text-align: left;
-        }
-
-        .laporan-main-table th {
-            text-align: center;
             font-weight: bold;
-            background-color: #EFEFEF;
+            font-size: 11pt;
+            padding: 3px 10px 3px 6px;
         }
-
-        .laporan-main-table .kriteria-row td {
-            font-weight: bold;
-            background-color: #FFFFCC;
-        }
-
-        .laporan-main-table .center-align {
-            text-align: center;
-        }
-        
-        .laporan-main-table .standar-col {
-             white-space: nowrap;
-        }
-
-        /* Footer Definitions Styling */
-        .footer-definitions {
-            margin-top: 20px;
-            font-size: 9.5pt;
-            text-align: left;
-            line-height: 1.4;
-        }
-
-        .footer-definitions p {
-            margin: 2px 0;
-        }
-
-        .footer-definitions b {
-            font-size: 10pt;
-        }
-
     </style>
 </head>
 <body>
 
-<!-- Header Section -->
+<!-- HEADER -->
 <table class="header-table">
     <tr>
-        <td class="header-logo-cell" rowspan="2">
-            <!-- LOGO DIUBAH DI SINI -->
-            <img src="{{ asset('public/logo.png') }}" alt="Logo Polines" class="header-logo">
+        <!-- Logo -->
+        <td class="header-logo-cell" rowspan="4">
+            <img src="{{ public_path('logo.png') }}" alt="Logo Polines" class="header-logo"><br>
             <span class="header-spmi">SPMI</span>
         </td>
-        <td class="header-title-cell" rowspan="2">
-            FORMULIR PROSEDUR AKADEMIK<br>
-            <span class="header-subtitle-cell">LAPORAN AUDIT MUTU INTERNAL</span>
+        <!-- Judul Tengah -->
+        <td class="header-title-cell" rowspan="2" style="font-size:16px;">
+            FORMULIR PROSEDUR AKADEMIK
         </td>
-        <td class="header-info-cell">
-            <span class="label">No.</span>: FPAK.2.01.L.4
-        </td>
+        <!-- Info Kanan -->
+        <td class="header-info-label">No.</td>
+        <td class="header-info-value">FPAK.2.01.L.4</td>
     </tr>
     <tr>
-        <td class="header-info-cell">
-            <span class="label">Revisi</span>: 3
-        </td>
-    </tr>
-     <tr>
-        <td colspan="2" style="border:none; border-right:1px solid #000;"></td>
-        <td class="header-info-cell">
-            <span class="label">Tanggal</span>: 21.12.2017
-        </td>
+        <td class="header-info-label">Revisi</td>
+        <td class="header-info-value">3</td>
     </tr>
     <tr>
-       <td colspan="2" style="border:none; border-right:1px solid #000;"></td>
-        <td class="header-info-cell">
-            <span class="label">Halaman</span>: 1/1
+        <td class="header-title-cell" rowspan="2" style="font-size:16px;">
+            LAPORAN AUDIT MUTU INTERNAL
         </td>
+        <td class="header-info-label">Tanggal</td>
+        <td class="header-info-value">21.12.2017</td>
+    </tr>
+    <tr>
+        <td class="header-info-label">Halaman</td>
+        <td class="header-info-value">1/1</td>
     </tr>
 </table>
 
+<!-- Judul Laporan -->
+<div style="text-align:center; font-weight:bold; font-size:14pt; margin: 15px 0 15px 0; text-decoration: underline;">
+    LAPORAN AUDIT MUTU INTERNAL
+</div>
 
-<div class="laporan-title">LAPORAN AUDIT MUTU INTERNAL</div>
-
-<!-- Information Section with Dummy Data -->
-<table class="laporan-info-table">
+<!-- Informasi Laporan -->
+<table style="width:100%; border-collapse:collapse; margin-bottom:15px; font-size:11pt;">
     <tr>
-        <td class="laporan-info-label">Jur./Bag./Unit</td>
-        <td class="laporan-info-colon">:</td>
+        <td style="width:110px;">Jur./Bag./Unit</td>
+        <td style="width:10px;">:</td>
         <td>D3 Informatika</td>
-        <td class="laporan-info-label" style="width: 120px;">Tanggal</td>
-        <td class="laporan-info-colon">:</td>
+        <td style="width:120px;">Tanggal</td>
+        <td style="width:10px;">:</td>
         <td>2 November 2022</td>
     </tr>
     <tr>
-        <td class="laporan-info-label">Prodi/Sub</td>
-        <td class="laporan-info-colon">:</td>
+        <td>Prodi/Sub</td>
+        <td>:</td>
         <td>-</td>
         <td></td>
         <td></td>
         <td></td>
     </tr>
     <tr>
-        <td class="laporan-info-label">Auditee</td>
-        <td class="laporan-info-colon">:</td>
+        <td>Auditee</td>
+        <td>:</td>
         <td>1. Idhawati Hestiningsih</td>
-        <td class="laporan-info-label" style="width: 120px;">Tanda Tangan</td>
-        <td class="laporan-info-colon">:</td>
+        <td>Tanda Tangan</td>
+        <td>:</td>
         <td>1. __________________</td>
     </tr>
     <tr>
-        <td class="laporan-info-label">Auditor</td>
-        <td class="laporan-info-colon">:</td>
+        <td>Auditor</td>
+        <td>:</td>
         <td>
             1. Suryani Sri Lestari<br>
             2. Marliyati
         </td>
         <td></td>
-        <td class="laporan-info-colon">:</td>
+        <td>:</td>
         <td>
             1. __________________<br>
-
             2. __________________
         </td>
     </tr>
 </table>
 
-<!-- Main Content Table with Dummy Data -->
-<table class="laporan-main-table">
+<!-- Tabel Temuan -->
+<table style="width:100%; border-collapse:collapse; font-size:10pt; margin-top:10px;">
     <thead>
         <tr>
-            <th style="width:4%;">No.</th>
-            <th style="width:15%;">Standar</th>
-            <th style="width:41%;">Uraian Temuan</th>
-            <th style="width:15%;">Kategori Temuan<br>NC/AOC/OFI</th>
-            <th style="width:25%;">Saran Perbaikan</th>
+            <th style="width:4%; border:1px solid #000; padding:4px; background:#EFEFEF;">No.</th>
+            <th style="width:15%; border:1px solid #000; padding:4px; background:#EFEFEF;">Standar</th>
+            <th style="width:41%; border:1px solid #000; padding:4px; background:#EFEFEF;">Uraian Temuan</th>
+            <th style="width:15%; border:1px solid #000; padding:4px; background:#EFEFEF;">Kategori Temuan<br>NC/AOC/OFI</th>
+            <th style="width:25%; border:1px solid #000; padding:4px; background:#EFEFEF;">Saran Perbaikan</th>
         </tr>
     </thead>
     <tbody>
-        <!-- Contoh Grup Kriteria 1 -->
-        <tr class="kriteria-row">
-            <td colspan="5">Kriteria 1</td>
+        <tr style="font-weight:bold; background:#FFFFCC;">
+            <td colspan="5" style="border:1px solid #000; padding:4px;">Kriteria 1</td>
         </tr>
         <tr>
-            <td class="center-align">1</td>
-            <td class="standar-col">LKPS C.1.4</td>
-            <td>Dokumen mekanisme dan keterlibatan pemangku kepentingan dalam penyusunan VMTS belum ditunjukkan.</td>
-            <td class="center-align">AOC</td>
-            <td>Lengkapi dokumen pendukung.</td>
-        </tr>
-         <tr>
-            <td class="center-align">2</td>
-            <td class="standar-col">LKPS C.1.4</td>
-            <td>Survei pemahaman VMTS oleh seluruh pemangku kepentingan belum dilakukan.</td>
-            <td class="center-align">NC</td>
-            <td>Segera laksanakan survei pemahaman VMTS.</td>
-        </tr>
-
-        <!-- Contoh Grup Kriteria 4 -->
-        <tr class="kriteria-row">
-            <td colspan="5">Kriteria 4</td>
+            <td style="border:1px solid #000; padding:4px; text-align:center;">1</td>
+            <td style="border:1px solid #000; padding:4px; white-space:nowrap;">LKPS C.1.4</td>
+            <td style="border:1px solid #000; padding:4px;">Dokumen mekanisme dan keterlibatan pemangku kepentingan dalam penyusunan VMTS belum ditunjukkan.</td>
+            <td style="border:1px solid #000; padding:4px; text-align:center;">AOC</td>
+            <td style="border:1px solid #000; padding:4px;">Lengkapi dokumen pendukung.</td>
         </tr>
         <tr>
-            <td class="center-align">3</td>
-            <td class="standar-col">LKPS C.4.4</td>
-            <td>Pemenuhan Dosen dengan kualifikasi S3 baru 9% dari target 30%.</td>
-            <td class="center-align">OFI</td>
-            <td>Perlu peran Institusi untuk memotivasi dosen studi lanjut.</td>
+            <td style="border:1px solid #000; padding:4px; text-align:center;">2</td>
+            <td style="border:1px solid #000; padding:4px; white-space:nowrap;">LKPS C.1.4</td>
+            <td style="border:1px solid #000; padding:4px;">Survei pemahaman VMTS oleh seluruh pemangku kepentingan belum dilakukan.</td>
+            <td style="border:1px solid #000; padding:4px; text-align:center;">NC</td>
+            <td style="border:1px solid #000; padding:4px;">Segera laksanakan survei pemahaman VMTS.</td>
+        </tr>
+        <tr style="font-weight:bold; background:#FFFFCC;">
+            <td colspan="5" style="border:1px solid #000; padding:4px;">Kriteria 4</td>
+        </tr>
+        <tr>
+            <td style="border:1px solid #000; padding:4px; text-align:center;">3</td>
+            <td style="border:1px solid #000; padding:4px; white-space:nowrap;">LKPS C.4.4</td>
+            <td style="border:1px solid #000; padding:4px;">Pemenuhan Dosen dengan kualifikasi S3 baru 9% dari target 30%.</td>
+            <td style="border:1px solid #000; padding:4px; text-align:center;">OFI</td>
+            <td style="border:1px solid #000; padding:4px;">Perlu peran Institusi untuk memotivasi dosen studi lanjut.</td>
         </tr>
     </tbody>
 </table>
 
 <!-- Footer Definitions -->
-<div class="footer-definitions">
+<div style="margin-top:20px; font-size:9.5pt; text-align:left; line-height:1.4;">
     <p><b>NC (Non-Conformity)</b> adalah temuan yang bersifat ketidaksesuaian mayor, yaitu temuan-temuan yang memiliki dampak luas/kritikal terhadap persyaratan mutu produk/pelayanan dan persyaratan sistem manajemen mutu.</p>
     <p style="padding-left: 20px;">Contoh: Pelanggaran sistem secara total (sistem tidak dilaksanakan).</p>
     <p><b>AOC (Area of Concern)</b> adalah temuan yang bersifat ketidaksesuaian minor, yaitu temuan-temuan yang memiliki dampak kecil/terbatas terhadap persyaratan mutu produk/pelayanan dan persyaratan sistem manajemen mutu.</p>
