@@ -350,9 +350,9 @@
             const showCustomConfirm = (message, onConfirm) => {
                 const confirmBox = document.createElement('div');
                 confirmBox.className =
-                    'fixed inset-0 bg-gray-900/60 flex items-center justify-center z-[9999] animate-fade-in';
+                    'fixed inset-0 bg-gray-900/60 flex items-center justify-center z-[9999]';
                 confirmBox.innerHTML = `
-                <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-2xl border border-gray-200 dark:border-gray-600 text-center max-w-sm mx-auto relative animate-pop-in">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl border border-gray-200 dark:border-gray-600 text-center max-w-sm mx-auto relative animate-pop-in">
                     <div class="flex justify-center mb-4">
                         <svg class="h-16 w-16 text-sky-600 dark:text-sky-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
