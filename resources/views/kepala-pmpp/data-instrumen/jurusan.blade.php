@@ -13,22 +13,22 @@
             Instrumen Jurusan
         </h1>
 
-        <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+        <!-- <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
             <div class="flex flex-wrap gap-2">
-                <select id="unitKerjaSelect" class="w-40 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 text-sm rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500 focus:outline-none transition-all duration-200">
+                <select id="unitKerjaSelectJurusan" class="w-40 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 text-sm rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500 focus:outline-none transition-all duration-200">
                     <option selected disabled>Pilih Unit</option>
                 </select>
-                <select id="periodeSelect" class="w-40 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 text-sm rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500 focus:outline-none transition-all duration-200">
+                <select id="periodeSelectJurusan" class="w-40 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 text-sm rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500 focus:outline-none transition-all duration-200">
                     <option selected disabled>Pilih Periode AMI</option>
                 </select>
             </div>
-        </div>
+        </div> -->
 
         <div class="bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 rounded-2xl">
             <div class="p-4 flex flex-col sm:flex-row justify-between items-center gap-4 bg-white dark:bg-gray-800 rounded-t-2xl border-b border-gray-200 dark:border-gray-700">
                 <div class="flex items-center gap-2">
                     <span class="text-sm text-gray-700 dark:text-gray-300">Tampilkan</span>
-                    <select id="perPageSelectInstrumen" class="w-18 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 p-2.5 transition-all duration-200">
+                    <select id="perPageSelectJurusan" class="w-18 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 p-2.5 transition-all duration-200">
                         <option value="5">5</option>
                         <option value="10" selected>10</option>
                         <option value="25">25</option>
@@ -42,7 +42,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                     </div>
-                    <input type="search" id="searchInputInstrumen" placeholder="Cari" class="block w-full pl-10 p-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 transition-all duration-200">
+                    <input type="search" id="searchInputJurusan" placeholder="Cari" class="block w-full pl-10 p-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 transition-all duration-200">
                 </div>
             </div>
 
@@ -58,33 +58,19 @@
                             <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Target 25</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700" id="instrumen-table-body">
-                        </tbody>
+                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700" id="instrumen-table-body-jurusan">
+                    </tbody>
                 </table>
             </div>
 
             <div class="p-4">
                 <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <span id="pagination-info-instrumen" class="text-sm text-gray-700 dark:text-gray-300">
+                    <span id="pagination-info-jurusan" class="text-sm text-gray-700 dark:text-gray-300">
                         Menampilkan 1 hingga 10 dari 100 hasil
                     </span>
                     <nav aria-label="Navigasi Paginasi">
-                        <ul id="pagination-buttons-instrumen" class="inline-flex -space-x-px text-sm">
-                            <li>
-                                <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-l-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-gray-200 transition-all duration-200 cursor-not-allowed opacity-50">
-                                    <x-heroicon-s-chevron-left class="w-4 h-4 mr-1" />
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-sky-800 bg-sky-50 dark:bg-sky-900 dark:text-sky-200 border-sky-300 dark:border-sky-700 border transition-all duration-200">
-                                    1
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-r-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-gray-200 transition-all duration-200">
-                                    <x-heroicon-s-chevron-right class="w-4 h-4 ml-1" />
-                                </a>
-                            </li>
+                        <ul id="pagination-buttons-jurusan" class="inline-flex -space-x-px text-sm">
+                            {{-- Pagination buttons will be generated by JavaScript --}}
                         </ul>
                     </nav>
                 </div>
@@ -94,22 +80,23 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const tableBodyInstrumen = document.getElementById('instrumen-table-body');
-            const perPageSelectInstrumen = document.getElementById('perPageSelectInstrumen');
-            const searchInputInstrumen = document.getElementById('searchInputInstrumen');
-            const paginationInfoInstrumen = document.getElementById('pagination-info-instrumen');
-            const paginationButtonsInstrumen = document.getElementById('pagination-buttons-instrumen');
-            const unitKerjaSelect = document.getElementById('unitKerjaSelect');
-            const periodeSelect = document.getElementById('periodeSelect');
+            const tableBodyJurusan = document.getElementById('instrumen-table-body-jurusan');
+            const perPageSelectJurusan = document.getElementById('perPageSelectJurusan');
+            const searchInputJurusan = document.getElementById('searchInputJurusan');
+            const paginationInfoJurusan = document.getElementById('pagination-info-jurusan');
+            const paginationButtonsJurusan = document.getElementById('pagination-buttons-jurusan');
+            const unitKerjaSelectJurusan = document.getElementById('unitKerjaSelectJurusan');
+            const periodeSelectJurusan = document.getElementById('periodeSelectJurusan');
 
-            let allInstrumenDataRaw = []; // Data mentah dari API
-            let processedInstrumenData = []; // Data setelah diratakan (flattened) untuk pagination/search
-            let perPageInstrumen = parseInt(perPageSelectInstrumen.value, 10) || 10;
-            let currentPageInstrumen = 1;
-            let searchQueryInstrumen = '';
-            let selectedUnitKerja = null;
-            let selectedPeriode = null;
+            let allInstrumenDataJurusanRaw = []; // Data mentah dari API
+            let flattenedInstrumenDataJurusan = []; // Data setelah diratakan (flattened) untuk pagination/search
+            let perPageJurusan = parseInt(perPageSelectJurusan.value, 10) || 10;
+            let currentPageJurusan = 1;
+            let searchQueryJurusan = '';
+            let selectedUnitKerjaJurusan = null; // Filter ini belum diimplementasikan di API fetch
+            let selectedPeriodeJurusan = null; // Filter ini belum diimplementasikan di API fetch
 
+            // === HELPER FUNCTIONS ===
             function debounce(func, delay) {
                 let timeoutId;
                 return function(...args) {
@@ -118,13 +105,36 @@
                 };
             }
 
-            function processRawData(data) {
+            function showLoadingStateJurusan() {
+                tableBodyJurusan.innerHTML = `<tr><td colspan="6" class="text-center p-4"><div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-sky-500 mx-auto"></div><p class="mt-2">Memuat data...</p></td></tr>`;
+                paginationInfoJurusan.textContent = 'Memuat...';
+                paginationButtonsJurusan.innerHTML = '';
+            }
+
+            function showEmptyStateJurusan() {
+                tableBodyJurusan.innerHTML = `<tr><td colspan="6" class="px-4 py-3 sm:px-6 text-center text-gray-500">Data tidak ditemukan.</td></tr>`;
+                paginationInfoJurusan.textContent = 'Menampilkan 0 hingga 0 dari 0 hasil';
+                paginationButtonsJurusan.innerHTML = '';
+            }
+
+            function showErrorStateJurusan(message) {
+                tableBodyJurusan.innerHTML = `<tr><td colspan="6" class="px-4 py-3 sm:px-6 text-center text-red-500">${message}</td></tr>`;
+                paginationInfoJurusan.textContent = '';
+                paginationButtonsJurusan.innerHTML = '';
+            }
+
+            /**
+             * Flattens the nested data structure into a single array of activity rows,
+             * with parent sasaran and indikator info attached.
+             * This flattened data is then used for pagination and search based on individual activities.
+             * Adds `original_sasaran_index` to maintain grouping for rowspan display.
+             */
+            function flattenInstrumenDataJurusan(data) {
                 let flatData = [];
-                let overallIndex = 0; // To keep track of the global index for each unique 'No' (Sasaran Strategis)
+                let sasaranCounter = 0; // To track unique sasaran for the 'No' column logic
 
                 data.forEach(sasaran => {
-                    const sasaranIndex = overallIndex; // Capture the index for this sasaran
-
+                    const currentSasaranOriginalIndex = sasaranCounter;
                     sasaran.indikator_kinerja.forEach(indikator => {
                         indikator.aktivitas.forEach(aktivitas => {
                             flatData.push({
@@ -136,21 +146,24 @@
                                 nama_aktivitas: aktivitas.nama_aktivitas,
                                 satuan: aktivitas.satuan,
                                 target: aktivitas.target,
-                                original_sasaran_index: sasaranIndex // Mark which original sasaran it belongs to
+                                original_sasaran_index: currentSasaranOriginalIndex // Used for 'No' column grouping
                             });
                         });
                     });
-                    overallIndex++; // Increment for the next unique sasaran
+                    sasaranCounter++; // Increment for next unique sasaran
                 });
                 return flatData;
             }
 
-            function filterAndPaginateInstrumenData() {
-                let filteredData = processedInstrumenData;
+            /**
+             * Filters the flattened data based on search query, then applies pagination.
+             */
+            function filterAndPaginateInstrumenDataJurusan() {
+                let filteredData = flattenedInstrumenDataJurusan;
 
-                // Filter berdasarkan search query
-                if (searchQueryInstrumen) {
-                    const searchTerm = searchQueryInstrumen.toLowerCase();
+                // Apply search query filter
+                if (searchQueryJurusan) {
+                    const searchTerm = searchQueryJurusan.toLowerCase();
                     filteredData = filteredData.filter(item => {
                         return (
                             (item.nama_sasaran || '').toLowerCase().includes(searchTerm) ||
@@ -162,87 +175,102 @@
                     });
                 }
 
-                // Filtering by unique sasaran_id for pagination (each sasaran_id counts as 1 for 'No' column)
-                // We need to group by original_sasaran_index to effectively paginate by the "No" column
-                const uniqueSasaranGroups = [];
-                let currentSasaranGroup = null;
+                // Apply Unit Kerja filter (if selected)
+                if (selectedUnitKerjaJurusan && selectedUnitKerjaJurusan !== '') {
+                    // This assumes `allInstrumenDataJurusanRaw` might need re-fetching
+                    // or `flattenedInstrumenDataJurusan` needs to be derived from a pre-filtered `allInstrumenDataJurusanRaw`.
+                    // For now, this filter cannot be applied to `flattenedInstrumenDataJurusan`
+                    // unless `unit_kerja_id` is included in each flattened activity item.
+                    // If your API supports filtering by unit_kerja_id, it's better to fetch filtered data.
+                    console.warn("Filtering by Unit Kerja is not implemented in client-side data for Jurusan. Consider filtering via API or including unit_kerja_id in flattened data.");
+                }
 
-                filteredData.forEach(item => {
-                    if (!currentSasaranGroup || currentSasaranGroup.original_sasaran_index !== item.original_sasaran_index) {
-                        currentSasaranGroup = {
-                            original_sasaran_index: item.original_sasaran_index,
-                            items: []
-                        };
-                        uniqueSasaranGroups.push(currentSasaranGroup);
-                    }
-                    currentSasaranGroup.items.push(item);
-                });
+                // Apply Periode filter (if selected)
+                if (selectedPeriodeJurusan && selectedPeriodeJurusan !== '') {
+                    // Similar to Unit Kerja filter, needs API support or `periode_id` in flattened data.
+                    console.warn("Filtering by Periode AMI is not implemented in client-side data for Jurusan. Consider filtering via API or including periode_id in flattened data.");
+                }
 
-                const totalSasaranGroups = uniqueSasaranGroups.length;
-                const totalPages = Math.ceil(totalSasaranGroups / perPageInstrumen);
-                currentPageInstrumen = Math.min(currentPageInstrumen, totalPages) || 1;
 
-                const startGroupIndex = (currentPageInstrumen - 1) * perPageInstrumen;
-                const paginatedSasaranGroups = uniqueSasaranGroups.slice(startGroupIndex, startGroupIndex + perPageInstrumen);
+                const totalFilteredItems = filteredData.length;
+                const totalPages = Math.ceil(totalFilteredItems / perPageJurusan);
+                currentPageJurusan = Math.min(currentPageJurusan, totalPages) || 1;
+                currentPageJurusan = Math.max(1, currentPageJurusan); // Ensure current page is at least 1
 
-                let finalPaginatedData = [];
-                paginatedSasaranGroups.forEach(group => {
-                    finalPaginatedData = finalPaginatedData.concat(group.items);
-                });
+                const startIndex = (currentPageJurusan - 1) * perPageJurusan;
+                const paginatedData = filteredData.slice(startIndex, startIndex + perPageJurusan);
 
                 return {
-                    data: finalPaginatedData,
-                    totalItems: totalSasaranGroups, // This is the count of unique "No" entries
+                    data: paginatedData,
+                    totalItems: totalFilteredItems, // Total number of activity rows after filter
                     totalPages: totalPages,
-                    startIndex: startGroupIndex // This is the start index for the groups
+                    startIndex: startIndex // Starting index of the current page for numbering
                 };
             }
 
-
+            /**
+             * Renders the table content and updates pagination controls.
+             */
             function renderInstrumenTable() {
-                const { data: paginatedData, totalItems, totalPages, startIndex } = filterAndPaginateInstrumenData();
+                const { data: paginatedData, totalItems, totalPages, startIndex } = filterAndPaginateInstrumenDataJurusan();
 
-                tableBodyInstrumen.innerHTML = '';
+                tableBodyJurusan.innerHTML = '';
                 if (paginatedData.length === 0) {
-                    showEmptyStateInstrumen();
-                    renderPaginationInfoInstrumen(0, 0, 0, 0); // Reset info on empty
-                    renderPaginationButtonsInstrumen(1); // Show only 1 page
+                    showEmptyStateJurusan();
+                    renderPaginationInfoJurusan(0, 0); // Reset info on empty
+                    renderPaginationButtonsJurusan(1); // Show only 1 page
                     return;
                 }
 
-                let currentSasaranId = null;
-                let sasaranRowspan = 0;
-                let currentIndikatorId = null;
-                let indikatorRowspan = 0;
-                let rowNumberDisplay = startIndex + 1; // Actual number for the "No" column
+                let lastSasaranOriginalIndex = null;
+                let lastIndikatorId = null;
+                let displayNoForSasaran = 0; // This will map to the original Sasaran's index for 'No' column
 
-                let rowIndexInCurrentSasaranGroup = 0; // Tracks rows within the current SASARAN group
+                // Pre-calculate rowspans for the *current paginated data*
+                const paginatedSasaranRowspans = {};
+                const paginatedIndikatorRowspans = {};
 
-                paginatedData.forEach((item, index) => {
+                paginatedData.forEach(item => {
+                    const sasaranKey = item.original_sasaran_index;
+                    const indikatorKey = `${sasaranKey}-${item.indikator_id}`;
+
+                    paginatedSasaranRowspans[sasaranKey] = (paginatedSasaranRowspans[sasaranKey] || 0) + 1;
+                    paginatedIndikatorRowspans[indikatorKey] = (paginatedIndikatorRowspans[indikatorKey] || 0) + 1;
+                });
+
+                // Re-map `original_sasaran_index` to sequential `No` numbers for the current page
+                const sasaranDisplayMap = {};
+                let currentSasaranDisplayNo = startIndex + 1; // Start 'No' from the true global index + 1
+                let seenOriginalSasaranIndexes = new Set();
+
+
+                paginatedData.forEach(item => {
                     const row = document.createElement('tr');
-                    row.className = 'hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200';
+                    row.className = "transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700";
 
                     let noCellHtml = '';
                     let sasaranCellHtml = '';
                     let indikatorCellHtml = '';
 
-                    // Calculate rowspan for the current sasaran group
-                    if (item.sasaran_id !== currentSasaranId) {
-                        currentSasaranId = item.sasaran_id;
-                        // Find how many rows this sasaran_id spans in the *current filtered and paginated view*
-                        sasaranRowspan = paginatedData.filter(d => d.sasaran_id === item.sasaran_id).length;
-                        noCellHtml = `<td rowspan="${sasaranRowspan}" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${rowNumberDisplay}</td>`;
-                        sasaranCellHtml = `<td rowspan="${sasaranRowspan}" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${item.nama_sasaran}</td>`;
-                        rowNumberDisplay++; // Increment 'No' only for new sasaran groups
-                        currentIndikatorId = null; // Reset indikator for new sasaran
+                    // Logic for 'No' and 'Sasaran Strategis' columns
+                    if (item.original_sasaran_index !== lastSasaranOriginalIndex) {
+                        lastSasaranOriginalIndex = item.original_sasaran_index;
+                        // Determine the rowspan for this Sasaran in the *current paginated view*
+                        const sasaranTotalRows = paginatedData.filter(d => d.original_sasaran_index === item.original_sasaran_index).length;
+
+                        noCellHtml = `<td rowspan="${sasaranTotalRows}" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${currentSasaranDisplayNo}</td>`;
+                        sasaranCellHtml = `<td rowspan="${sasaranTotalRows}" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${item.nama_sasaran}</td>`;
+                        currentSasaranDisplayNo++; // Increment for the next *new* Sasaran displayed on this page
+                        lastIndikatorId = null; // Reset indikator when sasaran changes
                     }
 
-                    // Calculate rowspan for the current indikator group within the sasaran
-                    if (item.indikator_id !== currentIndikatorId) {
-                        currentIndikatorId = item.indikator_id;
-                        // Find how many rows this indikator_id spans within the current sasaran_id in the *current filtered and paginated view*
-                        indikatorRowspan = paginatedData.filter(d => d.sasaran_id === item.sasaran_id && d.indikator_id === item.indikator_id).length;
-                        indikatorCellHtml = `<td rowspan="${indikatorRowspan}" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${item.isi_indikator_kinerja}</td>`;
+                    // Logic for 'Indikator Kinerja' column
+                    if (item.indikator_id !== lastIndikatorId || item.original_sasaran_index !== lastSasaranOriginalIndex) {
+                        // Check if current indikator is different OR if sasaran just changed (forcing new indikator cell)
+                        lastIndikatorId = item.indikator_id;
+                        // Determine the rowspan for this Indikator within its Sasaran in the *current paginated view*
+                        const indikatorTotalRows = paginatedData.filter(d => d.original_sasaran_index === item.original_sasaran_index && d.indikator_id === item.indikator_id).length;
+                        indikatorCellHtml = `<td rowspan="${indikatorTotalRows}" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${item.isi_indikator_kinerja}</td>`;
                     }
 
                     row.innerHTML = `
@@ -253,23 +281,23 @@
                         <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${item.satuan}</td>
                         <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${item.target}</td>
                     `;
-                    tableBodyInstrumen.appendChild(row);
+                    tableBodyJurusan.appendChild(row);
                 });
 
-                renderPaginationInfoInstrumen(startIndex, paginatedData.length, totalItems, totalPages);
-                renderPaginationButtonsInstrumen(totalPages);
+                renderPaginationInfoJurusan(startIndex, totalItems);
+                renderPaginationButtonsJurusan(totalPages);
             }
 
 
-            function renderPaginationInfoInstrumen(startGroupIndex, currentDisplayedItems, totalUniqueGroups, totalPages) {
-                const startNum = totalUniqueGroups > 0 ? startGroupIndex + 1 : 0;
-                const endNum = Math.min(startGroupIndex + perPageInstrumen, totalUniqueGroups);
-                paginationInfoInstrumen.innerHTML = `Menampilkan <strong>${startNum}</strong> hingga <strong>${endNum}</strong> dari <strong>${totalUniqueGroups}</strong> hasil`;
+            function renderPaginationInfoJurusan(startIndex, totalFilteredItems) {
+                const startItem = totalFilteredItems > 0 ? startIndex + 1 : 0;
+                const endItem = Math.min(startIndex + perPageJurusan, totalFilteredItems);
+                paginationInfoJurusan.innerHTML = `Menampilkan <strong>${startItem}</strong> hingga <strong>${endItem}</strong> dari <strong>${totalFilteredItems}</strong> hasil`;
             }
 
 
-            function renderPaginationButtonsInstrumen(totalPages) {
-                paginationButtonsInstrumen.innerHTML = '';
+            function renderPaginationButtonsJurusan(totalPages) {
+                paginationButtonsJurusan.innerHTML = '';
                 if (totalPages <= 1) return;
 
                 const maxVisibleButtons = 5;
@@ -281,28 +309,28 @@
                     endPage = totalPages;
                 } else {
                     const sideButtons = Math.floor(maxVisibleButtons / 2);
-                    if (currentPageInstrumen <= sideButtons) {
+                    if (currentPageJurusan <= sideButtons) {
                         startPage = 1;
                         endPage = maxVisibleButtons;
-                    } else if (currentPageInstrumen + sideButtons >= totalPages) {
+                    } else if (currentPageJurusan + sideButtons >= totalPages) {
                         startPage = totalPages - maxVisibleButtons + 1;
                         endPage = totalPages;
                     } else {
-                        startPage = currentPageInstrumen - sideButtons;
-                        endPage = currentPageInstrumen + sideButtons;
+                        startPage = currentPageJurusan - sideButtons;
+                        endPage = currentPageJurusan + sideButtons;
                     }
                 }
 
-                paginationButtonsInstrumen.appendChild(createPageButtonInstrumen(currentPageInstrumen > 1 ? currentPageInstrumen - 1 : null, 'Previous', currentPageInstrumen === 1));
+                paginationButtonsJurusan.appendChild(createPageButtonJurusan(currentPageJurusan > 1 ? currentPageJurusan - 1 : null, 'Previous', currentPageJurusan === 1));
 
                 for (let i = startPage; i <= endPage; i++) {
-                    paginationButtonsInstrumen.appendChild(createPageButtonInstrumen(i, i, false, i === currentPageInstrumen));
+                    paginationButtonsJurusan.appendChild(createPageButtonJurusan(i, i, false, i === currentPageJurusan));
                 }
 
-                paginationButtonsInstrumen.appendChild(createPageButtonInstrumen(currentPageInstrumen < totalPages ? currentPageInstrumen + 1 : null, 'Next', currentPageInstrumen === totalPages));
+                paginationButtonsJurusan.appendChild(createPageButtonJurusan(currentPageJurusan < totalPages ? currentPageJurusan + 1 : null, 'Next', currentPageJurusan === totalPages));
             }
 
-            function createPageButtonInstrumen(page, text, isDisabled = false, isActive = false) {
+            function createPageButtonJurusan(page, text, isDisabled = false, isActive = false) {
                 const li = document.createElement('li');
                 const a = document.createElement('a');
                 a.href = '#';
@@ -323,110 +351,59 @@
                 return li;
             }
 
-            function showLoadingStateInstrumen() {
-                tableBodyInstrumen.innerHTML = `<tr><td colspan="6" class="text-center p-4"><div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-sky-500 mx-auto"></div><p class="mt-2">Memuat data...</p></td></tr>`;
-            }
-
-            function showEmptyStateInstrumen() {
-                tableBodyInstrumen.innerHTML = `<tr><td colspan="6" class="text-center p-4 text-gray-500">Data tidak ditemukan.</td></tr>`;
-            }
-
-            function showErrorStateInstrumen(message) {
-                tableBodyInstrumen.innerHTML = `<tr><td colspan="6" class="text-center p-4 text-red-500">${message}</td></tr>`;
-            }
-
-            async function fetchInstrumenData() {
-                showLoadingStateInstrumen();
+            // === DATA FETCHING FUNCTIONS ===
+            async function fetchAllInstrumenDataJurusan() {
+                showLoadingStateJurusan();
                 try {
-                    const response = await fetch('http://127.0.0.1:5000/api/data-instrumen');
+                    const response = await fetch('http://127.0.0.1:5000/api/data-instrumen'); // Your API endpoint
                     if (!response.ok) throw new Error('Gagal mengambil data instrumen');
                     const data = await response.json();
-                    allInstrumenDataRaw = data;
-                    processedInstrumenData = processRawData(data); // Flatten and process data once
-                    currentPageInstrumen = 1; // Reset to first page
-                    renderInstrumenTable();
+                    allInstrumenDataJurusanRaw = data;
+                    flattenedInstrumenDataJurusan = flattenInstrumenDataJurusan(data); // Flatten data once
+                    currentPageJurusan = 1; // Reset to first page
+                    renderInstrumenTable(); // Initial render
                 } catch (error) {
                     console.error('Error fetching instrumen data:', error);
-                    showErrorStateInstrumen('Tidak dapat terhubung ke server instrumen.');
+                    showErrorStateJurusan('Tidak dapat terhubung ke server instrumen.');
                 }
             }
 
-            // =========================== BAGIAN Filter Dropdown ===========================
-            async function fetchUnitKerja() {
-                try {
-                    const response = await fetch('http://127.0.0.1:5000/api/unit-kerja');
-                    const result = await response.json();
-                    const data = result.data;
-                    data.forEach(unit => {
-                        const option = document.createElement('option');
-                        option.value = unit.unit_kerja_id;
-                        option.textContent = unit.nama_unit_kerja;
-                        unitKerjaSelect.appendChild(option);
-                    });
-                } catch (error) {
-                    console.error('Gagal memuat unit kerja:', error);
-                }
-            }
+            // === DROPDOWN DATA FETCHING (for filters) ===
+            
 
-            async function fetchPeriodeAudit() {
-                try {
-                    const response = await fetch('http://127.0.0.1:5000/api/periode-audits');
-                    const result = await response.json();
-                    const data = result.data.data;
-                    data.forEach(periode => {
-                        const option = document.createElement('option');
-                        option.value = periode.periode_id;
-                        option.textContent = periode.nama_periode;
-                        periodeSelect.appendChild(option);
-                    });
-                } catch (error) {
-                    console.error('Gagal memuat periode AMI:', error);
-                }
-            }
+            
 
-            // =========================== EVENT LISTENERS ===========================
-            perPageSelectInstrumen.addEventListener('change', () => {
-                perPageInstrumen = parseInt(perPageSelectInstrumen.value, 10);
-                currentPageInstrumen = 1;
+            // === EVENT LISTENERS ===
+            perPageSelectJurusan.addEventListener('change', () => {
+                perPageJurusan = parseInt(perPageSelectJurusan.value, 10);
+                currentPageJurusan = 1; // Reset to first page
                 renderInstrumenTable();
             });
 
-            const debouncedSearchInstrumen = debounce(() => {
-                searchQueryInstrumen = searchInputInstrumen.value;
-                fetchInstrumenData(); // Refetch or re-process all data to apply search
+            const debouncedSearchJurusan = debounce(() => {
+                searchQueryJurusan = searchInputJurusan.value;
+                currentPageJurusan = 1; // Reset to first page
+                // When search changes, re-filter the already flattened data and re-render
+                renderInstrumenTable();
             }, 300);
-            searchInputInstrumen.addEventListener('input', debouncedSearchInstrumen);
+            searchInputJurusan.addEventListener('input', debouncedSearchJurusan);
 
-            paginationButtonsInstrumen.addEventListener('click', (e) => {
+            paginationButtonsJurusan.addEventListener('click', (e) => {
                 e.preventDefault();
                 const target = e.target.closest('a');
                 if (target && target.dataset.page) {
                     const page = parseInt(target.dataset.page);
-                    if (!isNaN(page) && page !== currentPageInstrumen) {
-                        currentPageInstrumen = page;
+                    if (!isNaN(page) && page !== currentPageJurusan) {
+                        currentPageJurusan = page;
                         renderInstrumenTable();
                     }
                 }
             });
 
-            // Handle filter changes (implement filtering logic if needed based on selected values)
-            unitKerjaSelect.addEventListener('change', (event) => {
-                selectedUnitKerja = event.target.value;
-                // Implement filtering logic here or trigger a data refetch
-                console.log('Selected Unit Kerja:', selectedUnitKerja);
-            });
 
-            periodeSelect.addEventListener('change', (event) => {
-                selectedPeriode = event.target.value;
-                // Implement filtering logic here or trigger a data refetch
-                console.log('Selected Periode AMI:', selectedPeriode);
-            });
+            // === INITIALIZATION ===
+            fetchAllInstrumenDataJurusan();
 
-
-            // === INISIALISASI ===
-            fetchInstrumenData();
-            fetchUnitKerja();
-            fetchPeriodeAudit();
         });
     </script>
 @endsection
