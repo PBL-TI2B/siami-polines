@@ -8,7 +8,7 @@
     <x-breadcrumb :items="[
         ['label' => 'Dashboard', 'url' => route('auditor.dashboard.index')],
         ['label' => 'Audit', 'url' => route('auditor.audit.index')],
-        ['label' => 'Buat Pertanyaan Daftar Tilik', 'url' => route('auditor.daftar-tilik.index')],
+        ['label' => 'Daftar Tilik', 'url' => route('auditor.daftar-tilik.index', ['auditingId' => $auditingId])],
         ['label' => 'Edit Pertanyaan Daftar Tilik'],
     ]" />
     <h1 class="text-2xl font-bold mb-4">Edit Pertanyaan</h1>
@@ -21,7 +21,7 @@
         <x-toast id="toast-success" type="success" :message="session('success')" />
     @endif
 
-    <form id="tilikForm" method="POST" action="{{ route('auditor.daftar-tilik.index', $id) }}">
+    <form id="tilikForm" method="POST" action="{{ route('auditor.daftar-tilik.index', ['auditingId' => $auditingId, 'id' => $id]) }}">
         @csrf
         @method('PUT')
 
@@ -74,7 +74,7 @@
             <x-button type="submit" color="sky" icon="heroicon-o-plus">
                 Simpan
             </x-button>
-            <x-button color="gray" icon="heroicon-o-x-mark" href="{{ route('auditor.daftar-tilik.index') }}">
+            <x-button color="gray" icon="heroicon-o-x-mark" href="{{ route('auditor.daftar-tilik.index', ['auditingId' => $auditingId]) }}">
                 Batal
             </x-button>
         </div>
@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 showToast(data.message || 'Data berhasil diperbarui.', 'success');
                 // Redirect to trigger session-based toast
                 setTimeout(() => {
-                    window.location.href = "{{ route('auditor.daftar-tilik.index') }}";
+                    window.location.href = "{{ route('auditor.daftar-tilik.index', ['auditingId' => $auditingId]) }}";
                 }, 3000);
             } else {
                 showToast('Gagal update: ' + data.message, 'error');

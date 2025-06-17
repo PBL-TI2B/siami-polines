@@ -132,8 +132,8 @@ Route::prefix('auditor')->middleware('auth.ami:auditor')->group(function () {
         Route::get('/detail/{id}', [AuditController::class, 'auditorAuditPage'])->name('auditor.audit.audit');
         Route::get('/auditings', [AuditController::class, 'getAuditingsByUser'])->name('auditor.auditings');
         Route::get('/daftar-tilik/{auditingId}', [DaftarTilikController::class, 'auditortilik'])->name('auditor.daftar-tilik.index');
-        Route::get('/daftar-tilik/{id}/edit', [DaftarTilikController::class, 'edit'])->name('auditor.daftar-tilik.edit');
-        Route::get('/daftar-tilik/create', [DaftarTilikController::class, 'create'])->name('auditor.daftar-tilik.create');
+        Route::get('/daftar-tilik/{auditingId}/edit/{id}', [DaftarTilikController::class, 'edit'])->name('auditor.daftar-tilik.edit');
+        Route::get('/daftar-tilik/{auditingId}/create', [DaftarTilikController::class, 'create'])->name('auditor.daftar-tilik.create');
     });
 
     Route::prefix('assesmen-lapangan')->group(function () {
