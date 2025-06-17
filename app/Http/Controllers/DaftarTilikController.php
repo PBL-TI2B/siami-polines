@@ -16,17 +16,91 @@ class DaftarTilikController extends Controller
     }
     public function auditortilik($auditingId)
     {
+        $userId = session('user')['user_id'] ?? null;
+        $unitKerjaId = session('unit_kerja_id') ?? null;
+        $status = session('status') ?? null;
+
+        if (!$userId) {
+            return redirect()->route('login')->with('error', 'Silakan login untuk mengakses daftar tilik.');
+        }
+
+        try {
+            // Ambil data audit dari API berdasarkan userId
+            $response = Http::get("http://127.0.0.1:5000/api/auditings/userID={$userId}");
+
+            if (!$response->successful()) {
+                \Log::error("Gagal mengambil data audit untuk user {$userId}: " . $response->body());
+                return back()->with('error', 'Gagal mengambil data audit dari sistem eksternal.');
+            }
+
+            $apiData = $response->json();
+            $allUserAudits = $apiData['data'] ?? [];
+
+            // Cari audit spesifik berdasarkan auditingId
+            $audit = null;
+            foreach ($allUserAudits as $item) {
+                if (is_array($item) && isset($item['auditing_id']) && (string)$item['auditing_id'] === (string)$auditingId) {
+                    $audit = $item;
+                    break;
+                }
+            }
+
+            if (!$audit) {
+                \Log::warning("Audit dengan ID {$auditingId} tidak ditemukan untuk user {$userId}.");
+                return back()->with('error', 'Data audit tidak ditemukan.');
+            }
+
+            // Validasi auditor
+            $isAuditor1 = isset($audit['user_id_1_auditor']) && $audit['user_id_1_auditor'] == $userId;
+            $isAuditor2 = isset($audit['user_id_2_auditor']) && $audit['user_id_2_auditor'] == $userId;
+
+            if (!$isAuditor1 && !$isAuditor2) {
+                \Log::warning("Akses ditolak untuk user {$userId} ke audit ID {$auditingId}.");
+                abort(403, 'Anda tidak memiliki hak akses untuk audit ini.');
+            }
+
+            // Simpan data ke session jika belum ada
+            session([
+                'auditing_id' => $audit['auditing_id'],
+                'unit_kerja_id' => $audit['unit_kerja']['unit_kerja_id'] ?? $unitKerjaId,
+                'status' => $audit['status'] ?? $status,
+            ]);
+
+            // Kirim auditingId ke view
+            return view('auditor.daftar-tilik.index', [
+                'auditingId' => $audit['auditing_id'],
+                'status' => $audit['status'] ?? $status,
+                'audit' => $audit,
+            ]);
+        } catch (\Exception $e) {
+            \Log::error("Gagal memuat halaman daftar tilik untuk audit ID {$auditingId}: " . $e->getMessage());
+            return back()->with('error', 'Terjadi masalah saat memuat halaman daftar tilik.');
+        }
         // Ambil data auditing berdasarkan ID
-        $auditing = \App\Models\Auditing::findOrFail($auditingId);
-        return view('auditor.daftar-tilik.index', compact('auditing', 'auditingId'));
+        // $auditing = \App\Models\Auditing::findOrFail($auditingId);
+        // return view('auditor.daftar-tilik.index', compact('auditing', 'auditingId'));
     }
-    public function create()
+
+    public function create($auditingId)
     {
-        return view('auditor.daftar-tilik.create'); // Pastikan file ini ada
-    }
-    public function edit($id)
+        // Anda bisa mengambil data auditing jika perlu, misal:
+        // $auditing = Auditing::findOrFail($auditingId);
+
+        // Kirim auditingId ke view
+        return view('auditor.daftar-tilik.create', [
+            'auditingId' => $auditingId,
+            // 'auditing' => $auditing, // jika ingin kirim data auditing
+        ]);
+}
+
+    public function edit($auditingId, $id)
     {
-        return view('auditor.daftar-tilik.edit', compact('id'));
+        // Kirim auditingId ke view
+        return view('auditor.daftar-tilik.edit', [
+            'auditingId' => $auditingId,
+            'id' => $id,
+            // 'auditing' => $auditing, // jika ingin kirim data auditing
+        ]);
     }
     public function store(Request $request)
     {

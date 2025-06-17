@@ -18,7 +18,7 @@
 
         <div class="mb-6 flex gap-2">
             @if (session('status') == 4)
-            <x-button href="{{ route('auditor.daftar-tilik.create') }}" color="sky" icon="heroicon-o-plus">
+            <x-button href="{{ route('auditor.daftar-tilik.create', ['auditingId' => $auditingId]) }}" color="sky" icon="heroicon-o-plus">
                 Tambah Pertanyaan
             </x-button>
             @endif
@@ -187,13 +187,13 @@
     </div>
 
     <!-- Pass route to JavaScript -->
-    <script>
+    {{-- <script>
         window.App = {
             routes: {
                 editTilik: '{{ route("auditor.daftar-tilik.edit", ":id") }}'
             }
         };
-    </script>
+    </script> --}}
 
     <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -419,7 +419,7 @@
                             </span>
                         ` : `
                             <div class="flex items-center gap-2 justify-center">
-                                <a href="/auditor/daftar-tilik/${item.tilik_id}/edit" class="text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-200 transition-colors duration-200">
+                                <a href="/auditor/audit/daftar-tilik/${auditingId}/edit/${item.tilik_id}" class="text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-200 transition-colors duration-200">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L16.732 3.732z"></path>
                                     </svg>
