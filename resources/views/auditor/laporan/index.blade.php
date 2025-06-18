@@ -80,7 +80,7 @@
                                 <td class="px-4 py-2 sm:px-6">{{ $laporan['saran_perbaikan'] ?? '-' }}</td>
                                 <td class="px-4 py-2 sm:px-6">
                                     <a href="{{ route('auditor.laporan.edit', ['auditingId' => $auditingId, 'laporan_temuan_id' => $laporan_temuan_id]) }}"
-                                    class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-4">
+                                    class="inline-flex items-center rounded bg-blue-600 px-2 py-1 text-sm font-medium text-white hover:bg-blue-700">
                                         Edit
                                     </a>
                                     <form action="{{ route('auditor.laporan.destroy', ['auditingId' => $auditingId, 'laporan_temuan_id' => $laporan_temuan_id]) }}"
