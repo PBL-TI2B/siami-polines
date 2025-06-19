@@ -110,13 +110,12 @@
 <div style="text-align:center; font-weight:bold; font-size:14pt; margin: 15px 0 15px 0; text-decoration: underline;">
     LAPORAN AUDIT MUTU INTERNAL
 </div>
-
 <!-- Informasi Laporan -->
 <table style="width:100%; border-collapse:collapse; margin-bottom:15px; font-size:11pt;">
     <tr>
         <td style="width:110px;">Jur./Bag./Unit</td>
         <td style="width:10px;">:</td>
-        <td>D3 Informatika</td>
+        <td>{{$audit['unitKerja']['nama_unit_kerja']}}</td>
         <td style="width:120px;">Tanggal</td>
         <td style="width:10px;">:</td>
         <td>2 November 2022</td>

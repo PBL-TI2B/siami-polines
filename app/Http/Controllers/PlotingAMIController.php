@@ -400,7 +400,7 @@ public function update(Request $request, $id)
         if ($audit->status < 7) {
             return redirect()->back()->with('error', 'Laporan Temuan hanya tersedia jika status sudah Laporan Temuan atau lebih.');
         }
-
+        // dd($audit['unitKerja']['nama_unit_kerja']);
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('kepala-pmpp.ploting-ami.laporan-temuan', compact('audit'));
         return $pdf->download('Laporan-Temuan'.$audit->unit_kerja.'.pdf');
     }
