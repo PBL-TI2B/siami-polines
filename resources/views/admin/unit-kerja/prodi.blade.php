@@ -20,12 +20,6 @@
             <x-button href="{{ route('unit-kerja.create', ['type' => 'prodi']) }}" color="sky" icon="heroicon-o-plus">
                 Tambah Data
             </x-button>
-            <x-button type="submit" color="sky" icon="heroicon-o-document-arrow-down">
-                Unduh Data
-            </x-button>
-            <x-button type="submit" color="yellow" icon="heroicon-o-document-arrow-up">
-                Import Data
-            </x-button>
         </div>
 
         <div class="pt-6">
