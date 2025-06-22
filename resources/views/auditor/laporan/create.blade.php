@@ -1,64 +1,62 @@
-```blade
 @extends('layouts.app')
 
 @section('title', 'Tambah Laporan Temuan')
 
 @section('content')
-<div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-    <!-- Breadcrumb Component -->
+<div class="mx-auto max_width-7xl px-4 py-4 sm:px-6 lg:px-8">
+    <!-- Breadcrumb -->
     <x-breadcrumb :items="[
         ['label' => 'Dashboard', 'url' => route('auditor.dashboard.index')],
         ['label' => 'Audit', 'url' => route('auditor.audit.index')],
         ['label' => 'Laporan Temuan', 'url' => route('auditor.laporan.index', ['auditingId' => $auditingId])],
-    ]" class="mb-6" />
+        ['label' => 'Tambah Laporan', 'url' => '#'],
+    ]" />
 
-    <!-- Page Heading -->
-    <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+    <!-- Heading -->
+    <h1 class="mb-8 text-3xl font-bold text-gray-900 dark:text-gray-200">
         Tambah Laporan Temuan
     </h1>
-    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
-        Tambahkan temuan dengan memilih standar dan mengisi detail temuan di bawah.
-    </p>
 
-    <!-- Validation Errors Display -->
-    @if ($errors->any())
-        <div class="mb-6 p-4 bg-red-50 dark:bg-red-900/50 border border-red-200 dark:border-red-700 rounded-lg text-red-700 dark:text-red-300">
-            <ul class="list-disc pl-5 space-y-1">
+    <div class="mb-3 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all duration-200 dark:border-gray-700 dark:bg-gray-800">
+        {{-- Message Container for JavaScript messages (no longer strictly needed for form submission, but kept if client-side hints are desired) --}}
+        <div id="js-message-container" class="mb-6 hidden">
+            <div id="js-message" class="p-4 rounded-lg text-sm" role="alert"></div>
+        </div>
+
+        <!-- Toast Notifications -->
+        @if (session('success'))
+            <x-toast id="toast-success" type="success" :message="session('success')" />
+        @endif
+
+        @if (session('error') || $errors->any())
+            <x-toast id="toast-danger" type="danger">
+                @if (session('error'))
+                    {{ session('error') }}<br>
+                @endif
                 @foreach ($errors->all() as $error)
-                    <li>{!! $error !!}</li>
+                    {{ $error }}<br>
                 @endforeach
-            </ul>
-        </div>
-    @endif
+            </x-toast>
+        @endif
 
-    <!-- Success Message Display -->
-    @if (session('success'))
-        <div class="mb-6 p-4 bg-green-50 dark:bg-green-900/50 border border-green-200 dark:border-green-700 rounded-lg text-green-700 dark:text-green-300">
-            {!! session('success') !!}
-        </div>
-    @endif
-
-    <!-- Form Section -->
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-        <form action="{{ route('auditor.laporan.store', ['auditingId' => $auditingId]) }}" method="POST" id="laporanForm" class="space-y-6">
+        <form id="laporan-form" method="POST" action="{{ route('auditor.laporan.store', ['auditingId' => $auditingId]) }}" class="space-y-6">
             @csrf
+            {{-- auditing_id will be sent as part of the form data --}}
             <input type="hidden" name="auditing_id" value="{{ $auditingId }}">
 
-            <!-- Container for dynamically added finding items -->
-            <div id="findingsContainer" class="space-y-6">
+            <div id="findings-container" class="space-y-6">
                 @if (empty($kriterias))
                     <div class="mt-1 text-sm text-red-600 dark:text-red-400">
-                        Tidak ada kriteria tersedia.
-                        <button type="button" onclick="window.location.reload()" class="underline hover:text-red-700">Coba lagi</button> atau
+                        Tidak ada kriteria tersedia. <button type="button" onclick="window.location.reload()" class="underline hover:text-red-700">Coba lagi</button> atau
                         <a href="#" class="underline hover:text-red-700">hubungi administrator</a>.
                     </div>
                 @else
-                    @if (empty(old('findings')))
-                        <!-- Initial Finding Item -->
-                        <div class="finding-item p-4 border border-gray-200 dark:border-gray-600 rounded-lg space-y-3 transition-opacity duration-200" data-finding-index="0">
+                    <!-- Initial Finding Item -->
+                    <div class="finding-item mb-6 p-4 border border-gray-200 rounded-lg dark:border-gray-600" data-finding-index="0">
+                        <div class="grid grid-cols-1 gap-4">
                             <div>
-                                <label for="kriteria_id_0" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Standar <span class="text-red-500">*</span></label>
-                                <select name="findings[0][kriteria_id]" id="kriteria_id_0" title="Pilih standar untuk temuan ini" class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm transition duration-150" required aria-describedby="kriteria-error-0">
+                                <label for="kriteria_id_0" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Standar <span class="text-red-500">*</span></label>
+                                <select name="findings[0][kriteria_id]" id="kriteria_id_0" class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm" required>
                                     <option value="" disabled selected>Pilih Standar</option>
                                     @foreach ($kriterias as $kriteria)
                                         <option value="{{ $kriteria['kriteria_id'] }}" {{ old('findings.0.kriteria_id') == $kriteria['kriteria_id'] ? 'selected' : '' }}>
@@ -66,474 +64,199 @@
                                         </option>
                                     @endforeach
                                 </select>
-                                <div id="kriteria-error-0" class="error-message text-sm text-red-600 dark:text-red-400 @error('findings.0.kriteria_id') @else hidden @enderror">@error('findings.0.kriteria_id'){{ $message }}@enderror</div>
                             </div>
                             <div>
-                                <label for="uraian_temuan_0" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Uraian Temuan <span class="text-red-500">*</span></label>
-                                <textarea name="findings[0][uraian_temuan]" id="uraian_temuan_0" rows="4" title="Masukkan deskripsi temuan audit" placeholder="Tulis uraian temuan di sini..." class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm transition duration-150" required aria-describedby="uraian-error-0">{{ old('findings.0.uraian_temuan') }}</textarea>
-                                <div id="uraian-error-0" class="error-message text-sm text-red-600 dark:text-red-400 @error('findings.0.uraian_temuan') @else hidden @enderror">@error('findings.0.uraian_temuan'){{ $message }}@enderror</div>
+                                <label for="uraian_temuan_0" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Uraian Temuan <span class="text-red-500">*</span></label>
+                                <textarea name="findings[0][uraian_temuan]" id="uraian_temuan_0" rows="4" placeholder="Masukkan uraian temuan" class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm" required>{{ old('findings.0.uraian_temuan') }}</textarea>
                             </div>
                             <div>
-                                <label for="kategori_temuan_0" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Kategori Temuan <span class="text-red-500">*</span></label>
-                                <select name="findings[0][kategori_temuan]" id="kategori_temuan_0" title="Pilih kategori temuan" class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm transition duration-150" required aria-describedby="kategori-error-0">
+                                <label for="kategori_temuan_0" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Kategori Temuan <span class="text-red-500">*</span></label>
+                                <select name="findings[0][kategori_temuan]" id="kategori_temuan_0" class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm" required>
                                     <option value="" disabled selected>Pilih Kategori</option>
-                                    @foreach ($kategori_temuan as $kategori)
+                                    @foreach (['NC', 'AOC', 'OFI'] as $kategori)
                                         <option value="{{ $kategori }}" {{ old('findings.0.kategori_temuan') == $kategori ? 'selected' : '' }}>{{ $kategori }}</option>
                                     @endforeach
                                 </select>
-                                <div id="kategori-error-0" class="error-message text-sm text-red-600 dark:text-red-400 @error('findings.0.kategori_temuan') @else hidden @enderror">@error('findings.0.kategori_temuan'){{ $message }}@enderror</div>
                             </div>
                             <div>
-                                <label for="saran_perbaikan_0" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Saran Perbaikan</label>
-                                <textarea name="findings[0][saran_perbaikan]" id="saran_perbaikan_0" rows="4" title="Masukkan saran perbaikan (opsional)" placeholder="Tulis saran perbaikan di sini..." class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm transition duration-150" aria-describedby="saran-error-0">{{ old('findings.0.saran_perbaikan') }}</textarea>
-                                <div id="saran-error-0" class="error-message text-sm text-red-600 dark:text-red-400 @error('findings.0.saran_perbaikan') @else hidden @enderror">@error('findings.0.saran_perbaikan'){{ $message }}@enderror</div>
-                            </div>
-                            <div class="flex gap-2">
-                                <button type="button" class="remove-finding px-3 py-1 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition duration-150 flex items-center gap-1" aria-label="Hapus temuan ini">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                    Hapus Temuan Ini
-                                </button>
-                                <button type="button" class="add-same-kriteria px-3 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition duration-150 flex items-center gap-1" aria-label="Tambah temuan pada kriteria ini">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                                    Tambah Temuan pada Kriteria Ini
-                                </button>
+                                <label for="saran_perbaikan_0" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Saran Perbaikan</label>
+                                <textarea name="findings[0][saran_perbaikan]" id="saran_perbaikan_0" rows="4" placeholder="Masukkan saran perbaikan" class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm">{{ old('findings.0.saran_perbaikan') }}</textarea>
                             </div>
                         </div>
-                    @else
-                        @foreach (old('findings', []) as $index => $finding)
-                            <div class="finding-item p-4 border border-gray-200 dark:border-gray-600 rounded-lg space-y-3 transition-opacity duration-200" data-finding-index="{{ $index }}">
-                                <div>
-                                    <label for="kriteria_id_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Standar <span class="text-red-500">*</span></label>
-                                    <select name="findings[{{ $index }}][kriteria_id]" id="kriteria_id_{{ $index }}" title="Pilih standar untuk temuan ini" class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm transition duration-150" required aria-describedby="kriteria-error-{{ $index }}">
-                                        <option value="" disabled {{ empty($finding['kriteria_id']) ? 'selected' : '' }}>Pilih Standar</option>
-                                        @foreach ($kriterias as $kriteria)
-                                            <option value="{{ $kriteria['kriteria_id'] }}" {{ ($finding['kriteria_id'] ?? '') == $kriteria['kriteria_id'] ? 'selected' : '' }}>
-                                                {{ $kriteria['nama_kriteria'] ?? 'Standar ' . $kriteria['kriteria_id'] }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    <div id="kriteria-error-{{ $index }}" class="error-message text-sm text-red-600 dark:text-red-400 @error('findings.' . $index . '.kriteria_id') @else hidden @enderror">@error('findings.' . $index . '.kriteria_id'){{ $message }}@enderror</div>
-                                </div>
-                                <div>
-                                    <label for="uraian_temuan_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Uraian Temuan <span class="text-red-500">*</span></label>
-                                    <textarea name="findings[{{ $index }}][uraian_temuan]" id="uraian_temuan_{{ $index }}" rows="4" title="Masukkan deskripsi temuan audit" placeholder="Tulis uraian temuan di sini..." class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm transition duration-150" required aria-describedby="uraian-error-{{ $index }}">{{ $finding['uraian_temuan'] ?? '' }}</textarea>
-                                    <div id="uraian-error-{{ $index }}" class="error-message text-sm text-red-600 dark:text-red-400 @error('findings.' . $index . '.uraian_temuan') @else hidden @enderror">@error('findings.' . $index . '.uraian_temuan'){{ $message }}@enderror</div>
-                                </div>
-                                <div>
-                                    <label for="kategori_temuan_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Kategori Temuan <span class="text-red-500">*</span></label>
-                                    <select name="findings[{{ $index }}][kategori_temuan]" id="kategori_temuan_{{ $index }}" title="Pilih kategori temuan" class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm transition duration-150" required aria-describedby="kategori-error-{{ $index }}">
-                                        <option value="" disabled {{ empty($finding['kategori_temuan']) ? 'selected' : '' }}>Pilih Kategori</option>
-                                        @foreach ($kategori_temuan as $kategori)
-                                            <option value="{{ $kategori }}" {{ ($finding['kategori_temuan'] ?? '') == $kategori ? 'selected' : '' }}>{{ $kategori }}</option>
-                                        @endforeach
-                                    </select>
-                                    <div id="kategori-error-{{ $index }}" class="error-message text-sm text-red-600 dark:text-red-400 @error('findings.' . $index . '.kategori_temuan') @else hidden @enderror">@error('findings.' . $index . '.kategori_temuan'){{ $message }}@enderror</div>
-                                </div>
-                                <div>
-                                    <label for="saran_perbaikan_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Saran Perbaikan</label>
-                                    <textarea name="findings[{{ $index }}][saran_perbaikan]" id="saran_perbaikan_{{ $index }}" rows="4" title="Masukkan saran perbaikan (opsional)" placeholder="Tulis saran perbaikan di sini..." class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm transition duration-150" aria-describedby="saran-error-{{ $index }}">{{ $finding['saran_perbaikan'] ?? '' }}</textarea>
-                                    <div id="saran-error-{{ $index }}" class="error-message text-sm text-red-600 dark:text-red-400 @error('findings.' . $index . '.saran_perbaikan') @else hidden @enderror">@error('findings.' . $index . '.saran_perbaikan'){{ $message }}@enderror</div>
-                                </div>
-                                <div class="flex gap-2">
-                                    <button type="button" class="remove-finding px-3 py-1 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition duration-150 flex items-center gap-1" aria-label="Hapus temuan ini">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                        Hapus Temuan Ini
-                                    </button>
-                                    <button type="button" class="add-same-kriteria px-3 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition duration-150 flex items-center gap-1" aria-label="Tambah temuan pada kriteria ini">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                                        Tambah Temuan pada Kriteria Ini
-                                    </button>
-                                </div>
-                            </div>
-                        @endforeach
-                    @endif
+                        {{-- Remove button for the initial item. Will be managed by JS based on count. --}}
+                        <button type="button" class="mt-2 bg-red-100 text-red-600 hover:text-red-800 text-sm font-medium py-1 px-3 rounded remove-finding">
+                            Hapus Temuan
+                        </button>
+                        <button type="button" class="mt-2 ml-2 bg-green-100 text-green-600 hover:text-green-800 text-sm font-medium py-1 px-3 rounded add-same-kriteria">
+                            Tambah Temuan pada Kriteria Ini
+                        </button>
+                    </div>
                 @endif
             </div>
 
-            <!-- Button to add new finding block -->
-            <div class="flex justify-start mt-6">
-                <button type="button" id="addFinding" class="px-3 py-1 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition duration-150 flex items-center gap-1 {{ empty($kriterias) ? 'opacity-50 cursor-not-allowed' : '' }}" {{ empty($kriterias) ? 'disabled' : '' }} aria-label="Tambah temuan baru">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                    Tambah Temuan
-                </button>
+            {{-- Deskripsi Kategori Temuan --}}
+            <div class="mt-6 text-sm text-gray-700 dark:text-gray-300 space-y-3">
+                <p><strong>NC (Non-Conformity)</strong> adalah temuan yang bersifat ketidaksesuaian mayor, yaitu temuan-temuan yang memiliki dampak luas/kritikal terhadap persyaratan mutu produk/pelayanan dan persyaratan sistem manajemen mutu.</p>
+                <p class="pl-4 italic">Contoh: Pelanggaran sistem secara total (sistem tidak dilaksanakan).</p>
+
+                <p><strong>AOC (Area of Concern)</strong> adalah temuan yang bersifat ketidaksesuaian minor, yaitu temuan-temuan yang memiliki dampak kecil/terbatas terhadap persyaratan mutu produk/pelayanan dan persyaratan sistem manajemen mutu.</p>
+                <p class="pl-4 italic">Contoh: Ketidaksempurnaan dan ketidakkonsistenan dalam penerapan sistem.</p>
+
+                <p><strong>OFI (Opportunity for Improvement)</strong> adalah temuan yang bukan merupakan ketidaksesuaian yang dimaksudkan untuk penyempurnaan-penyempurnaan.</p>
+                <p class="pl-4 italic">** Catatan: Hanya diisi bila auditor dapat memastikan saran perbaikannya adalah efektif.</p>
             </div>
 
-            <!-- Submit Button -->
-            <div class="flex justify-end pt-6">
-                <button type="submit" id="submitButton" class="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition duration-150 flex items-center gap-2 {{ empty($kriterias) ? 'opacity-50 cursor-not-allowed' : '' }}" {{ empty($kriterias) ? 'disabled' : '' }}>
-                    <span>Simpan Laporan</span>
-                    <svg id="loadingSpinner" class="hidden animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
-                    </svg>
+            <button type="button" id="add-finding" class="mt-3 bg-blue-100 text-blue-600 hover:bg-blue-200 hover:text-blue-800 text-sm font-medium py-1.5 px-4 rounded {{ empty($kriterias) ? 'opacity-50 cursor-not-allowed' : '' }}" {{ empty($kriterias) ? 'disabled' : '' }}>
+                Tambah Temuan
+            </button>
+            <div class="mt-6 flex gap-3 justify-end">
+                <button type="submit" class="bg-sky-600 text-white text-sm font-medium py-2 px-4 rounded hover:bg-blue-700 {{ empty($kriterias) ? 'opacity-50 cursor-not-allowed' : '' }}" {{ empty($kriterias) ? 'disabled' : '' }}>
+                    Simpan
+                </button>
+                <button type="button" class="bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200 text-sm font-medium py-2 px-4 rounded hover:bg-gray-300 dark:hover:bg-gray-600" onclick="window.location.href='{{ route('auditor.laporan.index', ['auditingId' => $auditingId]) }}'">
+                    Batal
                 </button>
             </div>
         </form>
     </div>
 </div>
+@endsection
 
-<!-- Enhanced Modal Structure -->
-<div id="customModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center hidden z-50 transition-opacity duration-300">
-    <div id="modalContent" class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-md w-full mx-4 p-6 transform scale-95 transition-transform duration-300">
-        <div class="flex items-center gap-3 mb-4">
-            <svg id="modalIcon" class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <h3 id="modalTitle" class="text-lg font-semibold text-gray-900 dark:text-gray-100"></h3>
-        </div>
-        <p id="modalMessage" class="text-sm text-gray-600 dark:text-gray-300 mb-6"></p>
-        <div id="modalActions" class="flex justify-end gap-3">
-            <button id="modalCancel" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-150 text-sm font-medium">Batal</button>
-            <button id="modalConfirm" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-150 text-sm font-medium">OK</button>
-        </div>
-    </div>
-</div>
-
-<style>
-/* Modal Animations */
-#customModal.show {
-    opacity: 1;
-}
-#customModal.show #modalContent {
-    transform: scale(1);
-}
-#customModal {
-    opacity: 0;
-}
-#customModal #modalContent {
-    transform: scale(0.95);
-}
-</style>
-
+@push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const laporanForm = document.getElementById('laporanForm');
-    const submitButton = document.getElementById('submitButton');
-    const loadingSpinner = document.getElementById('loadingSpinner');
-    const findingsContainer = document.getElementById('findingsContainer');
-    const criteriasData = @json($kriteria);
-    const categories = @json($kategori_temuan);
-    let isRemoving = false;
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('laporan-form');
+        const findingsContainer = document.getElementById('findings-container');
+        const addFindingBtn = document.getElementById('add-finding');
+        const jsMessageContainer = document.getElementById('js-message-container');
+        const jsMessage = document.getElementById('js-message');
 
-    const customModal = document.getElementById('customModal');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalMessage = document.getElementById('modalMessage');
-    const modalActions = document.getElementById('modalActions');
-    const modalCancel = document.getElementById('modalCancel');
-    const modalConfirm = document.getElementById('modalConfirm');
-    const modalIcon = document.getElementById('modalIcon');
-
-    function showCustomModal(title, message, isConfirm = false) {
-        modalTitle.textContent = title;
-        modalMessage.textContent = message;
-
-        // Update icon based on title
-        if (title === 'Peringatan') {
-            modalIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>`;
-            modalIcon.classList.remove('text-indigo-600', 'dark:text-indigo-400');
-            modalIcon.classList.add('text-yellow-600', 'dark:text-yellow-400');
-        } else {
-            modalIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>`;
-            modalIcon.classList.remove('text-yellow-600', 'dark:text-yellow-400');
-            modalIcon.classList.add('text-indigo-600', 'dark:text-indigo-400');
-        }
-
-        if (isConfirm) {
-            modalActions.classList.remove('hidden');
-            modalConfirm.classList.remove('hidden');
-            modalCancel.classList.remove('hidden');
-        } else {
-            modalActions.classList.remove('hidden');
-            modalConfirm.classList.remove('hidden');
-            modalCancel.classList.add('hidden');
-        }
-
-        customModal.classList.remove('hidden');
-        setTimeout(() => customModal.classList.add('show'), 10);
-
-        return new Promise((resolve) => {
-            modalConfirm.onclick = null;
-            modalCancel.onclick = null;
-            customModal.onclick = null;
-
-            if (isConfirm) {
-                modalConfirm.onclick = () => {
-                    customModal.classList.remove('show');
-                    setTimeout(() => {
-                        customModal.classList.add('hidden');
-                        resolve(true);
-                    }, 300);
-                };
-                modalCancel.onclick = () => {
-                    customModal.classList.remove('show');
-                    setTimeout(() => {
-                        customModal.classList.add('hidden');
-                        resolve(false);
-                    }, 300);
-                };
-            } else {
-                modalConfirm.onclick = () => {
-                    customModal.classList.remove('show');
-                    setTimeout(() => {
-                        customModal.classList.add('hidden');
-                        resolve(true);
-                    }, 300);
-                };
-                customModal.addEventListener('click', function dismissOnClickOutside(e) {
-                    if (e.target === customModal) {
-                        customModal.classList.remove('show');
-                        setTimeout(() => {
-                            customModal.classList.add('hidden');
-                            resolve(true);
-                            customModal.removeEventListener('click', dismissOnClickOutside);
-                        }, 300);
-                    }
-                });
+        // Function to display messages (now mostly for client-side hints, not submission errors)
+        function displayMessage(message, type = 'info') {
+            jsMessage.innerHTML = message;
+            jsMessageContainer.classList.remove('hidden', 'bg-green-50', 'bg-red-50', 'text-green-700', 'text-red-700', 'border', 'border-green-200', 'border-red-200', 'dark:bg-green-900/50', 'dark:border-green-700', 'dark:text-green-300', 'dark:bg-red-900/50', 'dark:border-red-700', 'dark:text-red-300');
+            jsMessageContainer.classList.add('flex');
+            if (type === 'success') {
+                jsMessage.classList.add('bg-green-50', 'text-green-700', 'border', 'border-green-200', 'dark:bg-green-900/50', 'dark:border-green-700', 'dark:text-green-300');
+            } else if (type === 'error') {
+                jsMessage.classList.add('bg-red-50', 'text-red-700', 'border', 'border-red-200', 'dark:bg-red-900/50', 'dark:border-red-700', 'dark:text-red-300');
             }
-        });
-    }
+            // Hide message after a few seconds
+            setTimeout(() => jsMessageContainer.classList.add('hidden'), 5000);
+        }
 
-    function createFindingFields(findingIndex, kriteriaId = '') {
-        let criteriaField = kriteriaId
-            ? `<input type="hidden" name="findings[${findingIndex}][kriteria_id]" value="${kriteriaId}">`
-            : `
-                <div>
-                    <label for="kriteria_id_${findingIndex}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Standar <span class="text-red-500">*</span></label>
-                    <select name="findings[${findingIndex}][kriteria_id]" id="kriteria_id_${findingIndex}" title="Pilih standar untuk temuan ini" class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm transition duration-150" required aria-describedby="kriteria-error-${findingIndex}">
-                        <option value="" disabled selected>Pilih Standar</option>
-                        ${criteriasData.map(kriteria => `<option value="${kriteria.kriteria_id}">${kriteria.nama_kriteria || 'Standar ' + kriteria.kriteria_id}</option>`).join('')}
-                    </select>
-                    <div id="kriteria-error-${findingIndex}" class="error-message text-sm text-red-600 dark:text-red-400 hidden"></div>
+        // Generate select options for kriteria
+        function generateKriteriaOptions(selectedValue = '') {
+            let optionsHtml = '<option value="" disabled selected>Pilih Standar</option>';
+            // Make sure $kriterias is available globally or passed correctly
+            const kriterias = @json($kriterias);
+            kriterias.forEach(kriteria => {
+                const selectedAttr = (kriteria.kriteria_id == selectedValue) ? 'selected' : '';
+                optionsHtml += `<option value="${kriteria.kriteria_id}" ${selectedAttr}>${kriteria.nama_kriteria ?? 'Standar ' + kriteria.kriteria_id}</option>`;
+            });
+            return optionsHtml;
+        }
+
+        // Generate select options for kategori temuan
+        function generateKategoriTemuanOptions(selectedValue = '') {
+            let optionsHtml = '<option value="" disabled selected>Pilih Kategori</option>';
+            ['NC', 'AOC', 'OFI'].forEach(kategori => {
+                const selectedAttr = (kategori == selectedValue) ? 'selected' : '';
+                optionsHtml += `<option value="${kategori}" ${selectedAttr}>${kategori}</option>`;
+            });
+            return optionsHtml;
+        }
+
+        let findingCounter = findingsContainer.querySelectorAll('.finding-item').length;
+        // If no initial finding items, and kriterias are available, add one
+        if (findingCounter === 0 && @json($kriterias).length > 0) {
+            addFindingItem(); // Call the function directly
+        }
+
+        // Add Finding Item
+        addFindingBtn.addEventListener('click', () => {
+            if (@json($kriterias).length === 0) {
+                displayMessage('Tidak ada kriteria tersedia untuk ditambahkan.', 'error');
+                return;
+            }
+            addFindingItem();
+        });
+
+        function addFindingItem(kriteriaId = null) {
+            const newFindingItemHtml = `
+                <div class="finding-item mb-6 p-4 border border-gray-200 rounded-lg dark:border-gray-600" data-finding-index="${findingCounter}">
+                    {{-- Close button for removing --}}
+                    <button type="button" class="float-right text-red-600 hover:text-red-800 dark:hover:text-red-400 remove-finding">×</button>
+                    <div class="grid grid-cols-1 gap-4">
+                        <div><label for="kriteria_id_${findingCounter}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Standar <span class="text-red-500">*</span></label><select name="findings[${findingCounter}][kriteria_id]" id="kriteria_id_${findingCounter}" class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm" required>${generateKriteriaOptions(kriteriaId)}</select></div>
+                        <div><label for="uraian_temuan_${findingCounter}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Uraian Temuan <span class="text-red-500">*</span></label><textarea name="findings[${findingCounter}][uraian_temuan]" id="uraian_temuan_${findingCounter}" rows="4" placeholder="Masukkan uraian temuan" class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm" required></textarea></div>
+                        <div><label for="kategori_temuan_${findingCounter}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Kategori Temuan <span class="text-red-500">*</span></label><select name="findings[${findingCounter}][kategori_temuan]" id="kategori_temuan_${findingCounter}" class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm" required>${generateKategoriTemuanOptions()}</select></div>
+                        <div><label for="saran_perbaikan_${findingCounter}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Saran Perbaikan</label><textarea name="findings[${findingCounter}][saran_perbaikan]" id="saran_perbaikan_${findingCounter}" rows="4" placeholder="Masukkan saran perbaikan" class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm"></textarea></div>
+                    </div>
+                    <button type="button" class="mt-2 bg-red-100 text-red-600 hover:text-red-800 text-sm font-medium py-1 px-3 rounded remove-finding">Hapus Temuan</button>
+                    <button type="button" class="mt-2 ml-2 bg-green-100 text-green-600 hover:text-green-800 text-sm font-medium py-1 px-3 rounded add-same-kriteria">Tambah Temuan pada Kriteria Ini</button>
                 </div>
             `;
-        let categoryOptions = categories.map(category =>
-            `<option value="${category}">${category}</option>`
-        ).join('');
+            findingsContainer.insertAdjacentHTML('beforeend', newFindingItemHtml);
+            findingCounter++;
+            updateFindingIndices();
+        }
 
-        return `
-            <div class="finding-item p-4 border border-gray-200 dark:border-gray-600 rounded-lg space-y-3 transition-opacity duration-200 opacity-0" data-finding-index="${findingIndex}">
-                ${criteriaField}
-                <div>
-                    <label for="uraian_temuan_${findingIndex}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Uraian Temuan <span class="text-red-500">*</span></label>
-                    <textarea name="findings[${findingIndex}][uraian_temuan]" id="uraian_temuan_${findingIndex}" rows="4" title="Masukkan deskripsi temuan audit" placeholder="Tulis uraian temuan di sini..." class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm transition duration-150" required aria-describedby="uraian-error-${findingIndex}"></textarea>
-                    <div id="uraian-error-${findingIndex}" class="error-message text-sm text-red-600 dark:text-red-400 hidden"></div>
-                </div>
-                <div>
-                    <label for="kategori_temuan_${findingIndex}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Kategori Temuan <span class="text-red-500">*</span></label>
-                    <select name="findings[${findingIndex}][kategori_temuan]" id="kategori_temuan_${findingIndex}" title="Pilih kategori temuan" class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm transition duration-150" required aria-describedby="kategori-error-${findingIndex}">
-                        <option value="" disabled selected>Pilih Kategori</option>
-                        ${categoryOptions}
-                    </select>
-                    <div id="kategori-error-${findingIndex}" class="error-message text-sm text-red-600 dark:text-red-400 hidden"></div>
-                </div>
-                <div>
-                    <label for="saran_perbaikan_${findingIndex}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Saran Perbaikan</label>
-                    <textarea name="findings[${findingIndex}][saran_perbaikan]" id="saran_perbaikan_${findingIndex}" rows="4" title="Masukkan saran perbaikan (opsional)" placeholder="Tulis saran perbaikan di sini..." class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm transition duration-150" aria-describedby="saran-error-${findingIndex}"></textarea>
-                    <div id="saran-error-${findingIndex}" class="error-message text-sm text-red-600 dark:text-red-400 hidden"></div>
-                </div>
-                <div class="flex gap-2">
-                    <button type="button" class="remove-finding px-3 py-1 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition duration-150 flex items-center gap-1" aria-label="Hapus temuan ini">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        Hapus Temuan Ini
-                    </button>
-                    <button type="button" class="add-same-kriteria px-3 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition duration-150 flex items-center gap-1" aria-label="Tambah temuan pada kriteria ini">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                        Tambah Temuan pada Kriteria Ini
-                    </button>
-                </div>
-            </div>
-        `;
-    }
+        // Add Finding with Same Kriteria & Remove Finding via delegation
+        findingsContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('add-same-kriteria')) {
+                if (@json($kriterias).length === 0) {
+                    displayMessage('Tidak ada kriteria tersedia untuk ditambahkan.', 'error');
+                    return;
+                }
+                const findingItem = e.target.closest('.finding-item');
+                const kriteriaSelect = findingItem.querySelector(`select[name^="findings["][name$="[kriteria_id]"]`);
+                const kriteriaId = kriteriaSelect ? kriteriaSelect.value : '';
 
-    function reindexFindings() {
-        const findingItems = findingsContainer.querySelectorAll('.finding-item');
-        findingItems.forEach((item, index) => {
-            item.setAttribute('data-finding-index', index);
+                if (!kriteriaId) {
+                    displayMessage('Silakan pilih standar terlebih dahulu sebelum menambahkan temuan pada kriteria ini.', 'error');
+                    return;
+                }
+                addFindingItem(kriteriaId);
 
-            item.querySelectorAll('[name*="[kriteria_id]"]').forEach(el => {
-                el.name = `findings[${index}][kriteria_id]`;
-                el.id = `kriteria_id_${index}`;
-                el.setAttribute('aria-describedby', `kriteria-error-${index}`);
-            });
-            item.querySelectorAll('[id^="kriteria-error-"]').forEach(el => el.id = `kriteria-error-${index}`);
-
-            item.querySelectorAll('[name*="[uraian_temuan]"]').forEach(el => {
-                el.name = `findings[${index}][uraian_temuan]`;
-                el.id = `uraian_temuan_${index}`;
-                el.setAttribute('aria-describedby', `uraian-error-${index}`);
-            });
-            item.querySelectorAll('[id^="uraian-error-"]').forEach(el => el.id = `uraian-error-${index}`);
-
-            item.querySelectorAll('[name*="[kategori_temuan]"]').forEach(el => {
-                el.name = `findings[${index}][kategori_temuan]`;
-                el.id = `kategori_temuan_${index}`;
-                el.setAttribute('aria-describedby', `kategori-error-${index}`);
-            });
-            item.querySelectorAll('[id^="kategori-error-"]').forEach(el => el.id = `kategori-error-${index}`);
-
-            item.querySelectorAll('[name*="[saran_perbaikan]"]').forEach(el => {
-                el.name = `findings[${index}][saran_perbaikan]`;
-                el.id = `saran_perbaikan_${index}`;
-                el.setAttribute('aria-describedby', `saran-error-${index}`);
-            });
-            item.querySelectorAll('[id^="saran-error-"]').forEach(el => el.id = `saran-error-${index}`);
-        });
-    }
-
-    document.getElementById('addFinding').addEventListener('click', function() {
-        const currentFindingItemsCount = findingsContainer.querySelectorAll('.finding-item').length;
-        const newFindingIndex = currentFindingItemsCount;
-
-        const newFindingWrapper = document.createElement('div');
-        newFindingWrapper.innerHTML = createFindingFields(newFindingIndex);
-        const newFindingItem = newFindingWrapper.firstElementChild;
-
-        findingsContainer.appendChild(newFindingItem);
-        setTimeout(() => newFindingItem.classList.remove('opacity-0'), 50);
-        reindexFindings();
-    });
-
-    findingsContainer.addEventListener('click', async function(event) {
-        const removeTarget = event.target.closest('.remove-finding');
-        const addSameKriteriaTarget = event.target.closest('.add-same-kriteria');
-
-        if (removeTarget) {
-            if (isRemoving) return;
-
-            const findingItem = removeTarget.closest('.finding-item');
-            const allFindingItems = findingsContainer.querySelectorAll('.finding-item');
-
-            if (allFindingItems.length <= 1) {
-                await showCustomModal('Peringatan', 'Minimal satu temuan harus tetap ada.', false);
-                return;
-            }
-
-            isRemoving = true;
-            if (findingItem) {
-                findingItem.classList.add('opacity-0');
-                setTimeout(() => {
+            } else if (e.target.classList.contains('remove-finding')) {
+                const findingItem = e.target.closest('.finding-item');
+                if (findingsContainer.querySelectorAll('.finding-item').length > 1) {
                     findingItem.remove();
-                    reindexFindings();
-                    isRemoving = false;
-                }, 200);
-            } else {
-                isRemoving = false;
-            }
-        }
-
-        if (addSameKriteriaTarget) {
-            const findingItem = addSameKriteriaTarget.closest('.finding-item');
-            const kriteriaInput = findingItem.querySelector('[name*="[kriteria_id]"]');
-            if (!kriteriaInput || !kriteriaInput.value) {
-                await showCustomModal('Peringatan', 'Silakan pilih standar terlebih dahulu.', false);
-                return;
-            }
-
-            const kriteriaId = kriteriaInput.value;
-            const currentFindingItemsCount = findingsContainer.querySelectorAll('.finding-item').length;
-            const newFindingIndex = currentFindingItemsCount;
-
-            const newFindingWrapper = document.createElement('div');
-            newFindingWrapper.innerHTML = createFindingFields(newFindingIndex, kriteriaId);
-            const newFindingItem = newFindingWrapper.firstElementChild;
-
-            findingsContainer.appendChild(newFindingItem);
-            setTimeout(() => newFindingItem.classList.remove('opacity-0'), 50);
-            reindexFindings();
-        }
-    });
-
-    laporanForm.addEventListener('submit', async function(event) {
-        event.preventDefault();
-        let isValid = true;
-
-        const allFindingItems = findingsContainer.querySelectorAll('.finding-item');
-
-        if (allFindingItems.length === 0) {
-            await showCustomModal('Peringatan', 'Harap tambahkan setidaknya satu temuan.', false);
-            isValid = false;
-        } else {
-            document.querySelectorAll('.finding-item .error-message').forEach(el => {
-                el.classList.add('hidden');
-                el.textContent = '';
-            });
-
-            allFindingItems.forEach((findingItem, index) => {
-                const kriteriaInput = findingItem.querySelector(`[name="findings[${index}][kriteria_id]"]`);
-                const uraianInput = findingItem.querySelector(`textarea[name="findings[${index}][uraian_temuan]"]`);
-                const kategoriInput = findingItem.querySelector(`select[name="findings[${index}][kategori_temuan]"]`);
-
-                const kriteria = kriteriaInput ? kriteriaInput.value : '';
-                const uraian = uraianInput ? uraianInput.value.trim() : '';
-                const kategori = kategoriInput ? kategoriInput.value : '';
-
-                const kriteriaErrorDiv = findingItem.querySelector(`#kriteria-error-${index}`);
-                const uraianErrorDiv = findingItem.querySelector(`#uraian-error-${index}`);
-                const kategoriErrorDiv = findingItem.querySelector(`#kategori-error-${index}`);
-
-                if (!kriteria) {
-                    if (kriteriaErrorDiv) {
-                        kriteriaErrorDiv.textContent = 'Standar wajib dipilih.';
-                        kriteriaErrorDiv.classList.remove('hidden');
-                    }
-                    isValid = false;
+                    updateFindingIndices();
+                } else {
+                    displayMessage('Setidaknya harus ada satu temuan.', 'error');
                 }
-                if (!uraian) {
-                    uraianErrorDiv.textContent = 'Uraian temuan wajib diisi.';
-                    uraianErrorDiv.classList.remove('hidden');
-                    isValid = false;
-                }
-                if (!kategori) {
-                    kategoriErrorDiv.textContent = 'Kategori temuan wajib dipilih.';
-                    kategoriErrorDiv.classList.remove('hidden');
-                    isValid = false;
-                }
-            });
-        }
-
-        if (isValid) {
-            const confirmed = await showCustomModal('Konfirmasi', 'Apakah Anda yakin ingin menyimpan laporan temuan ini?', true);
-            if (confirmed) {
-                submitButton.disabled = true;
-                submitButton.classList.add('opacity-75', 'cursor-not-allowed');
-                loadingSpinner.classList.remove('hidden');
-                laporanForm.submit();
-            } else {
-                submitButton.disabled = false;
-                submitButton.classList.remove('opacity-75', 'cursor-not-allowed');
-                loadingSpinner.classList.add('hidden');
             }
-        } else {
-            submitButton.disabled = false;
-            submitButton.classList.remove('opacity-75', 'cursor-not-allowed');
-            loadingSpinner.classList.add('hidden');
-        }
-    });
-
-    reindexFindings();
-
-    @if ($errors->any() && old('findings'))
-        document.querySelectorAll('.finding-item').forEach((item, index) => {
-            const errorKriteria = document.querySelector(`#kriteria-error-${index}`);
-            const errorUraian = document.querySelector(`#uraian-error-${index}`);
-            const errorKategori = document.querySelector(`#kategori-error-${index}`);
-            const errorSaran = document.querySelector(`#saran-error-${index}`);
-
-            @error('findings.' . $index . '.kriteria_id')
-                if (errorKriteria) { errorKriteria.textContent = "{{ $message }}"; errorKriteria.classList.remove('hidden'); }
-            @enderror
-            @error('findings.' . $index . '.uraian_temuan')
-                if (errorUraian) { errorUraian.textContent = "{{ $message }}"; errorUraian.classList.remove('hidden'); }
-            @enderror
-            @error('findings.' . $index . '.kategori_temuan')
-                if (errorKategori) { errorKategori.textContent = "{{ $message }}"; errorKategori.classList.remove('hidden'); }
-            @enderror
-            @error('findings.' . $index . '.saran_perbaikan')
-                if (errorSaran) { errorSaran.textContent = "{{ $message }}"; errorSaran.classList.remove('hidden'); }
-            @enderror
         });
-    @endif
-});
+
+        // Function to update data-finding-index, name, and id attributes for all inputs
+        function updateFindingIndices() {
+            findingsContainer.querySelectorAll('.finding-item').forEach((item, newIndex) => {
+                item.setAttribute('data-finding-index', newIndex);
+                item.querySelectorAll('[name^="findings["]').forEach(input => {
+                    const oldName = input.getAttribute('name');
+                    // Regex to find 'findings[any_number]' and replace it with 'findings[newIndex]'
+                    const newName = oldName.replace(/findings\[\d+\]/, `findings[${newIndex}]`);
+                    input.setAttribute('name', newName);
+                });
+                item.querySelectorAll('[id^="kriteria_id_"], [id^="uraian_temuan_"], [id^="kategori_temuan_"], [id^="saran_perbaikan_"]').forEach(input => {
+                    const oldId = input.getAttribute('id');
+                    // Regex to find '_any_number' at the end of the ID
+                    const newId = oldId.replace(/_\d+$/, `_${newIndex}`);
+                    input.setAttribute('id', newId);
+                });
+            });
+            findingCounter = findingsContainer.querySelectorAll('.finding-item').length;
+        }
+
+        // Disable buttons if no kriterias are available on initial load
+        if (@json($kriterias).length === 0) {
+            addFindingBtn.disabled = true;
+            addFindingBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            form.querySelector('button[type="submit"]').disabled = true;
+            form.querySelector('button[type="submit"]').classList.add('opacity-50', 'cursor-not-allowed');
+        }
+    });
 </script>
-@endsection
-```
+@endpush

@@ -149,18 +149,20 @@ Route::prefix('auditor')->middleware('auth.ami:auditor')->group(function () {
     Route::get('/data-instrumen/jurusan/{id}', [AuditController::class, 'auditorShowInstrumenJurusan'])->name('auditor.data-instrumen.instrumenjurusan');
     Route::patch('/data-instrumen/jurusan/update/{id}', [AuditController::class, 'auditorUpdateInstrumenResponse'])->name('auditor.instrumen.update')->where('id', '[0-9]+');
 
-    Route::get('/laporan', function () {
-        return view('auditor.laporan.index');
-    })->name('auditor.laporan.index');
+    // Route::get('/laporan', function () {
+    //     return view('auditor.laporan.index');
+    // })->name('auditor.laporan.index');
 
-    Route::get('laporan/{auditingId}', [LaporanTemuanController::class, 'index'])->name('auditor.laporan.index');
-    Route::get('laporan/{auditingId}/create', [LaporanTemuanController::class, 'create'])->name('auditor.laporan.create');
-    Route::post('laporan/{auditingId}', [LaporanTemuanController::class, 'store'])->name('auditor.laporan.store');
-    Route::get('laporan/{laporan_temuan_id}/detail', [LaporanTemuanController::class, 'show'])->name('auditor.laporan.detail');
-    Route::get('laporan/{auditingId}/{laporan_temuan_id}/edit', [LaporanTemuanController::class, 'edit'])->name('auditor.laporan.edit');
-    Route::put('laporan/{laporan_temuan_id}', [LaporanTemuanController::class, 'update'])->name('auditor.laporan.update');
-    Route::post('laporan/store-new-kriteria', [LaporanTemuanController::class, 'storeNewKriteria'])->name('auditor.laporan.storeNewKriteria');
-    Route::delete('laporan/{laporan_temuan_id}', [LaporanTemuanController::class, 'destroy'])->name('auditor.laporan.destroy');
+    Route::get('/laporan/{auditingId}', [LaporanTemuanController::class, 'index'])->name('auditor.laporan.index');
+    Route::get('/laporan/{auditingId}/create', [LaporanTemuanController::class, 'create'])->name('auditor.laporan.create');
+    Route::post('/laporan/{auditingId}', [LaporanTemuanController::class, 'store'])->name('auditor.laporan.store');
+    Route::get('/laporan/{auditingId}/{laporan_temuan_id}', [LaporanTemuanController::class, 'show'])->name('auditor.laporan.show');
+    Route::get('/laporan/{auditingId}/{laporan_temuan_id}/edit', [LaporanTemuanController::class, 'edit'])->name('auditor.laporan.edit');
+    Route::put('/laporan/{auditingId}/{laporan_temuan_id}', [LaporanTemuanController::class, 'update'])->name('auditor.laporan.update');
+    Route::delete('/laporan/{auditingId}/{laporan_temuan_id}', [LaporanTemuanController::class, 'destroy'])->name('auditor.laporan.destroy');
+    Route::post('laporan/{auditingId}/submit', [LaporanTemuanActionController::class, 'submit'])->name('auditor.laporan.submit');
+    Route::post('laporan/{auditingId}/accept', [LaporanTemuanActionController::class, 'accept'])->name('auditor.laporan.accept');
+    Route::post('laporan/{auditingId}/revise', [LaporanTemuanActionController::class, 'revise'])->name('auditor.laporan.revise');
 
     Route::get('/ptpp', function () {
         return view('auditor.ptpp.index');
