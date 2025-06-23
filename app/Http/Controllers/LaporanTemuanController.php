@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Validator; // Penting: tambahkan ini
+use Illuminate\Support\Facades\Validator;
 
 class LaporanTemuanController extends Controller
 {
@@ -19,10 +19,24 @@ class LaporanTemuanController extends Controller
     public function index(Request $request, $auditingId)
     {
         try {
-            // 1. Fetch all relevant laporan temuan from the API for the given auditingId
-            $response = Http::timeout(30)->retry(2, 100)->get("{$this->apiBaseUrl}/laporan-temuan", [
+            // Ambil parameter pencarian dan per_page dari request Laravel
+            $searchTerm = $request->query('search');
+            $perPage = $request->query('per_page', 10); // Default ke 10 jika tidak ada
+
+            // Persiapkan parameter untuk dikirim ke API eksternal
+            $apiParams = [
                 'auditing_id' => $auditingId,
-            ]);
+                'per_page' => $perPage, // <-- Penting: Teruskan per_page ke API
+            ];
+
+            // Jika ada searchTerm, tambahkan ke parameter API
+            if ($searchTerm) {
+                $apiParams['search'] = $searchTerm; // <-- Penting: Teruskan search ke API
+            }
+
+            // 1. Fetch all relevant laporan temuan from the API for the given auditingId
+            // Sertakan semua $apiParams yang relevan (termasuk search dan per_page)
+            $response = Http::timeout(30)->retry(2, 100)->get("{$this->apiBaseUrl}/laporan-temuan", $apiParams);
 
             if (!$response->successful()) {
                 Log::error('API laporan-temuan failed: Status ' . $response->status() . ', Body: ' . $response->body());
@@ -32,12 +46,14 @@ class LaporanTemuanController extends Controller
 
             $apiResponse = $response->json();
 
+            // Pastikan struktur respons API valid
             if (!isset($apiResponse['status']) || !is_array($apiResponse['data'])) {
                 Log::error('Invalid API response structure (index): ' . json_encode($apiResponse));
                 return redirect()->route('auditor.dashboard.index')
                     ->with('error', 'Format respons API tidak valid.');
             }
 
+            // Periksa status yang dikembalikan API
             if (!$apiResponse['status']) {
                 Log::error('API returned failure (index): ' . ($apiResponse['message'] ?? 'No message'));
                 return redirect()->route('auditor.dashboard.index')
@@ -47,6 +63,8 @@ class LaporanTemuanController extends Controller
             $laporanTemuansData = collect($apiResponse['data']);
 
             // 2. Group the data by kriteria_id for display with rowspan
+            // Catatan: Filtering dan pagination *seharusnya* sudah dilakukan di API.
+            // Grouping ini untuk tampilan agar temuan per kriteria bisa digabungkan.
             $groupedLaporanTemuans = $laporanTemuansData->groupBy('kriteria_id');
 
             // 3. Transform grouped data for easier rendering and consistent structure
@@ -68,18 +86,17 @@ class LaporanTemuanController extends Controller
             })->values()->all();
 
             // 4. Manual Pagination for the grouped items (each "item" in paginator is a kriteria group)
+            // Asumsi API Anda sudah memaginasi dan mengembalikan data yang *sudah* untuk halaman saat ini.
+            // Jika API Anda mengembalikan SEMUA data yang difilter, maka Anda perlu melakukan slicing di sini.
+            // Namun, untuk efisiensi, praktik terbaik adalah API yang melakukan pagination.
             $page = $request->query('page', 1);
-            $perPage = $request->query('per_page', 10); // Default perPage for groups
-            $totalGroupedItems = count($processedGroupedData);
-
-            $paginatedCollection = Collection::make($processedGroupedData);
-            $itemsForCurrentPage = $paginatedCollection->slice(($page - 1) * $perPage, $perPage)->values();
+            $totalGroupedItems = count($processedGroupedData); // Jumlah item setelah filtering oleh API
 
             $laporanTemuansPaginated = new LengthAwarePaginator(
-                $itemsForCurrentPage,
-                $totalGroupedItems,
-                $perPage,
-                $page,
+                $processedGroupedData, // Ini adalah data yang sudah difilter & dipaginasi (jika API memaginasi)
+                $totalGroupedItems,    // Total item setelah filter
+                $perPage,              // Per page yang diminta
+                $page,                 // Halaman saat ini
                 [
                     'path' => $request->url(),
                     'query' => $request->query(),
@@ -138,27 +155,26 @@ class LaporanTemuanController extends Controller
     public function store(Request $request)
     {
         try {
-            // Menggunakan Validator Facade
             $validator = Validator::make($request->all(), [
-                'auditing_id' => 'required|numeric',
+                'auditing_id' => 'required|exists:auditings,auditing_id',
                 'findings' => 'required|array|min:1',
                 'findings.*.kriteria_id' => 'required|numeric',
                 'findings.*.uraian_temuan' => 'required|string|max:1000',
                 'findings.*.kategori_temuan' => 'required|in:NC,AOC,OFI',
                 'findings.*.saran_perbaikan' => 'nullable|string|max:1000',
             ], [
-                'auditing_id.required' => 'ID audit wajib diisi.',
-                'findings.required' => 'Setidaknya satu temuan harus ditambahkan.',
-                'findings.min' => 'Setidaknya satu temuan harus ditambahkan.',
-                'findings.*.kriteria_id.required' => 'Standar wajib dipilih untuk setiap temuan.',
-                'findings.*.uraian_temuan.required' => 'Uraian temuan wajib diisi.',
-                'findings.*.kategori_temuan.required' => 'Kategori temuan wajib dipilih.',
-                'findings.*.kategori_temuan.in' => 'Kategori temuan harus NC, AOC, atau OFI.',
+                'auditing_id.required' => 'Audit ID is required.',
+                'auditing_id.exists' => 'Invalid audit ID.',
+                'findings.required' => 'At least one finding is required.',
+                'findings.min' => 'At least one finding is required.',
+                'findings.*.kriteria_id.required' => 'Standard ID is required for each finding.',
+                'findings.*.uraian_temuan.required' => 'Finding description is required.',
+                'findings.*.kategori_temuan.required' => 'Finding category is required.',
+                'findings.*.kategori_temuan.in' => 'Finding category must be NC, AOC, or OFI.',
             ]);
 
             if ($validator->fails()) {
-                Log::warning('Validation failed in store: ', $validator->errors()->toArray());
-                // Menggunakan redirect back dengan errors untuk formulir HTML standar
+                Log::warning('Validation failed for storing laporan temuan: ' . json_encode($validator->errors()));
                 return back()->withInput()->withErrors($validator);
             }
 
@@ -178,13 +194,11 @@ class LaporanTemuanController extends Controller
 
             $response = Http::timeout(30)->retry(2, 100)->post("{$this->apiBaseUrl}/laporan-temuan", $payload);
 
-            // Mendapatkan auditing_id untuk redirect jika berhasil atau gagal API
             $auditingId = $request->auditing_id;
 
             if (!$response->successful()) {
                 Log::error('API store failed: Status ' . $response->status() . ', Body: ' . $response->body());
                 $errorMessage = 'Gagal menyimpan laporan temuan dari API: ' . ($response->json()['message'] ?? 'Kesalahan server');
-                // Redirect back dengan pesan error
                 return back()->withInput()->with('error', $errorMessage);
             }
 
@@ -192,17 +206,14 @@ class LaporanTemuanController extends Controller
             if (!isset($apiResponse['status']) || !$apiResponse['status']) {
                 Log::error('API store returned failure: ' . ($apiResponse['message'] ?? 'No message'));
                 $errorMessage = $apiResponse['message'] ?? 'Gagal menyimpan laporan temuan.';
-                // Redirect back dengan pesan error dari API
                 return back()->withInput()->with('error', $errorMessage);
             }
 
-            // Jika berhasil, redirect ke halaman index dengan pesan sukses
             return redirect()->route('auditor.laporan.index', ['auditingId' => $auditingId])
                 ->with('success', 'Laporan temuan berhasil disimpan.');
 
         } catch (\Exception $e) {
             Log::error('Unexpected error in store: ' . $e->getMessage());
-            // Tangani exception tak terduga dengan redirect back dan pesan error
             return back()->withInput()->with('error', 'Terjadi kesalahan tak terduga saat menyimpan laporan temuan.');
         }
     }
@@ -237,15 +248,20 @@ class LaporanTemuanController extends Controller
 
             $laporan = $apiResponse['data'];
             $kriteriaResponse = Http::timeout(30)->retry(2, 100)->get("{$this->apiBaseUrl}/kriteria");
-            $kriteriaMap = [];
+            $kriterias = [];
             if ($kriteriaResponse->successful()) {
                 $kriteriaData = $kriteriaResponse->json();
-                $kriteriaMap = array_column($kriteriaData, 'nama_kriteria', 'kriteria_id');
+                $kriterias = array_map(function ($item) {
+                    return [
+                        'kriteria_id' => $item['kriteria_id'] ?? null,
+                        'nama_kriteria' => $item['nama_kriteria'] ?? 'Standar ' . ($item['kriteria_id'] ?? 'Unknown'),
+                    ];
+                }, $kriteriaData);
             } else {
                 Log::warning('Failed to fetch kriteria map for show: Status ' . $kriteriaResponse->status());
             }
 
-            return view('auditor.laporan.detail', compact('laporan', 'auditingId', 'kriteriaMap'));
+            return view('auditor.laporan.detail', compact('laporan', 'auditingId', 'kriterias'));
         } catch (\Exception $e) {
             Log::error('Unexpected error in show: ' . $e->getMessage());
             return redirect()->route('auditor.laporan.index', ['auditingId' => $auditingId])
@@ -304,7 +320,7 @@ class LaporanTemuanController extends Controller
             $findingData = [
                 'laporan_temuan_id' => $laporan['laporan_temuan_id'],
                 'auditing_id' => $laporan['auditing_id'],
-                'kriteria_id' => $laporan['kriteria_id'], // Pass single kriteria_id
+                'kriteria_id' => $laporan['kriteria_id'],
                 'uraian_temuan' => $laporan['uraian_temuan'],
                 'kategori_temuan' => $laporan['kategori_temuan'],
                 'saran_perbaikan' => $laporan['saran_perbaikan'],
@@ -321,12 +337,11 @@ class LaporanTemuanController extends Controller
     /**
      * Update the specified laporan temuan via API.
      */
-    public function update(Request $request, $auditingId, $laporan_temuan_id) // Tambahkan $auditingId, $laporan_temuan_id dari route
+    public function update(Request $request, $auditingId, $laporan_temuan_id)
     {
         try {
-            // Validasi input dari request
             $validator = Validator::make($request->all(), [
-                'auditing_id' => 'required|numeric', // tetap diperlukan jika dikirim dari form
+                'auditing_id' => 'required|numeric',
                 'kriteria_id' => 'required|numeric',
                 'uraian_temuan' => 'required|string|max:1000',
                 'kategori_temuan' => 'required|in:NC,AOC,OFI',
@@ -341,28 +356,24 @@ class LaporanTemuanController extends Controller
 
             if ($validator->fails()) {
                 Log::warning('Validation failed in update: ', $validator->errors()->toArray());
-                // Untuk formulir tradisional, redirect back dengan errors
                 return back()->withInput()->withErrors($validator);
             }
 
-            // Payload yang akan dikirim ke API eksternal
             $payload = [
-                'auditing_id' => (int)$request->auditing_id, // Ambil dari request body
+                'auditing_id' => (int)$request->auditing_id,
                 'kriteria_id' => (int)$request->kriteria_id,
                 'uraian_temuan' => trim($request->uraian_temuan),
                 'kategori_temuan' => trim($request->kategori_temuan),
                 'saran_perbaikan' => trim($request->saran_perbaikan ?? '') ?: null,
             ];
 
-            Log::info('Update request payload: ', $payload); // Pindahkan log ini ke sini
+            Log::info('Update request payload: ', $payload);
 
-            // Kirim PUT request ke API eksternal
-            $response = Http::timeout(30)->retry(2, 100)->put("{$this->apiBaseUrl}/laporan-temuan/{$laporan_temuan_id}", $payload); // Gunakan $laporan_temuan_id dari route
+            $response = Http::timeout(30)->retry(2, 100)->put("{$this->apiBaseUrl}/laporan-temuan/{$laporan_temuan_id}", $payload);
 
             if (!$response->successful()) {
                 Log::error('API update failed: Status ' . $response->status() . ', Body: ' . $response->body());
                 $errorMessage = 'Gagal memperbarui laporan temuan: ' . ($response->json()['message'] ?? 'Kesalahan server');
-                // Untuk formulir tradisional, redirect back dengan pesan error
                 return back()->withInput()->with('error', $errorMessage);
             }
 
@@ -370,18 +381,85 @@ class LaporanTemuanController extends Controller
             if (!isset($apiResponse['status']) || !$apiResponse['status']) {
                 Log::error('API update returned failure: ' . ($apiResponse['message'] ?? 'No message'));
                 $errorMessage = $apiResponse['message'] ?? 'Gagal memperbarui laporan temuan.';
-                // Untuk formulir tradisional, redirect back dengan pesan error
                 return back()->withInput()->with('error', $errorMessage);
             }
 
-            // Jika berhasil, redirect ke halaman index dengan pesan sukses
             return redirect()->route('auditor.laporan.index', ['auditingId' => $auditingId])
                 ->with('success', 'Laporan temuan berhasil diperbarui.');
 
         } catch (\Exception $e) {
             Log::error('Unexpected error in update: ' . $e->getMessage());
-            // Tangani exception tak terduga dengan redirect back dan pesan error
             return back()->withInput()->with('error', 'Terjadi kesalahan tak terduga saat memperbarui laporan temuan.');
+        }
+    }
+
+    /**
+     * Update the status of an audit via API.
+     * This method handles the "Submit & Kunci Jawaban", "Diterima", and "Revisi" actions.
+     */
+    public function updateAuditStatus(Request $request, $auditingId)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'status' => 'required|numeric|in:7,8,9', // Status: 7=Laporan Temuan, 8=Revisi, 9=Sudah revisi
+            ], [
+                'status.required' => 'Status tidak boleh kosong.',
+                'status.numeric' => 'Format status tidak valid.',
+                'status.in' => 'Status yang dipilih tidak valid.'
+            ]);
+
+            if ($validator->fails()) {
+                Log::warning('Validation failed for updateAuditStatus: ' . json_encode($validator->errors()));
+                return back()->withInput()->withErrors($validator);
+            }
+
+            $newStatus = (int)$request->status;
+
+            // Payload for the external API to update the audit status
+            $payload = [
+                'status' => $newStatus,
+            ];
+
+            Log::info("Update audit status request for Auditing ID: {$auditingId}, new status: {$newStatus}");
+
+            // Send PUT request to the external API for auditings
+            // Assuming your external API has an endpoint like PUT /api/auditings/{id}
+            $response = Http::timeout(30)->retry(2, 100)->put("{$this->apiBaseUrl}/auditings/{$auditingId}", $payload);
+
+            if (!$response->successful()) {
+                Log::error('API update audit status failed: Status ' . $response->status() . ', Body: ' . $response->body());
+                $errorMessage = 'Gagal memperbarui status audit: ' . ($response->json()['message'] ?? 'Kesalahan server API.');
+                return back()->with('error', $errorMessage);
+            }
+
+            $apiResponse = $response->json();
+            if (!isset($apiResponse['status']) || !$apiResponse['status']) {
+                Log::error('API update audit status returned failure: ' . ($apiResponse['message'] ?? 'No message'));
+                $errorMessage = $apiResponse['message'] ?? 'Gagal memperbarui status audit.';
+                return back()->with('error', $errorMessage);
+            }
+
+            $successMessage = '';
+            switch ($newStatus) {
+                case 7:
+                    $successMessage = 'Laporan temuan berhasil di-Submit dan dikunci.';
+                    break;
+                case 8:
+                    $successMessage = 'Permintaan revisi laporan temuan berhasil dikirim.';
+                    break;
+                case 9:
+                    $successMessage = 'Laporan temuan berhasil dinyatakan Diterima.';
+                    break;
+                default:
+                    $successMessage = 'Status audit berhasil diperbarui.';
+            }
+
+            return redirect()->route('auditor.laporan.index', ['auditingId' => $auditingId])
+                ->with('success', $successMessage);
+
+        } catch (\Exception $e) {
+            Log::error('Unexpected error in updateAuditStatus: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan tak terduga saat memperbarui status audit.');
         }
     }
 

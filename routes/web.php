@@ -163,7 +163,8 @@ Route::prefix('auditor')->middleware('auth.ami:auditor')->group(function () {
     Route::post('laporan/{auditingId}/submit', [LaporanTemuanActionController::class, 'submit'])->name('auditor.laporan.submit');
     Route::post('laporan/{auditingId}/accept', [LaporanTemuanActionController::class, 'accept'])->name('auditor.laporan.accept');
     Route::post('laporan/{auditingId}/revise', [LaporanTemuanActionController::class, 'revise'])->name('auditor.laporan.revise');
-
+    Route::put('/auditor/laporan/{auditingId}/update-status', [LaporanTemuanController::class, 'updateAuditStatus'])->name('auditor.laporan.update_audit_status');
+    
     Route::get('/ptpp', function () {
         return view('auditor.ptpp.index');
     })->name('auditor.ptpp.index');

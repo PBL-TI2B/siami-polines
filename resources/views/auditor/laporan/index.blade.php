@@ -29,9 +29,6 @@
             @if (session('error'))
                 {{ session('error') }}<br>
             @endif
-            {{-- In index page, $errors->any() typically comes from a redirect with errors,
-                 which is less common for a pure list view unless it's a delete operation.
-                 But including it for completeness if any other action might redirect with errors. --}}
             @foreach ($errors->all() as $error)
                 {{ $error }}<br>
             @endforeach
@@ -177,15 +174,100 @@
 
     <!-- Action Buttons (Below Table) -->
     <div class="mt-6 flex gap-2 justify-start">
-        <x-button href="{{ route('auditor.laporan.submit', ['auditingId' => $auditingId]) }}" color="sky" class="shadow-md hover:shadow-lg transition-all bg-blue-600 hover:bg-blue-700">
-            Submit & Kunci Jawaban
-        </x-button>
-        <x-button href="{{ route('auditor.laporan.accept', ['auditingId' => $auditingId]) }}" color="green" class="shadow-md hover:shadow-lg transition-all bg-green-600 hover:bg-green-700">
-            Diterima
-        </x-button>
-        <x-button href="{{ route('auditor.laporan.revise', ['auditingId' => $auditingId]) }}" color="yellow" class="shadow-md hover:shadow-lg transition-all bg-amber-600 hover:bg-amber-700">
-            Revisi
-        </x-button>
+        {{-- Form for Submit & Kunci Jawaban --}}
+        <form action="{{ route('auditor.laporan.update_audit_status', ['auditingId' => $auditingId]) }}" method="POST" class="inline-block"
+            onsubmit="return confirm('Apakah Anda yakin ingin Submit dan Mengunci Laporan Temuan? Ini akan mengunci laporan dari perubahan lebih lanjut.');">
+            @csrf
+            @method('PUT')
+            <input type="hidden" name="status" value="7"> {{-- Status for 'Laporan Temuan' --}}
+            <x-button type="submit" color="sky" class="shadow-md hover:shadow-lg transition-all">
+                Submit & Kunci Jawaban
+            </x-button>
+        </form>
+
+        {{-- Form for Diterima --}}
+        <form action="{{ route('auditor.laporan.update_audit_status', ['auditingId' => $auditingId]) }}" method="POST" class="inline-block"
+            onsubmit="return confirm('Apakah Anda yakin ingin menyatakan Laporan Temuan Diterima? Ini akan memindahkan laporan ke status sudah direvisi.');">
+            @csrf
+            @method('PUT')
+            <input type="hidden" name="status" value="9"> {{-- Status for 'Sudah revisi' --}}
+            <x-button type="submit" color="green" class="shadow-md hover:shadow-lg transition-all">
+                Diterima
+            </x-button>
+        </form>
+
+        {{-- Form for Revisi --}}
+        <form action="{{ route('auditor.laporan.update_audit_status', ['auditingId' => $auditingId]) }}" method="POST" class="inline-block"
+            onsubmit="return confirm('Apakah Anda yakin ingin meminta Revisi untuk Laporan Temuan ini? Auditee perlu merevisi laporan.');">
+            @csrf
+            @method('PUT')
+            <input type="hidden" name="status" value="8"> {{-- Status for 'Revisi' --}}
+            <x-button type="submit" color="yellow" class="shadow-md hover:shadow-lg transition-all">
+                Revisi
+            </x-button>
+        </form>
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Function to create and display a dynamic toast message
+        function showToast(message, type) {
+            let toastContainer = document.getElementById('toast-notification-container');
+            if (!toastContainer) {
+                const newContainer = document.createElement('div');
+                newContainer.id = 'toast-notification-container';
+                newContainer.className = 'fixed top-4 right-4 z-50 flex flex-col items-end space-y-3';
+                document.body.appendChild(newContainer);
+                toastContainer = newContainer;
+            }
+
+            const toast = document.createElement('div');
+            let bgColorClass = '';
+            let textColorClass = '';
+            let borderColorClass = '';
+
+            if (type === 'success') {
+                bgColorClass = 'bg-green-50 dark:bg-green-900/50';
+                textColorClass = 'text-green-700 dark:text-green-300';
+                borderColorClass = 'border-green-200 dark:border-green-700';
+            } else if (type === 'danger') {
+                bgColorClass = 'bg-red-50 dark:bg-red-900/50';
+                textColorClass = 'text-red-700 dark:text-red-300';
+                borderColorClass = 'border-red-200 dark:border-red-700';
+            } else {
+                bgColorClass = 'bg-blue-50 dark:bg-blue-900/50';
+                textColorClass = 'text-blue-700 dark:text-blue-300';
+                borderColorClass = 'border-blue-200 dark:border-blue-700';
+            }
+
+            toast.className = `p-4 rounded-lg text-sm border shadow-md transition-all duration-300 ease-out transform translate-x-full opacity-0 ${bgColorClass} ${textColorClass} ${borderColorClass}`;
+            toast.innerHTML = `<div>${message}</div>`;
+
+            toastContainer.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-x-full', 'opacity-0');
+                toast.classList.add('translate-x-0', 'opacity-100');
+            }, 100);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-x-0', 'opacity-100');
+                toast.classList.add('translate-x-full', 'opacity-0');
+                toast.addEventListener('transitionend', () => toast.remove());
+            }, 5000);
+        }
+
+        // Handle delete forms for individual findings (still using traditional confirm)
+        document.querySelectorAll('form[onsubmit*="confirm"]').forEach(form => {
+            form.addEventListener('submit', (event) => {
+                // For traditional forms, the page will reload after submission,
+                // so no need for explicit global loading overlay from JS here.
+                // The browser's default loading indicator will be shown.
+            });
+        });
+    });
+</script>
+@endpush
