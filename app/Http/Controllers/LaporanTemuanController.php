@@ -26,16 +26,15 @@ class LaporanTemuanController extends Controller
             // Persiapkan parameter untuk dikirim ke API eksternal
             $apiParams = [
                 'auditing_id' => $auditingId,
-                'per_page' => $perPage, // <-- Penting: Teruskan per_page ke API
+                'per_page' => $perPage,
             ];
 
             // Jika ada searchTerm, tambahkan ke parameter API
             if ($searchTerm) {
-                $apiParams['search'] = $searchTerm; // <-- Penting: Teruskan search ke API
+                $apiParams['search'] = $searchTerm;
             }
 
             // 1. Fetch all relevant laporan temuan from the API for the given auditingId
-            // Sertakan semua $apiParams yang relevan (termasuk search dan per_page)
             $response = Http::timeout(30)->retry(2, 100)->get("{$this->apiBaseUrl}/laporan-temuan", $apiParams);
 
             if (!$response->successful()) {
@@ -47,6 +46,7 @@ class LaporanTemuanController extends Controller
             $apiResponse = $response->json();
 
             // Pastikan struktur respons API valid
+            // Cek data di sini, karena API laporan-temuan masih mengembalikan 'data' langsung
             if (!isset($apiResponse['status']) || !is_array($apiResponse['data'])) {
                 Log::error('Invalid API response structure (index): ' . json_encode($apiResponse));
                 return redirect()->route('auditor.dashboard.index')
@@ -63,8 +63,6 @@ class LaporanTemuanController extends Controller
             $laporanTemuansData = collect($apiResponse['data']);
 
             // 2. Group the data by kriteria_id for display with rowspan
-            // Catatan: Filtering dan pagination *seharusnya* sudah dilakukan di API.
-            // Grouping ini untuk tampilan agar temuan per kriteria bisa digabungkan.
             $groupedLaporanTemuans = $laporanTemuansData->groupBy('kriteria_id');
 
             // 3. Transform grouped data for easier rendering and consistent structure
@@ -86,24 +84,30 @@ class LaporanTemuanController extends Controller
             })->values()->all();
 
             // 4. Manual Pagination for the grouped items (each "item" in paginator is a kriteria group)
-            // Asumsi API Anda sudah memaginasi dan mengembalikan data yang *sudah* untuk halaman saat ini.
-            // Jika API Anda mengembalikan SEMUA data yang difilter, maka Anda perlu melakukan slicing di sini.
-            // Namun, untuk efisiensi, praktik terbaik adalah API yang melakukan pagination.
             $page = $request->query('page', 1);
-            $totalGroupedItems = count($processedGroupedData); // Jumlah item setelah filtering oleh API
+            $totalGroupedItems = count($processedGroupedData);
 
             $laporanTemuansPaginated = new LengthAwarePaginator(
-                $processedGroupedData, // Ini adalah data yang sudah difilter & dipaginasi (jika API memaginasi)
-                $totalGroupedItems,    // Total item setelah filter
-                $perPage,              // Per page yang diminta
-                $page,                 // Halaman saat ini
+                $processedGroupedData,
+                $totalGroupedItems,
+                $perPage,
+                $page,
                 [
                     'path' => $request->url(),
                     'query' => $request->query(),
                 ]
             );
 
-            return view('auditor.laporan.index', compact('laporanTemuansPaginated', 'auditingId'));
+            // Fetch the specific audit status for button control
+            $auditResponse = Http::timeout(30)->retry(2, 100)->get("{$this->apiBaseUrl}/auditings/{$auditingId}");
+            $currentAuditStatus = null;
+            if ($auditResponse->successful() && isset($auditResponse->json()['status']) && $auditResponse->json()['status']) {
+                $currentAuditStatus = $auditResponse->json()['data']['status'] ?? null;
+            } else {
+                Log::warning("Failed to fetch current audit status for auditingId {$auditingId}. Status not available for button control.");
+            }
+
+            return view('auditor.laporan.index', compact('laporanTemuansPaginated', 'auditingId', 'currentAuditStatus'));
 
         } catch (\Exception $e) {
             Log::error('Unexpected error in index: ' . $e->getMessage());
@@ -433,7 +437,8 @@ class LaporanTemuanController extends Controller
             }
 
             $apiResponse = $response->json();
-            if (!isset($apiResponse['status']) || !$apiResponse['status']) {
+            // KOREKSI DI SINI: Cek 'success' dari API jika backend tidak bisa diubah
+            if (!isset($apiResponse['success']) || !$apiResponse['success']) { // <-- UBAH DARI 'status' MENJADI 'success'
                 Log::error('API update audit status returned failure: ' . ($apiResponse['message'] ?? 'No message'));
                 $errorMessage = $apiResponse['message'] ?? 'Gagal memperbarui status audit.';
                 return back()->with('error', $errorMessage);

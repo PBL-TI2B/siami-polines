@@ -39,9 +39,25 @@
     <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
         <!-- Action Buttons -->
         <div class="flex flex-wrap gap-2">
-            <x-button href="{{ route('auditor.laporan.create', ['auditingId' => $auditingId]) }}" color="sky" icon="heroicon-o-plus" class="shadow-md hover:shadow-lg transition-all">
-                Tambah Laporan Temuan
-            </x-button>
+            {{-- Tombol Tambah Laporan Temuan dengan kondisi disabled --}}
+            @php
+                // Tombol Tambah Laporan Temuan dan Aksi Edit/Hapus:
+                // Nonaktif jika status == 7 (dikunci) ATAU == 8 (revisi, menunggu auditee), ATAU >= 9 (diterima/selesai).
+                // Aktif hanya jika status < 7 (belum disubmit).
+                $isModificationLocked = (($currentAuditStatus ?? 0) >= 7);
+            @endphp
+
+            @if ($isModificationLocked)
+                <x-button href="#" color="sky" icon="heroicon-o-plus"
+                    class="shadow-md transition-all opacity-50 cursor-not-allowed" disabled>
+                    Tambah Laporan Temuan
+                </x-button>
+            @else
+                <x-button href="{{ route('auditor.laporan.create', ['auditingId' => $auditingId]) }}" color="sky" icon="heroicon-o-plus"
+                    class="shadow-md hover:shadow-lg transition-all">
+                    Tambah Laporan Temuan
+                </x-button>
+            @endif
         </div>
     </div>
 
@@ -131,22 +147,42 @@
 
                                     <td class="px-4 py-3 sm:px-6">
                                         <div class="flex items-center gap-2">
-                                            {{-- Link Edit --}}
-                                            <a href="{{ route('auditor.laporan.edit', ['auditingId' => $auditingId, 'laporan_temuan_id' => $laporan['laporan_temuan_id']]) }}"
-                                                class="text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-200 transition-colors duration-200">
-                                                <x-heroicon-o-pencil class="w-5 h-5" />
-                                            </a>
-                                            {{-- Form Delete --}}
-                                            <form action="{{ route('auditor.laporan.destroy', ['auditingId' => $auditingId, 'laporan_temuan_id' => $laporan['laporan_temuan_id']]) }}"
-                                                method="POST"
-                                                class="inline-block"
-                                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus laporan temuan ini?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 transition-colors duration-200">
-                                                    <x-heroicon-o-trash class="w-5 h-5" />
-                                                </button>
-                                            </form>
+                                            {{-- Kondisi disabled untuk aksi Edit dan Delete --}}
+                                            @php
+                                                // Nonaktif jika status >= 7 (sudah disubmit/dikunci, direvisi, diterima, atau tahap selanjutnya)
+                                                $isActionLocked = (($currentAuditStatus ?? 0) >= 7);
+                                            @endphp
+
+                                            @if ($isActionLocked)
+                                                {{-- Render disabled versions of links/buttons --}}
+                                                <a href="#"
+                                                    class="text-gray-400 dark:text-gray-600 pointer-events-none transition-colors duration-200">
+                                                    <x-heroicon-o-pencil class="w-5 h-5" />
+                                                </a>
+                                                <form action="#" method="POST" class="inline-block">
+                                                    <button type="button" disabled
+                                                        class="text-gray-400 dark:text-gray-600 opacity-50 cursor-not-allowed transition-colors duration-200">
+                                                        <x-heroicon-o-trash class="w-5 h-5" />
+                                                    </button>
+                                                </form>
+                                            @else
+                                                {{-- Link Edit --}}
+                                                <a href="{{ route('auditor.laporan.edit', ['auditingId' => $auditingId, 'laporan_temuan_id' => $laporan['laporan_temuan_id']]) }}"
+                                                    class="text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-200 transition-colors duration-200">
+                                                    <x-heroicon-o-pencil class="w-5 h-5" />
+                                                </a>
+                                                {{-- Form Delete --}}
+                                                <form action="{{ route('auditor.laporan.destroy', ['auditingId' => $auditingId, 'laporan_temuan_id' => $laporan['laporan_temuan_id']]) }}"
+                                                    method="POST"
+                                                    class="inline-block"
+                                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus laporan temuan ini?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 transition-colors duration-200">
+                                                        <x-heroicon-o-trash class="w-5 h-5" />
+                                                    </button>
+                                                </form>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>
@@ -175,36 +211,69 @@
     <!-- Action Buttons (Below Table) -->
     <div class="mt-6 flex gap-2 justify-start">
         {{-- Form for Submit & Kunci Jawaban --}}
+        @php
+            // Aktif jika status < 7 (belum disubmit)
+            // Nonaktif jika status >= 7 (sudah disubmit, revisi, diterima, dll)
+            $canSubmit = (($currentAuditStatus ?? 0) < 7);
+        @endphp
         <form action="{{ route('auditor.laporan.update_audit_status', ['auditingId' => $auditingId]) }}" method="POST" class="inline-block"
             onsubmit="return confirm('Apakah Anda yakin ingin Submit dan Mengunci Laporan Temuan? Ini akan mengunci laporan dari perubahan lebih lanjut.');">
             @csrf
             @method('PUT')
             <input type="hidden" name="status" value="7"> {{-- Status for 'Laporan Temuan' --}}
-            <x-button type="submit" color="sky" class="shadow-md hover:shadow-lg transition-all">
-                Submit & Kunci Jawaban
-            </x-button>
+            @if (!$canSubmit)
+                <x-button type="submit" color="sky" class="shadow-md transition-all opacity-50 cursor-not-allowed" disabled>
+                    Submit & Kunci Jawaban
+                </x-button>
+            @else
+                <x-button type="submit" color="sky" class="shadow-md hover:shadow-lg transition-all">
+                    Submit & Kunci Jawaban
+                </x-button>
+            @endif
         </form>
 
         {{-- Form for Diterima --}}
+        @php
+            // Aktif jika status == 7 (Laporan Temuan) ATAU == 8 (Revisi)
+            // Nonaktif jika status < 7 (belum disubmit) ATAU >= 9 (sudah diterima/selesai)
+            $canAccept = (($currentAuditStatus ?? 0) == 7) || (($currentAuditStatus ?? 0) == 8);
+        @endphp
         <form action="{{ route('auditor.laporan.update_audit_status', ['auditingId' => $auditingId]) }}" method="POST" class="inline-block"
             onsubmit="return confirm('Apakah Anda yakin ingin menyatakan Laporan Temuan Diterima? Ini akan memindahkan laporan ke status sudah direvisi.');">
             @csrf
             @method('PUT')
             <input type="hidden" name="status" value="9"> {{-- Status for 'Sudah revisi' --}}
-            <x-button type="submit" color="green" class="shadow-md hover:shadow-lg transition-all">
-                Diterima
-            </x-button>
+            @if (!$canAccept)
+                <x-button type="submit" color="green" class="shadow-md transition-all opacity-50 cursor-not-allowed" disabled>
+                    Diterima
+                </x-button>
+            @else
+                <x-button type="submit" color="green" class="shadow-md hover:hover:bg-green-700 transition-all">
+                    Diterima
+                </x-button>
+            @endif
         </form>
 
         {{-- Form for Revisi --}}
+        @php
+            // Aktif jika status == 7 (Laporan Temuan)
+            // Nonaktif jika status < 7 (belum disubmit) ATAU >= 8 (sudah revisi, diterima, selesai)
+            $canRequestRevision = (($currentAuditStatus ?? 0) == 7);
+        @endphp
         <form action="{{ route('auditor.laporan.update_audit_status', ['auditingId' => $auditingId]) }}" method="POST" class="inline-block"
             onsubmit="return confirm('Apakah Anda yakin ingin meminta Revisi untuk Laporan Temuan ini? Auditee perlu merevisi laporan.');">
             @csrf
             @method('PUT')
             <input type="hidden" name="status" value="8"> {{-- Status for 'Revisi' --}}
-            <x-button type="submit" color="yellow" class="shadow-md hover:shadow-lg transition-all">
-                Revisi
-            </x-button>
+            @if (!$canRequestRevision)
+                <x-button type="submit" color="yellow" class="shadow-md transition-all opacity-50 cursor-not-allowed" disabled>
+                    Revisi
+                </x-button>
+            @else
+                <x-button type="submit" color="yellow" class="shadow-md hover:hover:bg-amber-700 transition-all">
+                    Revisi
+                </x-button>
+            @endif
         </form>
     </div>
 </div>
