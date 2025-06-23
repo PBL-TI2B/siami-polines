@@ -16,7 +16,6 @@ use App\Http\Livewire\PeriodeAudit;
 use App\Http\Controllers\LaporanTemuanController;
 use Illuminate\Support\Facades\Route;
 
-
 Route::get('/', function () {
     return view('login');
 });
@@ -163,29 +162,18 @@ Route::prefix('auditor')->middleware('auth.ami:auditor')->group(function () {
     Route::post('laporan/{auditingId}/submit', [LaporanTemuanActionController::class, 'submit'])->name('auditor.laporan.submit');
     Route::post('laporan/{auditingId}/accept', [LaporanTemuanActionController::class, 'accept'])->name('auditor.laporan.accept');
     Route::post('laporan/{auditingId}/revise', [LaporanTemuanActionController::class, 'revise'])->name('auditor.laporan.revise');
-    Route::put('/auditor/laporan/{auditingId}/update-status', [LaporanTemuanController::class, 'updateAuditStatus'])->name('auditor.laporan.update_audit_status');
-    
+        Route::put('/auditor/laporan/{auditingId}/update-status', [LaporanTemuanController::class, 'updateAuditStatus'])->name('auditor.laporan.update_audit_status');
+
     Route::get('/ptpp', function () {
         return view('auditor.ptpp.index');
     })->name('auditor.ptpp.index');
 });
 
-
 Route::prefix('auditee')->middleware('auth.ami:auditee')->group(function () {
     Route::get('/dashboard', function () {
         return view('auditee.dashboard.index');
     })->name('auditee.dashboard.index');
-    Route::prefix('pengisian-instrumen')->group(function () {
-        Route::get('/', function () {
-            return view('auditee.pengisian-instrumen.index');
-        })->name('auditee.pengisian-instrumen.index');
-        Route::get('/instrumen-upt', function ($id) {
-            return view('auditee.pengisian-instrumen.instrumen-upt');
-        })->name('auditee.pengisian-instrumen.instrumen-upt');
-    });
-    Route::get('/tindak-lanjut-perbaikan', function () {
-        return view('auditee.tindak-lanjut-perbaikan.index');
-    })->name('auditee.tindak-lanjut-perbaikan.index');
+
     Route::get('/riwayat-audit', function () {
         return view('auditee.riwayat-audit.index');
     })->name('auditee.riwayat-audit.index');
@@ -202,7 +190,7 @@ Route::prefix('auditee')->middleware('auth.ami:auditee')->group(function () {
         Route::get('/instrumen-jurusan/{auditingId}', [AuditController::class, 'showAuditeeInstrumenJurusan'])->name('auditee.data-instrumen.instrumenjurusan');
 
         // Rute untuk Assesmen Lapangan
-        Route::get('/assesmen-lapangan', [PlotingAMIController::class, 'lihatJadwal'])->name('auditee.assesmen-lapangan.index');
+        Route::get('/assesmen-lapangan/{auditingId}', [PlotingAMIController::class, 'lihatJadwal'])->name('auditee.assesmen-lapangan.index');
 
         // Rute untuk daftar tilik
         Route::prefix('daftar-tilik')->group(function () {
@@ -210,8 +198,15 @@ Route::prefix('auditee')->middleware('auth.ami:auditee')->group(function () {
             Route::get('/{id}/edit', [DaftarTilikController::class, 'editauditee'])->name('auditee.daftar-tilik.edit');
             Route::get('/{tilik_id}/create', [DaftarTilikController::class, 'createauditee'])->name('auditee.daftar-tilik.create');
         });
-    });
 
+        // Rute untuk PTPP
+        Route::prefix('laporan-temuan')->group(function () {
+            Route::get('/{auditingId}', [AuditController::class, 'showAuditeeLaporanTemuan'])->name('auditee.laporan-temuan.index');
+            Route::get('/tindak-lanjut/{id}', [AuditController::class, 'tindakLanjutPTPP'])->name('auditee.laporan-temuan.tindak-lanjut');
+            Route::get('/download-ptpp/{auditing}', [AuditController::class, 'downloadPTPP'])->name('auditee.laporan-temuan.download-ptpp');
+        });
+
+    });
 
     // Data Instrumen
     Route::prefix('data-instrumen')->group(function () {
@@ -255,3 +250,5 @@ Route::prefix('admin-unit')->middleware('auth.ami:admin-unit')->group(function (
 //Route::get('/pengaturan-akun', [UserController::class, 'editpassword'])->name('pengaturan-akun');
 //Route::get('/edit-profile', [UserController::class, 'editprofile'])->name('profile.editProfile');
 Route::get('/profile', [UserController::class, 'profile'])->name('profile');
+
+

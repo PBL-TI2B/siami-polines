@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Models\Auditing;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 
 class AuditController extends Controller
@@ -140,12 +141,14 @@ class AuditController extends Controller
                 };
                 $assessmentScheduleRoute = route('auditee.assesmen-lapangan.index', ['auditingId' => $currentAuditingIdForRoutes]);
                 $tilikResponseRoute = route('auditee.daftar-tilik.index', ['auditingId' => $currentAuditingIdForRoutes]);
+                $laporanTemuanRoute = route('auditee.laporan-temuan.index', ['auditingId' => $currentAuditingIdForRoutes]);
 
                 return view('auditee.audit.progress-detail', [
                     'audit' => $audit,
                     'instrumenRoute' => $instrumenRoute,
                     'assessmentScheduleRoute' => $assessmentScheduleRoute,
                     'tilikResponseRoute' => $tilikResponseRoute,
+                    'laporanTemuanRoute' => $laporanTemuanRoute,
                 ]);
             } else if ($response->status() == 404) {
                 return back()->with('error', 'Tidak ada data audit yang ditemukan untuk user Anda dari sistem eksternal.');
@@ -378,7 +381,63 @@ class AuditController extends Controller
         }
     }
 
+    public function showAuditeeLaporanTemuan(Request $request, $auditingId)
+    {
+        $userId = session('user')['user_id'] ?? null;
+        if (!$userId) {
+            return redirect()->route('login')->with('error', 'Silakan login untuk mengakses laporan temuan.');
+        }
 
+        try {
+            // Ambil data audit dari API berdasarkan userId
+            $response = Http::get("http://127.0.0.1:5000/api/auditings/userID={$userId}");
+
+            if (!$response->successful()) {
+                \Log::error("Gagal mengambil data audit untuk user {$userId}: " . $response->body());
+                return back()->with('error', 'Gagal mengambil data audit dari sistem eksternal.');
+            }
+
+            $apiData = $response->json();
+            $allUserAudits = $apiData['data'] ?? [];
+
+            // Cari audit spesifik berdasarkan auditingId
+            $audit = null;
+            foreach ($allUserAudits as $item) {
+                if (is_array($item) && isset($item['auditing_id']) && (string)$item['auditing_id'] === (string)$auditingId) {
+                    $audit = $item;
+                    break;
+                }
+            }
+
+            if (!$audit) {
+                \Log::warning("Audit dengan ID {$auditingId} tidak ditemukan untuk user {$userId}.");
+                return back()->with('error', 'Data audit tidak ditemukan.');
+            }
+
+            // Validasi auditee
+            $isAuditee1 = isset($audit['user_id_1_auditee']) && $audit['user_id_1_auditee'] == $userId;
+            $isAuditee2 = isset($audit['user_id_2_auditee']) && $audit['user_id_2_auditee'] == $userId;
+
+            if (!$isAuditee1 && !$isAuditee2) {
+                \Log::warning("Akses ditolak untuk user {$userId} ke audit ID {$auditingId}.");
+                abort(403, 'Anda tidak memiliki hak akses untuk audit ini.');
+            }
+
+            // (Opsional) Ambil data laporan temuan dari API lain jika diperlukan
+            // $temuanResponse = Http::get("http://127.0.0.1:5000/api/laporan-temuan/auditingID={$auditingId}");
+            // $laporanTemuan = $temuanResponse->successful() ? $temuanResponse->json()['data'] ?? [] : [];
+
+            // Kirim data ke view
+            return view('auditee.laporan-temuan.index', [
+                'audit' => $audit,
+                'auditingId' => $auditingId,
+                // 'laporanTemuan' => $laporanTemuan, // jika ada
+            ]);
+        } catch (\Exception $e) {
+            \Log::error("Gagal memuat halaman laporan temuan untuk audit ID {$auditingId}: " . $e->getMessage());
+            return back()->with('error', 'Terjadi masalah saat memuat halaman laporan temuan.');
+        }
+    }
 
     public function auditorIndexPage()
     {
@@ -591,6 +650,48 @@ public function auditorUpdateInstrumenResponse(Request $request, $id)
                 'jenis_unit_id' => $jenisUnitId,
             ]);
     }
+
+    public function downloadPTPP($id)
+    {
+        try {
+            $audit = Auditing::with(['auditor1', 'auditor2', 'auditee1', 'auditee2', 'periode', 'unitKerja'])
+                ->findOrFail($id);
+
+            $fileName = 'Permintaan Tindakan Perbaikan dan Pencegahan-' .
+                ($audit->unitKerja->nama_unit_kerja ?? 'unit') . '-' . ($audit->periode->nama_periode) . '.pdf';
+
+            $pdf = Pdf::loadView('auditee.laporan-temuan.download-ptpp', compact('audit'));
+
+            return $pdf->download($fileName);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            \Log::error("Audit tidak ditemukan untuk download PTPP, ID: {$id}", ['exception' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'Data audit tidak ditemukan.');
+        } catch (\Exception $e) {
+            \Log::error("Gagal generate PDF PTPP untuk audit ID {$id}: " . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal mengunduh file PTPP.');
+        }
+    }
+
+    public function tindakLanjutPTPP()
+    {
+        // $request->validate([
+        //     'tindak_lanjut' => 'required|string|max:1000',
+        // ]);
+
+        // try {
+        //     $audit = Auditing::findOrFail($id);
+        //     $audit->tindak_lanjut = $request->tindak_lanjut;
+        //     $audit->save();
+
+        //     return redirect()->back()->with('success', 'Tindak lanjut berhasil disimpan.');
+        // } catch (\Exception $e) {
+        //     \Log::error("Gagal menyimpan tindak lanjut untuk audit ID {$id}: " . $e->getMessage());
+        //     return redirect()->back()->with('error', 'Gagal menyimpan tindak lanjut. Silakan coba lagi.');
+        // }
+
+        return view ('auditee.laporan-temuan.tindak-lanjut');
+    }
+
     /**
      * Show the form for creating a new resource.
      */

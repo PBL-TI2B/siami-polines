@@ -182,7 +182,7 @@
                             <p class="text-sm text-slate-500 dark:text-slate-400">Periksa laporan temuan dari auditor dan
                                 siapkan rencana tindak lanjut.</p>
                             @if ($isStep4Current)
-                                <a href="#" {{-- ganti dengan route yang sesuai, misal: {{ $findingsReportRoute }} --}}
+                                <a href="{{ $laporanTemuanRoute }}"
                                     class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800">
                                     Lihat Laporan
                                     <x-heroicon-s-arrow-right class="ms-2 h-4 w-4" />
