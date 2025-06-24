@@ -52,7 +52,7 @@
                     </div>
                     <div>
                         <p class="text-sm text-gray-700 dark:text-gray-300">Audit Selesai</p>
-                        <p class="text-2xl font-bold text-gray-900 dark:text-white" id="completedAudits">0</p>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white" id="completedAudits">11</p>
                     </div>
                 </div>
             </div>
@@ -156,21 +156,39 @@
                     `;
                 });
 
-                // Hitung statistik
-                const activeAudits = data.filter(audit => audit.periode_id === 3).length;
-                const completedAudits = data.filter(audit => audit.status === 9).length;
-                const followupAudits = data.filter(audit => audit.status === 8).length;
+// Hitung statistik
+const activeAudits = data.filter(
+    audit => audit.periode_id === 3 && audit.status !== 11
+).length;
+const completedAudits = data.filter(audit => audit.status === 11).length;
+const followupAudits = data.filter(audit => audit.status === 8).length;
 
-                // Update statistik di DOM
-                document.getElementById('activeAudits').textContent = activeAudits;
-                document.getElementById('completedAudits').textContent = completedAudits;
-                document.getElementById('followupAudits').textContent = followupAudits;
+// Update statistik di DOM
+document.getElementById('activeAudits').textContent = activeAudits;
+document.getElementById('completedAudits').textContent = completedAudits;
+document.getElementById('followupAudits').textContent = followupAudits;
 
-                // Siapkan data untuk grafik
-                const periods = [1, 2, 3].map(id => `Periode ${id}`);
-                const activeData = [1, 2, 3].map(periodId => data.filter(audit => audit.periode_id === periodId && audit.periode_id === 3).length);
-                const completedData = [1, 2, 3].map(periodId => data.filter(audit => audit.periode_id === periodId && audit.status === 9).length);
-                const followupData = [1, 2, 3].map(periodId => data.filter(audit => audit.periode_id === periodId && audit.status === 8).length);
+// Siapkan data untuk grafik
+const periods = [1, 2, 3].map(id => `Periode ${id}`);
+const activeData = [1, 2, 3].map(periodId =>
+    data.filter(audit =>
+        audit.periode_id === periodId &&
+        audit.status !== 11
+    ).length
+);
+const completedData = [1, 2, 3].map(periodId =>
+    data.filter(audit =>
+        audit.periode_id === periodId &&
+        audit.status === 11
+    ).length
+);
+const followupData = [1, 2, 3].map(periodId =>
+    data.filter(audit =>
+        audit.periode_id === periodId &&
+        audit.status === 8
+    ).length
+);
+
 
                 // Buat grafik
                 const ctx = document.getElementById('auditChart').getContext('2d');
