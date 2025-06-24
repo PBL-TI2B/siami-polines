@@ -113,42 +113,48 @@
 <!-- Informasi Laporan -->
 <table style="width:100%; border-collapse:collapse; margin-bottom:15px; font-size:11pt;">
     <tr>
-        <td style="width:110px;">Jur./Bag./Unit</td>
+        <td style="width:110px;">Jurusan/Prodi/Sub</td>
         <td style="width:10px;">:</td>
-        <td>{{$audit['unitKerja']['nama_unit_kerja']}}</td>
+        <td>{{ $audit['unitKerja']['nama_unit_kerja'] ?? $audit['unit_kerja']['nama'] ?? '-' }}</td>
         <td style="width:120px;">Tanggal</td>
         <td style="width:10px;">:</td>
-        <td>2 November 2022</td>
+        <td>{{ $audit['jadwal_audit'] ?? '-' }}</td>
     </tr>
-    <tr>
+    <!-- <tr>
         <td>Prodi/Sub</td>
         <td>:</td>
-        <td>-</td>
+        <td>{{ $audit['unitKerja']['nama_unit_kerja'] ?? '-' }}</td>
         <td></td>
         <td></td>
         <td></td>
-    </tr>
+    </tr> -->
     <tr>
         <td>Auditee</td>
         <td>:</td>
-        <td>1. Idhawati Hestiningsih</td>
-        <td>Tanda Tangan</td>
-        <td>:</td>
-        <td>1. __________________</td>
-    </tr>
-    <tr>
-        <td>Auditor</td>
-        <td>:</td>
         <td>
-            1. Suryani Sri Lestari<br>
-            2. Marliyati
+            1. {{ $audit['auditee1']['nama'] ?? '-' }}<br>
+            2. {{ $audit['auditee2']['nama'] ?? '-' }}
         </td>
-        <td></td>
+        <td>Tanda Tangan</td>
         <td>:</td>
         <td>
             1. __________________<br>
             2. __________________
         </td>
+    </tr>
+    <tr>
+        <td>Auditor</td>
+        <td>:</td>
+        <td>
+            1. {{ $audit['auditor1']['nama'] ?? '-' }}<br>
+            2. {{ $audit['auditor2']['nama'] ?? '-' }}
+        </td>
+        <td></td>
+        <!-- <td>:</td>
+        <td>
+            1. __________________<br>
+            2. __________________
+        </td> -->
     </tr>
 </table>
 
@@ -164,33 +170,39 @@
         </tr>
     </thead>
     <tbody>
-        <tr style="font-weight:bold; background:#FFFFCC;">
-            <td colspan="5" style="border:1px solid #000; padding:4px;">Kriteria 1</td>
-        </tr>
-        <tr>
-            <td style="border:1px solid #000; padding:4px; text-align:center;">1</td>
-            <td style="border:1px solid #000; padding:4px; white-space:nowrap;">LKPS C.1.4</td>
-            <td style="border:1px solid #000; padding:4px;">Dokumen mekanisme dan keterlibatan pemangku kepentingan dalam penyusunan VMTS belum ditunjukkan.</td>
-            <td style="border:1px solid #000; padding:4px; text-align:center;">AOC</td>
-            <td style="border:1px solid #000; padding:4px;">Lengkapi dokumen pendukung.</td>
-        </tr>
-        <tr>
-            <td style="border:1px solid #000; padding:4px; text-align:center;">2</td>
-            <td style="border:1px solid #000; padding:4px; white-space:nowrap;">LKPS C.1.4</td>
-            <td style="border:1px solid #000; padding:4px;">Survei pemahaman VMTS oleh seluruh pemangku kepentingan belum dilakukan.</td>
-            <td style="border:1px solid #000; padding:4px; text-align:center;">NC</td>
-            <td style="border:1px solid #000; padding:4px;">Segera laksanakan survei pemahaman VMTS.</td>
-        </tr>
-        <tr style="font-weight:bold; background:#FFFFCC;">
-            <td colspan="5" style="border:1px solid #000; padding:4px;">Kriteria 4</td>
-        </tr>
-        <tr>
-            <td style="border:1px solid #000; padding:4px; text-align:center;">3</td>
-            <td style="border:1px solid #000; padding:4px; white-space:nowrap;">LKPS C.4.4</td>
-            <td style="border:1px solid #000; padding:4px;">Pemenuhan Dosen dengan kualifikasi S3 baru 9% dari target 30%.</td>
-            <td style="border:1px solid #000; padding:4px; text-align:center;">OFI</td>
-            <td style="border:1px solid #000; padding:4px;">Perlu peran Institusi untuk memotivasi dosen studi lanjut.</td>
-        </tr>
+        @if(!empty($laporanTemuan) && isset($laporanTemuan['data']) && count($laporanTemuan['data']) > 0)
+            {{-- Kelompokkan temuan berdasarkan kriteria_id --}}
+            @php
+                $groupedTemuan = collect($laporanTemuan['data'] ?? [])->groupBy('kriteria_id');
+            @endphp
+            @if($groupedTemuan->count() > 0)
+                @foreach($groupedTemuan as $kriteriaId => $temuanGroup)
+                    <tr style="font-weight:bold; background:#FFFFCC;">
+                        <td colspan="5" style="border:1px solid #000; padding:4px;">
+                            Kriteria {{ $temuanGroup->first()['kriteria_nama'] ?? $kriteriaId ?? '-' }}
+                        </td>
+                    </tr>
+                    @foreach($temuanGroup as $i => $temuan)
+                        <tr>
+                            <td style="border:1px solid #000; padding:4px; text-align:center;">{{ $i+1 }}</td>
+                            <td style="border:1px solid #000; padding:4px;">{{ $temuan['nama_kriteria'] ?? 'Kriteria' }}</td>
+                            <td style="border:1px solid #000; padding:4px;">{{ $temuan['uraian_temuan'] ?? '-' }}</td>
+                            <td style="border:1px solid #000; padding:4px; text-align:center;">{{ $temuan['kategori_temuan'] ?? '-' }}</td>
+                            <td style="border:1px solid #000; padding:4px;">{{ $temuan['saran_perbaikan'] ?? '-' }}</td>
+                        </tr>
+                    @endforeach
+                @endforeach
+            @else
+                <tr>
+                    <td colspan="5" style="border:1px solid #000; padding:4px; text-align:center;">Tidak ada data temuan.</td>
+                </tr>
+            @endif
+        @else
+            <tr>
+                <td colspan="5" style="border:1px solid #000; padding:4px; text-align:center;">Tidak ada data temuan.</td>
+            </tr>
+        @endif
+        
     </tbody>
 </table>
 

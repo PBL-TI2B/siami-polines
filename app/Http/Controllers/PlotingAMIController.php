@@ -19,6 +19,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class PlotingAMIController extends Controller
 {
+
     public function index(Request $request)
     {
         $entries = $request->get('per_page', 10);
@@ -396,12 +397,25 @@ public function update(Request $request, $id)
         $audit = Auditing::with(['auditor1', 'auditor2', 'auditee1', 'auditee2', 'periode', 'unitKerja'])
             ->findOrFail($id);
 
+        // Ambil data laporan temuan dari API eksternal
+        $laporanTemuan = [];
+        try {
+            $response = \Illuminate\Support\Facades\Http::get('http://127.0.0.1:5000/api/laporan-temuan?auditing_id=' . $id);
+            if ($response->successful()) {
+                $laporanTemuan = $response->json();
+            } else {
+                $laporanTemuan = [];
+            }
+        } catch (\Exception $e) {
+            $laporanTemuan = [];
+        }
+
         // Cek status, hanya bisa download jika status >= 7 (Laporan Temuan atau lebih)
         if ($audit->status < 7) {
             return redirect()->back()->with('error', 'Laporan Temuan hanya tersedia jika status sudah Laporan Temuan atau lebih.');
         }
-        // dd($audit['unitKerja']['nama_unit_kerja']);
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('kepala-pmpp.ploting-ami.laporan-temuan', compact('audit'));
+        // Kirim data audit dan laporanTemuan ke view
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('kepala-pmpp.ploting-ami.laporan-temuan', compact('audit', 'laporanTemuan'));
         return $pdf->download('Laporan-Temuan'.$audit->unit_kerja.'.pdf');
     }
 }
