@@ -107,7 +107,7 @@
         <div class="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
             <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Ubah Password</h3>
-                <button type="button" id="closeModal" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white">
+                <button type="button" id="closeModalPasswordBtn" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white">
                     <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                     <span class="sr-only">Close modal</span>
                 </button>
@@ -116,15 +116,30 @@
                 <div class="grid gap-4 mb-4 sm:grid-cols-1">
                     <div>
                         <label for="old_password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password Lama</label>
-                        <input type="password" id="old_password" name="old_password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-600 focus:border-sky-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
+                        <div class="relative">
+                            <input type="password" id="old_password" name="old_password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-600 focus:border-sky-600 block w-full p-2.5 pr-10 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
+                            <button type="button" id="toggleOldPassword" class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white">
+                                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
+                            </button>
+                        </div>
                     </div>
                     <div>
                         <label for="new_password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password Baru</label>
-                        <input type="password" id="new_password" name="new_password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-600 focus:border-sky-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
+                        <div class="relative">
+                            <input type="password" id="new_password" name="new_password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-600 focus:border-sky-600 block w-full p-2.5 pr-10 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
+                            <button type="button" id="toggleNewPassword" class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white">
+                                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
+                            </button>
+                        </div>
                     </div>
                     <div>
                         <label for="confirm_password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Konfirmasi Password Baru</label>
-                        <input type="password" id="confirm_password" name="confirm_password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-600 focus:border-sky-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
+                        <div class="relative">
+                            <input type="password" id="confirm_password" name="confirm_password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-600 focus:border-sky-600 block w-full p-2.5 pr-10 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
+                            <button type="button" id="toggleConfirmPassword" class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white">
+                                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
@@ -136,25 +151,30 @@
     </div>
 </div>
 
-<div id="responseModal" class="hidden fixed top-5 right-5 z-50 flex items-center w-full max-w-xs p-4 space-x-4 text-gray-500 bg-white divide-x rtl:divide-x-reverse divide-gray-200 rounded-lg shadow dark:text-gray-400 dark:divide-gray-700 space-x dark:bg-gray-800" role="alert">
-    <div id="modalIcon" class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-green-200">
-        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
-        </svg>
-        <span class="sr-only">Success icon</span>
+<!-- Modal Toast -->
+<div id="responseModal" class="hidden fixed top-4 end-4 z-50 bg-transparent transition-opacity duration-300">
+    <div class="w-full max-w-md p-4 bg-white rounded-lg shadow-lg dark:bg-gray-800">
+        <div class="flex items-center">
+            <div class="inline-flex items-center justify-center shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-green-200" id="modalIcon">
+                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+                </svg>
+                <span class="sr-only">Ikon Sukses</span>
+            </div>
+            <div class="ms-3 text-sm font-normal text-gray-500 dark:text-gray-400" id="modalMessage">
+                Action completed successfully.
+            </div>
+            <button type="button" id="closeResponseModal" class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700" aria-label="Tutup">
+                <span class="sr-only">Tutup</span>
+                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                </svg>
+            </button>
+        </div>
     </div>
-    <div class="ps-4 text-sm font-normal" id="modalMessage">Message here.</div>
-    <button type="button" id="closeResponseModal" class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700" aria-label="Close">
-        <span class="sr-only">Close</span>
-        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-        </svg>
-    </button>
 </div>
 
-
 <script>
-// Pindahkan ke paling atas sebelum DOMContentLoaded
 function showToast(message, success = true) {
     const responseModal = document.getElementById('responseModal');
     const modalMessage = document.getElementById('modalMessage');
@@ -163,17 +183,16 @@ function showToast(message, success = true) {
     
     modalMessage.textContent = message;
 
-    // Ganti ikon dan warna
     const successClasses = ['text-green-500', 'bg-green-100', 'dark:bg-green-800', 'dark:text-green-200'];
     const errorClasses = ['text-red-500', 'bg-red-100', 'dark:bg-red-800', 'dark:text-red-200'];
     const successIcon = `
         <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
             <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
-        </svg><span class="sr-only">Success icon</span>`;
+        </svg><span class="sr-only">Ikon Sukses</span>`;
     const errorIcon = `
         <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
             <path d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm-1-5h2v2h-2v-2Zm0-8h2v6h-2V5Z"/>
-        </svg><span class="sr-only">Error icon</span>`;
+        </svg><span class="sr-only">Ikon Error</span>`;
 
     if (success) {
         modalIcon.classList.remove(...errorClasses);
@@ -186,33 +205,30 @@ function showToast(message, success = true) {
     }
     
     responseModal.classList.remove('hidden');
-    responseModal.classList.add('flex'); // Use flex for Flowbite toast
+    responseModal.classList.add('opacity-100');
 
-    // Auto close function
     const autoClose = setTimeout(() => {
-        responseModal.classList.add('hidden');
-        responseModal.classList.remove('flex');
+        responseModal.classList.remove('opacity-100');
+        responseModal.classList.add('opacity-0');
+        setTimeout(() => responseModal.classList.add('hidden'), 300); // Tunggu transisi selesai
     }, 3000);
 
-    // Manual close
     closeButton.onclick = () => {
         clearTimeout(autoClose);
-        responseModal.classList.add('hidden');
-        responseModal.classList.remove('flex');
+        responseModal.classList.remove('opacity-100');
+        responseModal.classList.add('opacity-0');
+        setTimeout(() => responseModal.classList.add('hidden'), 300); // Tunggu transisi selesai
     };
 }
 
 let userData = {};
-// Menggunakan instance Flowbite untuk mengelola modal secara programmatic
 let modalProfileInstance = null;
 let modalPasswordInstance = null;
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Inisialisasi instance Modal Flowbite
     const modalProfileEl = document.getElementById('modalEditProfile');
     const modalPasswordEl = document.getElementById('modalEditPassword');
     
-    // Opsi default untuk modal (biarkan kosong jika tidak ada kustomisasi)
     const options = {
         placement: 'center-center',
         backdrop: 'dynamic',
@@ -242,11 +258,9 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => {
                 console.error("Fetch error:", error);
                 document.getElementById('nama').textContent = 'Gagal memuat data';
-                // ... set lainnya ke '-'
             });
     }
 
-    // --- Modal Edit Profile Logic ---
     const btnEdit = document.getElementById('btnEditProfile');
     const closeModal = modalProfileEl.querySelector('#closeModal');
     const cancelEdit = modalProfileEl.querySelector('#cancelEdit');
@@ -270,7 +284,7 @@ document.addEventListener('DOMContentLoaded', function () {
             nip: document.getElementById('edit_nip').value,
             role_id: userData.role ? userData.role.role_id : null,
             unit_kerja_id: userData.unit_kerja ? userData.unit_kerja.unit_kerja_id : null,
-            password: '', 
+            password: '',
         };
 
         fetch(`http://127.0.0.1:5000/api/data-user/${UserId}`, {
@@ -292,11 +306,39 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // --- Modal Edit Password Logic ---
     const btnEditPassword = document.getElementById('btnEditPassword');
-    const closeModalPassword = modalPasswordEl.querySelector('#closeModal');
+    const closeModalPassword = modalPasswordEl.querySelector('#closeModalPasswordBtn');
     const cancelEditPassword = modalPasswordEl.querySelector('#cancelPasswordEdit');
     const formEditPassword = document.getElementById('formEditPassword');
+
+    const eyeIcon = `
+        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+        </svg>
+    `;
+    const eyeSlashIcon = `
+        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.243 4.243L6.228 6.228" />
+        </svg>
+    `;
+
+    function setupPasswordToggle(inputId, toggleId) {
+        const passwordInput = document.getElementById(inputId);
+        const toggleButton = document.getElementById(toggleId);
+
+        toggleButton.innerHTML = eyeIcon;
+
+        toggleButton.addEventListener('click', function() {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleButton.innerHTML = eyeSlashIcon;
+            } else {
+                passwordInput.type = 'password';
+                toggleButton.innerHTML = eyeIcon;
+            }
+        });
+    }
 
     btnEditPassword.addEventListener('click', () => {
         formEditPassword.reset();
@@ -305,6 +347,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     closeModalPassword.addEventListener('click', () => modalPasswordInstance.hide());
     cancelEditPassword.addEventListener('click', () => modalPasswordInstance.hide());
+
+    setupPasswordToggle('old_password', 'toggleOldPassword');
+    setupPasswordToggle('new_password', 'toggleNewPassword');
+    setupPasswordToggle('confirm_password', 'toggleConfirmPassword');
 
     formEditPassword.addEventListener('submit', function(e) {
         e.preventDefault();

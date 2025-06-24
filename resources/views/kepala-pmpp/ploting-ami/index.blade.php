@@ -45,7 +45,6 @@
         @endphp
 
         <x-table id="jadwalAuditTable" :headers="[
-            '',
             'No',
             'Unit Kerja',
             'Waktu Audit',
@@ -58,9 +57,6 @@
         ]" :data="$auditings" :perPage="$auditings->perPage()" :route="route('kepala-pmpp.ploting-ami.index')">
             @forelse ($auditings as $index => $auditing)
                 <tr class="border-y border-gray-200 bg-white transition-all duration-200 hover:bg-gray-50 dark:border-gray-500 dark:bg-gray-800 dark:hover:bg-gray-600">
-                    <td class="border border-gray-200 px-4 py-4">
-                        <input type="checkbox" class="h-4 w-4 rounded border-gray-200 bg-gray-100 text-sky-800">
-                    </td>
                     <td class="border border-gray-200 px-4 py-4">
                         {{ $auditings->firstItem() + $index }}
                     </td>
@@ -93,25 +89,32 @@
                                 <a href="{{ route('kepala-pmpp.ploting-ami.download-ptpp', $auditing->auditing_id) }}"
                                     class="inline-flex items-center px-2.5 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-xs font-semibold"
                                     target="_blank">
-                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
-                                        </svg>
-                                        PTPP
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
+                                    </svg>
+                                    PTPP
                                 </a>
                                 <a href="{{ route('kepala-pmpp.ploting-ami.download-laporan', $auditing->auditing_id) }}"
-                                    class="inline-flex items-center px-2.5 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-xs font-semibold"
+                                    class="inline-flex items-center px-2.5 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 text-xs font-semibold"
                                     target="_blank">
-                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" /></svg>
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
+                                    </svg>
                                     Laporan Temuan
                                 </a>
                             </div>
                         @else
-                            <a href="#" 
-                                class="rtm-btn inline-flex items-center px-3 py-1 bg-sky-800 text-white rounded hover:bg-sky-900 text-xs" 
-                                data-auditing-id="{{ $auditing->auditing_id ?? $auditing->auditing_id }}" 
-                                data-set-id="{{ $auditing->set_instrumen_unit_kerja_id ?? '' }}">
-                                RTM
-                            </a>
+                            @if ($auditing->status == 10)
+                                <a href="#" 
+                                    class="rtm-btn inline-flex items-center px-6 py-2 bg-sky-800 text-white rounded hover:bg-sky-900 text-xs font-semibold shadow transition-all duration-150" 
+                                    style="min-width: 90px; justify-content: center;"
+                                    data-auditing-id="{{ $auditing->auditing_id ?? $auditing->auditing_id }}" 
+                                    data-set-id="{{ $auditing->set_instrumen_unit_kerja_id ?? '' }}">
+                                    RTM
+                                </a>
+                            @else
+                                -
+                            @endif
                         @endif
                     </td>
                 </tr>
