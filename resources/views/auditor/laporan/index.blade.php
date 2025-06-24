@@ -4,14 +4,12 @@
 
 @section('content')
 <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-    <!-- Breadcrumb -->
     <x-breadcrumb :items="[
         ['label' => 'Dashboard', 'url' => route('auditor.dashboard.index')],
         ['label' => 'Audit', 'url' => route('auditor.audit.index')],
         ['label' => 'Laporan Temuan', 'url' => route('auditor.laporan.index', ['auditingId' => $auditingId])],
     ]" class="mb-6" />
 
-    <!-- Heading -->
     <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-200 mb-6">
         Daftar Laporan Temuan
     </h1>
@@ -19,7 +17,6 @@
         Berikut adalah daftar laporan temuan untuk audit ini. Anda dapat menambahkan, mengedit, atau menghapus laporan temuan sesuai kebutuhan.
     </p>
 
-    <!-- Toast Notifications -->
     @if (session('success'))
         <x-toast id="toast-success" type="success" :message="session('success')" />
     @endif
@@ -35,9 +32,7 @@
         </x-toast>
     @endif
 
-    <!-- Toolbar -->
     <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
-        <!-- Action Buttons -->
         <div class="flex flex-wrap gap-2">
             {{-- Tombol Tambah Laporan Temuan dengan kondisi disabled --}}
             @php
@@ -61,9 +56,7 @@
         </div>
     </div>
 
-    <!-- Table and Pagination -->
     <div class="bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 rounded-2xl">
-        <!-- Table Controls -->
         <div class="p-4 flex flex-col sm:flex-row justify-between items-center gap-4 bg-white dark:bg-gray-800 rounded-t-2xl border-b border-gray-200 dark:border-gray-700">
             <div class="flex items-center gap-2">
                 <span class="text-sm text-gray-700 dark:text-gray-300">Tampilkan</span>
@@ -92,7 +85,6 @@
             </div>
         </div>
 
-        <!-- Table -->
         <div class="overflow-x-auto">
             <table class="min-w-full text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-200 border-t border-b border-gray-200 dark:border-gray-600">
@@ -193,7 +185,6 @@
             </table>
         </div>
 
-        <!-- Pagination -->
         <div class="p-4">
             <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
                 <span class="text-sm text-gray-700 dark:text-gray-300">
@@ -208,7 +199,6 @@
         </div>
     </div>
 
-    <!-- Action Buttons (Below Table) -->
     <div class="mt-6 flex gap-2 justify-start">
         {{-- Form for Submit & Kunci Jawaban --}}
         @php
@@ -234,9 +224,9 @@
 
         {{-- Form for Diterima --}}
         @php
-            // Aktif jika status == 7 (Laporan Temuan) ATAU == 8 (Revisi)
-            // Nonaktif jika status < 7 (belum disubmit) ATAU >= 9 (sudah diterima/selesai)
-            $canAccept = (($currentAuditStatus ?? 0) == 7) || (($currentAuditStatus ?? 0) == 8);
+            // **KOREKSI DISINI**: Aktif hanya jika status == 7.
+            // Setelah status berubah menjadi 8 (Revisi) atau 9 (Diterima), tombol ini akan nonaktif.
+            $canAccept = (($currentAuditStatus ?? 0) == 7);
         @endphp
         <form action="{{ route('auditor.laporan.update_audit_status', ['auditingId' => $auditingId]) }}" method="POST" class="inline-block"
             onsubmit="return confirm('Apakah Anda yakin ingin menyatakan Laporan Temuan Diterima? Ini akan memindahkan laporan ke status sudah direvisi.');">
@@ -256,8 +246,8 @@
 
         {{-- Form for Revisi --}}
         @php
-            // Aktif jika status == 7 (Laporan Temuan)
-            // Nonaktif jika status < 7 (belum disubmit) ATAU >= 8 (sudah revisi, diterima, selesai)
+            // Aktif hanya jika status == 7.
+            // Setelah status berubah menjadi 8 (Revisi) atau 9 (Diterima), tombol ini akan nonaktif.
             $canRequestRevision = (($currentAuditStatus ?? 0) == 7);
         @endphp
         <form action="{{ route('auditor.laporan.update_audit_status', ['auditingId' => $auditingId]) }}" method="POST" class="inline-block"
