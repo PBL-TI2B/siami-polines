@@ -45,17 +45,16 @@ class LaporanTemuanController extends Controller
 
             $apiResponse = $response->json();
 
-            // Pastikan struktur respons API valid
-            // Cek data di sini, karena API laporan-temuan masih mengembalikan 'data' langsung
+            // Pastikan struktur respons API valid (diasumsikan API ini selalu mengembalikan 'data' langsung di root)
             if (!isset($apiResponse['status']) || !is_array($apiResponse['data'])) {
-                Log::error('Invalid API response structure (index): ' . json_encode($apiResponse));
+                Log::error('Invalid API response structure (index for findings): ' . json_encode($apiResponse));
                 return redirect()->route('auditor.dashboard.index')
-                    ->with('error', 'Format respons API tidak valid.');
+                    ->with('error', 'Format respons API laporan temuan tidak valid.');
             }
 
             // Periksa status yang dikembalikan API
             if (!$apiResponse['status']) {
-                Log::error('API returned failure (index): ' . ($apiResponse['message'] ?? 'No message'));
+                Log::error('API returned failure (index for findings): ' . ($apiResponse['message'] ?? 'No message'));
                 return redirect()->route('auditor.dashboard.index')
                     ->with('error', $apiResponse['message'] ?? 'Gagal mengambil data laporan temuan.');
             }
@@ -101,10 +100,17 @@ class LaporanTemuanController extends Controller
             // Fetch the specific audit status for button control
             $auditResponse = Http::timeout(30)->retry(2, 100)->get("{$this->apiBaseUrl}/auditings/{$auditingId}");
             $currentAuditStatus = null;
-            if ($auditResponse->successful() && isset($auditResponse->json()['status']) && $auditResponse->json()['status']) {
-                $currentAuditStatus = $auditResponse->json()['data']['status'] ?? null;
+            if ($auditResponse->successful()) {
+                $apiAuditData = $auditResponse->json(); // Ini akan langsung menjadi array/objek Auditing
+                // Karena AuditingController@show mengembalikan model langsung,
+                // 'status' adalah properti langsung dari objek yang dikembalikan.
+                if (isset($apiAuditData['status'])) {
+                    $currentAuditStatus = $apiAuditData['status'];
+                } else {
+                    Log::warning("Audit status key 'status' not found in API response for auditingId {$auditingId}. Response: " . json_encode($apiAuditData));
+                }
             } else {
-                Log::warning("Failed to fetch current audit status for auditingId {$auditingId}. Status not available for button control.");
+                Log::warning("Failed to fetch current audit status from API for auditingId {$auditingId}. Status: " . $auditResponse->status() . ", Body: " . $auditResponse->body());
             }
 
             return view('auditor.laporan.index', compact('laporanTemuansPaginated', 'auditingId', 'currentAuditStatus'));
@@ -127,6 +133,8 @@ class LaporanTemuanController extends Controller
 
             if ($response->successful()) {
                 $kriteriaData = $response->json();
+                // Asumsi API kriteria mengembalikan array langsung atau array di bawah kunci 'data'
+                // Jika langsung array, tidak perlu $kriteriaData['data']
                 $kriterias = array_map(function ($item) {
                     return [
                         'kriteria_id' => $item['kriteria_id'] ?? null,
@@ -160,7 +168,7 @@ class LaporanTemuanController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'auditing_id' => 'required|exists:auditings,auditing_id',
+                'auditing_id' => 'required|numeric', // Hapus |exists:auditings,auditing_id jika tabel tidak ada di lokal
                 'findings' => 'required|array|min:1',
                 'findings.*.kriteria_id' => 'required|numeric',
                 'findings.*.uraian_temuan' => 'required|string|max:1000',
@@ -168,7 +176,6 @@ class LaporanTemuanController extends Controller
                 'findings.*.saran_perbaikan' => 'nullable|string|max:1000',
             ], [
                 'auditing_id.required' => 'Audit ID is required.',
-                'auditing_id.exists' => 'Invalid audit ID.',
                 'findings.required' => 'At least one finding is required.',
                 'findings.min' => 'At least one finding is required.',
                 'findings.*.kriteria_id.required' => 'Standard ID is required for each finding.',
@@ -207,6 +214,7 @@ class LaporanTemuanController extends Controller
             }
 
             $apiResponse = $response->json();
+            // Asumsi API ini mengembalikan 'status' true/false
             if (!isset($apiResponse['status']) || !$apiResponse['status']) {
                 Log::error('API store returned failure: ' . ($apiResponse['message'] ?? 'No message'));
                 $errorMessage = $apiResponse['message'] ?? 'Gagal menyimpan laporan temuan.';
@@ -238,19 +246,17 @@ class LaporanTemuanController extends Controller
 
             $apiResponse = $response->json();
 
-            if (!isset($apiResponse['status']) || !isset($apiResponse['data']) || !is_array($apiResponse['data'])) {
-                Log::error('Invalid API response structure (show): ' . json_encode($apiResponse));
+            // Asumsi API laporan-temuan/{id} mengembalikan objek langsung atau objek dengan 'data'
+            // Periksa apakah respons memiliki 'data' key, jika ya, gunakan $apiResponse['data'], jika tidak, gunakan $apiResponse langsung
+            $laporan = isset($apiResponse['data']) ? $apiResponse['data'] : $apiResponse;
+
+            if (empty($laporan)) {
+                Log::error('Empty or invalid data for show: ' . json_encode($apiResponse));
                 return redirect()->route('auditor.laporan.index', ['auditingId' => $auditingId])
-                    ->with('error', 'Format respons API tidak valid.');
+                    ->with('error', 'Laporan temuan tidak ditemukan atau format respons API tidak valid.');
             }
 
-            if (!$apiResponse['status']) {
-                Log::error('API show returned failure: ' . ($apiResponse['message'] ?? 'No message'));
-                return redirect()->route('auditor.laporan.index', ['auditingId' => $auditingId])
-                    ->with('error', $apiResponse['message'] ?? 'Gagal mengambil data laporan temuan.');
-            }
 
-            $laporan = $apiResponse['data'];
             $kriteriaResponse = Http::timeout(30)->retry(2, 100)->get("{$this->apiBaseUrl}/kriteria");
             $kriterias = [];
             if ($kriteriaResponse->successful()) {
@@ -287,13 +293,16 @@ class LaporanTemuanController extends Controller
             }
 
             $apiResponse = $response->json();
-            if (!isset($apiResponse['data']) || empty($apiResponse['data'])) {
+            // Periksa apakah respons memiliki 'data' key, jika ya, gunakan $apiResponse['data'], jika tidak, gunakan $apiResponse langsung
+            $laporan = isset($apiResponse['data']) ? $apiResponse['data'] : $apiResponse;
+
+
+            if (empty($laporan)) {
                 Log::warning('Empty or invalid data for edit: ' . json_encode($apiResponse));
                 return redirect()->route('auditor.laporan.index', ['auditingId' => $auditingId])
                     ->with('error', 'Laporan temuan tidak ditemukan.');
             }
 
-            $laporan = $apiResponse['data'];
             if ((string)$laporan['auditing_id'] !== (string)$auditingId) {
                 Log::warning('Mismatched auditingId for edit: ' . $laporan['auditing_id'] . ' vs ' . $auditingId);
                 return redirect()->route('auditor.laporan.index', ['auditingId' => $auditingId])
@@ -382,6 +391,7 @@ class LaporanTemuanController extends Controller
             }
 
             $apiResponse = $response->json();
+            // Asumsi API ini mengembalikan 'status' true/false
             if (!isset($apiResponse['status']) || !$apiResponse['status']) {
                 Log::error('API update returned failure: ' . ($apiResponse['message'] ?? 'No message'));
                 $errorMessage = $apiResponse['message'] ?? 'Gagal memperbarui laporan temuan.';
@@ -427,7 +437,7 @@ class LaporanTemuanController extends Controller
             Log::info("Update audit status request for Auditing ID: {$auditingId}, new status: {$newStatus}");
 
             // Send PUT request to the external API for auditings
-            // Assuming your external API has an endpoint like PUT /api/auditings/{id}
+            // Asumsi API Anda di AuditingController@update mengembalikan 'success: true'
             $response = Http::timeout(30)->retry(2, 100)->put("{$this->apiBaseUrl}/auditings/{$auditingId}", $payload);
 
             if (!$response->successful()) {
@@ -437,8 +447,8 @@ class LaporanTemuanController extends Controller
             }
 
             $apiResponse = $response->json();
-            // KOREKSI DI SINI: Cek 'success' dari API jika backend tidak bisa diubah
-            if (!isset($apiResponse['success']) || !$apiResponse['success']) { // <-- UBAH DARI 'status' MENJADI 'success'
+            // KOREKSI DI SINI: TETAP GUNAKAN 'success' KARENA AuditingController@update MENGEMBALIKAN 'success: true'
+            if (!isset($apiResponse['success']) || !$apiResponse['success']) {
                 Log::error('API update audit status returned failure: ' . ($apiResponse['message'] ?? 'No message'));
                 $errorMessage = $apiResponse['message'] ?? 'Gagal memperbarui status audit.';
                 return back()->with('error', $errorMessage);
@@ -484,10 +494,12 @@ class LaporanTemuanController extends Controller
             }
 
             $apiResponse = $response->json();
+            // Asumsi API ini mengembalikan 'status' true/false
             if (!isset($apiResponse['status']) || !$apiResponse['status']) {
                 Log::error('API destroy returned failure: ' . ($apiResponse['message'] ?? 'No message'));
+                $errorMessage = $apiResponse['message'] ?? 'Gagal menghapus laporan temuan.';
                 return redirect()->route('auditor.laporan.index', ['auditingId' => $auditingId])
-                    ->with('error', $apiResponse['message'] ?? 'Gagal menghapus laporan temuan.');
+                    ->with('error', $errorMessage);
             }
 
             return redirect()->route('auditor.laporan.index', ['auditingId' => $auditingId])
