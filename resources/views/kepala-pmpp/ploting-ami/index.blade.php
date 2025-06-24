@@ -108,7 +108,8 @@
                         @else
                             @if ($auditing->status == 10)
                                 <a href="#" 
-                                    class="rtm-btn inline-flex items-center px-3 py-1 bg-sky-800 text-white rounded hover:bg-sky-900 text-xs" 
+                                    class="rtm-btn inline-flex items-center px-8 py-1.5 bg-sky-800 text-white rounded-md hover:bg-sky-900 text-sm font-semibold shadow transition-all duration-150" 
+                                    style="min-width: 90px; justify-content: center;"
                                     data-auditing-id="{{ $auditing->auditing_id ?? $auditing->auditing_id }}" 
                                     data-set-id="{{ $auditing->set_instrumen_unit_kerja_id ?? '' }}">
                                     RTM
