@@ -106,12 +106,16 @@
                                 </a>
                             </div>
                         @else
-                            <a href="#" 
-                                class="rtm-btn inline-flex items-center px-3 py-1 bg-sky-800 text-white rounded hover:bg-sky-900 text-xs" 
-                                data-auditing-id="{{ $auditing->auditing_id ?? $auditing->auditing_id }}" 
-                                data-set-id="{{ $auditing->set_instrumen_unit_kerja_id ?? '' }}">
-                                RTM
-                            </a>
+                            @if ($auditing->status == 10)
+                                <a href="#" 
+                                    class="rtm-btn inline-flex items-center px-3 py-1 bg-sky-800 text-white rounded hover:bg-sky-900 text-xs" 
+                                    data-auditing-id="{{ $auditing->auditing_id ?? $auditing->auditing_id }}" 
+                                    data-set-id="{{ $auditing->set_instrumen_unit_kerja_id ?? '' }}">
+                                    RTM
+                                </a>
+                            @else
+                                -
+                            @endif
                         @endif
                     </td>
                 </tr>
