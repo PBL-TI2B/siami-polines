@@ -672,6 +672,27 @@ public function auditorUpdateInstrumenResponse(Request $request, $id)
         }
     }
 
+      public function downloadPresensi($id)
+    {
+        try {
+            $audit = Auditing::with(['auditor1', 'auditor2', 'auditee1', 'auditee2', 'periode', 'unitKerja'])
+                ->findOrFail($id);
+
+            $fileName = 'Presensi Audit-' .
+                ($audit->unitKerja->nama_unit_kerja ?? 'unit') . '-' . ($audit->periode->nama_periode) . '.pdf';
+
+            $pdf = Pdf::loadView('auditor.audit.presensi', compact('audit'));
+
+            return $pdf->download($fileName);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            \Log::error("Audit tidak ditemukan untuk download PTPP, ID: {$id}", ['exception' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'Data audit tidak ditemukan.');
+        } catch (\Exception $e) {
+            \Log::error("Gagal generate PDF PTPP untuk audit ID {$id}: " . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal mengunduh file PTPP.');
+        }
+    }
+
     public function tindakLanjutPTPP()
     {
         // $request->validate([
