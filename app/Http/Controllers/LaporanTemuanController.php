@@ -77,6 +77,9 @@ class LaporanTemuanController extends Controller
                             'kategori_temuan' => $finding['kategori_temuan'],
                             'saran_perbaikan' => $finding['saran_perbaikan'],
                             'auditing_id' => $finding['auditing_id'],
+                            // Add standar_id and standar_nasional if available in the API response for index view
+                            'standar_id' => $finding['standar_id'] ?? null,
+                            'standar_nasional' => $finding['standar_nasional'] ?? null,
                         ];
                     })->values()->all(),
                 ];
@@ -101,9 +104,7 @@ class LaporanTemuanController extends Controller
             $auditResponse = Http::timeout(30)->retry(2, 100)->get("{$this->apiBaseUrl}/auditings/{$auditingId}");
             $currentAuditStatus = null;
             if ($auditResponse->successful()) {
-                $apiAuditData = $auditResponse->json(); // Ini akan langsung menjadi array/objek Auditing
-                // Karena AuditingController@show mengembalikan model langsung,
-                // 'status' adalah properti langsung dari objek yang dikembalikan.
+                $apiAuditData = $auditResponse->json();
                 if (isset($apiAuditData['status'])) {
                     $currentAuditStatus = $apiAuditData['status'];
                 } else {
@@ -128,32 +129,57 @@ class LaporanTemuanController extends Controller
     public function create($auditingId)
     {
         try {
-            $response = Http::timeout(30)->retry(2, 100)->get("{$this->apiBaseUrl}/kriteria");
+            // Fetch Kriteria
+            $kriteriaResponse = Http::timeout(30)->retry(2, 100)->get("{$this->apiBaseUrl}/kriteria");
             $kriterias = [];
-
-            if ($response->successful()) {
-                $kriteriaData = $response->json();
-                // Asumsi API kriteria mengembalikan array langsung atau array di bawah kunci 'data'
-                // Jika langsung array, tidak perlu $kriteriaData['data']
+            if ($kriteriaResponse->successful()) {
+                $kriteriaData = $kriteriaResponse->json();
                 $kriterias = array_map(function ($item) {
                     return [
                         'kriteria_id' => $item['kriteria_id'] ?? null,
-                        'nama_kriteria' => $item['nama_kriteria'] ?? 'Standar ' . ($item['kriteria_id'] ?? 'Unknown'),
+                        'nama_kriteria' => $item['nama_kriteria'] ?? 'Kriteria ' . ($item['kriteria_id'] ?? 'Unknown'),
                     ];
                 }, $kriteriaData);
             } else {
-                Log::error('Failed to fetch kriteria for create: Status ' . $response->status() . ', Body: ' . $response->body());
-            }
-
-            $kategori_temuan = ['NC', 'AOC', 'OFI'];
-
-            if (empty($kriterias)) {
-                Log::warning('No kriteria data available for create view.');
+                Log::error('Failed to fetch kriteria for create: Status ' . $kriteriaResponse->status() . ', Body: ' . $kriteriaResponse->body());
                 return redirect()->route('auditor.laporan.index', ['auditingId' => $auditingId])
                     ->with('error', 'Gagal memuat data kriteria dari API.');
             }
 
-            return view('auditor.laporan.create', compact('auditingId', 'kriterias', 'kategori_temuan'));
+            // Fetch Standards from response-tilik API, filtered by auditing_id
+            // CHANGED: Using the specific endpoint for auditing_id filter
+            $standardsResponse = Http::timeout(30)->retry(2, 100)->get("{$this->apiBaseUrl}/response-tilik/auditing/{$auditingId}");
+            $standards = [];
+            if ($standardsResponse->successful()) {
+                $standardsData = $standardsResponse->json();
+                if (isset($standardsData['data']) && is_array($standardsData['data'])) {
+                    $uniqueStandards = new Collection();
+                    foreach ($standardsData['data'] as $item) {
+                        if (isset($item['standar_nasional']) && $item['standar_nasional'] !== null) {
+                            $uniqueKey = $item['standar_nasional'] . '|' . ($item['response_tilik_id'] ?? 'null');
+                            if (!$uniqueStandards->has($uniqueKey)) {
+                                $uniqueStandards->put($uniqueKey, [
+                                    'standar_id' => $item['response_tilik_id'], // Using response_tilik_id as the value for the dropdown
+                                    'nama_standar' => $item['standar_nasional']
+                                ]);
+                            }
+                        }
+                    }
+                    $standards = $uniqueStandards->values()->all(); // Get only the values
+                } else {
+                    Log::warning('Response-tilik API did not return data or has invalid structure.');
+                }
+            } else {
+                Log::error('Failed to fetch standards for create: Status ' . $standardsResponse->status() . ', Body: ' . $standardsResponse->body());
+            }
+
+            if (empty($kriterias) || empty($standards)) {
+                Log::warning('Missing kriteria or standards data for create view.');
+                return redirect()->route('auditor.laporan.index', ['auditingId' => $auditingId])
+                    ->with('error', 'Gagal memuat data kriteria atau standar dari API. Pastikan kedua API berfungsi.');
+            }
+
+            return view('auditor.laporan.create', compact('auditingId', 'kriterias', 'standards'));
         } catch (\Exception $e) {
             Log::error('Unexpected error in create: ' . $e->getMessage());
             return redirect()->route('auditor.laporan.index', ['auditingId' => $auditingId])
@@ -168,9 +194,10 @@ class LaporanTemuanController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'auditing_id' => 'required|numeric', // Hapus |exists:auditings,auditing_id jika tabel tidak ada di lokal
+                'auditing_id' => 'required|numeric',
                 'findings' => 'required|array|min:1',
                 'findings.*.kriteria_id' => 'required|numeric',
+                'findings.*.standar_id' => 'required|numeric', // Add validation for standar_id
                 'findings.*.uraian_temuan' => 'required|string|max:1000',
                 'findings.*.kategori_temuan' => 'required|in:NC,AOC,OFI',
                 'findings.*.saran_perbaikan' => 'nullable|string|max:1000',
@@ -178,10 +205,11 @@ class LaporanTemuanController extends Controller
                 'auditing_id.required' => 'Audit ID is required.',
                 'findings.required' => 'At least one finding is required.',
                 'findings.min' => 'At least one finding is required.',
-                'findings.*.kriteria_id.required' => 'Standard ID is required for each finding.',
-                'findings.*.uraian_temuan.required' => 'Finding description is required.',
-                'findings.*.kategori_temuan.required' => 'Finding category is required.',
-                'findings.*.kategori_temuan.in' => 'Finding category must be NC, AOC, or OFI.',
+                'findings.*.kriteria_id.required' => 'Kriteria wajib dipilih untuk setiap temuan.',
+                'findings.*.standar_id.required' => 'Standar wajib dipilih untuk setiap temuan.',
+                'findings.*.uraian_temuan.required' => 'Uraian temuan wajib diisi.',
+                'findings.*.kategori_temuan.required' => 'Kategori temuan wajib diisi.',
+                'findings.*.kategori_temuan.in' => 'Kategori temuan harus NC, AOC, atau OFI.',
             ]);
 
             if ($validator->fails()) {
@@ -194,6 +222,7 @@ class LaporanTemuanController extends Controller
                 'findings' => array_map(function ($finding) {
                     return [
                         'kriteria_id' => (int)$finding['kriteria_id'],
+                        'standar_id' => (int)$finding['standar_id'], // Include standar_id in payload
                         'uraian_temuan' => trim($finding['uraian_temuan']),
                         'kategori_temuan' => trim($finding['kategori_temuan']),
                         'saran_perbaikan' => trim($finding['saran_perbaikan'] ?? '') ?: null,
@@ -214,7 +243,6 @@ class LaporanTemuanController extends Controller
             }
 
             $apiResponse = $response->json();
-            // Asumsi API ini mengembalikan 'status' true/false
             if (!isset($apiResponse['status']) || !$apiResponse['status']) {
                 Log::error('API store returned failure: ' . ($apiResponse['message'] ?? 'No message'));
                 $errorMessage = $apiResponse['message'] ?? 'Gagal menyimpan laporan temuan.';
@@ -246,8 +274,6 @@ class LaporanTemuanController extends Controller
 
             $apiResponse = $response->json();
 
-            // Asumsi API laporan-temuan/{id} mengembalikan objek langsung atau objek dengan 'data'
-            // Periksa apakah respons memiliki 'data' key, jika ya, gunakan $apiResponse['data'], jika tidak, gunakan $apiResponse langsung
             $laporan = isset($apiResponse['data']) ? $apiResponse['data'] : $apiResponse;
 
             if (empty($laporan)) {
@@ -256,7 +282,6 @@ class LaporanTemuanController extends Controller
                     ->with('error', 'Laporan temuan tidak ditemukan atau format respons API tidak valid.');
             }
 
-
             $kriteriaResponse = Http::timeout(30)->retry(2, 100)->get("{$this->apiBaseUrl}/kriteria");
             $kriterias = [];
             if ($kriteriaResponse->successful()) {
@@ -264,12 +289,15 @@ class LaporanTemuanController extends Controller
                 $kriterias = array_map(function ($item) {
                     return [
                         'kriteria_id' => $item['kriteria_id'] ?? null,
-                        'nama_kriteria' => $item['nama_kriteria'] ?? 'Standar ' . ($item['kriteria_id'] ?? 'Unknown'),
+                        'nama_kriteria' => $item['nama_kriteria'] ?? 'Kriteria ' . ($item['kriteria_id'] ?? 'Unknown'),
                     ];
                 }, $kriteriaData);
             } else {
                 Log::warning('Failed to fetch kriteria map for show: Status ' . $kriteriaResponse->status());
             }
+
+            // Standards are not typically needed for a simple 'show' view unless explicitly displayed
+            // However, if $laporan already contains 'standar_id' and 'standar_nasional', it's sufficient.
 
             return view('auditor.laporan.detail', compact('laporan', 'auditingId', 'kriterias'));
         } catch (\Exception $e) {
@@ -293,9 +321,7 @@ class LaporanTemuanController extends Controller
             }
 
             $apiResponse = $response->json();
-            // Periksa apakah respons memiliki 'data' key, jika ya, gunakan $apiResponse['data'], jika tidak, gunakan $apiResponse langsung
             $laporan = isset($apiResponse['data']) ? $apiResponse['data'] : $apiResponse;
-
 
             if (empty($laporan)) {
                 Log::warning('Empty or invalid data for edit: ' . json_encode($apiResponse));
@@ -309,6 +335,7 @@ class LaporanTemuanController extends Controller
                     ->with('error', 'Laporan temuan tidak ditemukan untuk audit ini.');
             }
 
+            // Fetch Kriteria
             $kriteriaResponse = Http::timeout(30)->retry(2, 100)->get("{$this->apiBaseUrl}/kriteria");
             $kriterias = [];
             if ($kriteriaResponse->successful()) {
@@ -316,30 +343,58 @@ class LaporanTemuanController extends Controller
                 $kriterias = array_map(function ($item) {
                     return [
                         'kriteria_id' => $item['kriteria_id'] ?? null,
-                        'nama_kriteria' => $item['nama_kriteria'] ?? 'Standar ' . ($item['kriteria_id'] ?? 'Unknown'),
+                        'nama_kriteria' => $item['nama_kriteria'] ?? 'Kriteria ' . ($item['kriteria_id'] ?? 'Unknown'),
                     ];
                 }, $kriteriaData);
             } else {
                 Log::warning('Failed to fetch kriteria for edit: Status ' . $kriteriaResponse->status());
             }
 
+            // Fetch Standards from response-tilik API, filtered by auditing_id
+            // CHANGED: Using the specific endpoint for auditing_id filter
+            $standardsResponse = Http::timeout(30)->retry(2, 100)->get("{$this->apiBaseUrl}/response-tilik/auditing/{$auditingId}");
+            $standards = [];
+            if ($standardsResponse->successful()) {
+                $standardsData = $standardsResponse->json();
+                if (isset($standardsData['data']) && is_array($standardsData['data'])) {
+                    $uniqueStandards = new Collection();
+                    foreach ($standardsData['data'] as $item) {
+                        if (isset($item['standar_nasional']) && $item['standar_nasional'] !== null) {
+                             $uniqueKey = $item['standar_nasional'] . '|' . ($item['response_tilik_id'] ?? 'null');
+                            if (!$uniqueStandards->has($uniqueKey)) {
+                                $uniqueStandards->put($uniqueKey, [
+                                    'standar_id' => $item['response_tilik_id'], // Using response_tilik_id as the value for the dropdown
+                                    'nama_standar' => $item['standar_nasional']
+                                ]);
+                            }
+                        }
+                    }
+                    $standards = $uniqueStandards->values()->all();
+                } else {
+                    Log::warning('Response-tilik API did not return data or has invalid structure for edit.');
+                }
+            } else {
+                Log::error('Failed to fetch standards for edit: Status ' . $standardsResponse->status() . ', Body: ' . $standardsResponse->body());
+            }
+
             $kategori_temuan = ['NC', 'AOC', 'OFI'];
 
-            if (empty($kriterias)) {
+            if (empty($kriterias) || empty($standards)) {
                 return redirect()->route('auditor.laporan.index', ['auditingId' => $auditingId])
-                    ->with('error', 'Gagal memuat data kriteria.');
+                    ->with('error', 'Gagal memuat data kriteria atau standar.');
             }
 
             $findingData = [
                 'laporan_temuan_id' => $laporan['laporan_temuan_id'],
                 'auditing_id' => $laporan['auditing_id'],
                 'kriteria_id' => $laporan['kriteria_id'],
+                'standar_id' => $laporan['standar_id'] ?? null, // Ensure standar_id is passed
                 'uraian_temuan' => $laporan['uraian_temuan'],
                 'kategori_temuan' => $laporan['kategori_temuan'],
                 'saran_perbaikan' => $laporan['saran_perbaikan'],
             ];
 
-            return view('auditor.laporan.edit', compact('auditingId', 'kriterias', 'kategori_temuan', 'findingData'));
+            return view('auditor.laporan.edit', compact('auditingId', 'kriterias', 'kategori_temuan', 'findingData', 'standards'));
         } catch (\Exception $e) {
             Log::error('Unexpected error in edit: ' . $e->getMessage());
             return redirect()->route('auditor.laporan.index', ['auditingId' => $auditingId])
@@ -356,12 +411,14 @@ class LaporanTemuanController extends Controller
             $validator = Validator::make($request->all(), [
                 'auditing_id' => 'required|numeric',
                 'kriteria_id' => 'required|numeric',
+                'standar_id' => 'required|numeric', // Add validation for standar_id
                 'uraian_temuan' => 'required|string|max:1000',
                 'kategori_temuan' => 'required|in:NC,AOC,OFI',
                 'saran_perbaikan' => 'nullable|string|max:1000',
             ], [
                 'auditing_id.required' => 'ID audit wajib diisi.',
-                'kriteria_id.required' => 'Standar wajib dipilih.',
+                'kriteria_id.required' => 'Kriteria wajib dipilih.',
+                'standar_id.required' => 'Standar wajib dipilih.',
                 'uraian_temuan.required' => 'Uraian temuan wajib diisi.',
                 'kategori_temuan.required' => 'Kategori temuan wajib dipilih.',
                 'kategori_temuan.in' => 'Kategori harus NC, AOC, atau OFI.',
@@ -375,6 +432,7 @@ class LaporanTemuanController extends Controller
             $payload = [
                 'auditing_id' => (int)$request->auditing_id,
                 'kriteria_id' => (int)$request->kriteria_id,
+                'standar_id' => (int)$request->standar_id, // Include standar_id in payload
                 'uraian_temuan' => trim($request->uraian_temuan),
                 'kategori_temuan' => trim($request->kategori_temuan),
                 'saran_perbaikan' => trim($request->saran_perbaikan ?? '') ?: null,
@@ -391,7 +449,6 @@ class LaporanTemuanController extends Controller
             }
 
             $apiResponse = $response->json();
-            // Asumsi API ini mengembalikan 'status' true/false
             if (!isset($apiResponse['status']) || !$apiResponse['status']) {
                 Log::error('API update returned failure: ' . ($apiResponse['message'] ?? 'No message'));
                 $errorMessage = $apiResponse['message'] ?? 'Gagal memperbarui laporan temuan.';
@@ -437,7 +494,6 @@ class LaporanTemuanController extends Controller
             Log::info("Update audit status request for Auditing ID: {$auditingId}, new status: {$newStatus}");
 
             // Send PUT request to the external API for auditings
-            // Asumsi API Anda di AuditingController@update mengembalikan 'success: true'
             $response = Http::timeout(30)->retry(2, 100)->put("{$this->apiBaseUrl}/auditings/{$auditingId}", $payload);
 
             if (!$response->successful()) {
@@ -447,7 +503,6 @@ class LaporanTemuanController extends Controller
             }
 
             $apiResponse = $response->json();
-            // KOREKSI DI SINI: TETAP GUNAKAN 'success' KARENA AuditingController@update MENGEMBALIKAN 'success: true'
             if (!isset($apiResponse['success']) || !$apiResponse['success']) {
                 Log::error('API update audit status returned failure: ' . ($apiResponse['message'] ?? 'No message'));
                 $errorMessage = $apiResponse['message'] ?? 'Gagal memperbarui status audit.';
@@ -494,7 +549,6 @@ class LaporanTemuanController extends Controller
             }
 
             $apiResponse = $response->json();
-            // Asumsi API ini mengembalikan 'status' true/false
             if (!isset($apiResponse['status']) || !$apiResponse['status']) {
                 Log::error('API destroy returned failure: ' . ($apiResponse['message'] ?? 'No message'));
                 $errorMessage = $apiResponse['message'] ?? 'Gagal menghapus laporan temuan.';
