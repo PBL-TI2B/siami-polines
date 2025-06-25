@@ -381,16 +381,63 @@ public function update(Request $request, $id)
 
     public function downloadptpp($id)
     {
+        // Ambil data audit
         $audit = Auditing::with(['auditor1', 'auditor2', 'auditee1', 'auditee2', 'periode', 'unitKerja'])->findOrFail($id);
 
+        // Cek apakah status audit selesai (status == 11)
         if ($audit->status != 11) {
             return redirect()->back()->with('error', 'PTPP hanya tersedia jika status selesai.');
         }
 
-        $pdf = Pdf::loadView('kepala-pmpp.ploting-ami.ptpp', compact('audit'));
+        try {
+            // Permintaan API untuk laporan temuan
+            $laporanResponse = Http::get('http://127.0.0.1:5000/api/laporan-temuan', [
+                'auditing_id' => $id
+            ]);
 
-        return $pdf->download('PTPP-'.$audit->unit_kerja.'.pdf');
+            // Cek apakah respons laporan temuan berhasil
+            if ($laporanResponse->successful()) {
+                $laporanApiResponse = $laporanResponse->json();
+                if ($laporanApiResponse['status'] === true) {
+                    $laporanTemuan = $laporanApiResponse['data'];
+                } else {
+                    Log::error('Gagal mengambil laporan temuan: ' . $laporanApiResponse['message']);
+                    return redirect()->back()->with('error', 'Gagal mengambil data laporan temuan.');
+                }
+            } else {
+                Log::error('Permintaan API laporan temuan gagal: ' . $laporanResponse->status());
+                return redirect()->back()->with('error', 'Terjadi kesalahan saat mengambil data laporan temuan.');
+            }
+
+            // Permintaan API untuk response tilik
+            $tilikResponse = Http::get("http://127.0.0.1:5000/api/response-tilik/auditing/{$id}");
+
+            // Cek apakah respons response tilik berhasil
+            if ($tilikResponse->successful()) {
+                $tilikApiResponse = $tilikResponse->json();
+                if ($tilikApiResponse['success'] === true) {
+                    $responseTilik = $tilikApiResponse['data'];
+                } else {
+                    Log::error('Gagal mengambil response tilik: ' . $tilikApiResponse['message']);
+                    return redirect()->back()->with('error', 'Gagal mengambil data response tilik.');
+                }
+            } else {
+                Log::error('Permintaan API response tilik gagal: ' . $tilikResponse->status());
+                return redirect()->back()->with('error', 'Terjadi kesalahan saat mengambil data response tilik.');
+            }
+        } catch (\Illuminate\Http\Client\RequestException $e) {
+            // Catat error dan arahkan kembali dengan pesan error
+            Log::error('Error permintaan API: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengambil data.');
+        }
+
+        // Muat view PDF dengan data audit, laporan temuan, dan response tilik
+        $pdf = Pdf::loadView('kepala-pmpp.ploting-ami.ptpp', compact('audit', 'laporanTemuan', 'responseTilik'));
+
+        // Unduh PDF
+        return $pdf->download('PTPP-' . $audit->unitKerja->nama_unit_kerja . '.pdf');
     }
+
 
     public function downloadLaporan($id)
     {
