@@ -16,6 +16,8 @@ class Auditing extends Model
         'unit_kerja_id',
         'periode_id',
         'status',
+        'rtm',
+        'link',
     ];
 
     // Relasi: Auditing berelasi ke User sebagai auditor pertama

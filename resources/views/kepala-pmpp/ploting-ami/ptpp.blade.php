@@ -114,7 +114,7 @@
         </tr>
         <tr>
             <td class="header-info-label"><strong>Tanggal</strong></td>
-            <td class="header-info-value">15/12/2024</td>
+            <td class="header-info-value">{{ now()->format('d/m/Y') }}</td>
         </tr>
         <tr>
             <td class="header-info-label"><strong>Halaman</strong></td>
@@ -128,7 +128,7 @@
             <td class="laporan-info-label">Kepada Yth.</td>
             <td>: {{ $audit['auditee1']['nama'] }}</td>
             <td class="laporan-info-label">Tanggal</td>
-            <td>: {{ $audit['jadwal_audit'] }}</td>
+            <td>: {{ now()->locale('id')->isoFormat('MMMM Y') }}</td>
         </tr>
         <tr>
             <td>Jur/Bag/Unit</td>
@@ -161,7 +161,7 @@
             <td colspan="2">Kategori Temuan</td>
             <td colspan="2">: {{ $temuan['kategori_temuan'] }}</td>
             <td colspan="2">Tanggal Perbaikan</td>
-            <td colspan="2">: ....................</td>
+            <td colspan="2">: {{ now()->format('d/m/Y') }}</td>
         </tr>
         <tr>
             <td>Auditor</td>
@@ -184,16 +184,16 @@
             <td colspan="2">Kategori Temuan</td>
             <td colspan="2">: {{ $temuan['kategori_temuan'] }}</td>
             <td colspan="2">Tanggal Perbaikan</td>
-            <td colspan="2">: ....................</td>
+            <td colspan="2">: {{ now()->format('d/m/Y') }}</td>
         </tr>
         <tr>
-            <td colspan="8">Pemeriksaan Hasil Tindakan Perbaikan (close out):<br>{{ $temuan['uraian_temuan'] }}<br><br><br></td>
+            <td colspan="8">Pemeriksaan Hasil Tindakan Perbaikan (close out):<br>{{ $temuan['saran_perbaikan'] }}<br><br><br></td>
         </tr>
         <tr>
             <td colspan="2">Hasil Verifikasi</td>
             <td colspan="2">: Sesuai/Tidak Sesuai</td>
             <td colspan="2">Rekomendasi</td>
-            <td colspan="2">: ....................</td>
+            <td colspan="2">{{ $audit['rtm'] }}</td>
         </tr>
         <tr>
             <td>Auditor</td>
