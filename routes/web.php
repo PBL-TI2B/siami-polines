@@ -144,7 +144,7 @@ Route::prefix('auditor')->middleware('auth.ami:auditor')->group(function () {
 
     // Rute untuk data-instrumen
     Route::get('/data-instrumen', [DataInstrumenControllerAuditor::class, 'index'])->name('auditor.data-instrumen.index');
-    Route::get('/data-instrumen/upt', [DataInstrumenControllerAuditor::class, 'auditorInsUpt'])->name('auditor.data-instrumen.instrumenupt');
+    Route::get('/data-instrumen/upt/{id}', [AuditController::class, 'auditorShowInstrumenUpt'])->name('auditor.data-instrumen.instrumenupt');
     Route::get('/data-instrumen/prodi/{id}', [AuditController::class, 'auditorShowInstrumenProdi'])->name('auditor.data-instrumen.instrumenprodi');
     Route::get('/data-instrumen/jurusan/{id}', [AuditController::class, 'auditorShowInstrumenJurusan'])->name('auditor.data-instrumen.instrumenjurusan');
     Route::patch('/data-instrumen/jurusan/update/{id}', [AuditController::class, 'auditorUpdateInstrumenResponse'])->name('auditor.instrumen.update')->where('id', '[0-9]+');

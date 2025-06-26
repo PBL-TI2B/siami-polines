@@ -508,6 +508,63 @@ class AuditController extends Controller
         return redirect()->route('auditor.audit.index')->with('error', 'Terjadi kesalahan saat mengambil data audit.');
     }
 }
+   public function auditorShowInstrumenUpt($id)
+{
+    // Validasi ID
+    if (!is_numeric($id) || $id <= 0) {
+        \Log::warning("ID audit tidak valid: {$id}");
+        return redirect()->route('auditor.audit.index')->with('error', 'ID audit tidak valid.');
+    }
+
+    // Periksa sesi pengguna
+    $userId = session('user')['user_id'] ?? null;
+    if (!$userId) {
+        \Log::warning("Pengguna belum login untuk mengakses audit ID: {$id}");
+        return redirect()->route('login')->with('error', 'Silakan login untuk mengakses instrumen upt.');
+    }
+
+    try {
+        // Ambil data audit dengan relasi
+        $auditing = Auditing::with(['unitKerja', 'auditor1', 'auditor2', 'auditee1', 'auditee2', 'periode'])
+            ->findOrFail($id);
+
+        // Validasi bahwa pengguna adalah auditor untuk audit ini
+        if ($auditing->user_id_1_auditor != $userId && $auditing->user_id_2_auditor != $userId) {
+            \Log::warning("Akses tidak sah ke audit ID: {$id} oleh pengguna ID: {$userId}");
+            return redirect()->route('auditor.audit.index')->with('error', 'Anda tidak memiliki hak akses untuk audit ini.');
+        }
+
+        // Validasi jenis unit (harus jurusan, jenis_unit_id = 2)
+        $jenisUnitId = $auditing->unitKerja->jenis_unit_id ?? null;
+        if ($jenisUnitId !== 1) {
+            \Log::warning("Jenis unit tidak valid untuk audit ID: {$id}. Ditemukan jenis_unit_id: {$jenisUnitId}");
+            return redirect()->route('auditor.audit.index')->with('error', 'Halaman ini hanya untuk jurusan.');
+        }
+
+        // Ambil data dari API
+        $response = Http::get("http://127.0.0.1:5000/api/instrumen-response");
+        if ($response->successful()) {
+            $allData = $response->json()['data'] ?? [];
+            $filteredData = array_filter($allData, function ($item) use ($userId, $id) {
+                return isset($item['auditing_id']) && $item['auditing_id'] === (int)$id &&
+                       (isset($item['auditing']['user_id_1_auditor']) && $item['auditing']['user_id_1_auditor'] === $userId ||
+                        isset($item['auditing']['user_id_2_auditor']) && $item['auditing']['user_id_2_auditor'] === $userId);
+            });
+            $instrumenData = array_values($filteredData);
+        } else {
+            \Log::error("Gagal mengambil data instrumen-response dari API: {$response->status()}", ['response' => $response->body()]);
+            $instrumenData = [];
+        }
+
+        return view('auditor.data-instrumen.instrumenupt', compact('auditing', 'instrumenData'));
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        \Log::error("Data audit tidak ditemukan untuk ID: {$id}", ['exception' => $e->getMessage()]);
+        return redirect()->route('auditor.audit.index')->with('error', 'Data audit tidak ditemukan.');
+    } catch (\Exception $e) {
+        \Log::error("Kesalahan saat mengambil data audit untuk ID: {$id}", ['exception' => $e->getMessage()]);
+        return redirect()->route('auditor.audit.index')->with('error', 'Terjadi kesalahan saat mengambil data audit.');
+    }
+}
 public function auditorShowInstrumenProdi($id)
    {
     // Validasi ID

@@ -50,7 +50,7 @@ $progressInfo = ['text' => 'Proses Penjadwalan Asesmen', 'color' => 'sky', 'valu
                 <ol class="ml-5 relative border-l-2 border-slate-200 dark:border-slate-700">
                     @php
                     $instrumenRoute = match ($jenisUnitId) {
-                    1 => route('auditor.data-instrumen.instrumenupt'),
+                    1 => route('auditor.data-instrumen.instrumenupt',['id' => $auditing->auditing_id]),
                     2 => route('auditor.data-instrumen.instrumenjurusan', ['id' => $auditing->auditing_id]),
                     3 => route('auditor.data-instrumen.instrumenprodi', ['id' => $auditing->auditing_id]),
                     default => '#',
