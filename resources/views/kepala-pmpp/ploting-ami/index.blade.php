@@ -89,7 +89,7 @@
                                 <a href="{{ route('kepala-pmpp.ploting-ami.download-ptpp', $auditing->auditing_id) }}"
                                     class="inline-flex items-center px-2.5 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-xs font-semibold"
                                     target="_blank">
-                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
                                     </svg>
                                     PTPP
@@ -97,7 +97,7 @@
                                 <a href="{{ route('kepala-pmpp.ploting-ami.download-laporan', $auditing->auditing_id) }}"
                                     class="inline-flex items-center px-2.5 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 text-xs font-semibold"
                                     target="_blank">
-                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
                                     </svg>
                                     Laporan Temuan
@@ -230,7 +230,7 @@
                 })
             })
             .then(res => res.json())
-            .then(data => {
+            .then data => {
                 window.location.reload();
             })
             .catch(() => {
