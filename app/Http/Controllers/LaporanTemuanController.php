@@ -222,7 +222,7 @@ class LaporanTemuanController extends Controller
                 'findings' => array_map(function ($finding) {
                     return [
                         'kriteria_id' => (int)$finding['kriteria_id'],
-                        'standar_id' => (int)$finding['standar_id'], // Include standar_id in payload
+                        'response_tilik_id' => (int)$finding['standar_id'], // Include standar_id in payload
                         'uraian_temuan' => trim($finding['uraian_temuan']),
                         'kategori_temuan' => trim($finding['kategori_temuan']),
                         'saran_perbaikan' => trim($finding['saran_perbaikan'] ?? '') ?: null,
