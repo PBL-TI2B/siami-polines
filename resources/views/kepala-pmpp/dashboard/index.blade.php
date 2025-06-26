@@ -19,13 +19,14 @@
                     Hai, {{ $user['nama'] ?? 'Kepala' }}! Selamat Datang di Dashboard Kepala PMPP
                 </h1>
 
-                {{-- Periode Aktif --}}
-                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                    Periode Aktif:
-                    <span class="ml-1 inline-block rounded-full bg-sky-100 px-3 py-1 text-sm font-semibold text-sky-600 dark:bg-sky-800 dark:text-sky-400">
-                        2024/2025 - Semester Genap
-                    </span>
-                </p>
+{{-- Periode Aktif --}}
+<p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+    Periode Aktif:
+    <span id="periodeAktifLabel" class="ml-1 inline-block rounded-full bg-sky-100 px-3 py-1 text-sm font-semibold text-sky-600 dark:bg-sky-800 dark:text-sky-400">
+        Memuat...
+    </span>
+</p>
+
             </div>
         </div>
         
@@ -39,7 +40,7 @@
                     </div>
                     <div>
                         <p class="text-sm text-gray-700 dark:text-gray-300">Audit Aktif</p>
-                        <p class="text-2xl font-bold text-gray-900 dark:text-white" id="activeAudits">0</p>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white" id="activeAudits"></p>
                     </div>
                 </div>
             </div>
@@ -52,7 +53,7 @@
                     </div>
                     <div>
                         <p class="text-sm text-gray-700 dark:text-gray-300">Audit Selesai</p>
-                        <p class="text-2xl font-bold text-gray-900 dark:text-white" id="completedAudits">11</p>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white" id="completedAudits"></p>
                     </div>
                 </div>
             </div>
@@ -65,36 +66,32 @@
                     </div>
                     <div>
                         <p class="text-sm text-gray-700 dark:text-gray-300">Tindak Lanjut</p>
-                        <p class="text-2xl font-bold text-gray-900 dark:text-white" id="followupAudits">0</p>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white" id="followupAudits"></p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Tabel Status AMI -->
-        <div class="mb-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-            <h3 class="mb-4 text-xl font-bold text-gray-900 dark:text-gray-200">Status Audit Mutu Internal</h3>
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                    <thead class="bg-gray-50 dark:bg-gray-700">
-                        <tr>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
-                                No
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
-                                Nama Unit
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
-                                Status
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800" id="auditTableBody">
-                        <!-- Data akan diisi oleh JavaScript -->
-                    </tbody>
-                </table>
+            <!-- Tabel Status AMI -->
+            <div class="mb-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                <h3 class="mb-4 text-xl font-bold text-gray-900 dark:text-gray-200">Status Audit Mutu Internal</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+ <thead class="bg-gray-50 dark:bg-gray-700">
+    <tr>
+        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">No</th>
+        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">Nama Unit</th>
+        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">Tanggal Audit</th>
+        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">Status</th>
+    </tr>
+</thead>
+
+                        <tbody class="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800" id="auditTableBody">
+                            <!-- Data akan diisi oleh JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
 
         <!-- Grafik Audit -->
         <div class="mb-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
@@ -128,6 +125,15 @@
             try {
                 const response = await fetch('http://127.0.0.1:5000/api/auditings');
                 const data = await response.json();
+                // Menentukan periode aktif berdasarkan periode_id === 3
+const periodeAktifData = data.find(a => a.periode_id === 3);
+
+if (periodeAktifData && periodeAktifData.periode?.nama_periode) {
+    document.getElementById('periodeAktifLabel').textContent = periodeAktifData.periode.nama_periode;
+} else {
+    document.getElementById('periodeAktifLabel').textContent = 'Tidak ditemukan';
+}
+
 
                 // Update tabel
                 tbody.innerHTML = '';
@@ -137,24 +143,34 @@
                     return;
                 }
 
-                data.forEach((item, idx) => {
-                    const status = statusMap[item.status] || {
-                        label: 'Status Tidak Diketahui',
-                        color: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'
-                    };
-                    tbody.innerHTML += `
-                        <tr>
-                            <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-200">${idx + 1}</td>
-                            <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-200">${item.unit_kerja?.nama_unit_kerja ?? '-'}</td>
-                            <td class="px-6 py-4 text-sm">
-                                <span class="inline-block rounded-full px-3 py-1 text-center text-xs font-semibold ${status.color}">
-                                    ${status.label}
-                                </span>
-                            </td>
+data.forEach((item, idx) => {
+    const status = statusMap[item.status] || {
+        label: 'Status Tidak Diketahui',
+        color: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'
+    };
 
-                        </tr>
-                    `;
-                });
+    const tanggalAudit = item.jadwal_audit
+        ? new Date(item.jadwal_audit).toLocaleDateString('id-ID', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        })
+        : '-';
+
+    tbody.innerHTML += `
+        <tr>
+            <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-200">${idx + 1}</td>
+            <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-200">${item.unit_kerja?.nama_unit_kerja ?? '-'}</td>
+            <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-200">${tanggalAudit}</td>
+            <td class="px-6 py-4 text-sm">
+                <span class="inline-block rounded-full px-3 py-1 text-center text-xs font-semibold ${status.color}">
+                    ${status.label}
+                </span>
+            </td>
+        </tr>
+    `;
+});
+
 
 // Hitung statistik
 const activeAudits = data.filter(
@@ -190,57 +206,66 @@ const followupData = [1, 2, 3].map(periodId =>
 );
 
 
-                // Buat grafik
-                const ctx = document.getElementById('auditChart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: periods,
-                        datasets: [
-                            {
-                                label: 'Audit Aktif',
-                                data: activeData,
-                                backgroundColor: 'rgba(14, 165, 233, 0.6)', // sky
-                                borderColor: 'rgba(14, 165, 233, 1)',
-                                borderWidth: 1
-                            },
-                            {
-                                label: 'Audit Selesai',
-                                data: completedData,
-                                backgroundColor: 'rgba(34, 197, 94, 0.6)', // green
-                                borderColor: 'rgba(34, 197, 94, 1)',
-                                borderWidth: 1
-                            },
-                            {
-                                label: 'Tindak Lanjut',
-                                data: followupData,
-                                backgroundColor: 'rgba(253, 224, 71, 0.6)', // yellow
-                                borderColor: 'rgba(253, 224, 71, 1)',
-                                borderWidth: 1
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Jumlah Audit'
-                                },
-                                ticks: {
-                                    stepSize: 10
-                                }
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                position: 'top'
-                            }
-                        }
-                    }
-                });
+const maxY = Math.max(
+    ...activeData,
+    ...completedData,
+    ...followupData,
+    1 
+);
+
+// Buat grafik
+const ctx = document.getElementById('auditChart').getContext('2d');
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: periods,
+        datasets: [
+            {
+                label: 'Audit Aktif',
+                data: activeData,
+                backgroundColor: 'rgba(14, 165, 233, 0.6)', // sky
+                borderColor: 'rgba(14, 165, 233, 1)',
+                borderWidth: 1
+            },
+            {
+                label: 'Audit Selesai',
+                data: completedData,
+                backgroundColor: 'rgba(34, 197, 94, 0.6)', // green
+                borderColor: 'rgba(34, 197, 94, 1)',
+                borderWidth: 1
+            },
+            {
+                label: 'Tindak Lanjut',
+                data: followupData,
+                backgroundColor: 'rgba(253, 224, 71, 0.6)', // yellow
+                borderColor: 'rgba(253, 224, 71, 1)',
+                borderWidth: 1
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: maxY,
+                title: {
+                    display: true,
+                    text: 'Jumlah Audit'
+                },
+                ticks: {
+                    stepSize: 1
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                position: 'top'
+            }
+        }
+    }
+});
+
             } catch (err) {
                 tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-4 text-center text-red-500">Gagal mengambil data audit.</td></tr>`;
                 console.error('Error fetching audit data:', err);
