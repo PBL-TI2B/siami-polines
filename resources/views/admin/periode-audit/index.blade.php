@@ -53,14 +53,10 @@
         </div>
 
         <!-- Table Section -->
-        <x-table :headers="['', 'No', 'Nama Periode AMI', 'Tanggal Mulai', 'Tanggal Berakhir', 'Status', 'Aksi']" :data="$periodeAudits" :perPage="5" :route="route('admin.periode-audit.index')">
+        <x-table :headers="['No', 'Nama Periode AMI', 'Tanggal Mulai', 'Tanggal Berakhir', 'Status', 'Aksi']" :data="$periodeAudits" :perPage="5" :route="route('admin.periode-audit.index')">
             @forelse ($periodeAudits ?? [] as $index => $periode)
                 <tr
                     class="border-y border-gray-200 bg-white transition-all duration-200 hover:bg-gray-50 dark:border-gray-500 dark:bg-gray-800 dark:hover:bg-gray-600">
-                    <td class="w-4 border-r border-gray-200 p-4 dark:border-gray-700">
-                        <input type="checkbox"
-                            class="h-4 w-4 rounded border-gray-200 bg-gray-100 text-sky-800 focus:ring-sky-500 dark:border-gray-500 dark:bg-gray-600 dark:focus:ring-sky-600">
-                    </td>
                     <td class="border-r border-gray-200 px-4 py-4 sm:px-6 dark:border-gray-700">
                         {{ $periodeAudits->firstItem() + $index }}
                     </td>
