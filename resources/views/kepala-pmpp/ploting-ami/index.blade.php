@@ -230,7 +230,7 @@
                 })
             })
             .then(res => res.json())
-            .then data => {
+            .then(data => {
                 window.location.reload();
             })
             .catch(() => {
