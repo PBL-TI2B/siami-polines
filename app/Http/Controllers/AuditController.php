@@ -708,6 +708,42 @@ public function auditorUpdateInstrumenResponse(Request $request, $id)
             ]);
     }
 
+
+    public function previewPTPP($id)
+    {
+        try {
+            // Ambil data audit dari database
+            $audit = Auditing::with(['auditor1', 'auditor2', 'auditee1', 'auditee2', 'periode', 'unitKerja'])
+                ->findOrFail($id);
+
+            $fileName = 'Permintaan Tindakan Perbaikan dan Pencegahan-' .
+                ($audit->unitKerja->nama_unit_kerja ?? 'unit') . '-' . ($audit->periode->nama_periode) . '.pdf';
+
+            // Ambil data laporan temuan dari API eksternal
+            $response = Http::get("http://127.0.0.1:5000/api/laporan-temuan?auditing_id={$id}");
+            $laporanTemuan = [];
+            if ($response->successful()) {
+                $laporanTemuan = $response->json()['data'] ?? [];
+            }
+
+            // Kirim data audit dan laporanTemuan ke view PDF
+            $pdf = Pdf::loadView('auditee.laporan-temuan.download-ptpp', compact('audit', 'laporanTemuan'));
+            $pdf->setPaper('a4', 'portrait');
+
+            // Set judul dokumen PDF (metadata)
+            $dompdf = $pdf->getDomPDF();
+            $dompdf->get_canvas()->add_info('Title', $fileName);
+
+            return $pdf->stream($fileName);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            \Log::error("Audit tidak ditemukan untuk preview PTPP, ID: {$id}", ['exception' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'Data audit tidak ditemukan.');
+        } catch (\Exception $e) {
+            \Log::error("Gagal generate PDF PTPP untuk audit ID {$id}: " . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menampilkan preview file PTPP.');
+        }
+    }
+
     public function downloadPTPP($id)
     {
         try {

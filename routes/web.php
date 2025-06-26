@@ -204,6 +204,7 @@ Route::prefix('auditee')->middleware('auth.ami:auditee')->group(function () {
         Route::prefix('laporan-temuan')->group(function () {
             Route::get('/{auditingId}', [AuditController::class, 'showAuditeeLaporanTemuan'])->name('auditee.laporan-temuan.index');
             Route::get('/tindak-lanjut/{id}', [AuditController::class, 'tindakLanjutPTPP'])->name('auditee.laporan-temuan.tindak-lanjut');
+            Route::get('/preview-ptpp/{auditing}', [AuditController::class, 'previewPTPP'])->name('auditee.laporan-temuan.preview-ptpp');
             Route::get('/download-ptpp/{auditing}', [AuditController::class, 'downloadPTPP'])->name('auditee.laporan-temuan.download-ptpp');
         });
 

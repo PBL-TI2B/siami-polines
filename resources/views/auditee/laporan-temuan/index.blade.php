@@ -28,7 +28,7 @@
 
             {{-- Action Button --}}
             <div class="flex-shrink-0">
-                <x-button href="{{ route('auditee.laporan-temuan.download-ptpp', ['auditing' => $audit['auditing_id']]) }}"
+                <x-button href="{{ route('auditee.laporan-temuan.preview-ptpp', ['auditing' => $audit['auditing_id']]) }}"
                     color="green">
                     <x-heroicon-o-arrow-down-tray class="mr-2 h-5 w-5" />
                     <span>Download PTPP</span>
