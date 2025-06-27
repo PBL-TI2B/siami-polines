@@ -27,9 +27,10 @@
     </div>
 
     <div class="mb-6" id="statusAmiBox"></div>
-
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+    
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <!-- Box 1: Status Audit 60% (3 dari 5) -->
+<div class="lg:col-span-2 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
             <h3 class="mb-4 text-xl font-bold text-gray-900 dark:text-gray-200">Status Audit Mutu Internal</h3>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -42,13 +43,15 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-800" id="auditTableBody">
+                        
                         </tbody>
                 </table>
             </div>
         </div>
 
         <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-md dark:border-slate-700 dark:bg-slate-800">
-            <h2 class="border-b border-gray-200 pb-3 text-xl font-bold text-gray-800 dark:border-slate-600 dark:text-white">
+            <!-- Box 2: Jadwal AMI 40% (2 dari 5) -->
+<div class="lg:col-span-1 rounded-lg border border-gray-200 bg-white p-5 shadow-md dark:border-slate-700 dark:bg-slate-800">
                 Informasi Jadwal AMI
             </h2>
             <div class="divide-y divide-gray-200 dark:divide-slate-600" id="infoAmiBox">
@@ -111,7 +114,12 @@
                 }
                 return;
             }
+            data.sort((a, b) => {
+    const dateA = new Date(a.periode?.tanggal_mulai ?? '2020-01-01');
+    const dateB = new Date(b.periode?.tanggal_mulai ?? '2020-01-01');
+    return dateB - dateA;
 
+});
             data.forEach((item, idx) => {
                 const status = item.status ?? 0;
                 const statusLabel = statusMap[status]?.label ?? 'Status Tidak Diketahui';
