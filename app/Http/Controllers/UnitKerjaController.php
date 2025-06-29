@@ -31,9 +31,9 @@ class UnitKerjaController extends Controller
 
         $url = "http://127.0.0.1:5000/api/unit-kerja/$type";
 
+        // Ambil semua data tanpa mengirim parameter search
         $response = Http::get($url, [
             'jenis_unit_id' => $jenisUnitId,
-            'search' => $search,
         ]);
 
         if (!$response->successful()) {
@@ -47,10 +47,18 @@ class UnitKerjaController extends Controller
         $json = $response->json();
         $unitsArray = $json['data'] ?? [];
 
-        // Konversi ke koleksi
+        // Konversi ke koleksi Laravel
         $collection = collect($unitsArray);
 
-        // Manual pagination
+        // Filter berdasarkan search jika ada
+        if (!empty($search)) {
+            $collection = $collection->filter(function ($item) use ($search) {
+                // Pastikan key 'nama_unit_kerja' sesuai dengan field dari API
+                return stripos($item['nama_unit_kerja'], $search) !== false;
+            });
+        }
+
+        // Manual pagination setelah filter
         $sliced = $collection->slice(($currentPage - 1) * $perPage, $perPage)->values();
 
         $paginatedUnits = new LengthAwarePaginator(
@@ -70,7 +78,6 @@ class UnitKerjaController extends Controller
             case 'jurusan':
                 return view('admin.unit-kerja.jurusan', ['units' => $paginatedUnits]);
             default:
-                // Jika tidak ada type, tampilkan view default atau error
                 return view('admin.unit-kerja.index', ['units' => $paginatedUnits]);
         }
     }
