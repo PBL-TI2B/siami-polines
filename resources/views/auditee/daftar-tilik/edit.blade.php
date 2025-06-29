@@ -61,6 +61,15 @@
                     placeholder="Masukkan Rencana Perbaikan & Tindak Lanjut..."></textarea>
             </div>
 
+            <!-- Kolom Tindakan Pencegahan -->
+            <div class="mb-4">
+                <label for="tindakan_pencegahan" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tindakan
+                    Pencegahan</label>
+                <textarea required name="tindakan_pencegahan" id="tindakan_pencegahan" rows="4"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                    placeholder="Masukkan Tindakan Pencegahan..."></textarea>
+            </div>
+
             <div class="mt-3 flex gap-3">
                 <x-button type="submit" color="sky" icon="heroicon-o-plus">
                     Simpan
@@ -128,6 +137,7 @@
                             .akar_penyebab_penunjang || '';
                         document.getElementById('rencana_perbaikan').value = data
                             .rencana_perbaikan_tindak_lanjut || '';
+                        document.getElementById('tindakan_pencegahan').value = data.tindakan_pencegahan || '';
                     } else {
                         showModalToast('bg-red-500', 'text-gray-900', 'Data tidak ditemukan.', false);
                     }
@@ -148,7 +158,8 @@
                     standar_nasional: document.getElementById('standar_nasional').value,
                     uraian_isian: document.getElementById('uraian_isian').value,
                     akar_penyebab_penunjang: document.getElementById('akar_penyebab_penunjang').value,
-                    rencana_perbaikan_tindak_lanjut: document.getElementById('rencana_perbaikan').value
+                    rencana_perbaikan_tindak_lanjut: document.getElementById('rencana_perbaikan').value,
+                    tindakan_pencegahan: document.getElementById('tindakan_pencegahan').value
                 };
 
                 // For form submission

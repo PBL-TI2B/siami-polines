@@ -83,6 +83,8 @@
                             <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">
                                 Rencana Perbaikan & Tindak Lanjut'25</th>
                             <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">
+                                Tindakan Pencegahan</th>
+                            <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">
                                 Aksi</th>
                         </tr>
                     </thead>
@@ -345,7 +347,8 @@
                     (response.standar_nasional || '').toLowerCase().includes(searchTerm) ||
                     (response.uraian_isian || '').toLowerCase().includes(searchTerm) ||
                     (response.akar_penyebab_penunjang || '').toLowerCase().includes(searchTerm) ||
-                    (response.rencana_perbaikan_tindak_lanjut || '').toLowerCase().includes(searchTerm)
+                    (response.rencana_perbaikan_tindak_lanjut || '').toLowerCase().includes(searchTerm) ||
+                    (response.tindakan_pencegahan || '').toLowerCase().includes(searchTerm)
                 );
             });
 
@@ -382,7 +385,8 @@
                     standar_nasional: response.standar_nasional ?? '-',
                     uraian_isian: response.uraian_isian ?? '-',
                     akar_penyebab_penunjang: response.akar_penyebab_penunjang ?? '-',
-                    rencana_perbaikan_tindak_lanjut: response.rencana_perbaikan_tindak_lanjut ?? '-'
+                    rencana_perbaikan_tindak_lanjut: response.rencana_perbaikan_tindak_lanjut ?? '-',
+                    tindakan_pencegahan: response.tindakan_pencegahan ?? '-'
                 };
             });
 
@@ -396,7 +400,8 @@
                     standar_nasional: '-',
                     uraian_isian: '-',
                     akar_penyebab_penunjang: '-',
-                    rencana_perbaikan_tindak_lanjut: '-'
+                    rencana_perbaikan_tindak_lanjut: '-',
+                    tindakan_pencegahan: '-'
                 };
 
                 row.innerHTML = `
@@ -412,6 +417,7 @@
                     <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600">${response.uraian_isian}</td>
                     <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600">${response.akar_penyebab_penunjang}</td>
                     <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600">${response.rencana_perbaikan_tindak_lanjut}</td>
+                    <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600">${response.tindakan_pencegahan}</td>
                     <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">
                         ${auditStatus !== 4 ? `
                             <span class="text-gray-500 dark:text-gray-400">
