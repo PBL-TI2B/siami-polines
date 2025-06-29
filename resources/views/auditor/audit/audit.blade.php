@@ -72,7 +72,7 @@ $progressInfo = ['text' => 'Proses Penjadwalan Asesmen', 'color' => 'sky', 'valu
                         <h4 class="mb-1 flex items-center text-lg font-semibold text-slate-900 dark:text-white">Jadwalkan Assesmen Lapangan</h4>
                         <p class="text-sm text-slate-500 dark:text-slate-400">Atur tanggal dan waktu untuk pelaksanaan asesmen lapangan dengan auditee.</p>
                         @if($status == 2)
-                        <a href="{{ route('auditor.assesmen-lapangan.index') }}" class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800">
+                        <a href="{{ route('auditor.assesmen-lapangan.index',['id' => $auditing->auditing_id]) }}" class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800">
                             Set Jadwal
                             <svg class="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />

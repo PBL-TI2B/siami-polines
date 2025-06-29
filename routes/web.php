@@ -134,12 +134,11 @@ Route::prefix('auditor')->middleware('auth.ami:auditor')->group(function () {
         Route::get('/daftar-tilik/{auditingId}/edit/{id}', [DaftarTilikController::class, 'edit'])->name('auditor.daftar-tilik.edit');
         Route::get('/daftar-tilik/{auditingId}/create', [DaftarTilikController::class, 'create'])->name('auditor.daftar-tilik.create');
         Route::get('/download-presensi/{auditing}', [AuditController::class, 'downloadPresensi'])->name('auditor.audit.presensi');
-    });
-
-    Route::prefix('assesmen-lapangan')->group(function () {
-        Route::get('/', [PlotingAMIController::class, 'editJadwal'])->name('auditor.assesmen-lapangan.index');
-        Route::get('/{id}/edit', [PlotingAMIController::class, 'edit'])->name('auditor.assesmen-lapangan.edit');
-        Route::put('/auditor/assesmen-lapangan/{id}', [PlotingAMIController::class, 'updateJadwal'])->name('auditor.assesmen-lapangan.update');
+        Route::prefix('assesmen-lapangan')->group(function () {
+            Route::get('/{id}', [PlotingAMIController::class, 'editJadwal'])->name('auditor.assesmen-lapangan.index');
+            Route::get('/{id}/edit', [PlotingAMIController::class, 'edit'])->name('auditor.assesmen-lapangan.edit');
+            Route::put('/{id}', [PlotingAMIController::class, 'updateJadwal'])->name('auditor.assesmen-lapangan.update');
+        });
     });
 
     // Rute untuk data-instrumen
@@ -160,9 +159,9 @@ Route::prefix('auditor')->middleware('auth.ami:auditor')->group(function () {
     Route::get('/laporan/{auditingId}/{laporan_temuan_id}/edit', [LaporanTemuanController::class, 'edit'])->name('auditor.laporan.edit');
     Route::put('/laporan/{auditingId}/{laporan_temuan_id}', [LaporanTemuanController::class, 'update'])->name('auditor.laporan.update');
     Route::delete('/laporan/{auditingId}/{laporan_temuan_id}', [LaporanTemuanController::class, 'destroy'])->name('auditor.laporan.destroy');
-    Route::post('laporan/{auditingId}/submit', [LaporanTemuanActionController::class, 'submit'])->name('auditor.laporan.submit');
-    Route::post('laporan/{auditingId}/accept', [LaporanTemuanActionController::class, 'accept'])->name('auditor.laporan.accept');
-    Route::post('laporan/{auditingId}/revise', [LaporanTemuanActionController::class, 'revise'])->name('auditor.laporan.revise');
+    // Route::post('laporan/{auditingId}/submit', [LaporanTemuanActionController::class, 'submit'])->name('auditor.laporan.submit');
+    // Route::post('laporan/{auditingId}/accept', [LaporanTemuanActionController::class, 'accept'])->name('auditor.laporan.accept');
+    // Route::post('laporan/{auditingId}/revise', [LaporanTemuanActionController::class, 'revise'])->name('auditor.laporan.revise');
         Route::put('/auditor/laporan/{auditingId}/update-status', [LaporanTemuanController::class, 'updateAuditStatus'])->name('auditor.laporan.update_audit_status');
 
     Route::get('/ptpp', function () {

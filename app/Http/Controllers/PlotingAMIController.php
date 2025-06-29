@@ -134,15 +134,14 @@ class PlotingAMIController extends Controller
         return view('auditor.assesmen-lapangan.index', ['auditings' => $paginatedUnits]);
     }
 
-    public function editJadwal(Request $request)
+    public function editJadwal(Request $request, $id)
     {
         $user = session('user')['user_id'];
-        $auditing = session('auditing_id');
+        $sessionAuditingId = session('auditing_id');
         $response = Http::get('http://127.0.0.1:5000/api/auditings/userID=' . $user);
         $auditingUnit = $response->json()['data'] ?? [];
-
-        // Find the specific auditing record by ID
-        $auditing = collect($auditingUnit)->firstWhere('auditing_id', $auditing);
+        
+        $auditing = collect($auditingUnit)->firstWhere('auditing_id', $id);
 
         if (!$auditing) {
             abort(404, 'Auditing record not found');
