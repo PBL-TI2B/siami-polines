@@ -104,9 +104,6 @@
                                     class="min-w-[250px] border-r border-gray-200 px-4 py-3 text-center sm:px-6 dark:border-gray-600">
                                     Link Bukti Dukung</th>
                                 <th scope="col"
-                                    class="min-w-[250px] border-r border-gray-200 px-4 py-3 text-center sm:px-6 dark:border-gray-600">
-                                    Keterangan</th>
-                                <th scope="col"
                                     class="w-48 border-r border-gray-200 px-4 py-3 text-center sm:px-6 dark:border-gray-600">
                                     Aksi</th>
                             </tr>
@@ -114,7 +111,7 @@
                         <tbody id="instr-table-body" class="divide-y divide-gray-200 dark:divide-gray-700">
                             {{-- Loading Spinner akan ditampilkan di sini saat memuat data --}}
                             <tr>
-                                <td colspan="9" class="px-4 py-3 text-center sm:px-6">
+                                <td colspan="8" class="px-4 py-3 text-center sm:px-6">
                                     <div class="flex flex-col items-center justify-center py-8">
                                         <div class="h-6 w-6 animate-spin rounded-full border-4 border-sky-500"></div>
                                         <p class="mt-3 text-gray-700 dark:text-gray-300">Memuat data instrumen...</p>
@@ -232,17 +229,6 @@
                             <span id="lokasi_bukti_dukung-error" class="mt-1 hidden text-sm font-medium text-red-600">Link
                                 bukti dukung wajib diisi.</span>
                         </div>
-                        <div>
-                            <label for="keterangan"
-                                class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Keterangan
-                                {{-- <span class="text-gray-400">(opsional)</span> --}}
-                            </label>
-                            <textarea name="keterangan" id="keterangan"
-                                class="block w-full rounded-lg border border-gray-300 px-3 py-2.5 focus:border-sky-500 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
-                                rows="4" placeholder="Masukkan keterangan tambahan (opsional)"></textarea>
-                            <span id="keterangan-error" class="mt-1 hidden text-sm font-medium text-red-600"></span>
-                        </div>
                     </div>
                 </div>
                 <input type="hidden" name="set_instrumen_unit_kerja_id" id="set_instrumen_unit_kerja_id">
@@ -303,7 +289,6 @@
                 modalTitle.textContent = isEdit ? 'Edit Jawaban Instrumen' : 'Jawab Instrumen Jurusan';
                 document.getElementById('capaian').value = response.capaian || '';
                 document.getElementById('lokasi_bukti_dukung').value = response.lokasi_bukti_dukung || '';
-                document.getElementById('keterangan').value = response.keterangan || '';
                 document.getElementById('set_instrumen_unit_kerja_id').value =
                     setInstrumenId; // set_instrumen_unit_kerja_id dari data tabel
                 document.getElementById('response_id').value = response.response_id || '';
@@ -314,7 +299,6 @@
                 document.getElementById('modal-target').textContent = instrumen.target || '-';
                 document.getElementById('capaian-error').classList.add('hidden');
                 document.getElementById('lokasi_bukti_dukung-error').classList.add('hidden');
-                document.getElementById('keterangan-error').classList.add('hidden');
                 modal.classList.remove('hidden');
                 setTimeout(() => {
                     modal.querySelector('div').classList.remove('scale-95');
@@ -380,7 +364,7 @@
             const initializeDataAndRenderTable = async () => {
                 tableBody.innerHTML = `
                 <tr>
-                    <td colspan="9" class="px-4 py-3 sm:px-6 text-center">
+                    <td colspan="8" class="px-4 py-3 sm:px-6 text-center">
                         <div class="flex flex-col items-center justify-center py-8">
                             <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-sky-500"></div>
                             <p class="mt-3 text-gray-700 dark:text-gray-300">Memuat data instrumen...</p>
@@ -419,7 +403,7 @@
                     console.error('Gagal memuat data:', error);
                     tableBody.innerHTML = `
                     <tr>
-                        <td colspan="9" class="px-4 py-3 sm:px-6 text-center text-red-600 dark:text-red-400">
+                        <td colspan="8" class="px-4 py-3 sm:px-6 text-center text-red-600 dark:text-red-400">
                             Gagal memuat data instrumen. Silakan coba lagi.
                         </td>
                     </tr>`;
@@ -537,10 +521,7 @@
                             searchTerm) ||
                         (allResponseData.find(res => res.set_instrumen_unit_kerja_id === item
                             .set_instrumen_unit_kerja_id)?.lokasi_bukti_dukung || '').toLowerCase()
-                        .includes(searchTerm) ||
-                        (allResponseData.find(res => res.set_instrumen_unit_kerja_id === item
-                            .set_instrumen_unit_kerja_id)?.keterangan || '').toLowerCase().includes(
-                            searchTerm)
+                        .includes(searchTerm)
 
                     );
                 });
@@ -591,7 +572,7 @@
 
                 if (paginatedData.length === 0) {
                     tableBody.innerHTML =
-                        `<tr><td colspan="9" class="px-4 py-3 sm:px-6 text-center text-gray-500 dark:text-gray-400">Tidak ada data instrumen untuk Jurusan ini.</td></tr>`;
+                        `<tr><td colspan="8" class="px-4 py-3 sm:px-6 text-center text-gray-500 dark:text-gray-400">Tidak ada data instrumen untuk Jurusan ini.</td></tr>`;
                 } else {
                     let
                         firstRowFlags = {}; // Untuk melacak apakah TD sudah dirender untuk sasaran/indikator tertentu di halaman ini
@@ -642,12 +623,11 @@
                             <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center">
                                 ${response.lokasi_bukti_dukung ? `<a href="${response.lokasi_bukti_dukung}" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline break-all">${response.lokasi_bukti_dukung}</a>` : '-'}
                             </td>
-                            <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center">${response.keterangan || '-'}</td>
                             <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center">
                                 ${(auditStatus != 1 && auditStatus != 8) ? `<span class="text-gray-500 dark:text-gray-400 text-sm">Jawaban Terkunci</span>` : `
-                                            <div class="flex items-center justify-center gap-2">
-                                                ${response.response_id ? `
-                                        <button type="button" class="edit-btn text-sm font-medium text-white bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:ring-yellow-300 dark:bg-yellow-500 dark:hover:bg-yellow-600 dark:focus:ring-yellow-600 rounded-lg px-3 py-1.5 flex items-center" data-id="${response.response_id}" data-capaian="${response.capaian || ''}" data-lokasi="${response.lokasi_bukti_dukung || ''}" data-keterangan="${response.keterangan || ''}" data-sasaran="${sasaran}" data-indikator="${indikator}" data-aktivitas="${groupedItem.aktivitas}" data-satuan="${item.aktivitas.satuan || ''}" data-target="${item.aktivitas.target || ''}" data-set-instrumen-id="${item.set_instrumen_unit_kerja_id}">
+                                                <div class="flex items-center justify-center gap-2">
+                                                    ${response.response_id ? `
+                                        <button type="button" class="edit-btn text-sm font-medium text-white bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:ring-yellow-300 dark:bg-yellow-500 dark:hover:bg-yellow-600 dark:focus:ring-yellow-600 rounded-lg px-3 py-1.5 flex items-center" data-id="${response.response_id}" data-capaian="${response.capaian || ''}" data-lokasi="${response.lokasi_bukti_dukung || ''}" data-sasaran="${sasaran}" data-indikator="${indikator}" data-aktivitas="${groupedItem.aktivitas}" data-satuan="${item.aktivitas.satuan || ''}" data-target="${item.aktivitas.target || ''}" data-set-instrumen-id="${item.set_instrumen_unit_kerja_id}">
                                             <svg class="w-3 h-3 mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" /></svg>
                                             Edit
                                         </button>
@@ -661,8 +641,8 @@
                                             Jawab
                                         </button>
                                     `}
-                                            </div>
-                                        `}
+                                                </div>
+                                            `}
                             </td>
                         `;
                         row.innerHTML = html;
@@ -743,8 +723,7 @@
                     const response = {
                         response_id: editBtn.getAttribute('data-id'),
                         capaian: editBtn.getAttribute('data-capaian') || '',
-                        lokasi_bukti_dukung: editBtn.getAttribute('data-lokasi') || '',
-                        keterangan: editBtn.getAttribute('data-keterangan') || ''
+                        lokasi_bukti_dukung: editBtn.getAttribute('data-lokasi') || ''
                     };
                     const setInstrId = editBtn.getAttribute('data-set-instrumen-id');
                     const instrumen = {
@@ -799,8 +778,6 @@
                 e.preventDefault();
                 const capaianInput = document.getElementById('capaian');
                 const capaianError = document.getElementById('capaian-error');
-                const keteranganInput = document.getElementById('keterangan'); // Tambahan
-                const keteranganError = document.getElementById('keterangan-error'); // Tambahan
 
                 if (!capaianInput.value.trim()) {
                     capaianError.textContent = 'Capaian wajib diisi';
@@ -814,8 +791,7 @@
                     set_instrumen_unit_kerja_id: formData.get('set_instrumen_unit_kerja_id'),
                     auditing_id: formData.get('auditing_id'),
                     capaian: formData.get('capaian'),
-                    lokasi_bukti_dukung: formData.get('lokasi_bukti_dukung') || '',
-                    keterangan: formData.get('keterangan') || '' // Tambahan untuk keterangan
+                    lokasi_bukti_dukung: formData.get('lokasi_bukti_dukung') || ''
                 };
 
                 const isEdit = !!formData.get('response_id');
@@ -920,16 +896,10 @@
                     })
                     .catch(error => {
                         const errorEl = document.getElementById('capaian-error');
-                        const keteranganErrorEl = document.getElementById(
-                            'keterangan-error'); // Tambahan
                         if (error.errors) {
                             if (error.errors.capaian) {
                                 errorEl.textContent = error.errors.capaian.join(', ');
                                 errorEl.classList.remove('hidden');
-                            }
-                            if (error.errors.keterangan) { // Tambahan untuk validasi keterangan
-                                keteranganErrorEl.textContent = error.errors.keterangan.join(', ');
-                                keteranganErrorEl.classList.remove('hidden');
                             }
                         } else {
                             showCustomMessage('Terjadi kesalahan: ' + (error.message ||

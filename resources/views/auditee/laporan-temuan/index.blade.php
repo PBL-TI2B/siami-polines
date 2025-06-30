@@ -103,12 +103,12 @@
                         </div>
 
                         <div class="flex flex-wrap items-center justify-center gap-2">
-                            <select name="status"
-                                class="w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 transition-all duration-200 focus:border-sky-500 focus:ring-sky-500 sm:w-auto dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
-                                <option value="">Semua Status</option>
-                                <option value="menunggu" selected>Menunggu Tindak Lanjut</option>
-                                <option value="diverifikasi">Sudah Diverifikasi</option>
-                                <option value="selesai">Selesai</option>
+                            <select name="filter-kategori"
+                                class="w-full rounded-lg border border-gray-300 bg-gray-50 py-2.5 pl-2.5 pr-8 text-sm text-gray-900 transition-all duration-200 focus:border-sky-500 focus:ring-sky-500 sm:w-auto dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                                <option value="" selected>Semua Kategori</option>
+                                <option value="menunggu">NC</option>
+                                <option value="diverifikasi">AOC</option>
+                                <option value="selesai">OFI</option>
                             </select>
                             <div class="relative w-full sm:w-64">
                                 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
