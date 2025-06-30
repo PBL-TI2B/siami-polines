@@ -90,6 +90,7 @@
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-200 border-t border-b border-gray-200 dark:border-gray-600">
                     <tr>
                         <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">No</th>
+                        <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Kriteria</th>
                         <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Standar</th>
                         <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Uraian Temuan</th>
                         <th scope="col" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">Kategori</th>
@@ -101,7 +102,7 @@
                     {{-- Menggunakan variabel baru: $laporanTemuansPaginated --}}
                     @if ($laporanTemuansPaginated->isEmpty())
                         <tr>
-                            <td colspan="6" class="px-4 py-3 sm:px-6 text-center text-gray-500 dark:text-gray-400">
+                            <td colspan="7" class="px-4 py-3 sm:px-6 text-center text-gray-500 dark:text-gray-400">
                                 Belum ada laporan temuan untuk audit ini.
                             </td>
                         </tr>
@@ -126,13 +127,15 @@
                                         </td>
                                     @endif
 
-                                    {{-- Kolom "Standar" hanya ditampilkan di baris pertama grup --}}
+                                    {{-- Kolom "Kriteria" hanya ditampilkan di baris pertama grup --}}
                                     @if ($indexInGroup === 0)
                                         <td rowspan="{{ $groupRowSpan }}" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 align-top">
                                             {{ $group['nama_kriteria'] }}
                                         </td>
                                     @endif
 
+                                    {{-- Kolom "Standar" untuk setiap finding --}}
+                                    <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">{{ $laporan['standar_nasional'] ?? '-' }}</td>
                                     <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">{{ $laporan['uraian_temuan'] ?? '-' }}</td>
                                     <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">{{ $laporan['kategori_temuan'] ?? '-' }}</td>
                                     <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">{{ $laporan['saran_perbaikan'] ?? '-' }}</td>

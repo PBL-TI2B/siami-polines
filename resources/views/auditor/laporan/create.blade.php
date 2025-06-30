@@ -42,7 +42,7 @@
             <input type="hidden" name="auditing_id" value="{{ $auditingId }}">
 
             <div id="findings-container" class="space-y-6">
-                @if (empty($kriterias) || empty($standards))
+                @if (empty($kriterias) || empty($allStandardsData))
                     <div class="mt-1 text-sm text-red-600 dark:text-red-400">
                         Tidak ada kriteria atau standar tersedia. <button type="button" onclick="window.location.reload()" class="underline hover:text-red-700">Coba lagi</button> atau
                         <a href="#" class="underline hover:text-red-700">hubungi administrator</a>.
@@ -53,7 +53,7 @@
                         <div class="grid grid-cols-1 gap-4">
                             <div>
                                 <label for="kriteria_id_0" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Kriteria <span class="text-red-500">*</span></label>
-                                <select name="findings[0][kriteria_id]" id="kriteria_id_0" class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm" required>
+                                <select name="findings[0][kriteria_id]" id="kriteria_id_0" class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm" required onchange="updateStandardOptions(this)">
                                     <option value="" disabled selected>Pilih Kriteria</option>
                                     @foreach ($kriterias as $kriteria)
                                         <option value="{{ $kriteria['kriteria_id'] }}" {{ old('findings.0.kriteria_id') == $kriteria['kriteria_id'] ? 'selected' : '' }}>
@@ -64,13 +64,8 @@
                             </div>
                             <div>
                                 <label for="standar_id_0" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Standar <span class="text-red-500">*</span></label>
-                                <select name="findings[0][standar_id]" id="standar_id_0" class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm" required>
-                                    <option value="" disabled selected>Pilih Standar</option>
-                                    @foreach ($standards as $standar)
-                                        <option value="{{ $standar['standar_id'] }}" {{ old('findings.0.standar_id') == $standar['standar_id'] ? 'selected' : '' }}>
-                                            {{ $standar['nama_standar'] ?? 'Standar ' . $standar['standar_id'] }}
-                                        </option>
-                                    @endforeach
+                                <select name="findings[0][standar_id]" id="standar_id_0" class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm" required disabled>
+                                    <option value="" disabled selected>Pilih Kriteria terlebih dahulu</option>
                                 </select>
                             </div>
                             <div>
@@ -114,11 +109,11 @@
                 <p class="pl-4 italic">** Catatan: Hanya diisi bila auditor dapat memastikan saran perbaikannya adalah efektif.</p>
             </div>
 
-            <button type="button" id="add-finding" class="mt-3 bg-blue-100 text-blue-600 hover:bg-blue-200 hover:text-blue-800 text-sm font-medium py-1.5 px-4 rounded {{ empty($kriterias) || empty($standards) ? 'opacity-50 cursor-not-allowed' : '' }}" {{ empty($kriterias) || empty($standards) ? 'disabled' : '' }}>
+            <button type="button" id="add-finding" class="mt-3 bg-blue-100 text-blue-600 hover:bg-blue-200 hover:text-blue-800 text-sm font-medium py-1.5 px-4 rounded {{ empty($kriterias) || empty($allStandardsData) ? 'opacity-50 cursor-not-allowed' : '' }}" {{ empty($kriterias) || empty($allStandardsData) ? 'disabled' : '' }}>
                 Tambah Temuan
             </button>
             <div class="mt-6 flex gap-3 justify-end">
-                <button type="submit" class="bg-sky-600 text-white text-sm font-medium py-2 px-4 rounded hover:bg-blue-700 {{ empty($kriterias) || empty($standards) ? 'opacity-50 cursor-not-allowed' : '' }}" {{ empty($kriterias) || empty($standards) ? 'disabled' : '' }}>
+                <button type="submit" class="bg-sky-600 text-white text-sm font-medium py-2 px-4 rounded hover:bg-blue-700 {{ empty($kriterias) || empty($allStandardsData) ? 'opacity-50 cursor-not-allowed' : '' }}" {{ empty($kriterias) || empty($allStandardsData) ? 'disabled' : '' }}>
                     Simpan
                 </button>
                 <button type="button" class="bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200 text-sm font-medium py-2 px-4 rounded hover:bg-gray-300 dark:hover:bg-gray-600" onclick="window.location.href='{{ route('auditor.laporan.index', ['auditingId' => $auditingId]) }}'">
@@ -154,7 +149,7 @@
         }
 
         const kriterias = @json($kriterias);
-        const standards = @json($standards); // Standards are now passed from the backend
+        const standardsByKriteria = @json($standardsByKriteria); // Standards grouped by kriteria_id
 
         // Generate select options for kriteria
         function generateCriteriaOptions(selectedValue = '') {
@@ -166,13 +161,15 @@
             return optionsHtml;
         }
 
-        // Generate select options for standar
-        function generateStandardOptions(selectedValue = '') {
+        // Generate select options for standar based on kriteria_id
+        function generateStandardOptions(kriteriaId = '', selectedValue = '') {
             let optionsHtml = '<option value="" disabled selected>Pilih Standar</option>';
-            standards.forEach(standar => {
-                const selectedAttr = (standar.standar_id == selectedValue) ? 'selected' : '';
-                optionsHtml += `<option value="${standar.standar_id}" ${selectedAttr}>${standar.nama_standar}</option>`;
-            });
+            if (kriteriaId && standardsByKriteria[kriteriaId]) {
+                standardsByKriteria[kriteriaId].forEach(standar => {
+                    const selectedAttr = (standar.standar_id == selectedValue) ? 'selected' : '';
+                    optionsHtml += `<option value="${standar.standar_id}" ${selectedAttr}>${standar.nama_standar}</option>`;
+                });
+            }
             return optionsHtml;
         }
 
@@ -190,7 +187,7 @@
 
         // Add Finding Item
         addFindingBtn.addEventListener('click', () => {
-            if (kriterias.length === 0 || standards.length === 0) {
+            if (kriterias.length === 0 || Object.keys(standardsByKriteria).length === 0) {
                 displayMessage('Tidak ada kriteria atau standar tersedia untuk ditambahkan.', 'error');
                 return;
             }
@@ -203,8 +200,8 @@
                     {{-- Close button for removing --}}
                     <button type="button" class="float-right text-red-600 hover:text-red-800 dark:hover:text-red-400 remove-finding">×</button>
                     <div class="grid grid-cols-1 gap-4">
-                        <div><label for="kriteria_id_${findingCounter}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Kriteria <span class="text-red-500">*</span></label><select name="findings[${findingCounter}][kriteria_id]" id="kriteria_id_${findingCounter}" class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm" required>${generateCriteriaOptions(kriteriaId)}</select></div>
-                        <div><label for="standar_id_${findingCounter}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Standar <span class="text-red-500">*</span></label><select name="findings[${findingCounter}][standar_id]" id="standar_id_${findingCounter}" class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm" required>${generateStandardOptions(standarId)}</select></div>
+                        <div><label for="kriteria_id_${findingCounter}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Kriteria <span class="text-red-500">*</span></label><select name="findings[${findingCounter}][kriteria_id]" id="kriteria_id_${findingCounter}" class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm" required onchange="updateStandardOptions(this)">${generateCriteriaOptions(kriteriaId)}</select></div>
+                        <div><label for="standar_id_${findingCounter}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Standar <span class="text-red-500">*</span></label><select name="findings[${findingCounter}][standar_id]" id="standar_id_${findingCounter}" class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm" required ${kriteriaId ? '' : 'disabled'}>${generateStandardOptions(kriteriaId, standarId)}</select></div>
                         <div><label for="uraian_temuan_${findingCounter}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Uraian Temuan <span class="text-red-500">*</span></label><textarea name="findings[${findingCounter}][uraian_temuan]" id="uraian_temuan_${findingCounter}" rows="4" placeholder="Masukkan uraian temuan" class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm" required></textarea></div>
                         <div><label for="kategori_temuan_${findingCounter}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Kategori Temuan <span class="text-red-500">*</span></label><select name="findings[${findingCounter}][kategori_temuan]" id="kategori_temuan_${findingCounter}" class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm" required>${generateKategoriTemuanOptions()}</select></div>
                         <div><label for="saran_perbaikan_${findingCounter}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Saran Perbaikan</label><textarea name="findings[${findingCounter}][saran_perbaikan]" id="saran_perbaikan_${findingCounter}" rows="4" placeholder="Masukkan saran perbaikan" class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200 sm:text-sm"></textarea></div>
@@ -221,7 +218,7 @@
         // Add Finding with Same Kriteria & Remove Finding via delegation
         findingsContainer.addEventListener('click', (e) => {
             if (e.target.classList.contains('add-same-kriteria')) {
-                if (kriterias.length === 0 || standards.length === 0) {
+                if (kriterias.length === 0 || Object.keys(standardsByKriteria).length === 0) {
                     displayMessage('Tidak ada kriteria atau standar tersedia untuk ditambahkan.', 'error');
                     return;
                 }
@@ -262,13 +259,18 @@
                     const newId = oldId.replace(/_\d+$/, `_${newIndex}`);
                     input.setAttribute('id', newId);
                 });
+
+                // Re-apply onchange handler for kriteria selects
+                item.querySelectorAll('[id^="kriteria_id_"]').forEach(select => {
+                    select.setAttribute('onchange', 'updateStandardOptions(this)');
+                });
             });
             findingCounter = findingsContainer.querySelectorAll('.finding-item').length;
         }
 
         // Disable buttons if no kriterias or standards are available on initial load
         function updateButtonStates() {
-            if (kriterias.length === 0 || standards.length === 0) {
+            if (kriterias.length === 0 || Object.keys(standardsByKriteria).length === 0) {
                 addFindingBtn.disabled = true;
                 addFindingBtn.classList.add('opacity-50', 'cursor-not-allowed');
                 form.querySelector('button[type="submit"]').disabled = true;
@@ -282,5 +284,48 @@
         }
         updateButtonStates(); // Call initially
     });
+
+    // Global function to update standard options based on selected kriteria
+    function updateStandardOptions(kriteriaSelect) {
+        // Get the selected kriteria value
+        const selectedKriteriaId = kriteriaSelect.value;
+
+        // Split the ID to get the form index (kriteria_id_0 -> 0)
+        const selectId = kriteriaSelect.id;
+        const formIndex = selectId.split('_').pop(); // Get the last part after splitting by '_'
+
+        // Find the corresponding standar select element
+        const standarSelect = document.getElementById(`standar_id_${formIndex}`);
+
+        if (!standarSelect) {
+            console.error(`Standar select with ID standar_id_${formIndex} not found`);
+            return;
+        }
+
+        // Get standards data from global variable
+        const standardsByKriteria = @json($standardsByKriteria);
+
+        // Clear current options
+        standarSelect.innerHTML = '<option value="" disabled selected>Pilih Standar</option>';
+
+        if (selectedKriteriaId && standardsByKriteria[selectedKriteriaId]) {
+            // Enable the standar select
+            standarSelect.disabled = false;
+
+            // Filter and add options based on selected kriteria
+            const filteredStandards = standardsByKriteria[selectedKriteriaId];
+
+            filteredStandards.forEach(standar => {
+                const option = document.createElement('option');
+                option.value = standar.standar_id;
+                option.textContent = standar.nama_standar;
+                standarSelect.appendChild(option);
+            });
+        } else {
+            // Disable the standar select if no kriteria selected
+            standarSelect.disabled = true;
+            standarSelect.innerHTML = '<option value="" disabled selected>Pilih Kriteria terlebih dahulu</option>';
+        }
+    }
 </script>
 @endpush

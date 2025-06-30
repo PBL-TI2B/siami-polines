@@ -61,31 +61,71 @@ class LaporanTemuanController extends Controller
 
             $laporanTemuansData = collect($apiResponse['data']);
 
-            // 2. Group the data by kriteria_id for display with rowspan
+            // 2. Fetch kriteria data for mapping
+            $kriteriaResponse = Http::timeout(30)->retry(2, 100)->get("{$this->apiBaseUrl}/kriteria");
+            $kriteriaMap = [];
+            if ($kriteriaResponse->successful()) {
+                $kriteriaData = $kriteriaResponse->json();
+                foreach ($kriteriaData as $kriteria) {
+                    $kriteriaMap[$kriteria['kriteria_id']] = $kriteria['nama_kriteria'] ?? 'Kriteria ' . $kriteria['kriteria_id'];
+                }
+            } else {
+                Log::warning('Failed to fetch kriteria for index: Status ' . $kriteriaResponse->status());
+            }
+
+            // 3. Fetch standards data for mapping
+            $standardsResponse = Http::timeout(30)->retry(2, 100)->get("{$this->apiBaseUrl}/response-tilik/auditing/{$auditingId}");
+            $standardsMap = [];
+            if ($standardsResponse->successful()) {
+                $standardsData = $standardsResponse->json();
+
+                // Handle both possible response structures
+                $dataArray = null;
+                if (isset($standardsData['data']['data']) && is_array($standardsData['data']['data'])) {
+                    $dataArray = $standardsData['data']['data'];
+                } elseif (isset($standardsData['data']) && is_array($standardsData['data'])) {
+                    $dataArray = $standardsData['data'];
+                }
+
+                if ($dataArray !== null) {
+                    foreach ($dataArray as $item) {
+                        if (isset($item['response_tilik_id']) && isset($item['standar_nasional'])) {
+                            $standardsMap[$item['response_tilik_id']] = $item['standar_nasional'];
+                        }
+                    }
+                }
+            } else {
+                Log::warning('Failed to fetch standards for index: Status ' . $standardsResponse->status());
+            }
+
+            // 4. Group the data by kriteria_id for display with rowspan
             $groupedLaporanTemuans = $laporanTemuansData->groupBy('kriteria_id');
 
-            // 3. Transform grouped data for easier rendering and consistent structure
-            $processedGroupedData = $groupedLaporanTemuans->map(function ($itemsInGroup, $kriteriaId) {
-                $firstItem = $itemsInGroup->first();
+            // 5. Transform grouped data for easier rendering and consistent structure
+            $processedGroupedData = $groupedLaporanTemuans->map(function ($itemsInGroup, $kriteriaId) use ($kriteriaMap, $standardsMap) {
                 return [
                     'kriteria_id' => $kriteriaId,
-                    'nama_kriteria' => $firstItem['nama_kriteria'] ?? 'Tidak ada kriteria',
-                    'findings' => $itemsInGroup->map(function ($finding) {
+                    'nama_kriteria' => $kriteriaMap[$kriteriaId] ?? 'Kriteria tidak ditemukan',
+                    'findings' => $itemsInGroup->map(function ($finding) use ($standardsMap) {
+                        // Determine standar_id from the finding data
+                        $standarId = $finding['standar_id'] ?? $finding['response_tilik_id'] ?? null;
+
                         return [
                             'laporan_temuan_id' => $finding['laporan_temuan_id'],
                             'uraian_temuan' => $finding['uraian_temuan'],
                             'kategori_temuan' => $finding['kategori_temuan'],
                             'saran_perbaikan' => $finding['saran_perbaikan'],
                             'auditing_id' => $finding['auditing_id'],
-                            // Add standar_id and standar_nasional if available in the API response for index view
-                            'standar_id' => $finding['standar_id'] ?? null,
-                            'standar_nasional' => $finding['standar_nasional'] ?? null,
+                            'kriteria_id' => $finding['kriteria_id'],
+                            // Map standar_id and standar_nasional using the standardsMap
+                            'standar_id' => $standarId,
+                            'standar_nasional' => $standarId ? ($standardsMap[$standarId] ?? 'Standar tidak ditemukan') : 'Tidak ada standar',
                         ];
                     })->values()->all(),
                 ];
             })->values()->all();
 
-            // 4. Manual Pagination for the grouped items (each "item" in paginator is a kriteria group)
+            // 6. Manual Pagination for the grouped items (each "item" in paginator is a kriteria group)
             $page = $request->query('page', 1);
             $totalGroupedItems = count($processedGroupedData);
 
@@ -147,39 +187,119 @@ class LaporanTemuanController extends Controller
             }
 
             // Fetch Standards from response-tilik API, filtered by auditing_id
-            // CHANGED: Using the specific endpoint for auditing_id filter
             $standardsResponse = Http::timeout(30)->retry(2, 100)->get("{$this->apiBaseUrl}/response-tilik/auditing/{$auditingId}");
-            $standards = [];
+            $allStandardsData = [];
+            $standardsByKriteria = [];
+
             if ($standardsResponse->successful()) {
                 $standardsData = $standardsResponse->json();
-                if (isset($standardsData['data']) && is_array($standardsData['data'])) {
-                    $uniqueStandards = new Collection();
-                    foreach ($standardsData['data'] as $item) {
-                        if (isset($item['standar_nasional']) && $item['standar_nasional'] !== null) {
-                            $uniqueKey = $item['standar_nasional'] . '|' . ($item['response_tilik_id'] ?? 'null');
-                            if (!$uniqueStandards->has($uniqueKey)) {
-                                $uniqueStandards->put($uniqueKey, [
-                                    'standar_id' => $item['response_tilik_id'], // Using response_tilik_id as the value for the dropdown
-                                    'nama_standar' => $item['standar_nasional']
-                                ]);
+                Log::info('Standards API response structure for create:', ['data' => $standardsData]);
+
+                // Handle both possible response structures
+                $dataArray = null;
+                if (isset($standardsData['data']['data']) && is_array($standardsData['data']['data'])) {
+                    // New structure: {"data": {"success": true, "data": [...]}}
+                    $dataArray = $standardsData['data']['data'];
+                } elseif (isset($standardsData['data']) && is_array($standardsData['data'])) {
+                    // Old structure: {"data": [...]}
+                    $dataArray = $standardsData['data'];
+                }
+
+                if ($dataArray !== null) {
+                    Log::info('Processing standards data for create, count: ' . count($dataArray));
+
+                    foreach ($dataArray as $item) {
+                        // Validate that all required keys exist
+                        if (!isset($item['response_tilik_id']) || !isset($item['standar_nasional']) || !isset($item['tilik']['kriteria_id'])) {
+                            Log::warning('Standard item missing required fields in create:', [
+                                'has_response_tilik_id' => isset($item['response_tilik_id']),
+                                'has_standar_nasional' => isset($item['standar_nasional']),
+                                'has_tilik_kriteria_id' => isset($item['tilik']['kriteria_id']),
+                                'item_keys' => array_keys($item),
+                                'tilik_keys' => isset($item['tilik']) ? array_keys($item['tilik']) : 'tilik not set'
+                            ]);
+                            continue; // Skip this item
+                        }
+
+                        // Extract kriteria_id from nested structure
+                        $kriteriaId = $item['tilik']['kriteria_id'];
+
+                        Log::debug('Processing standard item for create:', [
+                            'response_tilik_id' => $item['response_tilik_id'],
+                            'standar_nasional' => $item['standar_nasional'],
+                            'kriteria_id' => $kriteriaId,
+                            'tilik_structure' => $item['tilik']
+                        ]);
+
+                        $standardData = [
+                            'response_tilik_id' => $item['response_tilik_id'],
+                            'standar_nasional' => $item['standar_nasional'],
+                            'kriteria_id' => $kriteriaId,
+                        ];
+
+                        $allStandardsData[] = $standardData;
+
+                        // Group by kriteria_id for dropdown filtering
+                        if (!isset($standardsByKriteria[$kriteriaId])) {
+                            $standardsByKriteria[$kriteriaId] = [];
+                        }
+
+                        // Avoid duplicates within the same kriteria
+                        $exists = false;
+                        foreach ($standardsByKriteria[$kriteriaId] as $existing) {
+                            if ($existing['standar_id'] == $item['response_tilik_id']) {
+                                $exists = true;
+                                break;
                             }
                         }
+
+                        if (!$exists) {
+                            $standardsByKriteria[$kriteriaId][] = [
+                                'standar_id' => $item['response_tilik_id'],
+                                'nama_standar' => $item['standar_nasional']
+                            ];
+                        }
                     }
-                    $standards = $uniqueStandards->values()->all(); // Get only the values
                 } else {
-                    Log::warning('Response-tilik API did not return data or has invalid structure.');
+                    Log::warning('Response-tilik API response structure not recognized for create:', ['response' => $standardsData]);
                 }
             } else {
                 Log::error('Failed to fetch standards for create: Status ' . $standardsResponse->status() . ', Body: ' . $standardsResponse->body());
+
+                // Jika 404, kemungkinan auditing ID tidak memiliki data response-tilik
+                if ($standardsResponse->status() === 404) {
+                    Log::warning('No response-tilik data found for auditingId: ' . $auditingId);
+                    return redirect()->route('auditor.laporan.index', ['auditingId' => $auditingId])
+                        ->with('error', 'Tidak ada data response tilik untuk audit ini. Silakan lengkapi data response tilik terlebih dahulu sebelum membuat laporan temuan.');
+                }
             }
 
-            if (empty($kriterias) || empty($standards)) {
-                Log::warning('Missing kriteria or standards data for create view.');
+            Log::info('Processed standards data for create:', [
+                'allStandardsData_count' => count($allStandardsData),
+                'standardsByKriteria_count' => count($standardsByKriteria),
+                'standardsByKriteria_structure' => $standardsByKriteria
+            ]);
+
+            if (empty($kriterias)) {
+                Log::error('No kriteria data available');
                 return redirect()->route('auditor.laporan.index', ['auditingId' => $auditingId])
-                    ->with('error', 'Gagal memuat data kriteria atau standar dari API. Pastikan kedua API berfungsi.');
+                    ->with('error', 'Data kriteria tidak tersedia. Silakan hubungi administrator.');
             }
 
-            return view('auditor.laporan.create', compact('auditingId', 'kriterias', 'standards'));
+            if (empty($allStandardsData)) {
+                Log::error('No standards data available for auditingId: ' . $auditingId);
+                return redirect()->route('auditor.laporan.index', ['auditingId' => $auditingId])
+                    ->with('error', 'Tidak ada data standar (response tilik) untuk audit ini. Silakan lengkapi data response tilik terlebih dahulu.');
+            }
+
+            Log::info('Successfully prepared data for create view', [
+                'auditingId' => $auditingId,
+                'kriterias_count' => count($kriterias),
+                'allStandardsData_count' => count($allStandardsData),
+                'standardsByKriteria_keys' => array_keys($standardsByKriteria)
+            ]);
+
+            return view('auditor.laporan.create', compact('auditingId', 'kriterias', 'allStandardsData', 'standardsByKriteria'));
         } catch (\Exception $e) {
             Log::error('Unexpected error in create: ' . $e->getMessage());
             return redirect()->route('auditor.laporan.index', ['auditingId' => $auditingId])
@@ -340,46 +460,129 @@ class LaporanTemuanController extends Controller
             $kriterias = [];
             if ($kriteriaResponse->successful()) {
                 $kriteriaData = $kriteriaResponse->json();
+                Log::info('Kriteria API response for edit:', ['count' => count($kriteriaData), 'data' => $kriteriaData]);
                 $kriterias = array_map(function ($item) {
                     return [
                         'kriteria_id' => $item['kriteria_id'] ?? null,
                         'nama_kriteria' => $item['nama_kriteria'] ?? 'Kriteria ' . ($item['kriteria_id'] ?? 'Unknown'),
                     ];
                 }, $kriteriaData);
+                Log::info('Processed kriterias for edit:', ['count' => count($kriterias), 'data' => $kriterias]);
             } else {
                 Log::warning('Failed to fetch kriteria for edit: Status ' . $kriteriaResponse->status());
             }
 
             // Fetch Standards from response-tilik API, filtered by auditing_id
-            // CHANGED: Using the specific endpoint for auditing_id filter
             $standardsResponse = Http::timeout(30)->retry(2, 100)->get("{$this->apiBaseUrl}/response-tilik/auditing/{$auditingId}");
-            $standards = [];
+            $allStandardsData = [];
+            $standardsByKriteria = [];
+
             if ($standardsResponse->successful()) {
                 $standardsData = $standardsResponse->json();
-                if (isset($standardsData['data']) && is_array($standardsData['data'])) {
-                    $uniqueStandards = new Collection();
-                    foreach ($standardsData['data'] as $item) {
-                        if (isset($item['standar_nasional']) && $item['standar_nasional'] !== null) {
-                             $uniqueKey = $item['standar_nasional'] . '|' . ($item['response_tilik_id'] ?? 'null');
-                            if (!$uniqueStandards->has($uniqueKey)) {
-                                $uniqueStandards->put($uniqueKey, [
-                                    'standar_id' => $item['response_tilik_id'], // Using response_tilik_id as the value for the dropdown
-                                    'nama_standar' => $item['standar_nasional']
-                                ]);
+                Log::info('Standards API response structure for edit:', ['data' => $standardsData]);
+
+                // Handle both possible response structures
+                $dataArray = null;
+                if (isset($standardsData['data']['data']) && is_array($standardsData['data']['data'])) {
+                    // New structure: {"data": {"success": true, "data": [...]}}
+                    $dataArray = $standardsData['data']['data'];
+                } elseif (isset($standardsData['data']) && is_array($standardsData['data'])) {
+                    // Old structure: {"data": [...]}
+                    $dataArray = $standardsData['data'];
+                }
+
+                if ($dataArray !== null) {
+                    Log::info('Processing standards data for edit, count: ' . count($dataArray));
+
+                    foreach ($dataArray as $item) {
+                        // Validate that all required keys exist
+                        if (!isset($item['response_tilik_id']) || !isset($item['standar_nasional']) || !isset($item['tilik']['kriteria_id'])) {
+                            Log::warning('Standard item missing required fields in edit:', [
+                                'has_response_tilik_id' => isset($item['response_tilik_id']),
+                                'has_standar_nasional' => isset($item['standar_nasional']),
+                                'has_tilik_kriteria_id' => isset($item['tilik']['kriteria_id']),
+                                'item_keys' => array_keys($item),
+                                'tilik_keys' => isset($item['tilik']) ? array_keys($item['tilik']) : 'tilik not set'
+                            ]);
+                            continue; // Skip this item
+                        }
+
+                        // Extract kriteria_id from nested structure
+                        $kriteriaId = $item['tilik']['kriteria_id'];
+
+                        Log::debug('Processing standard item for edit:', [
+                            'response_tilik_id' => $item['response_tilik_id'],
+                            'standar_nasional' => $item['standar_nasional'],
+                            'kriteria_id' => $kriteriaId,
+                            'tilik_structure' => $item['tilik']
+                        ]);
+
+                        $standardData = [
+                            'response_tilik_id' => $item['response_tilik_id'],
+                            'standar_nasional' => $item['standar_nasional'],
+                            'kriteria_id' => $kriteriaId,
+                        ];
+
+                        $allStandardsData[] = $standardData;
+
+                        // Group by kriteria_id for dropdown filtering
+                        if (!isset($standardsByKriteria[$kriteriaId])) {
+                            $standardsByKriteria[$kriteriaId] = [];
+                        }
+
+                        // Avoid duplicates within the same kriteria
+                        $exists = false;
+                        foreach ($standardsByKriteria[$kriteriaId] as $existing) {
+                            if ($existing['standar_id'] == $item['response_tilik_id']) {
+                                $exists = true;
+                                break;
                             }
                         }
+
+                        if (!$exists) {
+                            $standardsByKriteria[$kriteriaId][] = [
+                                'standar_id' => $item['response_tilik_id'],
+                                'nama_standar' => $item['standar_nasional']
+                            ];
+                        }
                     }
-                    $standards = $uniqueStandards->values()->all();
                 } else {
-                    Log::warning('Response-tilik API did not return data or has invalid structure for edit.');
+                    Log::warning('Response-tilik API response structure not recognized for edit:', ['response' => $standardsData]);
                 }
             } else {
                 Log::error('Failed to fetch standards for edit: Status ' . $standardsResponse->status() . ', Body: ' . $standardsResponse->body());
+
+                // Jika 404, kemungkinan auditing ID tidak memiliki data response-tilik
+                if ($standardsResponse->status() === 404) {
+                    Log::warning('No response-tilik data found for auditingId: ' . $auditingId);
+                    return redirect()->route('auditor.laporan.index', ['auditingId' => $auditingId])
+                        ->with('error', 'Tidak ada data response tilik untuk audit ini. Silakan lengkapi data response tilik terlebih dahulu sebelum mengedit laporan temuan.');
+                }
             }
+
+            Log::info('Processed standards data for edit:', [
+                'allStandardsData_count' => count($allStandardsData),
+                'standardsByKriteria_count' => count($standardsByKriteria),
+                'standardsByKriteria_structure' => $standardsByKriteria
+            ]);
 
             $kategori_temuan = ['NC', 'AOC', 'OFI'];
 
-            if (empty($kriterias) || empty($standards)) {
+            Log::info('Final data check for edit before view:', [
+                'kriterias_count' => count($kriterias),
+                'allStandardsData_count' => count($allStandardsData),
+                'kriterias_empty' => empty($kriterias),
+                'allStandardsData_empty' => empty($allStandardsData),
+                'auditingId' => $auditingId
+            ]);
+
+            if (empty($kriterias) || empty($allStandardsData)) {
+                Log::error('Data is empty for edit view:', [
+                    'kriterias_empty' => empty($kriterias),
+                    'allStandardsData_empty' => empty($allStandardsData),
+                    'kriterias_count' => count($kriterias),
+                    'allStandardsData_count' => count($allStandardsData)
+                ]);
                 return redirect()->route('auditor.laporan.index', ['auditingId' => $auditingId])
                     ->with('error', 'Gagal memuat data kriteria atau standar.');
             }
@@ -388,13 +591,13 @@ class LaporanTemuanController extends Controller
                 'laporan_temuan_id' => $laporan['laporan_temuan_id'],
                 'auditing_id' => $laporan['auditing_id'],
                 'kriteria_id' => $laporan['kriteria_id'],
-                'standar_id' => $laporan['standar_id'] ?? null, // Ensure standar_id is passed
+                'standar_id' => $laporan['response_tilik_id'] ?? $laporan['standar_id'] ?? null, // Use response_tilik_id from API
                 'uraian_temuan' => $laporan['uraian_temuan'],
                 'kategori_temuan' => $laporan['kategori_temuan'],
                 'saran_perbaikan' => $laporan['saran_perbaikan'],
             ];
 
-            return view('auditor.laporan.edit', compact('auditingId', 'kriterias', 'kategori_temuan', 'findingData', 'standards'));
+            return view('auditor.laporan.edit', compact('auditingId', 'kriterias', 'kategori_temuan', 'findingData', 'allStandardsData', 'standardsByKriteria'));
         } catch (\Exception $e) {
             Log::error('Unexpected error in edit: ' . $e->getMessage());
             return redirect()->route('auditor.laporan.index', ['auditingId' => $auditingId])
@@ -432,7 +635,7 @@ class LaporanTemuanController extends Controller
             $payload = [
                 'auditing_id' => (int)$request->auditing_id,
                 'kriteria_id' => (int)$request->kriteria_id,
-                'standar_id' => (int)$request->standar_id, // Include standar_id in payload
+                'response_tilik_id' => (int)$request->standar_id, // Include standar_id in payload
                 'uraian_temuan' => trim($request->uraian_temuan),
                 'kategori_temuan' => trim($request->kategori_temuan),
                 'saran_perbaikan' => trim($request->saran_perbaikan ?? '') ?: null,
