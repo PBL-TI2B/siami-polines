@@ -421,17 +421,34 @@ class AuditController extends Controller
             if (!$isAuditee1 && !$isAuditee2) {
                 \Log::warning("Akses ditolak untuk user {$userId} ke audit ID {$auditingId}.");
                 abort(403, 'Anda tidak memiliki hak akses untuk audit ini.');
+            }            // Ambil data laporan temuan dari API
+            $laporanTemuan = [];
+            try {
+                $temuanResponse = Http::timeout(30)->retry(2, 100)->get("http://127.0.0.1:5000/api/laporan-temuan", [
+                    'auditing_id' => $auditingId
+                ]);
+
+                if ($temuanResponse->successful()) {
+                    $temuanApiData = $temuanResponse->json();
+                    $laporanTemuan = $temuanApiData['data'] ?? [];
+                    \Log::info("Berhasil mengambil data laporan temuan untuk audit ID {$auditingId}", ['jumlah' => count($laporanTemuan)]);
+                } else {
+                    \Log::warning("Gagal mengambil data laporan temuan untuk audit ID {$auditingId}: Status " . $temuanResponse->status() . ", Body: " . $temuanResponse->body());
+                }
+            } catch (\Exception $e) {
+                \Log::error("Exception saat mengambil data laporan temuan untuk audit ID {$auditingId}: " . $e->getMessage());
             }
 
-            // (Opsional) Ambil data laporan temuan dari API lain jika diperlukan
-            // $temuanResponse = Http::get("http://127.0.0.1:5000/api/laporan-temuan/auditingID={$auditingId}");
-            // $laporanTemuan = $temuanResponse->successful() ? $temuanResponse->json()['data'] ?? [] : [];
+            // Data sudah lengkap dari API, tidak perlu mapping tambahan
+            // Karena API sudah mengembalikan data dengan struktur nested yang lengkap
+            // kriteria: { kriteria_id, nama_kriteria }
+            // response_tilik: { response_tilik_id, standar_nasional, akar_penyebab_penunjang, dll }
 
             // Kirim data ke view
             return view('auditee.laporan-temuan.index', [
                 'audit' => $audit,
                 'auditingId' => $auditingId,
-                // 'laporanTemuan' => $laporanTemuan, // jika ada
+                'laporanTemuan' => $laporanTemuan,
             ]);
         } catch (\Exception $e) {
             \Log::error("Gagal memuat halaman laporan temuan untuk audit ID {$auditingId}: " . $e->getMessage());
