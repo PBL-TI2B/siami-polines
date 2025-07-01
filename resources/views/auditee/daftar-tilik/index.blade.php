@@ -81,7 +81,8 @@
                                 Rencana Perbaikan & Tindak Lanjut</th>
                             <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">
                                 Tindakan Pencegahan</th>
-                            <th scope="col" class="border-r border-gray-200 px-4 py-3 sm:px-6 dark:border-gray-600">Aksi
+                            <th scope="col"
+                                class="border-r border-gray-200 px-4 py-3 text-center sm:px-6 dark:border-gray-600">Aksi
                             </th>
                         </tr>
                     </thead>
@@ -130,41 +131,137 @@
     </div>
 
     <!-- Modal Hapus -->
-    <div id="deleteConfirmModal" class="fixed inset-0 z-50 flex hidden items-center justify-center bg-gray-900/50">
+    <div id="deleteConfirmModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-gray-900/50">
         <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-gray-800">
             <h3 class="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">Konfirmasi Hapus Response</h3>
             <p class="mb-6 text-sm text-gray-700 dark:text-gray-300">
                 Apakah Anda yakin menghapus response daftar tilik? Tindakan ini tidak dapat dibatalkan.
             </p>
             <div class="flex justify-end gap-3">
-                <button id="cancelDeleteBtn" type="button"
-                    class="rounded-md bg-gray-300 px-4 py-2 text-gray-800 transition-all duration-200 hover:bg-gray-400">
+                <x-button id="cancelDeleteBtn" type="button" color="gray" icon="heroicon-o-x-mark">
                     Batal
-                </button>
-                <button id="confirmDeleteBtn" type="button"
-                    class="rounded-md bg-red-600 px-4 py-2 text-white transition-all duration-200 hover:bg-red-700">
+                </x-button>
+                <x-button id="confirmDeleteBtn" type="button" color="red" icon="heroicon-o-trash">
                     Ya, Hapus Response
-                </button>
+                </x-button>
             </div>
         </div>
     </div>
 
     <!-- Modal Konfirmasi Kunci -->
-    <div id="lockConfirmModal" class="fixed inset-0 z-50 flex hidden items-center justify-center bg-gray-900/50">
+    <div id="lockConfirmModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-gray-900/50">
         <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-gray-800">
             <h3 class="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">Konfirmasi Kunci Jawaban</h3>
             <p class="mb-6 text-sm text-gray-700 dark:text-gray-300">
                 Apakah Anda yakin ingin mengunci jawaban daftar tilik? Tindakan ini tidak dapat dibatalkan.
             </p>
             <div class="flex justify-end gap-3">
-                <button id="cancelLockBtn" type="button"
-                    class="rounded-md bg-gray-300 px-4 py-2 text-gray-800 transition-all duration-200 hover:bg-gray-400">
+                <x-button id="cancelLockBtn" type="button" color="gray" icon="heroicon-o-x-mark">
                     Batal
-                </button>
-                <button id="confirmLockBtn" type="button"
-                    class="rounded-md bg-sky-600 px-4 py-2 text-white transition-all duration-200 hover:bg-sky-700">
+                </x-button>
+                <x-button id="confirmLockBtn" type="button" color="sky" icon="heroicon-o-lock-closed">
                     Ya, Kunci Jawaban Daftar Tilik
+                </x-button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Create/Edit Response -->
+    <div id="responseFormModal" tabindex="-1" aria-hidden="true"
+        class="fixed inset-0 z-50 hidden items-center justify-center bg-gray-900/50 p-4">
+        <div class="relative flex h-[90vh] w-full max-w-3xl flex-col rounded-lg bg-white shadow dark:bg-gray-700">
+            <!-- Modal header -->
+            <div class="flex items-start justify-between rounded-t border-b p-6 dark:border-gray-600">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white" id="modalTitle">
+                    Tambah Jawaban Daftar Tilik
+                </h3>
+                <button type="button" id="closeFormModal"
+                    class="ml-auto inline-flex h-8 w-8 items-center justify-center rounded-lg bg-transparent text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white">
+                    <svg class="h-3 w-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                    </svg>
+                    <span class="sr-only">Close modal</span>
                 </button>
+            </div>
+            <!-- Modal body -->
+            <div class="flex-1 overflow-y-auto p-6">
+                <form id="responseForm" class="space-y-6">
+                    <input type="hidden" id="responseId" name="responseId">
+                    <input type="hidden" id="tilikId" name="tilikId">
+                    <input type="hidden" id="auditingIdInput" name="auditingId">
+
+                    <!-- Realisasi -->
+                    <div>
+                        <label for="realisasi"
+                            class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Realisasi <span
+                                class="text-red-500">*</span></label>
+                        <textarea required name="realisasi" id="realisasi" rows="5"
+                            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-500 dark:bg-gray-600 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                            placeholder="Masukkan Realisasi..."></textarea>
+                    </div>
+
+                    <!-- Standar Nasional -->
+                    <div>
+                        <label for="standarNasional"
+                            class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Standar Nasional/POLINES
+                            <span class="text-red-500">*</span></label>
+                        <textarea required name="standarNasional" id="standarNasional" rows="5"
+                            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-500 dark:bg-gray-600 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                            placeholder="Masukkan Standar Nasional..."></textarea>
+                    </div>
+
+                    <!-- Uraian Isian -->
+                    <div>
+                        <label for="uraianIsian"
+                            class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Uraian Isian <span
+                                class="text-red-500">*</span></label>
+                        <textarea required name="uraianIsian" id="uraianIsian" rows="5"
+                            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-500 dark:bg-gray-600 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                            placeholder="Masukkan Uraian Isian..."></textarea>
+                    </div>
+
+                    <!-- Akar Penyebab/Penunjang -->
+                    <div>
+                        <label for="akarPenyebabPenunjang"
+                            class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Akar Penyebab (Target
+                            tidak tercapai)/ Akar Penunjang (Target tercapai) <span class="text-red-500">*</span></label>
+                        <textarea required name="akarPenyebabPenunjang" id="akarPenyebabPenunjang" rows="5"
+                            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-500 dark:bg-gray-600 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                            placeholder="Masukkan Akar Penyebab (Target tidak tercapai)/ Akar Penunjang (Target tercapai)..."></textarea>
+                    </div>
+
+                    <!-- Rencana Perbaikan -->
+                    <div>
+                        <label for="rencanaPerbaikan"
+                            class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Rencana Perbaikan & Tindak
+                            Lanjut <span class="text-red-500">*</span></label>
+                        <textarea required name="rencanaPerbaikan" id="rencanaPerbaikan" rows="5"
+                            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-500 dark:bg-gray-600 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                            placeholder="Masukkan Rencana Perbaikan & Tindak Lanjut..."></textarea>
+                    </div>
+
+                    <!-- Tindakan Pencegahan -->
+                    <div>
+                        <label for="tindakanPencegahan"
+                            class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Tindakan Pencegahan <span
+                                class="text-red-500">*</span></label>
+                        <textarea required name="tindakanPencegahan" id="tindakanPencegahan" rows="5"
+                            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-500 dark:bg-gray-600 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                            placeholder="Masukkan Tindakan Pencegahan..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <!-- Modal footer -->
+            <div
+                class="flex items-center justify-end space-x-3 rounded-b border-t border-gray-200 p-6 dark:border-gray-600">
+                <x-button id="cancelFormBtn" type="button" color="gray" icon="heroicon-o-x-mark">
+                    Batal
+                </x-button>
+                <x-button id="saveResponseBtn" type="button" color="sky" icon="heroicon-o-check">
+                    Simpan
+                </x-button>
             </div>
         </div>
     </div>
@@ -265,11 +362,13 @@
             // Function to show modal
             const showModal = (modal) => {
                 modal.classList.remove('hidden');
+                modal.classList.add('flex');
             };
 
             // Function to hide modal
             const hideModal = (modal) => {
                 modal.classList.add('hidden');
+                modal.classList.remove('flex');
             };
 
             // Function to show toast modal
@@ -373,7 +472,8 @@
                         (response.standar_nasional || '').toLowerCase().includes(searchTerm) ||
                         (response.uraian_isian || '').toLowerCase().includes(searchTerm) ||
                         (response.akar_penyebab_penunjang || '').toLowerCase().includes(searchTerm) ||
-                        (response.rencana_perbaikan_tindak_lanjut || '').toLowerCase().includes(searchTerm) ||
+                        (response.rencana_perbaikan_tindak_lanjut || '').toLowerCase().includes(
+                            searchTerm) ||
                         (response.tindakan_pencegahan || '').toLowerCase().includes(searchTerm)
                     );
                 });
@@ -411,7 +511,8 @@
                         standar_nasional: response.standar_nasional ?? '-',
                         uraian_isian: response.uraian_isian ?? '-',
                         akar_penyebab_penunjang: response.akar_penyebab_penunjang ?? '-',
-                        rencana_perbaikan_tindak_lanjut: response.rencana_perbaikan_tindak_lanjut ?? '-',
+                        rencana_perbaikan_tindak_lanjut: response.rencana_perbaikan_tindak_lanjut ??
+                            '-',
                         tindakan_pencegahan: response.tindakan_pencegahan ?? '-'
                     };
                 });
@@ -447,29 +548,29 @@
                     <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600">${escapeHtml(response.tindakan_pencegahan)}</td>
                     <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">
                         ${auditStatus !== 5 ? `
-                                <span class="text-gray-500 dark:text-gray-400">Jawaban dikunci</span>
-                            ` : `
-                                <div class="flex items-center gap-2 justify-center">
-                                    ${response.realisasi !== '-' ? `
-                                    <a href="/auditee/audit/daftar-tilik/${response.response_tilik_id}/edit" title="Edit Jawaban" class="text-sky-600 hover:text-sky-800 dark:text-sky-400 dark:hover:text-sky-200">
+                                    <span class="text-gray-500 dark:text-gray-400">Jawaban dikunci</span>
+                                ` : `
+                                    <div class="flex items-center gap-2 justify-center">
+                                        ${response.realisasi !== '-' ? `
+                                    <button data-id="${response.response_tilik_id}" data-tilik-id="${item.tilik_id}" class="edit-btn text-sky-600 hover:text-sky-800 dark:text-sky-400 dark:hover:text-sky-200" title="Edit Jawaban">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M14 4a2.5 2.5 0 113.536 3.536L6.5 21H3v-3.5L14 4z"/>
                                         </svg>
-                                    </a>
+                                    </button>
                                     <button data-id="${response.response_tilik_id}" class="delete-btn text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200" title="Hapus">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12A2 2 0 0116.1 21H7.9a2 2 0 01-2-1.9L5 7m5-4h4m-4 0a2 2 0 00-2 2v1h8V5a2 2 0 00-2-2z"/>
                                         </svg>
                                     </button>
                                 ` : `
-                                    <a href="/auditee/audit/daftar-tilik/${item.tilik_id}/create" title="Tambah Jawaban" class="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-200">
+                                    <button data-tilik-id="${item.tilik_id}" class="create-btn text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-200" title="Tambah Jawaban">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                         </svg>
-                                    </a>
+                                    </button>
                                 `}
-                                </div>
-                            `}
+                                    </div>
+                                `}
                     </td>
                 `;
                     tbody.appendChild(row);
@@ -485,11 +586,24 @@
 
                 renderPagination();
 
-                // Add event listeners for delete buttons
+                // Add event listeners for action buttons
                 document.querySelectorAll('.delete-btn').forEach(button => {
                     button.addEventListener('click', function() {
                         currentResponseTilikId = this.getAttribute('data-id');
                         showModal(deleteModal);
+                    });
+                });
+
+                document.querySelectorAll('.create-btn').forEach(button => {
+                    button.addEventListener('click', function() {
+                        openCreateModal(this.getAttribute('data-tilik-id'));
+                    });
+                });
+
+                document.querySelectorAll('.edit-btn').forEach(button => {
+                    button.addEventListener('click', function() {
+                        openEditModal(this.getAttribute('data-id'), this.getAttribute(
+                            'data-tilik-id'));
                     });
                 });
             }
@@ -679,6 +793,178 @@
             // Close toast modal
             closeResponseModal.addEventListener('click', () => {
                 hideModal(responseModal);
+            });
+
+            // Modal handling functions
+            const responseFormModal = document.getElementById('responseFormModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const responseForm = document.getElementById('responseForm');
+            const closeFormModal = document.getElementById('closeFormModal');
+            const cancelFormBtn = document.getElementById('cancelFormBtn');
+            const saveResponseBtn = document.getElementById('saveResponseBtn');
+            let isEditMode = false;
+
+            function openCreateModal(tilikId) {
+                isEditMode = false;
+                modalTitle.textContent = 'Tambah Jawaban Daftar Tilik';
+                document.getElementById('responseId').value = '';
+                document.getElementById('tilikId').value = tilikId;
+                document.getElementById('auditingIdInput').value = auditingId;
+
+                // Clear form
+                responseForm.reset();
+                document.getElementById('tilikId').value = tilikId;
+                document.getElementById('auditingIdInput').value = auditingId;
+
+                showModal(responseFormModal);
+            }
+
+            function openEditModal(responseId, tilikId) {
+                isEditMode = true;
+                modalTitle.textContent = 'Edit Jawaban Daftar Tilik';
+                document.getElementById('responseId').value = responseId;
+                document.getElementById('tilikId').value = tilikId;
+                document.getElementById('auditingIdInput').value = auditingId;
+
+                // Load existing data
+                fetch(`http://127.0.0.1:5000/api/response-tilik/${responseId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data && data.response_tilik_id) {
+                            document.getElementById('realisasi').value = data.realisasi || '';
+                            document.getElementById('standarNasional').value = data.standar_nasional || '';
+                            document.getElementById('uraianIsian').value = data.uraian_isian || '';
+                            document.getElementById('akarPenyebabPenunjang').value = data
+                                .akar_penyebab_penunjang || '';
+                            document.getElementById('rencanaPerbaikan').value = data
+                                .rencana_perbaikan_tindak_lanjut || '';
+                            document.getElementById('tindakanPencegahan').value = data.tindakan_pencegahan ||
+                            '';
+                        } else {
+                            showToast('Data tidak ditemukan.', false);
+                        }
+                    })
+                    .catch(error => {
+                        showToast('Gagal mengambil data: ' + error.message, false);
+                    });
+
+                showModal(responseFormModal);
+            }
+
+            function closeResponseFormModal() {
+                hideModal(responseFormModal);
+                responseForm.reset();
+            }
+
+            // Modal event listeners
+            closeFormModal.addEventListener('click', closeResponseFormModal);
+            cancelFormBtn.addEventListener('click', closeResponseFormModal);
+
+            // Form submission
+            saveResponseBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const formData = new FormData(responseForm);
+                const payload = {
+                    auditing_id: parseInt(document.getElementById('auditingIdInput').value),
+                    tilik_id: parseInt(document.getElementById('tilikId').value),
+                    realisasi: document.getElementById('realisasi').value,
+                    standar_nasional: document.getElementById('standarNasional').value,
+                    uraian_isian: document.getElementById('uraianIsian').value,
+                    akar_penyebab_penunjang: document.getElementById('akarPenyebabPenunjang').value,
+                    rencana_perbaikan_tindak_lanjut: document.getElementById('rencanaPerbaikan').value,
+                    tindakan_pencegahan: document.getElementById('tindakanPencegahan').value
+                };
+
+                // Validate required fields
+                if (!payload.realisasi || !payload.standar_nasional || !payload.uraian_isian ||
+                    !payload.akar_penyebab_penunjang || !payload.rencana_perbaikan_tindak_lanjut ||
+                    !payload.tindakan_pencegahan) {
+                    showToast('Semua field harus diisi.', false);
+                    return;
+                }
+
+                const url = isEditMode ?
+                    `http://127.0.0.1:5000/api/response-tilik/${document.getElementById('responseId').value}` :
+                    'http://127.0.0.1:5000/api/response-tilik';
+
+                const method = isEditMode ? 'PUT' : 'POST';
+
+                // Disable button during request
+                saveResponseBtn.disabled = true;
+                const originalContent = saveResponseBtn.innerHTML;
+                saveResponseBtn.innerHTML = `
+                    <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Menyimpan...
+                `;
+
+                fetch(url, {
+                        method: method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(payload),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success || (data.message && data.message.includes('berhasil'))) {
+                            showToast(isEditMode ? 'Data berhasil diperbarui!' :
+                                'Jawaban berhasil disimpan!', true);
+                            closeResponseFormModal();
+                            initializeDataAndRenderTable(); // Refresh table
+                        } else {
+                            showToast(data.message || (isEditMode ? 'Gagal memperbarui data.' :
+                                'Gagal menyimpan data.'), false);
+                        }
+                    })
+                    .catch(error => {
+                        showToast('Error: ' + error.message, false);
+                    })
+                    .finally(() => {
+                        // Re-enable button
+                        saveResponseBtn.disabled = false;
+                        saveResponseBtn.innerHTML = originalContent;
+                    });
+            });
+
+            // Keyboard event handling
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    if (!responseFormModal.classList.contains('hidden')) {
+                        closeResponseFormModal();
+                    }
+                    if (!deleteModal.classList.contains('hidden')) {
+                        hideModal(deleteModal);
+                    }
+                    if (!lockModal.classList.contains('hidden')) {
+                        hideModal(lockModal);
+                    }
+                    if (!responseModal.classList.contains('hidden')) {
+                        hideModal(responseModal);
+                    }
+                }
+            });
+
+            // Click outside modal to close
+            responseFormModal.addEventListener('click', function(e) {
+                if (e.target === responseFormModal) {
+                    closeResponseFormModal();
+                }
+            });
+
+            deleteModal.addEventListener('click', function(e) {
+                if (e.target === deleteModal) {
+                    hideModal(deleteModal);
+                }
+            });
+
+            lockModal.addEventListener('click', function(e) {
+                if (e.target === lockModal) {
+                    hideModal(lockModal);
+                }
             });
 
             // Initialize data
