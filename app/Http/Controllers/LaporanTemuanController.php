@@ -169,27 +169,11 @@ class LaporanTemuanController extends Controller
     public function create($auditingId)
     {
         try {
-            // Fetch Kriteria
-            $kriteriaResponse = Http::timeout(30)->retry(2, 100)->get("{$this->apiBaseUrl}/kriteria");
-            $kriterias = [];
-            if ($kriteriaResponse->successful()) {
-                $kriteriaData = $kriteriaResponse->json();
-                $kriterias = array_map(function ($item) {
-                    return [
-                        'kriteria_id' => $item['kriteria_id'] ?? null,
-                        'nama_kriteria' => $item['nama_kriteria'] ?? 'Kriteria ' . ($item['kriteria_id'] ?? 'Unknown'),
-                    ];
-                }, $kriteriaData);
-            } else {
-                Log::error('Failed to fetch kriteria for create: Status ' . $kriteriaResponse->status() . ', Body: ' . $kriteriaResponse->body());
-                return redirect()->route('auditor.laporan.index', ['auditingId' => $auditingId])
-                    ->with('error', 'Gagal memuat data kriteria dari API.');
-            }
-
-            // Fetch Standards from response-tilik API, filtered by auditing_id
+            // Fetch Standards first to determine which kriteria have standards
             $standardsResponse = Http::timeout(30)->retry(2, 100)->get("{$this->apiBaseUrl}/response-tilik/auditing/{$auditingId}");
             $allStandardsData = [];
             $standardsByKriteria = [];
+            $availableKriteriaIds = []; // Track which kriteria have standards
 
             if ($standardsResponse->successful()) {
                 $standardsData = $standardsResponse->json();
@@ -223,6 +207,7 @@ class LaporanTemuanController extends Controller
 
                         // Extract kriteria_id from nested structure
                         $kriteriaId = $item['tilik']['kriteria_id'];
+                        $availableKriteriaIds[] = $kriteriaId; // Track this kriteria has standards
 
                         Log::debug('Processing standard item for create:', [
                             'response_tilik_id' => $item['response_tilik_id'],
@@ -274,9 +259,34 @@ class LaporanTemuanController extends Controller
                 }
             }
 
+            // Get unique kriteria IDs that have standards
+            $availableKriteriaIds = array_unique($availableKriteriaIds);
+
+            // Fetch Kriteria and filter only those that have standards
+            $kriteriaResponse = Http::timeout(30)->retry(2, 100)->get("{$this->apiBaseUrl}/kriteria");
+            $kriterias = [];
+            if ($kriteriaResponse->successful()) {
+                $kriteriaData = $kriteriaResponse->json();
+                foreach ($kriteriaData as $item) {
+                    $kriteriaId = $item['kriteria_id'] ?? null;
+                    // Only include kriteria that have standards available for this audit
+                    if ($kriteriaId && in_array($kriteriaId, $availableKriteriaIds)) {
+                        $kriterias[] = [
+                            'kriteria_id' => $kriteriaId,
+                            'nama_kriteria' => $item['nama_kriteria'] ?? 'Kriteria ' . $kriteriaId,
+                        ];
+                    }
+                }
+            } else {
+                Log::error('Failed to fetch kriteria for create: Status ' . $kriteriaResponse->status() . ', Body: ' . $kriteriaResponse->body());
+                return redirect()->route('auditor.laporan.index', ['auditingId' => $auditingId])
+                    ->with('error', 'Gagal memuat data kriteria dari API.');
+            }
+
             Log::info('Processed standards data for create:', [
                 'allStandardsData_count' => count($allStandardsData),
                 'standardsByKriteria_count' => count($standardsByKriteria),
+                'available_kriteria_count' => count($availableKriteriaIds),
                 'standardsByKriteria_structure' => $standardsByKriteria
             ]);
 
