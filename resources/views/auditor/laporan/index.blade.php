@@ -80,7 +80,15 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                     </div>
-                    <input type="search" name="search" id="search-input" placeholder="Cari uraian temuan atau standar" value="{{ request('search') }}" class="block w-full pl-10 p-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 transition-all duration-200">
+                    <input type="search"
+                           name="search"
+                           id="search-input"
+                           placeholder="Cari"
+                           value="{{ request('search') }}"
+                           class="block w-full pl-10 p-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 transition-all duration-200"
+                           onkeyup="debounceSearch(this.value)"
+                           autocomplete="off"
+                           title="Pencarian meliputi: nama kriteria, standar nasional, uraian temuan, kategori temuan, dan saran perbaikan">
                 </form>
             </div>
         </div>
@@ -167,16 +175,12 @@
                                                     <x-heroicon-o-pencil class="w-5 h-5" />
                                                 </a>
                                                 {{-- Form Delete --}}
-                                                <form action="{{ route('auditor.laporan.destroy', ['auditingId' => $auditingId, 'laporan_temuan_id' => $laporan['laporan_temuan_id']]) }}"
-                                                    method="POST"
-                                                    class="inline-block"
-                                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus laporan temuan ini?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 transition-colors duration-200">
-                                                        <x-heroicon-o-trash class="w-5 h-5" />
-                                                    </button>
-                                                </form>
+                                                <button type="button"
+                                                    class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 transition-colors duration-200"
+                                                    data-modal-target="delete-modal-{{ $laporan['laporan_temuan_id'] }}"
+                                                    data-modal-toggle="delete-modal-{{ $laporan['laporan_temuan_id'] }}">
+                                                    <x-heroicon-o-trash class="w-5 h-5" />
+                                                </button>
                                             @endif
                                         </div>
                                     </td>
@@ -214,7 +218,7 @@
                 Submit & Kunci Jawaban
             </x-button>
         @else
-            <x-button type="button" color="sky" class="shadow-md hover:shadow-lg transition-all" 
+            <x-button type="button" color="sky" class="shadow-md hover:shadow-lg transition-all"
                 data-modal-target="submit-lock-modal" data-modal-toggle="submit-lock-modal">
                 Submit & Kunci Jawaban
             </x-button>
@@ -256,7 +260,7 @@
     </div>
 
     {{-- Modal for Submit & Kunci Jawaban --}}
-    <x-confirmation-modal 
+    <x-confirmation-modal
         id="submit-lock-modal"
         title="Submit & Kunci Laporan Temuan"
         :action="route('auditor.laporan.update_audit_status', ['auditingId' => $auditingId])"
@@ -269,7 +273,7 @@
     </x-confirmation-modal>
 
     {{-- Modal for Diterima --}}
-    <x-confirmation-modal 
+    <x-confirmation-modal
         id="accept-modal"
         title="Terima Laporan Temuan"
         :action="route('auditor.laporan.update_audit_status', ['auditingId' => $auditingId])"
@@ -282,7 +286,7 @@
     </x-confirmation-modal>
 
     {{-- Modal for Revisi --}}
-    <x-confirmation-modal 
+    <x-confirmation-modal
         id="revision-modal"
         title="Minta Revisi Laporan Temuan"
         :action="route('auditor.laporan.update_audit_status', ['auditingId' => $auditingId])"
@@ -293,11 +297,37 @@
     >
         <input type="hidden" name="status" value="8">
     </x-confirmation-modal>
+
+    {{-- Modal for Delete Actions --}}
+    @if (!$laporanTemuansPaginated->isEmpty())
+        @foreach ($laporanTemuansPaginated as $group)
+            @foreach ($group['findings'] as $laporan)
+                <x-confirmation-modal
+                    id="delete-modal-{{ $laporan['laporan_temuan_id'] }}"
+                    title="Hapus Laporan Temuan"
+                    :action="route('auditor.laporan.destroy', ['auditingId' => $auditingId, 'laporan_temuan_id' => $laporan['laporan_temuan_id']])"
+                    method="DELETE"
+                    type="delete"
+                    formClass="delete-form-{{ $laporan['laporan_temuan_id'] }}"
+                    warningMessage="Apakah Anda yakin ingin menghapus laporan temuan ini? Tindakan ini tidak dapat dibatalkan."
+                />
+            @endforeach
+        @endforeach
+    @endif
 </div>
 @endsection
 
 @push('scripts')
 <script>
+    // Debounce function for search
+    let searchTimeout;
+    function debounceSearch(searchTerm) {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            document.getElementById('search-form').submit();
+        }, 500); // Wait 500ms after user stops typing
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         // Function to create and display a dynamic toast message
         function showToast(message, type) {
@@ -346,18 +376,40 @@
             }, 5000);
         }
 
-        // Handle delete forms for individual findings (still using traditional confirm)
-        document.querySelectorAll('form[onsubmit*="confirm"]').forEach(form => {
-            form.addEventListener('submit', (event) => {
-                // For traditional forms, the page will reload after submission,
-                // so no need for explicit global loading overlay from JS here.
-                // The browser's default loading indicator will be shown.
-            });
-        });
-
         // Initialize Flowbite modals
         if (typeof window.initFlowbite === 'function') {
             window.initFlowbite();
+        }
+
+        // Handle search form submission with Enter key
+        document.getElementById('search-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                clearTimeout(searchTimeout);
+                document.getElementById('search-form').submit();
+            }
+        });
+
+        // Clear search functionality
+        const searchInput = document.getElementById('search-input');
+        const searchForm = document.getElementById('search-form');
+
+        if (searchInput && searchInput.value) {
+            // Add clear button if there's a search term
+            const clearButton = document.createElement('button');
+            clearButton.type = 'button';
+            clearButton.id = 'search-clear';
+            clearButton.className = 'absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600';
+            clearButton.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+            clearButton.onclick = function() {
+                searchInput.value = '';
+                clearButton.remove();
+                searchForm.submit();
+            };
+
+            const searchContainer = searchInput.parentElement;
+            searchContainer.style.position = 'relative';
+            searchContainer.appendChild(clearButton);
         }
     });
 </script>

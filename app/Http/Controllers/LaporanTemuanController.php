@@ -23,16 +23,27 @@ class LaporanTemuanController extends Controller
             $searchTerm = $request->query('search');
             $perPage = $request->query('per_page', 10); // Default ke 10 jika tidak ada
 
+            // Log search parameters for debugging
+            Log::info('Search request parameters:', [
+                'search_term' => $searchTerm,
+                'per_page' => $perPage,
+                'auditing_id' => $auditingId
+            ]);
+
             // Persiapkan parameter untuk dikirim ke API eksternal
             $apiParams = [
                 'auditing_id' => $auditingId,
-                'per_page' => $perPage,
+                'per_page' => 1000, // Get all data for comprehensive search
             ];
 
-            // Jika ada searchTerm, tambahkan ke parameter API
-            if ($searchTerm) {
-                $apiParams['search'] = $searchTerm;
-            }
+            // Note: We're not sending search to API to get all data, then filter in frontend
+            // This allows comprehensive search across all fields
+            // if ($searchTerm && trim($searchTerm) !== '') {
+            //     $apiParams['search'] = trim($searchTerm);
+            //     Log::info('Adding search parameter to API call:', ['search' => trim($searchTerm)]);
+            // }
+
+            Log::info('API parameters being sent (without search for comprehensive filtering):', $apiParams);
 
             // 1. Fetch all relevant laporan temuan from the API for the given auditingId
             $response = Http::timeout(30)->retry(2, 100)->get("{$this->apiBaseUrl}/laporan-temuan", $apiParams);
@@ -44,6 +55,15 @@ class LaporanTemuanController extends Controller
             }
 
             $apiResponse = $response->json();
+            
+            // Log API response for debugging search
+            Log::info('API response received:', [
+                'status' => $apiResponse['status'] ?? 'not set',
+                'data_count' => isset($apiResponse['data']) ? count($apiResponse['data']) : 0,
+                'search_term' => $searchTerm,
+                'has_pagination' => isset($apiResponse['pagination']) || isset($apiResponse['meta']),
+                'full_url' => $response->effectiveUri()
+            ]);
 
             // Pastikan struktur respons API valid (diasumsikan API ini selalu mengembalikan 'data' langsung di root)
             if (!isset($apiResponse['status']) || !is_array($apiResponse['data'])) {
@@ -125,12 +145,64 @@ class LaporanTemuanController extends Controller
                 ];
             })->values()->all();
 
-            // 6. Manual Pagination for the grouped items (each "item" in paginator is a kriteria group)
+            // 5.5. Apply frontend search filter if search term exists and API didn't handle it
+            if ($searchTerm && trim($searchTerm) !== '') {
+                $searchTermLower = strtolower(trim($searchTerm));
+                Log::info('Applying frontend search filter:', ['search_term' => $searchTermLower]);
+                
+                $filteredGroupedData = [];
+                
+                foreach ($processedGroupedData as $group) {
+                    $kriteriaMatch = strpos(strtolower($group['nama_kriteria'] ?? ''), $searchTermLower) !== false;
+                    
+                    // Filter findings that match the search term
+                    $matchingFindings = array_filter($group['findings'], function ($finding) use ($searchTermLower) {
+                        $searchFields = [
+                            $finding['uraian_temuan'] ?? '',
+                            $finding['kategori_temuan'] ?? '',
+                            $finding['saran_perbaikan'] ?? '',
+                            $finding['standar_nasional'] ?? ''
+                        ];
+                        
+                        foreach ($searchFields as $field) {
+                            if (strpos(strtolower($field), $searchTermLower) !== false) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    });
+                    
+                    // Keep group if kriteria matches OR if any findings match
+                    if ($kriteriaMatch) {
+                        // If kriteria matches, include all findings
+                        $filteredGroupedData[] = $group;
+                    } elseif (!empty($matchingFindings)) {
+                        // If only findings match, include only matching findings
+                        $newGroup = $group;
+                        $newGroup['findings'] = array_values($matchingFindings);
+                        $filteredGroupedData[] = $newGroup;
+                    }
+                }
+                
+                $processedGroupedData = $filteredGroupedData;
+                
+                Log::info('Frontend search results:', [
+                    'original_groups' => count($groupedLaporanTemuans),
+                    'filtered_groups' => count($processedGroupedData),
+                    'search_term' => $searchTermLower
+                ]);
+            }
+
+            // 6. Handle pagination from filtered data
             $page = $request->query('page', 1);
             $totalGroupedItems = count($processedGroupedData);
-
+            
+            // Calculate pagination for filtered data
+            $startIndex = ($page - 1) * $perPage;
+            $paginatedGroupedData = array_slice($processedGroupedData, $startIndex, $perPage);
+            
             $laporanTemuansPaginated = new LengthAwarePaginator(
-                $processedGroupedData,
+                $paginatedGroupedData,
                 $totalGroupedItems,
                 $perPage,
                 $page,
@@ -139,6 +211,14 @@ class LaporanTemuanController extends Controller
                     'query' => $request->query(),
                 ]
             );
+            
+            Log::info('Using comprehensive search pagination:', [
+                'total_filtered_groups' => $totalGroupedItems,
+                'per_page' => $perPage,
+                'current_page' => $page,
+                'search_term' => $searchTerm,
+                'paginated_count' => count($paginatedGroupedData)
+            ]);
 
             // Fetch the specific audit status for button control
             $auditResponse = Http::timeout(30)->retry(2, 100)->get("{$this->apiBaseUrl}/auditings/{$auditingId}");
