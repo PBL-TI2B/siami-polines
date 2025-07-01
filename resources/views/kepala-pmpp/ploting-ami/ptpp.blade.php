@@ -149,10 +149,10 @@
         <tr>
             <td colspan="2" width="12.5%">Standar no</td>
             <td colspan="2" width="50%">: 
-                {{ $temuan['standar'] }}
+                {{ $temuan['response_tilik']['standar_nasional'] }}
             </td>
             <td colspan="2" width="12.5%">Prosedur/Proses</td>
-            <td colspan="2">: {{ $temuan['nama_kriteria'] }}</td>
+            <td colspan="2">: {{ $temuan['kriteria']['nama_kriteria'] }}</td>
         </tr>
         <tr>
             <td colspan="8">Hasil Temuan Ketidaksesuaian:<br>{{ $temuan['uraian_temuan'] }}<br></td>
@@ -166,19 +166,19 @@
         <tr>
             <td>Auditor</td>
             <td>Nama:</td>
-            <td colspan="2">1. {{ $audit['auditor1']['nama'] }}<br>2. {{ $audit['auditor2']['nama'] }}</td>
+            <td colspan="2">1. {{ optional($audit['auditor1'])['nama'] ?? '-' }} <br>2. {{ optional($audit['auditor2'])['nama'] ?? '-' }}</td>
             <td>Auditee</td>
             <td>Nama:</td>
-            <td colspan="2">1. {{ $audit['auditee1']['nama'] }}<br>2. {{ $audit['auditee2']['nama'] }}</td>
+            <td colspan="2">1. {{ optional($audit['auditee1'])['nama'] ?? '-' }} <br>2. {{ optional($audit['auditee2'])['nama'] ?? '-' }}</td>
         </tr>
         <tr>
-            <td colspan="8">Analisa Penyebab:<br>{{ $temuan['analisis_penyebab'] }}<br><br><br><br></td>
+            <td colspan="8">Analisa Penyebab:<br>{{ $temuan['response_tilik']['akar_penyebab_penunjang'] }}<br><br><br><br></td>
         </tr>
         <tr>
-            <td colspan="8">Tindakan Perbaikan:<br>{{ $temuan['tindakan_perbaikan'] }}<br></td>
+            <td colspan="8">Tindakan Perbaikan:<br>{{ $temuan['response_tilik']['rencana_perbaikan_tindak_lanjut'] }}<br></td>
         </tr>
         <tr>
-            <td colspan="8">Tindakan Pencegahan:<br>{{ $temuan['saran_perbaikan'] }}<br><br><br><br></td>
+            <td colspan="8">Tindakan Pencegahan:<br>{{ $temuan['response_tilik']['tindakan_pencegahan'] }}<br><br><br><br></td>
         </tr>
         <tr>
             <td colspan="2">Kategori Temuan</td>
@@ -198,11 +198,11 @@
         <tr>
             <td>Auditor</td>
             <td>Nama:</td>
-            <td>1. {{ $audit['auditor1']['nama'] }}<br>2. {{ $audit['auditor2']['nama'] }}</td>
+            <td>1. {{ optional($audit['auditor1'])['nama'] ?? '-' }} <br>2. {{ optional($audit['auditor2'])['nama'] ?? '-' }}</td>
             <td>TT.......<br>TT........</td>
             <td>Auditee</td>
             <td>Nama:</td>
-            <td>1. {{ $audit['auditee1']['nama'] }}<br>2. {{ $audit['auditee2']['nama'] }}</td>
+            <td>1. {{ optional($audit['auditee1'])['nama'] ?? '-' }} <br>2. {{ optional($audit['auditee2'])['nama'] ?? '-' }}</td>
             <td>TT.......<br>TT........</td>
         </tr>
     </table>

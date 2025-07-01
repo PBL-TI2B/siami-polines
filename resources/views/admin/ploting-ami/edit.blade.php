@@ -143,11 +143,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 const option = selectEl.querySelector('option[value=""]');
                 if(option) option.remove();
             }
+            let previousValue = tom.getValue();
             tom.on('type', removeDefaultOption);
             tom.on('dropdown_open', function() {
+                previousValue = tom.getValue();
                 removeDefaultOption();
                 const searchInput = tom.control_input;
                 if (searchInput) searchInput.value = '';
+                tom.clear();
+            });
+            tom.on('dropdown_close', function() {
+                // Jika tidak ada value yang dipilih, kembalikan ke value sebelumnya
+                if (!tom.getValue() && previousValue) {
+                    tom.setValue(previousValue, true);
+                }
             });
         }
     }
