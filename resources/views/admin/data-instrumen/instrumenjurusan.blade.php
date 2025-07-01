@@ -181,6 +181,16 @@ function renderTable(page = 1) {
             <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${item.aktivitas.nama_aktivitas}</td>
             <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${item.aktivitas.satuan}</td>
             <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${item.aktivitas.target}</td>
+            <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">
+                        <div class="flex items-center gap-2">
+                            <a href="/admin/data-instrumen/${item.sasaran.sasaran_strategis_id}/edit" class="text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-200 transition-colors duration-200">
+                                <x-heroicon-o-pencil class="w-5 h-5" />
+                            </a>
+                            <a href="#" class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 transition-colors duration-200">
+                                <x-heroicon-o-trash class="w-5 h-5" />
+                            </a>
+                        </div>
+                    </td>
             <!-- aksiCell jika ada -->
         `;
         tableBody.appendChild(row);
