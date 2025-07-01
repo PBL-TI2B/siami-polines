@@ -203,72 +203,96 @@
     </div>
 
     <div class="mt-6 flex gap-2 justify-start">
-        {{-- Form for Submit & Kunci Jawaban --}}
+        {{-- Button for Submit & Kunci Jawaban --}}
         @php
             // Aktif jika status < 7 (belum disubmit)
             // Nonaktif jika status >= 7 (sudah disubmit, revisi, diterima, dll)
             $canSubmit = (($currentAuditStatus ?? 0) < 7);
         @endphp
-        <form action="{{ route('auditor.laporan.update_audit_status', ['auditingId' => $auditingId]) }}" method="POST" class="inline-block"
-            onsubmit="return confirm('Apakah Anda yakin ingin Submit dan Mengunci Laporan Temuan? Ini akan mengunci laporan dari perubahan lebih lanjut.');">
-            @csrf
-            @method('PUT')
-            <input type="hidden" name="status" value="7"> {{-- Status for 'Laporan Temuan' --}}
-            @if (!$canSubmit)
-                <x-button type="submit" color="sky" class="shadow-md transition-all opacity-50 cursor-not-allowed" disabled>
-                    Submit & Kunci Jawaban
-                </x-button>
-            @else
-                <x-button type="submit" color="sky" class="shadow-md hover:shadow-lg transition-all">
-                    Submit & Kunci Jawaban
-                </x-button>
-            @endif
-        </form>
+        @if (!$canSubmit)
+            <x-button type="button" color="sky" class="shadow-md transition-all opacity-50 cursor-not-allowed" disabled>
+                Submit & Kunci Jawaban
+            </x-button>
+        @else
+            <x-button type="button" color="sky" class="shadow-md hover:shadow-lg transition-all" 
+                data-modal-target="submit-lock-modal" data-modal-toggle="submit-lock-modal">
+                Submit & Kunci Jawaban
+            </x-button>
+        @endif
 
-        {{-- Form for Diterima --}}
+        {{-- Button for Diterima --}}
         @php
             // **KOREKSI DISINI**: Aktif hanya jika status == 7.
             // Setelah status berubah menjadi 8 (Revisi) atau 9 (Diterima), tombol ini akan nonaktif.
             $canAccept = (($currentAuditStatus ?? 0) == 7);
         @endphp
-        <form action="{{ route('auditor.laporan.update_audit_status', ['auditingId' => $auditingId]) }}" method="POST" class="inline-block"
-            onsubmit="return confirm('Apakah Anda yakin ingin menyatakan Laporan Temuan Diterima? Ini akan memindahkan laporan ke status sudah direvisi.');">
-            @csrf
-            @method('PUT')
-            <input type="hidden" name="status" value="9"> {{-- Status for 'Sudah revisi' --}}
-            @if (!$canAccept)
-                <x-button type="submit" color="green" class="shadow-md transition-all opacity-50 cursor-not-allowed" disabled>
-                    Diterima
-                </x-button>
-            @else
-                <x-button type="submit" color="green" class="shadow-md hover:hover:bg-green-700 transition-all">
-                    Diterima
-                </x-button>
-            @endif
-        </form>
+        @if (!$canAccept)
+            <x-button type="button" color="green" class="shadow-md transition-all opacity-50 cursor-not-allowed" disabled>
+                Diterima
+            </x-button>
+        @else
+            <x-button type="button" color="green" class="shadow-md hover:hover:bg-green-700 transition-all"
+                data-modal-target="accept-modal" data-modal-toggle="accept-modal">
+                Diterima
+            </x-button>
+        @endif
 
-        {{-- Form for Revisi --}}
+        {{-- Button for Revisi --}}
         @php
             // Aktif hanya jika status == 7.
             // Setelah status berubah menjadi 8 (Revisi) atau 9 (Diterima), tombol ini akan nonaktif.
             $canRequestRevision = (($currentAuditStatus ?? 0) == 7);
         @endphp
-        <form action="{{ route('auditor.laporan.update_audit_status', ['auditingId' => $auditingId]) }}" method="POST" class="inline-block"
-            onsubmit="return confirm('Apakah Anda yakin ingin meminta Revisi untuk Laporan Temuan ini? Auditee perlu merevisi laporan.');">
-            @csrf
-            @method('PUT')
-            <input type="hidden" name="status" value="8"> {{-- Status for 'Revisi' --}}
-            @if (!$canRequestRevision)
-                <x-button type="submit" color="yellow" class="shadow-md transition-all opacity-50 cursor-not-allowed" disabled>
-                    Revisi
-                </x-button>
-            @else
-                <x-button type="submit" color="yellow" class="shadow-md hover:hover:bg-amber-700 transition-all">
-                    Revisi
-                </x-button>
-            @endif
-        </form>
+        @if (!$canRequestRevision)
+            <x-button type="button" color="yellow" class="shadow-md transition-all opacity-50 cursor-not-allowed" disabled>
+                Revisi
+            </x-button>
+        @else
+            <x-button type="button" color="yellow" class="shadow-md hover:hover:bg-amber-700 transition-all"
+                data-modal-target="revision-modal" data-modal-toggle="revision-modal">
+                Revisi
+            </x-button>
+        @endif
     </div>
+
+    {{-- Modal for Submit & Kunci Jawaban --}}
+    <x-confirmation-modal 
+        id="submit-lock-modal"
+        title="Submit & Kunci Laporan Temuan"
+        :action="route('auditor.laporan.update_audit_status', ['auditingId' => $auditingId])"
+        method="PUT"
+        type="lock"
+        formClass="submit-lock-form"
+        warningMessage="Setelah di-submit dan dikunci, laporan temuan tidak dapat diubah lagi. Pastikan semua data sudah benar."
+    >
+        <input type="hidden" name="status" value="7">
+    </x-confirmation-modal>
+
+    {{-- Modal for Diterima --}}
+    <x-confirmation-modal 
+        id="accept-modal"
+        title="Terima Laporan Temuan"
+        :action="route('auditor.laporan.update_audit_status', ['auditingId' => $auditingId])"
+        method="PUT"
+        type="accept"
+        formClass="accept-form"
+        warningMessage="Menerima laporan temuan akan memindahkan status ke 'Sudah Direvisi' dan mengakhiri proses audit untuk laporan ini."
+    >
+        <input type="hidden" name="status" value="9">
+    </x-confirmation-modal>
+
+    {{-- Modal for Revisi --}}
+    <x-confirmation-modal 
+        id="revision-modal"
+        title="Minta Revisi Laporan Temuan"
+        :action="route('auditor.laporan.update_audit_status', ['auditingId' => $auditingId])"
+        method="PUT"
+        type="revision"
+        formClass="revision-form"
+        warningMessage="Meminta revisi akan mengirim laporan kembali ke auditee untuk diperbaiki. Auditee perlu melakukan revisi sebelum laporan dapat diterima."
+    >
+        <input type="hidden" name="status" value="8">
+    </x-confirmation-modal>
 </div>
 @endsection
 
@@ -330,6 +354,11 @@
                 // The browser's default loading indicator will be shown.
             });
         });
+
+        // Initialize Flowbite modals
+        if (typeof window.initFlowbite === 'function') {
+            window.initFlowbite();
+        }
     });
 </script>
 @endpush
