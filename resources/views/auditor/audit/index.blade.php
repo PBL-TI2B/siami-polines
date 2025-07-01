@@ -69,7 +69,7 @@
                     throw new Error(result.message || 'Gagal memuat data');
                 }
 
-                const data = result.data;
+                const data = result.data.filter(item => item.periode?.status === 'Sedang Berjalan');
 
                 // Cek jika data tidak kosong
                 if (data.length === 0) {
