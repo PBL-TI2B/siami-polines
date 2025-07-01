@@ -195,11 +195,9 @@ $periodeStatus = $auditing->periode->status ?? null;
                         <h4 class="mb-1 text-lg font-semibold text-slate-900 dark:text-white">Closing Audit</h4>
                         <p class="text-sm text-slate-500 dark:text-slate-400">Selesaikan proses audit setelah semua tahapan disetujui.</p>
                         @if($status == 9)
-                        <button type="button" onclick="showCloseConfirmModal()" class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800" {!! $disabled !!}>
+                        <button type="button" onclick="showCloseConfirmModal()" class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800 gap-2" {!! $disabled !!}>
                             Closing Proses Audit
-                            <svg class="ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5v2.25a2.25 2.25 0 00-2.25 2.25v4.5A2.25 2.25 0 005.5 19h9a2.25 2.25 0 002.25-2.25v-4.5a2.25 2.25 0 00-2.25-2.25V5.5A4.5 4.5 0 0010 1zm3 8.5a.75.75 0 00-1.5 0v1.5a.75.75 0 001.5 0v-1.5z" clip-rule="evenodd" />
-                            </svg>
+                            <x-heroicon-s-key class="h-4 w-4"/>
                         </button>
                         @endif
                     </li>
@@ -275,11 +273,7 @@ $periodeStatus = $auditing->periode->status ?? null;
 
 <script>
     // Definisikan variabel penting dari PHP ke JS
-    const auditingId = {
-        {
-            $auditing - > auditing_id
-        }
-    };
+    const auditingId = {{$auditing -> auditing_id}};
     const apiUpdateUrl = `http://127.0.0.1:5000/api/auditings/${auditingId}`;
 
     const modalElement = document.getElementById('closeConfirmModal');
