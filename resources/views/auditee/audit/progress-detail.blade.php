@@ -45,27 +45,69 @@
         ]" />
 
         <div class="mb-6">
-            <h1 class="mb-6 text-3xl font-bold tracking-tight text-slate-900 sm:text-3xl dark:text-slate-100">
+            <h1 class="mb-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-3xl dark:text-slate-100">
                 Progress Audit: {{ $audit['unit_kerja']['nama_unit_kerja'] ?? 'Detail Audit' }}
             </h1>
         </div>
-        <div class="mb-4 flex items-center gap-x-2">
-            <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Periode:</span>
-            <div
-                class="inline-flex items-center gap-x-2 rounded-full bg-sky-100 px-3 py-1.5 text-xs sm:text-sm dark:bg-sky-900/50">
-                <x-heroicon-o-calendar-days class="h-4 w-4 shrink-0 text-sky-600 sm:h-5 sm:w-5 dark:text-sky-300" />
-                <span class="font-semibold text-sky-700 dark:text-sky-300">
-                    {{ $audit['periode']['nama_periode'] ?? 'Tidak Diketahui' }}
-                </span>
+
+        <div class="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2">
+            <div class="flex items-center gap-x-2">
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Periode:</span>
+                <div class="inline-flex items-center gap-x-2 rounded-full bg-sky-100 px-3 py-1.5 text-xs sm:text-sm dark:bg-sky-900/50">
+                    <x-heroicon-o-calendar-days class="h-4 w-4 shrink-0 text-sky-600 sm:h-5 sm:w-5 dark:text-sky-300" />
+                    <span class="font-semibold text-sky-700 dark:text-sky-300">
+                        {{ $audit['periode']['nama_periode'] ?? 'Tidak Diketahui' }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-x-2">
+                 <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Status Periode:</span>
+                @if ($isPeriodeActive)
+                    <span class="inline-flex items-center gap-x-1.5 rounded-full bg-green-100 px-3 py-1.5 text-xs font-medium text-green-700 dark:bg-green-500/20 dark:text-green-400">
+                        <span class="h-1.5 w-1.5 rounded-full bg-green-500"></span>
+                        Aktif
+                    </span>
+                @else
+                    <span class="inline-flex items-center gap-x-1.5 rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-700 dark:bg-gray-600/30 dark:text-gray-400">
+                        <span class="h-1.5 w-1.5 rounded-full bg-gray-500"></span>
+                        Telah Berakhir
+                    </span>
+                @endif
             </div>
         </div>
+
+        {{-- Alert untuk Status Revisi (status 8) --}}
+        @if ($status == 8 && $isPeriodeActive)
+            <div class="relative mb-6 flex items-start gap-3 rounded-lg border border-orange-400 bg-orange-100 px-4 py-3 text-orange-700 dark:border-orange-600 dark:bg-orange-800/20 dark:text-orange-200">
+                <x-heroicon-s-information-circle class="h-6 w-6 flex-shrink-0" />
+                <div>
+                    <strong class="text-sm font-bold">Revisi Diperlukan!</strong>
+                    <span class="block text-sm sm:inline">
+                        Auditor meminta perbaikan pada jawaban instrumen Anda. Silakan klik tombol "Kerjakan Revisi" di bawah.
+                    </span>
+                </div>
+            </div>
+        @endif
+
+        {{-- Alert jika Periode Telah Berakhir --}}
+        @if (!$isPeriodeActive)
+            <div class="relative mb-6 flex items-start gap-3 rounded-lg border border-yellow-400 bg-yellow-100 px-4 py-3 text-yellow-700 dark:border-yellow-600 dark:bg-yellow-800/20 dark:text-yellow-200">
+                <x-heroicon-s-exclamation-triangle class="h-6 w-6 flex-shrink-0" />
+                <div>
+                    <strong class="text-sm font-bold">Periode Telah Berakhir!</strong>
+                    <span class="block text-sm sm:inline">
+                        Anda tidak dapat lagi melakukan perubahan atau mengisi data. Halaman ini hanya dapat dilihat (read-only).
+                    </span>
+                </div>
+            </div>
+        @endif
 
 
         <div class="flex flex-col gap-8 lg:flex-row">
             {{-- Konten Utama (Stepper) --}}
             <div class="w-full lg:w-2/3">
-                <div
-                    class="rounded-2xl border border-slate-200 bg-white p-6 shadow-lg sm:p-8 dark:border-slate-700 dark:bg-slate-800/50">
+                <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-lg sm:p-8 dark:border-slate-700 dark:bg-slate-800/50">
                     <ol class="relative ml-5 border-l-2 border-slate-200 dark:border-slate-700">
 
                         {{-- Langkah 1: Jawab Instrumen --}}
@@ -75,28 +117,29 @@
                                 $isStep1Current = $status == 1;
                                 $isStep1Revision = $status == 8;
                             @endphp
-                            <span
-                                class="{{ $isStep1Done ? 'bg-green-500' : ($isStep1Current ? 'bg-sky-600' : ($isStep1Revision ? 'bg-orange-500' : 'bg-slate-200 dark:bg-slate-600')) }} absolute -left-5 flex h-10 w-10 items-center justify-center rounded-full ring-8 ring-white dark:ring-slate-800/50">
+                            <span class="{{ $isStep1Done ? 'bg-green-500' : ($isStep1Current ? 'bg-sky-600' : ($isStep1Revision ? 'bg-orange-500' : 'bg-slate-200 dark:bg-slate-600')) }} absolute -left-5 flex h-10 w-10 items-center justify-center rounded-full ring-8 ring-white dark:ring-slate-800/50">
                                 @if ($isStep1Done)
                                     <x-heroicon-s-check class="h-5 w-5 text-white" />
                                 @else
-                                    <x-heroicon-s-pencil-square
-                                        class="{{ $isStep1Current || $isStep1Revision ? 'text-white' : 'text-slate-500 dark:text-slate-300' }} h-5 w-5" />
+                                    <x-heroicon-s-pencil-square class="{{ $isStep1Current || $isStep1Revision ? 'text-white' : 'text-slate-500 dark:text-slate-300' }} h-5 w-5" />
                                 @endif
                             </span>
-                            <h4
-                                class="{{ $isStep1Done ? 'text-green-700 dark:text-green-400' : ($isStep1Current ? 'text-sky-800 dark:text-sky-300' : ($isStep1Revision ? 'text-orange-800 dark:text-orange-300' : 'text-slate-900 dark:text-white')) }} mb-1 text-lg font-semibold">
+                            <h4 class="{{ $isStep1Done ? 'text-green-700 dark:text-green-400' : ($isStep1Current ? 'text-sky-800 dark:text-sky-300' : ($isStep1Revision ? 'text-orange-800 dark:text-orange-300' : 'text-slate-900 dark:text-white')) }} mb-1 text-lg font-semibold">
                                 {{ $isStep1Revision ? 'Revisi Jawaban Instrumen' : 'Jawab Instrumen' }}
                             </h4>
                             <p class="text-sm text-slate-500 dark:text-slate-400">
                                 {{ $isStep1Revision ? 'Auditor meminta perbaikan pada jawaban instrumen Anda.' : 'Isi dan lengkapi semua instrumen audit yang tersedia.' }}
                             </p>
-                            @if ($isStep1Current || $isStep1Revision)
-                                <a href="{{ $instrumenRoute }}"
-                                    class="{{ $isStep1Revision ? 'bg-orange-600 hover:bg-orange-700 focus:ring-orange-300 dark:focus:ring-orange-800' : 'bg-sky-600 hover:bg-sky-700 focus:ring-sky-300 dark:focus:ring-sky-800' }} mt-3 inline-flex items-center rounded-lg px-4 py-2 text-sm font-medium text-white focus:outline-none focus:ring-4">
+
+                            @if (($isStep1Current || $isStep1Revision) && $isPeriodeActive)
+                                <a href="{{ $instrumenRoute }}" class="{{ $isStep1Revision ? 'bg-orange-600 hover:bg-orange-700 focus:ring-orange-300 dark:focus:ring-orange-800' : 'bg-sky-600 hover:bg-sky-700 focus:ring-sky-300 dark:focus:ring-sky-800' }} mt-3 inline-flex items-center rounded-lg px-4 py-2 text-sm font-medium text-white focus:outline-none focus:ring-4">
                                     {{ $isStep1Revision ? 'Kerjakan Revisi' : 'Mulai Jawab' }}
                                     <x-heroicon-s-arrow-right class="ms-2 h-4 w-4" />
                                 </a>
+                            @elseif (($isStep1Current || $isStep1Revision) && !$isPeriodeActive)
+                                 <button disabled class="mt-3 inline-flex cursor-not-allowed items-center rounded-lg bg-slate-400 px-4 py-2 text-sm font-medium text-white opacity-70 dark:bg-slate-600">
+                                    Aksi Dinonaktifkan
+                                </button>
                             @endif
                         </li>
 
@@ -106,24 +149,20 @@
                                 $isStep2Done = $status > 3;
                                 $isStep2Current = $status == 3;
                             @endphp
-                            <span
-                                class="{{ $isStep2Done ? 'bg-green-500' : ($isStep2Current ? 'bg-sky-600' : 'bg-slate-200 dark:bg-slate-600') }} absolute -left-5 flex h-10 w-10 items-center justify-center rounded-full ring-8 ring-white dark:ring-slate-800/50">
+                            <span class="{{ $isStep2Done ? 'bg-green-500' : ($isStep2Current ? 'bg-sky-600' : 'bg-slate-200 dark:bg-slate-600') }} absolute -left-5 flex h-10 w-10 items-center justify-center rounded-full ring-8 ring-white dark:ring-slate-800/50">
                                 @if ($isStep2Done)
                                     <x-heroicon-s-check class="h-5 w-5 text-white" />
                                 @else
-                                    <x-heroicon-s-calendar-days
-                                        class="{{ $isStep2Current ? 'text-white' : 'text-slate-500 dark:text-slate-300' }} h-5 w-5" />
+                                    <x-heroicon-s-calendar-days class="{{ $isStep2Current ? 'text-white' : 'text-slate-500 dark:text-slate-300' }} h-5 w-5" />
                                 @endif
                             </span>
-                            <h4
-                                class="{{ $isStep2Done ? 'text-green-700 dark:text-green-400' : ($isStep2Current ? 'text-sky-800 dark:text-sky-300' : 'text-slate-900 dark:text-white') }} mb-1 text-lg font-semibold">
+                            <h4 class="{{ $isStep2Done ? 'text-green-700 dark:text-green-400' : ($isStep2Current ? 'text-sky-800 dark:text-sky-300' : 'text-slate-900 dark:text-white') }} mb-1 text-lg font-semibold">
                                 Jadwal Asesmen Lapangan
                             </h4>
-                            <p class="text-sm text-slate-500 dark:text-slate-400">Lihat jadwal asesmen lapangan yang telah
-                                ditentukan oleh auditor.</p>
+                            <p class="text-sm text-slate-500 dark:text-slate-400">Lihat jadwal asesmen lapangan yang telah ditentukan oleh auditor.</p>
+
                             @if ($isStep2Current)
-                                <a href="{{ $assessmentScheduleRoute }}"
-                                    class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800">
+                                <a href="{{ $assessmentScheduleRoute }}" class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800">
                                     Lihat Jadwal
                                     <x-heroicon-s-arrow-right class="ms-2 h-4 w-4" />
                                 </a>
@@ -136,78 +175,70 @@
                                 $isStep3Done = $status > 5;
                                 $isStep3Current = $status == 5;
                             @endphp
-                            <span
-                                class="{{ $isStep3Done ? 'bg-green-500' : ($isStep3Current ? 'bg-sky-600' : 'bg-slate-200 dark:bg-slate-600') }} absolute -left-5 flex h-10 w-10 items-center justify-center rounded-full ring-8 ring-white dark:ring-slate-800/50">
+                            <span class="{{ $isStep3Done ? 'bg-green-500' : ($isStep3Current ? 'bg-sky-600' : 'bg-slate-200 dark:bg-slate-600') }} absolute -left-5 flex h-10 w-10 items-center justify-center rounded-full ring-8 ring-white dark:ring-slate-800/50">
                                 @if ($isStep3Done)
                                     <x-heroicon-s-check class="h-5 w-5 text-white" />
                                 @else
-                                    <x-heroicon-s-document-check
-                                        class="{{ $isStep3Current ? 'text-white' : 'text-slate-500 dark:text-slate-300' }} h-5 w-5" />
+                                    <x-heroicon-s-document-check class="{{ $isStep3Current ? 'text-white' : 'text-slate-500 dark:text-slate-300' }} h-5 w-5" />
                                 @endif
                             </span>
-                            <h4
-                                class="{{ $isStep3Done ? 'text-green-700 dark:text-green-400' : ($isStep3Current ? 'text-sky-800 dark:text-sky-300' : 'text-slate-900 dark:text-white') }} mb-1 text-lg font-semibold">
+                            <h4 class="{{ $isStep3Done ? 'text-green-700 dark:text-green-400' : ($isStep3Current ? 'text-sky-800 dark:text-sky-300' : 'text-slate-900 dark:text-white') }} mb-1 text-lg font-semibold">
                                 Jawab Daftar Tilik
                             </h4>
-                            <p class="text-sm text-slate-500 dark:text-slate-400">Berikan respon terhadap daftar tilik yang
-                                dibuat oleh auditor untuk verifikasi.</p>
-                            @if ($isStep3Current)
-                                <a href="{{ $tilikResponseRoute }}"
-                                    class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800">
+                            <p class="text-sm text-slate-500 dark:text-slate-400">Berikan respon terhadap daftar tilik yang dibuat oleh auditor untuk verifikasi.</p>
+
+                            @if ($isStep3Current && $isPeriodeActive)
+                                <a href="{{ $tilikResponseRoute }}" class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800">
                                     Jawab Daftar Tilik
                                     <x-heroicon-s-arrow-right class="ms-2 h-4 w-4" />
                                 </a>
+                            @elseif ($isStep3Current && !$isPeriodeActive)
+                                 <button disabled class="mt-3 inline-flex cursor-not-allowed items-center rounded-lg bg-slate-400 px-4 py-2 text-sm font-medium text-white opacity-70 dark:bg-slate-600">
+                                    Aksi Dinonaktifkan
+                                </button>
                             @endif
                         </li>
 
                         {{-- Langkah 4: Lihat Laporan Temuan --}}
                         <li class="mb-10 ml-10">
-                            @php
-                                $isStep4Done = $status > 7;
+                             @php
+                                $isStep4Done = $status > 7 && !in_array($status, [8, 9]);
                                 $isStep4Current = $status == 7;
                             @endphp
-                            <span
-                                class="{{ $isStep4Done ? 'bg-green-500' : ($isStep4Current ? 'bg-sky-600' : 'bg-slate-200 dark:bg-slate-600') }} absolute -left-5 flex h-10 w-10 items-center justify-center rounded-full ring-8 ring-white dark:ring-slate-800/50">
+                            <span class="{{ $isStep4Done ? 'bg-green-500' : ($isStep4Current ? 'bg-sky-600' : 'bg-slate-200 dark:bg-slate-600') }} absolute -left-5 flex h-10 w-10 items-center justify-center rounded-full ring-8 ring-white dark:ring-slate-800/50">
                                 @if ($isStep4Done)
                                     <x-heroicon-s-check class="h-5 w-5 text-white" />
                                 @else
-                                    <x-heroicon-s-document-text
-                                        class="{{ $isStep4Current ? 'text-white' : 'text-slate-500 dark:text-slate-300' }} h-5 w-5" />
+                                    <x-heroicon-s-document-text class="{{ $isStep4Current ? 'text-white' : 'text-slate-500 dark:text-slate-300' }} h-5 w-5" />
                                 @endif
                             </span>
-                            <h4
-                                class="{{ $isStep4Done ? 'text-green-700 dark:text-green-400' : ($isStep4Current ? 'text-sky-800 dark:text-sky-300' : 'text-slate-900 dark:text-white') }} mb-1 text-lg font-semibold">
+                            <h4 class="{{ $isStep4Done ? 'text-green-700 dark:text-green-400' : ($isStep4Current ? 'text-sky-800 dark:text-sky-300' : 'text-slate-900 dark:text-white') }} mb-1 text-lg font-semibold">
                                 Laporan Temuan & Tindak Lanjut
                             </h4>
-                            <p class="text-sm text-slate-500 dark:text-slate-400">Periksa laporan temuan dari auditor dan
-                                siapkan rencana tindak lanjut.</p>
-                            @if ($isStep4Current)
-                                <a href="{{ $laporanTemuanRoute }}"
-                                    class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800">
-                                    Lihat Laporan
+                            <p class="text-sm text-slate-500 dark:text-slate-400">Periksa laporan temuan dari auditor dan siapkan rencana tindak lanjut.</p>
+
+                            @if ($isStep4Current && $isPeriodeActive)
+                                <a href="{{ $laporanTemuanRoute }}" class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800">
+                                    Lihat Laporan & Tindak Lanjut
                                     <x-heroicon-s-arrow-right class="ms-2 h-4 w-4" />
                                 </a>
+                            @elseif ($isStep4Current && !$isPeriodeActive)
+                                <button disabled class="mt-3 inline-flex cursor-not-allowed items-center rounded-lg bg-slate-400 px-4 py-2 text-sm font-medium text-white opacity-70 dark:bg-slate-600">
+                                    Aksi Dinonaktifkan
+                                </button>
                             @endif
                         </li>
 
                         {{-- Langkah 5: Audit Selesai --}}
                         <li class="ml-10">
-                            {{-- PERUBAHAN: Dianggap selesai jika status 10 (Closing) atau lebih --}}
                             @php $isStep5Done = $status >= 10; @endphp
-                            <span
-                                class="{{ $isStep5Done ? 'bg-green-500' : 'bg-slate-200 dark:bg-slate-600' }} absolute -left-5 flex h-10 w-10 items-center justify-center rounded-full ring-8 ring-white dark:ring-slate-800/50">
-                                @if ($isStep5Done)
-                                    <x-heroicon-s-shield-check class="h-5 w-5 text-white" />
-                                @else
-                                    <x-heroicon-s-shield-check class="h-5 w-5 text-slate-500 dark:text-slate-300" />
-                                @endif
+                            <span class="{{ $isStep5Done ? 'bg-green-500' : 'bg-slate-200 dark:bg-slate-600' }} absolute -left-5 flex h-10 w-10 items-center justify-center rounded-full ring-8 ring-white dark:ring-slate-800/50">
+                                <x-heroicon-s-shield-check class="{{ $isStep5Done ? 'text-white' : 'text-slate-500 dark:text-slate-300' }} h-5 w-5" />
                             </span>
-                            <h4
-                                class="{{ $isStep5Done ? 'text-green-700 dark:text-green-400' : 'text-slate-900 dark:text-white' }} mb-1 text-lg font-semibold">
+                            <h4 class="{{ $isStep5Done ? 'text-green-700 dark:text-green-400' : 'text-slate-900 dark:text-white' }} mb-1 text-lg font-semibold">
                                 Audit Selesai
                             </h4>
-                            <p class="text-sm text-slate-500 dark:text-slate-400">Seluruh proses audit untuk unit kerja Anda
-                                telah selesai.</p>
+                            <p class="text-sm text-slate-500 dark:text-slate-400">Seluruh proses audit untuk unit kerja Anda telah selesai.</p>
                         </li>
 
                     </ol>
@@ -216,12 +247,10 @@
 
             {{-- Sidebar Status --}}
             <div class="w-full lg:w-1/3">
-                <div
-                    class="sticky top-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-lg dark:border-slate-700 dark:bg-slate-800/50">
+                <div class="sticky top-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-lg dark:border-slate-700 dark:bg-slate-800/50">
                     <h4 class="mb-4 text-xl font-bold text-slate-800 dark:text-slate-100">Status Audit Saat Ini</h4>
                     <div class="mb-4">
-                        <span
-                            class="{{ [
+                        <span class="{{ [
                                 'gray' => 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300',
                                 'blue' => 'bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-300',
                                 'sky' => 'bg-sky-100 dark:bg-sky-800 text-sky-700 dark:text-sky-300',

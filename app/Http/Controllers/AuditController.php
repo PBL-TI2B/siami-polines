@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Models\Auditing;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 
 
 class AuditController extends Controller
@@ -95,44 +96,61 @@ class AuditController extends Controller
 
             if ($response->successful()) {
                 $apiData = $response->json();
-                $allUserAudits = $apiData['data'] ?? []; // Ini adalah array dari semua audit user
-                $audit = null; // Variabel untuk menyimpan audit yang cocok
+                $allUserAudits = $apiData['data'] ?? [];
+                $audit = null;
 
-                // 2. Cari audit spesifik dari daftar berdasarkan $auditingId dari route
+                // 2. Cari audit spesifik dari daftar berdasarkan $auditingId
                 if (is_array($allUserAudits)) {
                     foreach ($allUserAudits as $item) {
-                        // Pastikan $item adalah array atau objek yang bisa diakses fieldnya
-                        if (is_array($item) && isset($item['auditing_id'])) {
-                            if ((string)$item['auditing_id'] === (string)$auditingId) {
-                                $audit = $item;
-                                break; // Hentikan loop setelah audit ditemukan
-                            }
+                        if (is_array($item) && isset($item['auditing_id']) && (string)$item['auditing_id'] === (string)$auditingId) {
+                            $audit = $item;
+                            break;
                         }
                     }
                 }
 
                 if (!$audit) {
-                    Log::warning("Audit spesifik dengan ID {$auditingId} tidak ditemukan untuk user {$userId} setelah memfilter dari list API.", ['auditing_id_route' => $auditingId, 'user_id_session' => $userId]);
+                    Log::warning("Audit spesifik dengan ID {$auditingId} tidak ditemukan untuk user {$userId}.", ['auditing_id_route' => $auditingId, 'user_id_session' => $userId]);
                     return back()->with('error', 'Data audit spesifik (ID: ' . $auditingId . ') tidak ditemukan untuk Anda.');
                 }
+
+                // ====================================================================
+                //                        AWAL VALIDASI PERIODE BARU
+                // ====================================================================
+                $isPeriodeActive = false; // Nilai default
+                if (isset($audit['periode']['tanggal_mulai']) && isset($audit['periode']['tanggal_berakhir'])) {
+                    $now = Carbon::now()->startOfDay();
+                    $startDate = Carbon::parse($audit['periode']['tanggal_mulai'])->startOfDay();
+                    $endDate = Carbon::parse($audit['periode']['tanggal_berakhir'])->startOfDay();
+
+                    // Cek apakah tanggal hari ini berada di antara tanggal mulai dan berakhir (inklusif)
+                    if ($now->between($startDate, $endDate)) {
+                        $isPeriodeActive = true;
+                    }
+                }
+                // ====================================================================
+                //                         AKHIR VALIDASI PERIODE BARU
+                // ====================================================================
+
+
                 // 3. Pastikan user yang login adalah auditee pada audit spesifik ini
                 $isAuditee1 = isset($audit['user_id_1_auditee']) && $audit['user_id_1_auditee'] == $userId;
                 $isAuditee2 = isset($audit['user_id_2_auditee']) && $audit['user_id_2_auditee'] == $userId;
 
                 if (!$isAuditee1 && !$isAuditee2) {
-                    Log::warning("Akses ditolak (setelah filter) untuk user {$userId} ke audit ID {$auditingId}. Auditee IDs: " . ($audit['user_id_1_auditee'] ?? 'N/A') . ", " . ($audit['user_id_2_auditee'] ?? 'N/A'));
+                    Log::warning("Akses ditolak untuk user {$userId} ke audit ID {$auditingId}.");
                     abort(403, 'Anda tidak memiliki hak akses untuk melihat progress audit ini.');
                 }
 
-                // Mendapatkan jenis_unit_id dari data audit SPESIFIK yang telah ditemukan
+                // Mendapatkan jenis_unit_id dari data audit SPESIFIK
                 if (!isset($audit['unit_kerja']['jenis_unit_id'])) {
                     Log::warning("Jenis Unit Kerja tidak ditemukan untuk audit ID: {$auditingId}", ['audit_data' => $audit]);
                     return back()->with('error', 'Informasi Jenis Unit Kerja tidak ditemukan untuk audit ini.');
                 }
                 $jenisUnitId = (int)$audit['unit_kerja']['jenis_unit_id'];
-
                 $currentAuditingIdForRoutes = $audit['auditing_id'] ?? $auditingId;
 
+                // Penentuan route berdasarkan jenis unit
                 $instrumenRoute = match ($jenisUnitId) {
                     1 => route('auditee.data-instrumen.instrumenupt', ['auditingId' => $currentAuditingIdForRoutes]),
                     2 => route('auditee.data-instrumen.instrumenjurusan', ['auditingId' => $currentAuditingIdForRoutes]),
@@ -145,19 +163,21 @@ class AuditController extends Controller
 
                 return view('auditee.audit.progress-detail', [
                     'audit' => $audit,
+                    'isPeriodeActive' => $isPeriodeActive, // <-- VARIABEL BARU DIKIRIM KE VIEW
                     'instrumenRoute' => $instrumenRoute,
                     'assessmentScheduleRoute' => $assessmentScheduleRoute,
                     'tilikResponseRoute' => $tilikResponseRoute,
                     'laporanTemuanRoute' => $laporanTemuanRoute,
                 ]);
+
             } else if ($response->status() == 404) {
                 return back()->with('error', 'Tidak ada data audit yang ditemukan untuk user Anda dari sistem eksternal.');
             } else {
-                Log::error('Gagal mengambil daftar audit (untuk filtering) dari API eksternal: ' . $response->status() . ' - ' . $response->body());
+                Log::error('Gagal mengambil daftar audit dari API eksternal: ' . $response->status() . ' - ' . $response->body());
                 return back()->with('error', 'Gagal mengambil data audit dari API. Status: ' . $response->status());
             }
         } catch (\Exception $e) {
-            Log::error("Exception saat mengambil/memfilter audit (ID: {$auditingId}) dari API: " . $e->getMessage());
+            Log::error("Exception saat mengambil/memfilter audit (ID: {$auditingId}): " . $e->getMessage());
             return back()->with('error', 'Terjadi masalah saat menghubungi layanan audit.');
         }
     }
@@ -727,50 +747,107 @@ public function auditorUpdateInstrumenResponse(Request $request, $id)
 
 
     public function previewPTPP($id)
-    {
-        try {
-            // Ambil data audit dari database
-            $audit = Auditing::with(['auditor1', 'auditor2', 'auditee1', 'auditee2', 'periode', 'unitKerja'])
-                ->findOrFail($id);
+{
+    try {
+        // 1. Ambil data audit dari database (tidak berubah)
+        $audit = Auditing::with(['auditor1', 'auditor2', 'auditee1', 'auditee2', 'periode', 'unitKerja'])
+            ->findOrFail($id);
 
-            $fileName = 'Permintaan Tindakan Perbaikan dan Pencegahan-' .
-                ($audit->unitKerja->nama_unit_kerja ?? 'unit') . '-' . ($audit->periode->nama_periode) . '.pdf';
+        $fileName = 'Preview-PTPP-' .
+            ($audit->unitKerja->nama_unit_kerja ?? 'unit') . '-' . ($audit->periode->nama_periode) . '.pdf';
 
-            // Ambil data laporan temuan dari API eksternal
-            $response = Http::get("http://127.0.0.1:5000/api/laporan-temuan?auditing_id={$id}");
-            $laporanTemuan = [];
-            if ($response->successful()) {
-                $laporanTemuan = $response->json()['data'] ?? [];
-            }
+        // --- Blok Pengambilan Data API yang Disesuaikan ---
 
-            // Kirim data audit dan laporanTemuan ke view PDF
-            $pdf = Pdf::loadView('auditee.laporan-temuan.download-ptpp', compact('audit', 'laporanTemuan'));
-            $pdf->setPaper('a4', 'portrait');
+        // 2. Permintaan API untuk laporan temuan (dengan penanganan error yang lebih baik)
+        $laporanResponse = Http::get('http://127.0.0.1:5000/api/laporan-temuan', [
+            'auditing_id' => $id
+        ]);
 
-            // Set judul dokumen PDF (metadata)
-            $dompdf = $pdf->getDomPDF();
-            $dompdf->get_canvas()->add_info('Title', $fileName);
-
-            return $pdf->stream($fileName);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            \Log::error("Audit tidak ditemukan untuk preview PTPP, ID: {$id}", ['exception' => $e->getMessage()]);
-            return redirect()->back()->with('error', 'Data audit tidak ditemukan.');
-        } catch (\Exception $e) {
-            \Log::error("Gagal generate PDF PTPP untuk audit ID {$id}: " . $e->getMessage());
-            return redirect()->back()->with('error', 'Gagal menampilkan preview file PTPP.');
+        if (!$laporanResponse->successful()) {
+            Log::error('Permintaan API laporan temuan untuk preview gagal: ' . $laporanResponse->status());
+            return redirect()->back()->with('error', 'Gagal mengambil data laporan temuan untuk preview.');
         }
+
+        $laporanApiResponse = $laporanResponse->json();
+        if (!($laporanApiResponse['status'] ?? false)) {
+            Log::error('API laporan temuan mengembalikan status false: ' . ($laporanApiResponse['message'] ?? 'No message'));
+            return redirect()->back()->with('error', 'Data laporan temuan tidak valid.');
+        }
+        $laporanTemuan = $laporanApiResponse['data'];
+
+
+        // 3. Permintaan API untuk response tilik (BARU)
+        $tilikResponse = Http::get("http://127.0.0.1:5000/api/response-tilik/auditing/{$id}");
+
+        if (!$tilikResponse->successful()) {
+            Log::error('Permintaan API response tilik untuk preview gagal: ' . $tilikResponse->status());
+            return redirect()->back()->with('error', 'Gagal mengambil data response tilik untuk preview.');
+        }
+
+        $tilikApiResponse = $tilikResponse->json();
+        // Perhatikan key 'success' sesuai contoh fungsi download
+        if (!($tilikApiResponse['success'] ?? false)) {
+            Log::error('API response tilik mengembalikan status false: ' . ($tilikApiResponse['message'] ?? 'No message'));
+            return redirect()->back()->with('error', 'Data response tilik tidak valid.');
+        }
+        $responseTilik = $tilikApiResponse['data'];
+
+        // --- Akhir Blok Pengambilan Data API ---
+
+
+        // 4. Kirim semua data yang diperlukan ke view PDF
+        //    Pastikan view 'download-ptpp' juga diupdate untuk menerima $responseTilik jika diperlukan
+        $pdf = Pdf::loadView('auditee.laporan-temuan.download-ptpp', compact('audit', 'laporanTemuan', 'responseTilik'));
+        $pdf->setPaper('a4', 'portrait');
+
+        // Set judul dokumen PDF (tidak berubah)
+        $dompdf = $pdf->getDomPDF();
+        $dompdf->get_canvas()->add_info('Title', $fileName);
+
+        // 5. Tampilkan PDF di browser menggunakan stream() (tidak berubah)
+        return $pdf->stream($fileName);
+
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        \Log::error("Audit tidak ditemukan untuk preview PTPP, ID: {$id}", ['exception' => $e->getMessage()]);
+        return redirect()->back()->with('error', 'Data audit tidak ditemukan.');
+    } catch (\Illuminate\Http\Client\RequestException $e) {
+        \Log::error("Koneksi ke API gagal untuk preview PTPP audit ID {$id}: " . $e->getMessage());
+        return redirect()->back()->with('error', 'Gagal terhubung ke layanan data.');
+    } catch (\Exception $e) {
+        \Log::error("Gagal generate PDF PTPP untuk audit ID {$id}: " . $e->getMessage());
+        return redirect()->back()->with('error', 'Gagal menampilkan preview file PTPP.');
     }
+}
 
     public function downloadPTPP($id)
     {
         try {
+            // Ambil data audit
             $audit = Auditing::with(['auditor1', 'auditor2', 'auditee1', 'auditee2', 'periode', 'unitKerja'])
                 ->findOrFail($id);
+
+            // Ambil data laporan temuan dari API
+            $response = Http::get("{$this->baseUrl}/laporan-temuan/{$id}");
+
+            if (!$response->successful()) {
+                \Log::error("Gagal mengambil data laporan temuan untuk PDF PTPP audit ID: {$id}");
+                return redirect()->back()->with('error', 'Gagal mengambil data laporan temuan.');
+            }
+
+            $data = $response->json();
+            $laporanTemuan = $data['data'] ?? [];
+
+            // Log untuk debugging
+            \Log::info("Data laporan temuan untuk PDF PTPP:", $laporanTemuan);
+
+            if (empty($laporanTemuan)) {
+                return redirect()->back()->with('error', 'Tidak ada data laporan temuan untuk dibuat PDF.');
+            }
 
             $fileName = 'Permintaan Tindakan Perbaikan dan Pencegahan-' .
                 ($audit->unitKerja->nama_unit_kerja ?? 'unit') . '-' . ($audit->periode->nama_periode) . '.pdf';
 
-            $pdf = Pdf::loadView('auditee.laporan-temuan.download-ptpp', compact('audit'));
+            $pdf = Pdf::loadView('auditee.laporan-temuan.download-ptpp', compact('audit', 'laporanTemuan'));
 
             return $pdf->download($fileName);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
