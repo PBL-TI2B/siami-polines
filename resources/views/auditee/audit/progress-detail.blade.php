@@ -25,8 +25,8 @@
             6 => ['text' => 'Daftar Tilik Telah Dijawab', 'color' => 'amber', 'value' => 60, 'progressBg' => 'bg-amber-500'],
             7 => ['text' => 'Menunggu Laporan Temuan', 'color' => 'amber', 'value' => 75, 'progressBg' => 'bg-amber-600'],
             8 => ['text' => 'Revisi Diperlukan', 'color' => 'orange', 'value' => 80, 'progressBg' => 'bg-orange-600'],
-            9 => ['text' => 'Revisi Telah Dikirim', 'color' => 'orange', 'value' => 85, 'progressBg' => 'bg-orange-700'],
-            10 => ['text' => 'Proses Closing oleh Auditor', 'color' => 'teal', 'value' => 90, 'progressBg' => 'bg-teal-500'],
+            9 => ['text' => 'Sudah Revisi', 'color' => 'orange', 'value' => 85, 'progressBg' => 'bg-orange-700'],
+            10 => ['text' => 'Closing', 'color' => 'teal', 'value' => 90, 'progressBg' => 'bg-teal-500'],
             11 => ['text' => 'Selesai', 'color' => 'green', 'value' => 100, 'progressBg' => 'bg-green-500'],
         ];
 
@@ -202,7 +202,7 @@
                         {{-- Langkah 4: Lihat Laporan Temuan --}}
                         <li class="mb-10 ml-10">
                              @php
-                                $isStep4Done = $status > 7 && !in_array($status, [8, 9]);
+                                $isStep4Done = $status > 7;
                                 $isStep4Current = $status == 7;
                             @endphp
                             <span class="{{ $isStep4Done ? 'bg-green-500' : ($isStep4Current ? 'bg-sky-600' : 'bg-slate-200 dark:bg-slate-600') }} absolute -left-5 flex h-10 w-10 items-center justify-center rounded-full ring-8 ring-white dark:ring-slate-800/50">
