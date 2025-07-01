@@ -96,34 +96,34 @@
         document.addEventListener('DOMContentLoaded', async function() {
             // Inisialisasi Tom Select setelah data dimuat
             function initTomSelect(id) {
-    if (window.TomSelect) {
-        const selectEl = document.getElementById(id);
-        if (selectEl.tomselect) {
-            selectEl.tomselect.destroy();
-        }
-        const tom = new TomSelect(`#${id}`, {
-            create: false,
-            sortField: {
-                field: "text",
-                direction: "asc"
-            },
-            allowEmptyOption: true,
-            placeholder: 'Ketik untuk mencari...'
-        });
-        // Hapus opsi default saat user mulai mengetik atau membuka dropdown
-        function removeDefaultOption() {
-            const option = selectEl.querySelector('option[value=""]');
-            if(option) option.remove();
-        }
-        tom.on('type', removeDefaultOption);
-        tom.on('dropdown_open', function() {
-            removeDefaultOption();
-            // Kosongkan input search Tom Select saat dropdown dibuka
-            const searchInput = tom.control_input;
-            if (searchInput) searchInput.value = '';
-        });
-    }
-}
+                if (window.TomSelect) {
+                    const selectEl = document.getElementById(id);
+                    if (selectEl.tomselect) {
+                        selectEl.tomselect.destroy();
+                    }
+                    const tom = new TomSelect(`#${id}`, {
+                        create: false,
+                        sortField: {
+                            field: "text",
+                            direction: "asc"
+                        },
+                        allowEmptyOption: true,
+                        placeholder: 'Ketik untuk mencari...'
+                    });
+                    // Hapus opsi default saat user mulai mengetik atau membuka dropdown
+                    function removeDefaultOption() {
+                        const option = selectEl.querySelector('option[value=""]');
+                        if (option) option.remove();
+                    }
+                    tom.on('type', removeDefaultOption);
+                    tom.on('dropdown_open', function() {
+                        removeDefaultOption();
+                        // Kosongkan input search Tom Select saat dropdown dibuka
+                        const searchInput = tom.control_input;
+                        if (searchInput) searchInput.value = '';
+                    });
+                }
+            }
 
             // Fetch Unit Kerja
             fetch('http://127.0.0.1:5000/api/unit-kerja')
@@ -201,7 +201,8 @@
                         body
                     }) => {
                         if (status === 200 || status === 201) {
-                            alert('Data berhasil disimpan!');
+                            // Simpan pesan sukses ke localStorage agar bisa diambil di index
+                            localStorage.setItem('successToast', 'Data berhasil disimpan!');
                             window.location.href = "{{ route('admin.ploting-ami.index') }}";
                         } else {
                             alert('Gagal menyimpan data!\n' + (body.message || JSON.stringify(
