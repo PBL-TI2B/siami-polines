@@ -26,17 +26,6 @@
                     Import Data
                 </x-button> -->
             </div>
-
-            <!-- Filter Dropdowns -->
-            <div class="flex flex-wrap gap-2">
-                <select id="unitKerjaSelect" class="w-40 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 text-sm rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500 focus:outline-none transition-all duration-200">
-                    <option selected disabled>Pilih Unit</option>
-                </select>
-
-                <select id="periodeSelect" class="w-40 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 text-sm rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500 focus:outline-none transition-all duration-200">
-                    <option selected disabled>Pilih Periode</option>
-                </select>
-            </div>
         </div>
 
         <!-- Table and Pagination -->
@@ -180,17 +169,14 @@
             const endIndex = startIndex + ITEMS_PER_PAGE;
             const dataToShow = data.slice(startIndex, endIndex);
             let rowNumber = startIndex + 1;
-            let lastSasaranId = null;
 
-            dataToShow.forEach(entry => {
+            dataToShow.forEach((entry, idx) => {
                 const row = document.createElement('tr');
                 row.className = 'hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200';
 
-                // NOMOR hanya muncul jika isFirstSasaran true
+                // NOMOR hanya muncul jika isFirstSasaran true, dan rowspan mengikuti rowspan Sasaran Strategis
                 const noCell = entry.isFirstSasaran ?
-                     `<td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center align-top">${rowNumber++}</td>` :
-                     `<td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600"></td>`;
-
+                    `<td rowspan="${entry.sasaranRowspan}" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center align-center">${rowNumber++}</td>` : '';
 
                 const sasaranCell = entry.isFirstSasaran ? 
                     `<td rowspan="${entry.sasaranRowspan}" class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600">${entry.sasaran.nama_sasaran}</td>` : '';

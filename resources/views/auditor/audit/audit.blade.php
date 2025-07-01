@@ -29,6 +29,8 @@ $progressInfo = ['text' => 'Proses Koreksi Instrumen', 'color' => 'sky', 'value'
 } elseif ($status == 2) {
 $progressInfo = ['text' => 'Proses Penjadwalan Asesmen', 'color' => 'sky', 'value' => 20];
 }
+
+$periodeStatus = $auditing->periode->status ?? null;
 @endphp
 
 <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
@@ -43,6 +45,11 @@ $progressInfo = ['text' => 'Proses Penjadwalan Asesmen', 'color' => 'sky', 'valu
         </h1>
     </div>
 
+    @if($periodeStatus === 'Berakhir')
+    <div class="mb-6 p-4 rounded-lg bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-200 flex flex-row gap-2">
+       <x-heroicon-s-exclamation-triangle class="h-6 w-6"/> <strong>Periode audit telah berakhir.</strong> Anda hanya dapat melihat progress audit, semua aksi telah dinonaktifkan.
+    </div>
+    @endif
 
     <div class="flex flex-col gap-8 lg:flex-row">
         <div class="w-full lg:w-2/3">
@@ -55,6 +62,7 @@ $progressInfo = ['text' => 'Proses Penjadwalan Asesmen', 'color' => 'sky', 'valu
                     3 => route('auditor.data-instrumen.instrumenprodi', ['id' => $auditing->auditing_id]),
                     default => '#',
                     };
+                    $disabled = $periodeStatus === 'Berakhir' ? 'disabled aria-disabled=true tabindex=-1 style="pointer-events:none;opacity:0.6;"' : '';
                     @endphp
 
                     <li class="mb-10 ml-10">
@@ -72,13 +80,13 @@ $progressInfo = ['text' => 'Proses Penjadwalan Asesmen', 'color' => 'sky', 'valu
                         <h4 class="mb-1 flex items-center text-lg font-semibold text-slate-900 dark:text-white">Jadwalkan Assesmen Lapangan</h4>
                         <p class="text-sm text-slate-500 dark:text-slate-400">Atur tanggal dan waktu untuk pelaksanaan asesmen lapangan dengan auditee.</p>
                         @if($status == 2)
-                        <a href="{{ route('auditor.assesmen-lapangan.index',['id' => $auditing->auditing_id]) }}" class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800">
+                        <a href="{{ route('auditor.assesmen-lapangan.index',['id' => $auditing->auditing_id]) }}" class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800" {!! $disabled !!}>
                             Set Jadwal
                             <svg class="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                             </svg>
                         </a>
-                        <a href="{{ route('auditor.audit.presensi',['auditing' => $auditing->auditing_id]) }}" class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800">
+                        <a href="{{ route('auditor.audit.presensi',['auditing' => $auditing->auditing_id]) }}" class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800" {!! $disabled !!}>
                             Download Presensi
                             <svg class="ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
@@ -103,7 +111,7 @@ $progressInfo = ['text' => 'Proses Penjadwalan Asesmen', 'color' => 'sky', 'valu
                         <h4 class="mb-1 text-lg font-semibold text-slate-900 dark:text-white">Koreksi Respon Instrumen</h4>
                         <p class="text-sm text-slate-500 dark:text-slate-400">Periksa dan berikan skor pada jawaban instrumen yang telah diisi oleh auditee.</p>
                         @if($status == 3)
-                        <a href="{{ $instrumenRoute }}" class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800">
+                        <a href="{{ $instrumenRoute }}" class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800" {!! $disabled !!}>
                             Koreksi Jawaban
                             <svg class="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
@@ -132,14 +140,14 @@ $progressInfo = ['text' => 'Proses Penjadwalan Asesmen', 'color' => 'sky', 'valu
                         <h4 class="mb-1 text-lg font-semibold text-slate-900 dark:text-white">Daftar Tilik</h4>
                         <p class="text-sm text-slate-500 dark:text-slate-400">Buat pertanyaan verifikasi untuk asesmen lapangan dan periksa jawabannya.</p>
                         @if($status == 4)
-                        <a href="{{ route('auditor.daftar-tilik.index', ['auditingId' => $auditing->auditing_id]) }}" class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800">
+                        <a href="{{ route('auditor.daftar-tilik.index', ['auditingId' => $auditing->auditing_id]) }}" class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800" {!! $disabled !!}>
                             Buat Daftar Tilik
                             <svg class="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                             </svg>
                         </a>
                         @elseif($status == 6 || $status == 9)
-                        <a href="{{ route('auditor.daftar-tilik.index', ['auditingId' => $auditing->auditing_id]) }}" class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800">
+                        <a href="{{ route('auditor.daftar-tilik.index', ['auditingId' => $auditing->auditing_id]) }}" class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800" {!! $disabled !!}>
                             Cek Jawaban Daftar Tilik
                             <svg class="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
@@ -163,7 +171,7 @@ $progressInfo = ['text' => 'Proses Penjadwalan Asesmen', 'color' => 'sky', 'valu
                         <h4 class="mb-1 text-lg font-semibold text-slate-900 dark:text-white">Laporan Temuan</h4>
                         <p class="text-sm text-slate-500 dark:text-slate-400">Susun laporan berdasarkan temuan selama proses audit untuk ditinjau oleh auditee.</p>
                         @if($status == 6)
-                        <a href="{{ route('auditor.laporan.index', ['auditingId' => $auditing->auditing_id]) }}" class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800">
+                        <a href="{{ route('auditor.laporan.index', ['auditingId' => $auditing->auditing_id]) }}" class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800" {!! $disabled !!}>
                             Buat Laporan
                             <svg class="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
@@ -187,7 +195,7 @@ $progressInfo = ['text' => 'Proses Penjadwalan Asesmen', 'color' => 'sky', 'valu
                         <h4 class="mb-1 text-lg font-semibold text-slate-900 dark:text-white">Closing Audit</h4>
                         <p class="text-sm text-slate-500 dark:text-slate-400">Selesaikan proses audit setelah semua tahapan disetujui.</p>
                         @if($status == 9)
-                        <button type="button" onclick="showCloseConfirmModal()" class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800">
+                        <button type="button" onclick="showCloseConfirmModal()" class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800" {!! $disabled !!}>
                             Closing Proses Audit
                             <svg class="ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5v2.25a2.25 2.25 0 00-2.25 2.25v4.5A2.25 2.25 0 005.5 19h9a2.25 2.25 0 002.25-2.25v-4.5a2.25 2.25 0 00-2.25-2.25V5.5A4.5 4.5 0 0010 1zm3 8.5a.75.75 0 00-1.5 0v1.5a.75.75 0 001.5 0v-1.5z" clip-rule="evenodd" />
