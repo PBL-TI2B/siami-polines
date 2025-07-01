@@ -749,16 +749,15 @@ public function auditorUpdateInstrumenResponse(Request $request, $id)
     public function previewPTPP($id)
 {
     try {
-        // 1. Ambil data audit dari database (tidak berubah)
+        // 1. Ambil data audit dari database
         $audit = Auditing::with(['auditor1', 'auditor2', 'auditee1', 'auditee2', 'periode', 'unitKerja'])
             ->findOrFail($id);
 
-        $fileName = 'Preview-PTPP-' .
+        $fileName = 'Permintaan Tindakan Perbaikan dan Pencegahan-' .
             ($audit->unitKerja->nama_unit_kerja ?? 'unit') . '-' . ($audit->periode->nama_periode) . '.pdf';
 
-        // --- Blok Pengambilan Data API yang Disesuaikan ---
 
-        // 2. Permintaan API untuk laporan temuan (dengan penanganan error yang lebih baik)
+        // 2. Permintaan API untuk laporan temuan
         $laporanResponse = Http::get('http://127.0.0.1:5000/api/laporan-temuan', [
             'auditing_id' => $id
         ]);
@@ -776,7 +775,7 @@ public function auditorUpdateInstrumenResponse(Request $request, $id)
         $laporanTemuan = $laporanApiResponse['data'];
 
 
-        // 3. Permintaan API untuk response tilik (BARU)
+        // 3. Permintaan API untuk response tilik
         $tilikResponse = Http::get("http://127.0.0.1:5000/api/response-tilik/auditing/{$id}");
 
         if (!$tilikResponse->successful()) {
@@ -792,8 +791,6 @@ public function auditorUpdateInstrumenResponse(Request $request, $id)
         }
         $responseTilik = $tilikApiResponse['data'];
 
-        // --- Akhir Blok Pengambilan Data API ---
-
 
         // 4. Kirim semua data yang diperlukan ke view PDF
         //    Pastikan view 'download-ptpp' juga diupdate untuk menerima $responseTilik jika diperlukan
@@ -804,7 +801,7 @@ public function auditorUpdateInstrumenResponse(Request $request, $id)
         $dompdf = $pdf->getDomPDF();
         $dompdf->get_canvas()->add_info('Title', $fileName);
 
-        // 5. Tampilkan PDF di browser menggunakan stream() (tidak berubah)
+        // 5. Tampilkan PDF di browser menggunakan stream()
         return $pdf->stream($fileName);
 
     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
