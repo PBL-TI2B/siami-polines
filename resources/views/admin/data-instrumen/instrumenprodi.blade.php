@@ -137,7 +137,7 @@
             // Define standard order and create number mapping
             const standardOrder = [
                 'Visi, Misi, Tujuan, Strategi',
-                'Tata kelola, Tata pamong, dan Kerjasama',
+                'Tata Kelola, Tata Pamong, dan Kerjasama',
                 'Mahasiswa',
                 'Sumber Daya Manusia',
                 'Keuangan, Sarana, dan Prasarana',
