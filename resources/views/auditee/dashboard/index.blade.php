@@ -1,62 +1,67 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard Auditee')
+@section('title', 'Dashboard Auditee') {{-- Title remains 'Dashboard Auditee' --}}
 
 @php
     $user = session('user');
 @endphp
 
 @section('content')
-<div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-    <div class="mb-6 flex items-center justify-between">
-        <div>
-            <x-breadcrumb :items="[['label' => 'Dashboard', 'url' => route('auditee.dashboard.index')]]" />
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-200">Dashboard</h1>
-            <h1 class="py-1 text-2xl font-bold text-gray-900 dark:text-gray-200">
-                Hai, {{ $user['nama'] ?? 'Auditee' }}! Selamat Datang di Dashboard Auditee!
-            </h1>
-            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Periode Aktif:
-                <div class="inline-flex items-center gap-x-2 rounded-2xl bg-sky-100 px-3 py-1.5 text-xs sm:text-sm dark:bg-sky-800">
-                    <x-heroicon-o-calendar-days class="h-4 w-4 shrink-0 text-sky-600 sm:h-5 sm:w-5 dark:text-sky-300" />
-                    <span id="dynamicPeriodeName" class="font-semibold text-sky-600 dark:text-sky-300">
-                        Memuat periode...
-                    </span>
-                </div>
-            </p>
+<div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mb-8">
+        {{-- Breadcrumb remains the same, pointing to auditee.dashboard.index --}}
+        <x-breadcrumb :items="[['label' => 'Dashboard', 'url' => route('auditee.dashboard.index')]]" />
+        <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+            Selamat Datang, {{ $user['nama'] ?? 'Auditee' }}!
+        </h1>
+        <p class="mt-1 text-lg text-gray-600 dark:text-gray-400">
+            Anda berada di Dashboard Auditee. Berikut adalah ringkasan aktivitas AMI Anda.
+        </p>
+    </div>
+
+    <div class="mb-8" id="statusAmiBox">
+        <div role="status" class="flex animate-pulse items-center rounded-lg bg-gray-100 p-4 shadow-sm dark:bg-gray-700">
+            <svg class="h-8 w-8 text-gray-400 dark:text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 13a8.949 8.949 0 0 1-4.951-1.488A3.987 3.987 0 0 1 9 13h2a3.987 3.987 0 0 1 3.951 3.512A8.949 8.949 0 0 1 10 18Z"/>
+            </svg>
+            <div class="ms-4 h-6 w-full rounded-full bg-gray-300 dark:bg-gray-600"></div>
+            <span class="sr-only">Memuat...</span>
         </div>
     </div>
 
-    <div class="mb-6" id="statusAmiBox"></div>
-    
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <!-- Box 1: Status Audit 60% (3 dari 5) -->
-<div class="lg:col-span-2 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-            <h3 class="mb-4 text-xl font-bold text-gray-900 dark:text-gray-200">Status Audit Mutu Internal</h3>
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 lg:col-span-2">
+            <h3 class="mb-5 text-xl font-bold text-gray-900 dark:text-white">Status Audit Unit Kerja</h3>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                     <thead class="bg-gray-50 dark:bg-gray-700">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">No</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">Nama Unit</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">Aksi</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">Unit Kerja</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">Progres</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">Status Terkini</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-800" id="auditTableBody">
-                        
-                        </tbody>
+                    <tbody class="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800" id="auditTableBody">
+                        <tr>
+                            <td colspan="4" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" /></svg>
+                                <h3 class="mt-2 text-sm font-semibold text-gray-900 dark:text-white">Memuat data audit...</h3>
+                                <p class="mt-1 text-sm text-gray-500">Mohon tunggu sebentar.</p>
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>
 
-        <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-md dark:border-slate-700 dark:bg-slate-800">
-            <!-- Box 2: Jadwal AMI 40% (2 dari 5) -->
-<div class="lg:col-span-1 rounded-lg border border-gray-200 bg-white p-5 shadow-md dark:border-slate-700 dark:bg-slate-800">
-                Informasi Jadwal AMI
-            </h2>
-            <div class="divide-y divide-gray-200 dark:divide-slate-600" id="infoAmiBox">
-                <div class="py-3 text-sm text-gray-600 dark:text-slate-300">
-                    Memuat data...
+        <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+            <h3 class="mb-5 text-xl font-bold text-gray-900 dark:text-white">
+                Jadwal Asesmen Lapangan
+            </h3>
+            <div id="infoAmiBox">
+                <div class="py-8 text-center text-gray-500 dark:text-gray-400">
+                    <p>Memuat jadwal asesmen...</p>
                 </div>
             </div>
         </div>
@@ -65,230 +70,225 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', async function () {
-        const tbody = document.querySelector('#auditTableBody');
-        const dynamicPeriodeNameElem = document.getElementById("dynamicPeriodeName");
+        // Elements
+        const auditTableBody = document.getElementById('auditTableBody');
+        const statusAmiBox = document.getElementById('statusAmiBox');
+        const infoAmiBox = document.getElementById('infoAmiBox');
 
+        // Data Maps (Now identical to Auditor's, including color definitions)
         const statusMap = {
-            1: { label: 'Pengisian Instrumen', color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-800 dark:text-yellow-400' },
-            2: { label: 'Desk Evaluation', color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-800 dark:text-yellow-400' },
-            3: { label: 'Penjadwalan AL', color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-800 dark:text-yellow-400' },
-            4: { label: 'Dijadwalkan Tilik', color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-800 dark:text-yellow-400' },
-            5: { label: 'Pertanyaan Tilik', color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-800 dark:text-yellow-400' },
-            6: { label: 'Tilik Dijawab', color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-800 dark:text-yellow-400' },
-            7: { label: 'Laporan Temuan', color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-800 dark:text-yellow-400' },
-            8: { label: 'Revisi', color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-800 dark:text-yellow-400' },
-            9: { label: 'Sudah Revisi', color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-800 dark:text-yellow-400' },
-            10: { label: 'Closing', color: 'bg-green-100 text-green-600 dark:bg-green-800 dark:text-green-400' },
-            11: { label: 'Selesai', color: 'bg-green-100 text-green-600 dark:bg-green-800 dark:text-green-400' }
+            1: { label: 'Pengisian Instrumen', color: 'bg-sky-100 text-sky-800 dark:bg-sky-900 dark:text-sky-300' },
+            2: { label: 'Desk Evaluation', color: 'bg-sky-100 text-sky-800 dark:bg-sky-900 dark:text-sky-300' },
+            3: { label: 'Penjadwalan AL', color: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300' },
+            4: { label: 'Dijadwalkan Tilik', color: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300' },
+            5: { label: 'Pertanyaan Tilik', color: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300' },
+            6: { label: 'Tilik Dijawab', color: 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300' },
+            7: { label: 'Laporan Temuan', color: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300' },
+            8: { label: 'Revisi', color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' },
+            9: { label: 'Sudah Revisi', color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' },
+            10: { label: 'Closing', color: 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-300' },
+            11: { label: 'Selesai', color: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' }
         };
+        const progressValueMap = { 1: 10, 2: 20, 3: 25, 4: 35, 5: 50, 6: 60, 7: 75, 8: 80, 9: 85, 10: 90, 11: 100 };
 
-        const progressValueMap = {
-            1: 10, 2: 20, 3: 25, 4: 35, 5: 50, 6: 60, 7: 75, 8: 80, 9: 85, 10: 90, 11: 100
-        };
-
-        const progressColorMap = {
-            1: 'bg-blue-500', 2: 'bg-sky-500', 3: 'bg-sky-500', 4: 'bg-yellow-500',
-            5: 'bg-yellow-500', 6: 'bg-amber-500', 7: 'bg-amber-600',
-            8: 'bg-orange-600', 9: 'bg-orange-700', 10: 'bg-teal-500', 11: 'bg-green-500'
-        };
-
-        // --- NEW: Definitions for button styling and URL ---
-        // Ensure this route is defined in your web.php for auditee.audit.progress-detail
+        // URL and Button Config (Crucially, this now points to auditee.audit.progress-detail)
         const progressDetailBaseUrl = "{{ route('auditee.audit.progress-detail', ['auditingId' => 'PLACEHOLDER_ID']) }}";
 
-        const buttonClasses = "text-sm font-medium rounded-lg px-4 py-2 flex items-center justify-center transition-all duration-200 text-white bg-sky-800 hover:bg-sky-900 focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-600";
-        const disabledButtonClasses = "opacity-50 cursor-not-allowed";
-        // --- END NEW ---
+        // Helper function to format dates (Identical)
+        const formatDate = (dateString) => {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+        };
 
-        try {
-            const response = await fetch('http://127.0.0.1:5000/api/auditings');
-            const data = await response.json();
+        // Render functions for each component (Identical logic to Auditor)
+        const renderAlert = (data) => {
+            let alertContent = '';
+            let periodMessage = 'Informasi periode tidak tersedia.';
+            let icon = `<svg class="flex-shrink-0 w-5 h-5 text-gray-800 dark:text-gray-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/></svg>`;
+            let classes = 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300';
+            
+            if (Array.isArray(data) && data.length > 0 && data[0]?.periode) {
+                const { tanggal_mulai, tanggal_berakhir, nama_periode } = data[0].periode;
+                if(tanggal_mulai && tanggal_berakhir) {
+                    const startDate = new Date(tanggal_mulai);
+                    const endDate = new Date(tanggal_berakhir);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
 
-            // Tabel Status
-            tbody.innerHTML = '';
-            if (!Array.isArray(data) || data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">Tidak ada data audit.</td></tr>`;
-                // Set dynamic periode name even if no audit data
-                if (dynamicPeriodeNameElem) {
-                    dynamicPeriodeNameElem.innerText = 'Tidak ada periode aktif';
+                    periodMessage = `<strong>${nama_periode}:</strong> Berlangsung dari ${formatDate(tanggal_mulai)} hingga ${formatDate(tanggal_berakhir)}.`;
+                    
+                    if (today > endDate) {
+                        icon = `<svg class="flex-shrink-0 w-5 h-5 text-green-800 dark:text-green-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/></svg>`;
+                        classes = 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-300';
+                        periodMessage = `<strong>${nama_periode}:</strong> Telah berakhir pada ${formatDate(tanggal_berakhir)}.`;
+                    } else if (today >= startDate && today <= endDate) {
+                        icon = `<svg class="flex-shrink-0 w-5 h-5 text-sky-800 dark:text-sky-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/></svg>`;
+                        classes = 'bg-sky-100 text-sky-800 dark:bg-sky-800 dark:text-sky-300';
+                    }
                 }
+            }
+            alertContent = `<div class="flex items-center p-4 text-sm rounded-lg shadow-sm ${classes}" role="alert">
+                ${icon}
+                <span class="sr-only">Info</span>
+                <div class="ms-3 font-medium">${periodMessage}</div>
+            </div>`;
+            statusAmiBox.innerHTML = alertContent;
+        };
+
+        const renderTable = (data) => {
+            // Sort data by periode.tanggal_mulai in descending order (Identical)
+            data.sort((a, b) => {
+                const dateA = new Date(a.periode?.tanggal_mulai ?? '2020-01-01');
+                const dateB = new Date(b.periode?.tanggal_mulai ?? '2020-01-01');
+                return dateB - dateA;
+            });
+
+            if (!Array.isArray(data) || data.length === 0) {
+                auditTableBody.innerHTML = `<tr><td colspan="4" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" /></svg>
+                    <h3 class="mt-2 text-sm font-semibold text-gray-900 dark:text-white">Tidak ada data audit</h3><p class="mt-1 text-sm text-gray-500">Saat ini belum ada data audit yang perlu ditangani.</p>
+                </td></tr>`;
                 return;
             }
-            data.sort((a, b) => {
-    const dateA = new Date(a.periode?.tanggal_mulai ?? '2020-01-01');
-    const dateB = new Date(b.periode?.tanggal_mulai ?? '2020-01-01');
-    return dateB - dateA;
 
-});
-            data.forEach((item, idx) => {
+            let tableRows = '';
+            data.forEach(item => { // Removed idx as 'No' column is removed per Auditor's table structure
                 const status = item.status ?? 0;
-                const statusLabel = statusMap[status]?.label ?? 'Status Tidak Diketahui';
-                const statusColor = statusMap[status]?.color ?? 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400';
+                const statusInfo = statusMap[status] || { label: 'Unknown', color: 'bg-gray-100 text-gray-800' };
                 const progress = progressValueMap[status] ?? 0;
-                const progressBarColor = progressColorMap[status] ?? 'bg-gray-500';
+                // Progress bar color is now fixed to bg-sky-600, like Auditor's
+                const progressBarColor = 'bg-sky-600';
+                const auditingId = item.auditing_id;
+                const detailUrl = auditingId ? progressDetailBaseUrl.replace('PLACEHOLDER_ID', auditingId) : '#';
+                const isButtonDisabled = !auditingId;
 
-                // --- NEW: Constructing the detail URL and button state ---
-                const auditingIdForItem = item.auditing_id; // Get the ID for the current audit item
-                let detailUrl = '#'; // Default to a hash if ID is missing
-                let buttonSpecificClasses = buttonClasses;
-                let buttonClickAttribute = '';
-
-                if (typeof auditingIdForItem !== 'undefined' && auditingIdForItem !== null) {
-                    detailUrl = progressDetailBaseUrl.replace('PLACEHOLDER_ID', auditingIdForItem);
-                } else {
-                    // Apply disabled styles and prevent default click if no ID
-                    buttonSpecificClasses += ` ${disabledButtonClasses}`;
-                    buttonClickAttribute = 'onclick="return false;" aria-disabled="true"';
-                }
-                // --- END NEW ---
-
-                tbody.innerHTML += `
-                    <tr class="bg-white dark:bg-gray-800">
-                        <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-200">${idx + 1}</td>
-                        <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-200">${item.unit_kerja?.nama_unit_kerja ?? '-'}</td>
-                        <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-200">
-                            <div class="w-full h-2 rounded-full bg-gray-200 dark:bg-gray-700">
-                                <div class="${progressBarColor} h-2 rounded-full" style="width: ${progress}%"></div>
+                tableRows += `
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-semibold text-gray-900 dark:text-white">${item.unit_kerja?.nama_unit_kerja ?? 'N/A'}</div>
+                            <div class="text-xs text-gray-500 dark:text-gray-400">Periode: ${item.periode?.nama_periode ?? 'N/A'}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-600">
+                                    <div class="${progressBarColor} h-2.5 rounded-full" style="width: ${progress}%" data-tooltip-target="tooltip-progress-${item.auditing_id}"></div>
+                                </div>
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300 ml-3">${progress}%</span>
                             </div>
-                            <p class="text-xs mt-1 mb-2 text-gray-600 dark:text-gray-400">${progress}% Selesai</p>
-                            <div class="mb-1">
-                                <span class="inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold ${statusColor}">
-                                    ${statusLabel}
-                                </span>
+                            <div id="tooltip-progress-${item.auditing_id}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                                Progres ${progress}%
+                                <div class="tooltip-arrow" data-popper-arrow></div>
                             </div>
                         </td>
-                        <td class="px-6 py-4 text-sm">
-                            <a href="${detailUrl}"
-                               class="${buttonSpecificClasses}"
-                               ${buttonClickAttribute}>
-                                Lihat Detail
+                        <td class="px-6 py-4 text-center whitespace-nowrap">
+                            <span class="inline-flex items-center text-xs font-medium px-2.5 py-0.5 rounded-full ${statusInfo.color}">${statusInfo.label}</span>
+                        </td>
+                        <td class="px-6 py-4 text-center whitespace-nowrap">
+                            <a href="${detailUrl}" ${isButtonDisabled ? 'aria-disabled="true"' : ''} class="inline-flex items-center justify-center text-white bg-sky-700 hover:bg-sky-800 focus:ring-4 focus:ring-sky-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-sky-600 dark:hover:bg-sky-700 focus:outline-none dark:focus:ring-sky-800 ${isButtonDisabled ? 'opacity-50 cursor-not-allowed' : ''}">
+                                Detail
+                                <svg class="w-3.5 h-3.5 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/></svg>
                             </a>
-                            </td>
+                        </td>
                     </tr>
                 `;
             });
+            auditTableBody.innerHTML = tableRows;
+        };
 
-            // Set dynamic period name in the header
-            if (dynamicPeriodeNameElem && data[0]?.periode?.nama_periode) {
-                dynamicPeriodeNameElem.innerText = data[0].periode.nama_periode;
-            } else if (dynamicPeriodeNameElem) {
-                dynamicPeriodeNameElem.innerText = 'Tidak ada periode aktif';
+        const renderTimeline = (data) => {
+            if (!Array.isArray(data) || data.length === 0) {
+                infoAmiBox.innerHTML = `<div class="text-center text-gray-500 dark:text-gray-400 py-8"><p>Belum ada jadwal asesmen lapangan.</p></div>`;
+                return;
             }
 
-            // --- Status Kegiatan Box - Displays Period Dates ---
-            const statusBox = document.getElementById('statusAmiBox');
-            let periodMessage = '';
-            let periodStyle = 'bg-blue-100 text-blue-600 dark:bg-blue-800 dark:text-blue-400'; // Default for ongoing
+            let timelineItems = '';
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
 
-            if (Array.isArray(data) && data.length > 0 && data[0]?.periode) {
-                const periode = data[0].periode;
-                const startDateString = periode.tanggal_mulai;
-                const endDateString = periode.tanggal_berakhir;
+            // Filter and sort items: scheduled first (by date ASC), then unscheduled (Identical)
+            const scheduledItems = data
+                .filter(item => item.jadwal_audit)
+                .sort((a, b) => new Date(a.jadwal_audit) - new Date(b.jadwal_audit));
 
-                if (startDateString && endDateString) {
-                    const startDate = new Date(startDateString);
-                    const endDate = new Date(endDateString);
+            const unscheduledItems = data.filter(item => !item.jadwal_audit);
+            const allItems = [...scheduledItems, ...unscheduledItems];
 
-                    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-                    const formattedStartDate = startDate.toLocaleDateString('id-ID', options);
-                    const formattedEndDate = endDate.toLocaleDateString('id-ID', options);
+            if(allItems.length === 0) {
+                infoAmiBox.innerHTML = `<div class="text-center text-gray-500 dark:text-gray-400 py-8"><p>Belum ada jadwal asesmen lapangan.</p></div>`;
+                return;
+            }
 
-                    periodMessage = `Periode AMI Aktif: ${formattedStartDate} - ${formattedEndDate}`;
+            allItems.forEach(item => {
+                let timeStatus = '';
+                let iconClass = 'bg-gray-200 dark:bg-gray-600';
+                let iconSvg = `<svg class="w-3 h-3 text-gray-600 dark:text-gray-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4Z M0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/></svg>`;
 
-                    // Determine period status for styling based on current date
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0); // Normalize today for comparison
-                    startDate.setHours(0,0,0,0); // Normalize start date
-                    endDate.setHours(0,0,0,0); // Normalize end date
-
-                    if (today > endDate) {
-                        periodStyle = 'bg-green-100 text-green-700 dark:bg-green-800 dark:text-green-400'; // Completed
-                    } else if (today >= startDate && today <= endDate) {
-                        periodStyle = 'bg-blue-100 text-blue-600 dark:bg-blue-800 dark:text-blue-400'; // Ongoing
+                if (item.jadwal_audit) {
+                    const auditDate = new Date(item.jadwal_audit);
+                    auditDate.setHours(0, 0, 0, 0);
+                    
+                    if (auditDate < today) {
+                        timeStatus = `<time class="text-sm font-normal leading-none text-gray-500 dark:text-gray-400">Selesai - ${formatDate(item.jadwal_audit)}</time>`;
+                        iconClass = 'bg-green-200 dark:bg-green-900';
+                        iconSvg = `<svg class="w-3 h-3 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/></svg>`;
+                    } else if (auditDate.getTime() === today.getTime()) {
+                        timeStatus = `<time class="text-sm font-semibold leading-none text-sky-700 dark:text-sky-400">Hari Ini - ${formatDate(item.jadwal_audit)}</time>`;
+                        iconClass = 'bg-sky-200 dark:bg-sky-900 ring-8 ring-white dark:ring-gray-800';
                     } else {
-                        periodStyle = 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'; // Not yet started or other
+                        timeStatus = `<time class="text-sm font-normal leading-none text-gray-500 dark:text-gray-400">${formatDate(item.jadwal_audit)}</time>`;
                     }
-
                 } else {
-                    periodMessage = 'Informasi tanggal periode tidak lengkap.';
-                    periodStyle = 'bg-yellow-100 text-yellow-600 dark:bg-yellow-800 dark:text-yellow-400'; // Warning style
+                    timeStatus = `<span class="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">Belum Dijadwalkan</span>`;
                 }
-            } else {
-                periodMessage = 'Informasi periode tidak tersedia.';
-                periodStyle = 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'; // No data style
-            }
-            statusBox.innerHTML = `<span class="inline-block rounded-lg px-6 py-3 shadow ${periodStyle}">${periodMessage}</span>`;
-            // --- END Status Kegiatan Box ---
-
-
-            // --- INFORMASI JADWAL AMI SECTION ---
-            // Now iterates through all 'data' items to display schedule info
-            const infoAmiList = data; // Use all data items for this section
-            const infoBox = document.getElementById('infoAmiBox');
-            let output = '';
-
-            if (infoAmiList.length > 0) {
-                infoAmiList.forEach(infoAmi => {
-                    const unitName = infoAmi.unit_kerja?.nama_unit_kerja ?? '-';
-                    const jadwalAuditDateString = infoAmi.jadwal_audit; // This could be null
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0); // Normalize 'today' to start of day for accurate comparison
-
-                    let outputText = `<span class="font-semibold text-gray-600 dark:text-slate-300">Nama Unit:</span>
-                                        <span class="font-bold">${unitName}</span>`;
-
-                    if (jadwalAuditDateString) {
-                        // Only parse date if jadwalAuditDateString exists
-                        const auditDate = new Date(jadwalAuditDateString);
-                        auditDate.setHours(0, 0, 0, 0); // Normalize audit date for accurate comparison
-
-                        const tanggalStr = auditDate.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
-
-                        if (today < auditDate) {
-                            outputText += ` &nbsp;|&nbsp;
-                                                <span class="font-semibold text-gray-600 dark:text-slate-300">Tanggal AL:</span>
-                                                <span class="font-bold">${tanggalStr}</span>`;
-                        } else if (today > auditDate) {
-                            outputText += ` &nbsp;|&nbsp;
-                                                <span class="font-bold text-red-600 dark:text-red-400">Sudah dilakukan</span>`;
-                        } else { // today === auditDate
-                            outputText += ` &nbsp;|&nbsp;
-                                                <span class="font-semibold text-gray-600 dark:text-slate-300">Tanggal AL:</span>
-                                                <span class="font-bold text-green-600 dark:text-green-400">${tanggalStr}</span>`;
-                        }
-                    } else {
-                        // This block will now correctly execute if jadwalAuditDateString is null
-                        outputText += ` &nbsp;|&nbsp;
-                                            <span class="font-bold text-yellow-600 dark:text-yellow-400">Belum dijadwalkan</span>`;
-                    }
-                    output += `<div class="py-3">${outputText}</div>`;
-                });
-                infoBox.innerHTML = output;
-            } else {
-                infoBox.innerHTML = `
-                    <div class="py-3 text-sm text-gray-600 dark:text-slate-300">
-                        Belum ada jadwal asesmen lapangan yang tersedia.
-                    </div>
+                
+                timelineItems += `
+                    <li class="mb-6 ms-6">
+                        <span class="absolute flex items-center justify-center w-6 h-6 rounded-full -start-3 ${iconClass}">
+                            ${iconSvg}
+                        </span>
+                        <h4 class="flex items-center mb-1 text-base font-semibold text-gray-900 dark:text-white">${item.unit_kerja?.nama_unit_kerja ?? 'N/A'}</h4>
+                        ${timeStatus}
+                    </li>
                 `;
-            }
-            // --- END INFORMASI JADWAL AMI SECTION ---
+            });
 
-        } catch (err) {
-            tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-4 text-center text-red-500">Gagal mengambil data audit. Pastikan server API berjalan.</td></tr>`;
-            console.error('Error fetching audit data:', err);
-            // Also update period name and status box if fetch fails
-            if (dynamicPeriodeNameElem) {
-                dynamicPeriodeNameElem.innerText = 'Gagal dimuat';
+            infoAmiBox.innerHTML = `<ol class="relative border-s border-gray-200 dark:border-gray-600">${timelineItems}</ol>`;
+        };
+
+        const renderError = (error) => {
+            console.error('Error fetching audit data:', error);
+            const errorMessage = `<tr><td colspan="4" class="px-6 py-4 text-center text-red-500 dark:text-red-400">Gagal mengambil data. Pastikan server API berjalan.</td></tr>`;
+            auditTableBody.innerHTML = errorMessage;
+            statusAmiBox.innerHTML = `<div class="flex items-center p-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+                <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/></svg>
+                <span class="sr-only">Error</span>
+                <div>Gagal memuat status periode.</div>
+            </div>`;
+            infoAmiBox.innerHTML = `<div class="text-center text-red-500 dark:text-red-400 py-8"><p>Gagal memuat jadwal asesmen.</p></div>`;
+        };
+
+        // Main execution (Identical)
+        (async () => {
+            try {
+                // Ensure this API endpoint is correct for the Auditee's data
+                const response = await fetch('http://127.0.0.1:5000/api/auditings');
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const data = await response.json();
+
+                renderAlert(data);
+                renderTable(data);
+                renderTimeline(data);
+                
+                // Re-initialize Flowbite components for dynamically added content
+                if (window.initFlowbite) {
+                    window.initFlowbite();
+                }
+
+            } catch (error) {
+                renderError(error);
             }
-            const statusBox = document.getElementById('statusAmiBox');
-            if (statusBox) {
-                statusBox.innerHTML = `<span class="inline-block rounded-lg px-6 py-3 shadow bg-red-100 text-red-600 dark:bg-red-800 dark:text-red-400">Gagal memuat status periode.</span>`;
-            }
-            const infoBox = document.getElementById('infoAmiBox');
-            if (infoBox) {
-                infoBox.innerHTML = `<div class="py-3 text-sm text-red-600 dark:text-red-400">Gagal memuat jadwal asesmen.</div>`;
-            }
-        }
+        })();
     });
 </script>
 @endsection
