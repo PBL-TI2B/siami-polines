@@ -137,11 +137,16 @@ class PlotingAMIController extends Controller
     public function editJadwal(Request $request, $id)
     {
         $user = session('user')['user_id'];
-        $sessionAuditingId = session('auditing_id');
         $response = Http::get('http://127.0.0.1:5000/api/auditings/userID=' . $user);
         $auditingUnit = $response->json()['data'] ?? [];
         
-        $auditing = collect($auditingUnit)->firstWhere('auditing_id', $id);
+        $auditing = null;
+        foreach ($auditingUnit as $item) {
+            if ($item['auditing_id'] == $id) {
+                $auditing = $item;
+                break;
+            }
+        }
 
         if (!$auditing) {
             abort(404, 'Auditing record not found');
@@ -159,6 +164,7 @@ class PlotingAMIController extends Controller
         // Kirim update ke API untuk jadwal_audit
         $response = Http::asJson()->put("http://127.0.0.1:5000/api/auditings/$id", [
             'jadwal_audit' => $validated['jadwal_audit'],
+            'status' => 3, // Update status ke 3 (Penjadwalan AL)
         ]);
 
         if (!$response->successful()) {
@@ -166,25 +172,7 @@ class PlotingAMIController extends Controller
             return redirect()->back()->with('error', $errorMessage);
         }
 
-        // Update status di endpoint responses/auditing jika status di session adalah 3 atau 4
-        $auditingId = session('auditing_id');
-        $auditStatus = session('status');
-
-        if (in_array($auditStatus, [2, 3])) {
-            Log::info('Updating status', ['auditingId' => $auditingId, 'auditStatus' => $auditStatus]);
-            $statusResponse = Http::asJson()->put("http://127.0.0.1:5000/api/auditings/$auditingId", [
-                'status' => 3,
-            ]);
-
-            if (!$statusResponse->successful()) {
-                Log::error('Status update failed', [
-                    'status_code' => $statusResponse->status(),
-                    'response_body' => $statusResponse->body(),
-                ]);
-                $errorMessage = $statusResponse->json()['message'] ?? 'Gagal memperbarui status audit di API.';
-                return redirect()->back()->with('error', $errorMessage);
-            }
-        }
+       
 
         // Fetch the updated auditing record
         $user = session('user')['user_id'];
