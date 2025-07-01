@@ -12,22 +12,28 @@ $progressInfo = [
 'value' => 0,
 ];
 
-if ($status >= 10) {
+if ($status >= 11) {
 $progressInfo = ['text' => 'Selesai', 'color' => 'green', 'value' => 100];
+} elseif ($status == 10) {
+$progressInfo = ['text' => 'Closing', 'color' => 'green', 'value' => 95];
 } elseif ($status == 9) {
-$progressInfo = ['text' => 'Menunggu Closing Audit', 'color' => 'sky', 'value' => 90];
-} elseif ($status >= 7) {
-$progressInfo = ['text' => 'Menunggu Persetujuan Laporan Temuan', 'color' => 'sky', 'value' => 75];
+$progressInfo = ['text' => 'Sudah Revisi', 'color' => 'sky', 'value' => 90];
+} elseif ($status == 8) {
+$progressInfo = ['text' => 'Revisi', 'color' => 'yellow', 'value' => 80];
+} elseif ($status == 7) {
+$progressInfo = ['text' => 'Laporan Temuan', 'color' => 'sky', 'value' => 70];
 } elseif ($status == 6) {
-$progressInfo = ['text' => 'Proses Laporan Temuan', 'color' => 'sky', 'value' => 60];
-} elseif ($status >= 5) {
-$progressInfo = ['text' => 'Menunggu Jawaban Daftar Tilik', 'color' => 'yellow', 'value' => 50];
+$progressInfo = ['text' => 'Tilik Dijawab', 'color' => 'sky', 'value' => 60];
+} elseif ($status == 5) {
+$progressInfo = ['text' => 'Pertanyaan Tilik', 'color' => 'yellow', 'value' => 50];
 } elseif ($status == 4) {
-$progressInfo = ['text' => 'Proses Pembuatan Daftar Tilik', 'color' => 'sky', 'value' => 40];
+$progressInfo = ['text' => 'Desk Evaluation', 'color' => 'sky', 'value' => 40];
 } elseif ($status == 3) {
-$progressInfo = ['text' => 'Proses Koreksi Instrumen', 'color' => 'sky', 'value' => 30];
+$progressInfo = ['text' => 'Dijadwalkan AL', 'color' => 'sky', 'value' => 30];
 } elseif ($status == 2) {
-$progressInfo = ['text' => 'Proses Penjadwalan Asesmen', 'color' => 'sky', 'value' => 20];
+$progressInfo = ['text' => 'Penjadwalan AL', 'color' => 'sky', 'value' => 20];
+} elseif ($status == 1) {
+$progressInfo = ['text' => 'Pengisian Instrumen', 'color' => 'sky', 'value' => 10];
 }
 
 $periodeStatus = $auditing->periode->status ?? null;
