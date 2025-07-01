@@ -167,6 +167,9 @@ Route::prefix('auditor')->middleware('auth.ami:auditor')->group(function () {
     Route::get('/ptpp', function () {
         return view('auditor.ptpp.index');
     })->name('auditor.ptpp.index');
+    Route::get('/riwayat-audit', function () {
+        return view('auditor.riwayat-audit.index');
+    })->name('auditor.riwayat-audit.index');
 });
 
 Route::prefix('auditee')->middleware('auth.ami:auditee')->group(function () {
