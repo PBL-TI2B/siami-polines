@@ -95,15 +95,9 @@
             <x-button id="back-btn" type="button" color="red" icon="heroicon-o-arrow-left">
                 Kembali
             </x-button>
-            @if (session('status') == 3)
             <x-button id="complete-correction-btn" type="button" color="sky" icon="heroicon-o-check">
                 Koreksi Selesai
             </x-button>
-            @elseif (session('status') == 8)
-            <x-button id="complete-revision-btn" type="button" color="sky" icon="heroicon-o-check">
-                Koreksi Revisi Selesai
-            </x-button>
-            @endif
         </div>
     </div>
     <!-- Modal Konfirmasi -->
@@ -136,8 +130,8 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     // DOM elements
-    const auditingId = {{ session('auditing_id') ?? 'null' }};
-    const auditStatus = {{ session('status') ?? 1 }};
+    const auditingId = {{$auditing -> auditing_id}};
+    const auditStatus = {{ session('status') ?? 3 }};
     const tableBody = document.getElementById('instrumen-table-body');
     const perPageSelect = document.querySelector('select[name="per_page"]');
     const searchInput = document.getElementById('search-input');
@@ -540,46 +534,23 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Handle correction and revision buttons
-    if (auditStatus === 3) {
-        const completeCorrectionBtn = document.getElementById('complete-correction-btn');
-        if (completeCorrectionBtn) {
-            completeCorrectionBtn.addEventListener('click', function () {
-                showConfirmModal(
-                    'Konfirmasi Kunci Jawaban',
-                    'Apakah Anda yakin sudah mengoreksi seluruh jawaban? Tindakan ini tidak dapat dibatalkan.',
-                    () => {
-                        handleCompletion(
-                            auditingId,
-                            4,
-                            'Koreksi berhasil diselesaikan!',
-                            completeCorrectionBtn,
-                            "{{ route('auditor.audit.index') }}"
-                        );
-                    }
-                );
-            });
-        }
-    }
-
-    if (auditStatus === 8) {
-        const completeRevisionBtn = document.getElementById('complete-revision-btn');
-        if (completeRevisionBtn) {
-            completeRevisionBtn.addEventListener('click', function () {
-                showConfirmModal(
-                    'Konfirmasi Kunci Revisi',
-                    'Apakah Anda yakin ingin menyelesaikan koreksi revisi? Tindakan ini tidak dapat dibatalkan.',
-                    () => {
-                        handleCompletion(
-                            auditingId,
-                            9,
-                            'Koreksi revisi berhasil diselesaikan!',
-                            completeRevisionBtn,
-                            "{{ route('auditor.audit.index') }}"
-                        );
-                    }
-                );
-            });
-        }
+    const completeCorrectionBtn = document.getElementById('complete-correction-btn');
+    if (completeCorrectionBtn) {
+        completeCorrectionBtn.addEventListener('click', function () {
+            showConfirmModal(
+                'Konfirmasi Kunci Jawaban',
+                'Apakah Anda yakin sudah mengoreksi seluruh jawaban? Tindakan ini tidak dapat dibatalkan.',
+                () => {
+                    handleCompletion(
+                        auditingId,
+                        4,
+                        'Koreksi berhasil diselesaikan!',
+                        completeCorrectionBtn,
+                        "{{ route('auditor.audit.index') }}"
+                    );
+                }
+            );
+        });
     }
 
     // Initialize data
