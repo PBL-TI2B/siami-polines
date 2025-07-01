@@ -16,18 +16,6 @@
                         SiAMI Polines
                     </span>
                 </a>
-                <!-- Search di sebelah logo (desktop) -->
-                <form action="#" method="GET" class="hidden md:ml-6 md:block">
-                    <label for="topbar-search" class="sr-only">Cari</label>
-                    <div class="relative w-64">
-                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                            <x-heroicon-o-magnifying-glass class="h-5 w-5 text-sky-300 dark:text-sky-400" />
-                        </div>
-                        <input type="text" name="search" id="topbar-search"
-                            class="block w-full rounded-lg border border-sky-500 bg-sky-700 p-2.5 pl-10 text-sm text-sky-100 placeholder-sky-300 focus:border-sky-300 focus:ring-sky-300 dark:border-sky-700 dark:bg-sky-900 dark:text-sky-200 dark:placeholder-sky-500 dark:focus:border-sky-500 dark:focus:ring-sky-500"
-                            placeholder="Cari..." />
-                    </div>
-                </form>
             </div>
             <!-- Mobile User Menu Button -->
             <div class="flex items-center md:hidden">

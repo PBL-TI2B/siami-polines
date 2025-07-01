@@ -114,23 +114,12 @@ class AuditController extends Controller
                     return back()->with('error', 'Data audit spesifik (ID: ' . $auditingId . ') tidak ditemukan untuk Anda.');
                 }
 
-                // ====================================================================
-                //                        AWAL VALIDASI PERIODE BARU
-                // ====================================================================
                 $isPeriodeActive = false; // Nilai default
-                if (isset($audit['periode']['tanggal_mulai']) && isset($audit['periode']['tanggal_berakhir'])) {
-                    $now = Carbon::now()->startOfDay();
-                    $startDate = Carbon::parse($audit['periode']['tanggal_mulai'])->startOfDay();
-                    $endDate = Carbon::parse($audit['periode']['tanggal_berakhir'])->startOfDay();
 
-                    // Cek apakah tanggal hari ini berada di antara tanggal mulai dan berakhir (inklusif)
-                    if ($now->between($startDate, $endDate)) {
-                        $isPeriodeActive = true;
-                    }
+                // Cek berdasarkan status periode "Sedang Berjalan"
+                if (isset($audit['periode']['status']) && $audit['periode']['status'] === "Sedang Berjalan") {
+                    $isPeriodeActive = true;
                 }
-                // ====================================================================
-                //                         AKHIR VALIDASI PERIODE BARU
-                // ====================================================================
 
 
                 // 3. Pastikan user yang login adalah auditee pada audit spesifik ini

@@ -159,15 +159,10 @@
                 const result = await response.json();
                 allAuditsData = result.data;
 
-                const now = new Date();
-                now.setHours(0, 0, 0, 0);
-
+                // Filter periode berdasarkan status "Berakhir"
                 allAuditsData.forEach(item => {
-                    if (item.periode?.tanggal_berakhir) {
-                        const endDate = new Date(item.periode.tanggal_berakhir);
-                        if (endDate < now && !pastPeriodeMap.has(item.periode.periode_id)) {
-                            pastPeriodeMap.set(item.periode.periode_id, item.periode);
-                        }
+                    if (item.periode?.status === "Berakhir" && !pastPeriodeMap.has(item.periode.periode_id)) {
+                        pastPeriodeMap.set(item.periode.periode_id, item.periode);
                     }
                 });
 
