@@ -31,9 +31,31 @@
                     class="ml-2 flex rounded-full bg-sky-700 text-sm focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-600"
                     id="user-menu-button-mobile" aria-expanded="false" data-dropdown-toggle="dropdown-mobile">
                     <span class="sr-only">Buka menu pengguna</span>
-                    <img class="h-8 w-8 rounded-full"
-                        src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/michael-gough.png"
-                        alt="Foto pengguna">
+                    @php
+                        $userName = session('user.nama', 'Guest');
+                        $initials = collect(explode(' ', $userName))
+                            ->map(fn($word) => strtoupper(substr($word, 0, 1)))
+                            ->take(2)
+                            ->join('');
+                        $colors = [
+                            'bg-gradient-to-br from-red-400 to-pink-500',
+                            'bg-gradient-to-br from-blue-400 to-indigo-500',
+                            'bg-gradient-to-br from-green-400 to-teal-500',
+                            'bg-gradient-to-br from-yellow-400 to-orange-500',
+                            'bg-gradient-to-br from-purple-400 to-violet-500',
+                            'bg-gradient-to-br from-pink-400 to-rose-500',
+                            'bg-gradient-to-br from-indigo-400 to-blue-500',
+                            'bg-gradient-to-br from-cyan-400 to-blue-500',
+                            'bg-gradient-to-br from-orange-400 to-red-500',
+                            'bg-gradient-to-br from-emerald-400 to-green-500',
+                        ];
+                        $colorIndex = strlen($userName) % count($colors);
+                        $profileColor = $colors[$colorIndex];
+                    @endphp
+                    <div
+                        class="{{ $profileColor }} flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold text-white">
+                        {{ $initials }}
+                    </div>
                 </button>
             </div>
         </div>
@@ -72,22 +94,33 @@
                 class="mx-3 flex rounded-full bg-sky-700 text-sm focus:ring-4 focus:ring-sky-300 md:mr-0 dark:focus:ring-sky-600"
                 id="user-menu-button" aria-expanded="false" data-dropdown-toggle="dropdown">
                 <span class="sr-only">Buka menu pengguna</span>
-                <img class="h-8 w-8 rounded-full"
-                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6G7fCMB6PcaJ-2N-do059HA3pRP746JM_HvSANwCtasmvwC8PlJEq7vmK&s=10 "
-                    alt="Foto pengguna">
+                <div
+                    class="{{ $profileColor }} flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold text-white">
+                    {{ $initials }}
+                </div>
             </button>
             <!-- User Dropdown (desktop) -->
             <div class="z-50 my-4 hidden w-56 list-none divide-y divide-sky-600 rounded-xl bg-sky-700 text-base shadow dark:divide-sky-800 dark:bg-sky-800"
                 id="dropdown">
                 <div class="px-4 py-3">
-                    <span class="block text-sm font-semibold text-sky-100 dark:text-sky-200">
-                        {{ session('user.nama', 'Guest') }} </span>
-                    <span
-                        class="block truncate text-sm text-sky-200 dark:text-sky-300">{{ session('user.email', 'Guest') }}</span>
+                    <div class="mb-2">
+                        <span class="block text-sm font-semibold text-sky-100 dark:text-sky-200">
+                            {{ session('user.nama', 'Guest') }}
+                        </span>
+                        <span class="block truncate text-sm text-sky-200 dark:text-sky-300">
+                            {{ session('user.email', 'Guest') }}
+                        </span>
+                    </div>
                 </div>
                 <ul class="py-1 text-sky-200 dark:text-sky-300" aria-labelledby="dropdown">
                     <li>
-                        <a href="{{ route('profile') }}" class="block px-4 py-2 hover:bg-gray-100">Profil Saya</a>
+                        <a href="{{ route('profile') }}"
+                            class="block px-4 py-2 hover:bg-sky-100 hover:text-sky-800 dark:hover:bg-sky-700 dark:hover:text-sky-200">
+                            <div class="flex items-center">
+                                <x-heroicon-o-user class="mr-2 h-4 w-4" />
+                                Profil Saya
+                            </div>
+                        </a>
                     </li>
                 </ul>
                 <ul>
@@ -95,7 +128,8 @@
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit"
-                                class="block w-full px-4 py-2 text-left text-sm text-sky-200 hover:bg-sky-100 hover:text-sky-800 dark:hover:bg-sky-700 dark:hover:text-sky-200">
+                                class="flex w-full items-center px-4 py-2 text-left text-sm text-sky-200 hover:bg-sky-100 hover:text-sky-800 dark:hover:bg-sky-700 dark:hover:text-sky-200">
+                                <x-heroicon-o-arrow-right-on-rectangle class="mr-2 h-4 w-4" />
                                 Keluar
                             </button>
                         </form>
@@ -108,21 +142,24 @@
             <div class="absolute right-4 z-50 my-4 mt-2 hidden w-56 list-none divide-y divide-sky-600 rounded-xl bg-sky-700 text-base shadow dark:divide-sky-800 dark:bg-sky-800"
                 id="dropdown-mobile">
                 <div class="px-4 py-3">
-                    <span class="block text-sm font-semibold text-sky-100 dark:text-sky-200">
-                        {{ session('user.nama', 'Guest') }} </span>
-                    <span
-                        class="block truncate text-sm text-sky-200 dark:text-sky-300">{{ session('user.email', 'Guest') }}</span>
+                    <div class="mb-2">
+                        <span class="block text-sm font-semibold text-sky-100 dark:text-sky-200">
+                            {{ session('user.nama', 'Guest') }}
+                        </span>
+                        <span class="block truncate text-sm text-sky-200 dark:text-sky-300">
+                            {{ session('user.email', 'Guest') }}
+                        </span>
+                    </div>
                 </div>
                 <ul class="py-1 text-sky-200 dark:text-sky-300" aria-labelledby="dropdown-mobile">
                     <li>
-                        <a href="#"
-                            class="block px-4 py-2 text-sm hover:bg-sky-100 hover:text-sky-800 dark:hover:bg-sky-700 dark:hover:text-sky-200">Profil
-                            Saya</a>
-                    </li>
-                    <li>
-                        <a href="#"
-                            class="block px-4 py-2 text-sm hover:bg-sky-100 hover:text-sky-800 dark:hover:bg-sky-700 dark:hover:text-sky-200">Pengaturan
-                            Akun</a>
+                        <a href="{{ route('profile') }}"
+                            class="block px-4 py-2 text-sm hover:bg-sky-100 hover:text-sky-800 dark:hover:bg-sky-700 dark:hover:text-sky-200">
+                            <div class="flex items-center">
+                                <x-heroicon-o-user class="mr-2 h-4 w-4" />
+                                Profil Saya
+                            </div>
+                        </a>
                     </li>
                 </ul>
                 <ul>
@@ -130,7 +167,8 @@
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit"
-                                class="block w-full px-4 py-2 text-left text-sm text-sky-200 hover:bg-sky-100 hover:text-sky-800 dark:hover:bg-sky-700 dark:hover:text-sky-200">
+                                class="flex w-full items-center px-4 py-2 text-left text-sm text-sky-200 hover:bg-sky-100 hover:text-sky-800 dark:hover:bg-sky-700 dark:hover:text-sky-200">
+                                <x-heroicon-o-arrow-right-on-rectangle class="mr-2 h-4 w-4" />
                                 Keluar
                             </button>
                         </form>
