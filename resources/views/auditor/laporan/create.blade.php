@@ -8,7 +8,6 @@
         ['label' => 'Dashboard', 'url' => route('auditor.dashboard.index')],
         ['label' => 'Audit', 'url' => route('auditor.audit.index')],
         ['label' => 'Laporan Temuan', 'url' => route('auditor.laporan.index', ['auditingId' => $auditingId])],
-        ['label' => 'Tambah Laporan', 'url' => '#'],
     ]" />
 
     <h1 class="mb-8 text-3xl font-bold text-gray-900 dark:text-gray-200">
@@ -109,16 +108,19 @@
                 <p class="pl-4 italic">** Catatan: Hanya diisi bila auditor dapat memastikan saran perbaikannya adalah efektif.</p>
             </div>
 
-            <button type="button" id="add-finding" class="mt-3 bg-blue-100 text-blue-600 hover:bg-blue-200 hover:text-blue-800 text-sm font-medium py-1.5 px-4 rounded {{ empty($kriterias) || empty($allStandardsData) ? 'opacity-50 cursor-not-allowed' : '' }}" {{ empty($kriterias) || empty($allStandardsData) ? 'disabled' : '' }}>
+            <x-button type="button" id="add-finding" color="blue" icon="heroicon-o-plus"
+                class="mt-3 shadow-md hover:shadow-lg transition-all">
                 Tambah Temuan
-            </button>
+            </x-button>
             <div class="mt-6 flex gap-3 justify-end">
-                <button type="submit" class="bg-sky-600 text-white text-sm font-medium py-2 px-4 rounded hover:bg-blue-700 {{ empty($kriterias) || empty($allStandardsData) ? 'opacity-50 cursor-not-allowed' : '' }}" {{ empty($kriterias) || empty($allStandardsData) ? 'disabled' : '' }}>
+                <x-button type="submit" color="sky" icon="heroicon-o-check"
+                    class="shadow-md hover:shadow-lg transition-all">
                     Simpan
-                </button>
-                <button type="button" class="bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200 text-sm font-medium py-2 px-4 rounded hover:bg-gray-300 dark:hover:bg-gray-600" onclick="window.location.href='{{ route('auditor.laporan.index', ['auditingId' => $auditingId]) }}'">
+                </x-button>
+                <x-button href="{{ route('auditor.laporan.index', ['auditingId' => $auditingId]) }}" color="gray"
+                    class="shadow-md hover:shadow-lg transition-all">
                     Batal
-                </button>
+                </x-button>
             </div>
         </form>
     </div>

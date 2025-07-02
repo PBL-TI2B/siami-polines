@@ -96,12 +96,14 @@
             </div>
 
             <div class="mt-6 flex gap-3 justify-end">
-                <button type="submit" class="bg-sky-600 text-white text-sm font-medium py-2 px-4 rounded hover:bg-blue-700 {{ (empty($kriterias) || empty($allStandardsData)) ? 'opacity-50 cursor-not-allowed' : '' }}" {{ (empty($kriterias) || empty($allStandardsData)) ? 'disabled' : '' }}>
+                <x-button type="submit" color="sky" icon="heroicon-o-arrow-path"
+                    class="shadow-md hover:shadow-lg transition-all">
                     Perbarui
-                </button>
-                <button type="button" class="bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200 text-sm font-medium py-2 px-4 rounded hover:bg-gray-300 dark:hover:bg-gray-600" onclick="window.location.href='{{ route('auditor.laporan.index', ['auditingId' => $auditingId]) }}'">
+                </x-button>
+                <x-button href="{{ route('auditor.laporan.index', ['auditingId' => $auditingId]) }}" color="gray"
+                    class="shadow-md hover:shadow-lg transition-all">
                     Batal
-                </button>
+                </x-button>
             </div>
         </form>
     </div>
@@ -113,43 +115,43 @@
     // Pass the data from PHP to JavaScript
     const standardsByKriteria = @json($standardsByKriteria ?? []);
     const findingData = @json($findingData ?? []);
-    
+
     console.log('Standards by Kriteria:', standardsByKriteria);
     console.log('Finding Data:', findingData);
-    
+
     // Function to populate standar dropdown based on selected kriteria
     function populateStandardDropdown(kriteriaId, selectedStandardId = null) {
         const standardSelect = document.getElementById('standar_id');
         standardSelect.innerHTML = '<option value="" disabled>Pilih Standar</option>';
-        
+
         if (kriteriaId && standardsByKriteria[kriteriaId]) {
             standardSelect.disabled = false;
-            
+
             standardsByKriteria[kriteriaId].forEach(function(standar) {
                 const option = document.createElement('option');
                 option.value = standar.standar_id;
                 option.textContent = standar.nama_standar || ('Standar ' + standar.standar_id);
-                
+
                 // Set selected if this matches the selected standard ID
                 if (selectedStandardId && standar.standar_id == selectedStandardId) {
                     option.selected = true;
                 }
-                
+
                 standardSelect.appendChild(option);
             });
         } else {
             standardSelect.disabled = true;
         }
-        
+
         // Trigger form validation update
         updateSubmitButton();
     }
-    
+
     // Function to update submit button state
     function updateSubmitButton() {
         const submitButton = document.querySelector('button[type="submit"]');
         const form = document.getElementById('laporan-form');
-        
+
         if (submitButton && form) {
             const isValid = form.checkValidity();
             submitButton.disabled = !isValid;
@@ -157,7 +159,7 @@
             submitButton.classList.toggle('cursor-not-allowed', !isValid);
         }
     }
-    
+
     // Function to create and display a dynamic toast message
     function showToast(message, type) {
         let toastContainer = document.getElementById('toast-notification-container');
@@ -204,42 +206,42 @@
             toast.addEventListener('transitionend', () => toast.remove());
         }, 5000);
     }
-    
+
     document.addEventListener('DOMContentLoaded', () => {
         const form = document.getElementById('laporan-form');
         const submitButton = form.querySelector('button[type="submit"]');
-        
+
         // Event listener for kriteria dropdown change
         document.getElementById('kriteria_id').addEventListener('change', function() {
             const selectedKriteriaId = this.value;
             console.log('Kriteria changed to:', selectedKriteriaId);
-            
+
             // Clear and populate standar dropdown
             populateStandardDropdown(selectedKriteriaId);
         });
-        
+
         // Event listeners for form validation
         const inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
         inputs.forEach(function(input) {
             input.addEventListener('change', updateSubmitButton);
             input.addEventListener('input', updateSubmitButton);
         });
-        
+
         // Initialize form with existing data
         const currentKriteriaId = findingData.kriteria_id || '{{ old("kriteria_id", $findingData["kriteria_id"] ?? "") }}';
         const currentStandardId = findingData.standar_id || '{{ old("standar_id", $findingData["standar_id"] ?? "") }}';
-        
+
         console.log('Current Kriteria ID:', currentKriteriaId);
         console.log('Current Standard ID:', currentStandardId);
-        
+
         if (currentKriteriaId) {
             // Set the kriteria dropdown value
             document.getElementById('kriteria_id').value = currentKriteriaId;
-            
+
             // Populate the standar dropdown with the current selection
             populateStandardDropdown(currentKriteriaId, currentStandardId);
         }
-        
+
         // Form submission handler
         form.addEventListener('submit', (e) => {
             // Disable button immediately on submit
@@ -258,10 +260,10 @@
                 return;
             }
         });
-        
+
         // Initial validation check
         updateSubmitButton();
-        
+
         // Logic to disable submit button if no kriterias are available on initial load
         if (@json($kriterias).length === 0) {
             submitButton.disabled = true;
