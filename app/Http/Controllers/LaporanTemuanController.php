@@ -55,7 +55,7 @@ class LaporanTemuanController extends Controller
             }
 
             $apiResponse = $response->json();
-            
+
             // Log API response for debugging search
             Log::info('API response received:', [
                 'status' => $apiResponse['status'] ?? 'not set',
@@ -149,12 +149,12 @@ class LaporanTemuanController extends Controller
             if ($searchTerm && trim($searchTerm) !== '') {
                 $searchTermLower = strtolower(trim($searchTerm));
                 Log::info('Applying frontend search filter:', ['search_term' => $searchTermLower]);
-                
+
                 $filteredGroupedData = [];
-                
+
                 foreach ($processedGroupedData as $group) {
                     $kriteriaMatch = strpos(strtolower($group['nama_kriteria'] ?? ''), $searchTermLower) !== false;
-                    
+
                     // Filter findings that match the search term
                     $matchingFindings = array_filter($group['findings'], function ($finding) use ($searchTermLower) {
                         $searchFields = [
@@ -163,7 +163,7 @@ class LaporanTemuanController extends Controller
                             $finding['saran_perbaikan'] ?? '',
                             $finding['standar_nasional'] ?? ''
                         ];
-                        
+
                         foreach ($searchFields as $field) {
                             if (strpos(strtolower($field), $searchTermLower) !== false) {
                                 return true;
@@ -171,7 +171,7 @@ class LaporanTemuanController extends Controller
                         }
                         return false;
                     });
-                    
+
                     // Keep group if kriteria matches OR if any findings match
                     if ($kriteriaMatch) {
                         // If kriteria matches, include all findings
@@ -183,9 +183,9 @@ class LaporanTemuanController extends Controller
                         $filteredGroupedData[] = $newGroup;
                     }
                 }
-                
+
                 $processedGroupedData = $filteredGroupedData;
-                
+
                 Log::info('Frontend search results:', [
                     'original_groups' => count($groupedLaporanTemuans),
                     'filtered_groups' => count($processedGroupedData),
@@ -196,11 +196,11 @@ class LaporanTemuanController extends Controller
             // 6. Handle pagination from filtered data
             $page = $request->query('page', 1);
             $totalGroupedItems = count($processedGroupedData);
-            
+
             // Calculate pagination for filtered data
             $startIndex = ($page - 1) * $perPage;
             $paginatedGroupedData = array_slice($processedGroupedData, $startIndex, $perPage);
-            
+
             $laporanTemuansPaginated = new LengthAwarePaginator(
                 $paginatedGroupedData,
                 $totalGroupedItems,
@@ -211,7 +211,7 @@ class LaporanTemuanController extends Controller
                     'query' => $request->query(),
                 ]
             );
-            
+
             Log::info('Using comprehensive search pagination:', [
                 'total_filtered_groups' => $totalGroupedItems,
                 'per_page' => $perPage,
@@ -817,6 +817,13 @@ class LaporanTemuanController extends Controller
                     $successMessage = 'Status audit berhasil diperbarui.';
             }
 
+            // Redirect ke halaman detail audit setelah diterima atau direvisi
+            if (in_array($newStatus, [8, 9])) {
+                return redirect()->route('auditor.audit.audit', ['id' => $auditingId])
+                    ->with('success', $successMessage);
+            }
+
+            // Untuk status 'submitted' (7), tetap di halaman index
             return redirect()->route('auditor.laporan.index', ['auditingId' => $auditingId])
                 ->with('success', $successMessage);
 
