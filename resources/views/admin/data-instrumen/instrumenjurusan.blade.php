@@ -22,9 +22,7 @@
             <x-button href="{{ route('admin.data-instrumen.tambah') }}" color="sky" icon="heroicon-o-plus" class="shadow-md hover:shadow-lg transition-all">
                 Tambah Instrumen
             </x-button>
-            <x-button href="{{ route('admin.data-instrumen.export') }}" color="sky" icon="heroicon-o-document-arrow-down" class="shadow-md hover:shadow-lg transition-all">
-                Unduh Data
-            </x-button>
+
         </div>
     </div>
 
