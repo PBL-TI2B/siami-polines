@@ -43,7 +43,7 @@
         </div>
 
         <div class="bg-gray-50 dark:bg-gray-800/50 px-8 py-4 flex flex-col sm:flex-row items-center justify-end gap-3">
-             @php
+            @php
                 $roleRoutes = [
                     1 => 'admin.dashboard.index',
                     2 => 'auditor.dashboard.index',
@@ -117,28 +117,25 @@
                     <div>
                         <label for="old_password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password Lama</label>
                         <div class="relative">
-                            <input type="password" id="old_password" name="old_password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-600 focus:border-sky-600 block w-full p-2.5 pr-10 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
-                            <button type="button" id="toggleOldPassword" class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white">
-                                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
-                            </button>
+                            <input type="password" id="old_password" name="old_password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-600 focus:border-sky-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
+                            <button type="button" id="toggleOldPassword" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700">
+                                </button>
                         </div>
                     </div>
                     <div>
                         <label for="new_password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password Baru</label>
                         <div class="relative">
-                            <input type="password" id="new_password" name="new_password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-600 focus:border-sky-600 block w-full p-2.5 pr-10 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
-                            <button type="button" id="toggleNewPassword" class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white">
-                                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
-                            </button>
+                            <input type="password" id="new_password" name="new_password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-600 focus:border-sky-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
+                            <button type="button" id="toggleNewPassword" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700">
+                                </button>
                         </div>
                     </div>
                     <div>
                         <label for="confirm_password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Konfirmasi Password Baru</label>
                         <div class="relative">
-                            <input type="password" id="confirm_password" name="confirm_password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-600 focus:border-sky-600 block w-full p-2.5 pr-10 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
-                            <button type="button" id="toggleConfirmPassword" class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white">
-                                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
-                            </button>
+                            <input type="password" id="confirm_password" name="confirm_password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-600 focus:border-sky-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
+                            <button type="button" id="toggleConfirmPassword" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700">
+                                </button>
                         </div>
                     </div>
                 </div>
@@ -175,141 +172,60 @@
 </div>
 
 <script>
-function showToast(message, success = true) {
-    const responseModal = document.getElementById('responseModal');
-    const modalMessage = document.getElementById('modalMessage');
-    const modalIcon = document.getElementById('modalIcon');
-    const closeButton = document.getElementById('closeResponseModal');
-    
-    modalMessage.textContent = message;
+    function showToast(message, success = true) {
+        const responseModal = document.getElementById('responseModal'); // Assuming this exists elsewhere
+        const modalMessage = document.getElementById('modalMessage'); // Assuming this exists elsewhere
+        const modalIcon = document.getElementById('modalIcon'); // Assuming this exists elsewhere
+        const closeButton = document.getElementById('closeResponseModal'); // Assuming this exists elsewhere
 
-    const successClasses = ['text-green-500', 'bg-green-100', 'dark:bg-green-800', 'dark:text-green-200'];
-    const errorClasses = ['text-red-500', 'bg-red-100', 'dark:bg-red-800', 'dark:text-red-200'];
-    const successIcon = `
-        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
-        </svg><span class="sr-only">Ikon Sukses</span>`;
-    const errorIcon = `
-        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm-1-5h2v2h-2v-2Zm0-8h2v6h-2V5Z"/>
-        </svg><span class="sr-only">Ikon Error</span>`;
+        if (!responseModal || !modalMessage || !modalIcon || !closeButton) {
+            console.error("Toast elements not found. Please ensure 'responseModal', 'modalMessage', 'modalIcon', and 'closeResponseModal' exist in your HTML.");
+            return;
+        }
 
-    if (success) {
-        modalIcon.classList.remove(...errorClasses);
-        modalIcon.classList.add(...successClasses);
-        modalIcon.innerHTML = successIcon;
-    } else {
-        modalIcon.classList.remove(...successClasses);
-        modalIcon.classList.add(...errorClasses);
-        modalIcon.innerHTML = errorIcon;
-    }
-    
-    responseModal.classList.remove('hidden');
-    responseModal.classList.add('opacity-100');
+        modalMessage.textContent = message;
 
-    const autoClose = setTimeout(() => {
-        responseModal.classList.remove('opacity-100');
-        responseModal.classList.add('opacity-0');
-        setTimeout(() => responseModal.classList.add('hidden'), 300); // Tunggu transisi selesai
-    }, 3000);
+        const successClasses = ['text-green-500', 'bg-green-100', 'dark:bg-green-800', 'dark:text-green-200'];
+        const errorClasses = ['text-red-500', 'bg-red-100', 'dark:bg-red-800', 'dark:text-red-200'];
+        const successIcon = `
+            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+            </svg><span class="sr-only">Ikon Sukses</span>`;
+        const errorIcon = `
+            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm-1-5h2v2h-2v-2Zm0-8h2v6h-2V5Z"/>
+            </svg><span class="sr-only">Ikon Error</span>`;
 
-    closeButton.onclick = () => {
-        clearTimeout(autoClose);
-        responseModal.classList.remove('opacity-100');
-        responseModal.classList.add('opacity-0');
-        setTimeout(() => responseModal.classList.add('hidden'), 300); // Tunggu transisi selesai
-    };
-}
+        if (success) {
+            modalIcon.classList.remove(...errorClasses);
+            modalIcon.classList.add(...successClasses);
+            modalIcon.innerHTML = successIcon;
+        } else {
+            modalIcon.classList.remove(...successClasses);
+            modalIcon.classList.add(...errorClasses);
+            modalIcon.innerHTML = errorIcon;
+        }
 
-let userData = {};
-let modalProfileInstance = null;
-let modalPasswordInstance = null;
+        responseModal.classList.remove('hidden');
+        responseModal.classList.add('opacity-100');
 
-document.addEventListener('DOMContentLoaded', function () {
-    const modalProfileEl = document.getElementById('modalEditProfile');
-    const modalPasswordEl = document.getElementById('modalEditPassword');
-    
-    const options = {
-        placement: 'center-center',
-        backdrop: 'dynamic',
-        backdropClasses: 'bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40',
-        closable: true,
-    };
+        const autoClose = setTimeout(() => {
+            responseModal.classList.remove('opacity-100');
+            responseModal.classList.add('opacity-0');
+            setTimeout(() => responseModal.classList.add('hidden'), 300); // Tunggu transisi selesai
+        }, 3000);
 
-    modalProfileInstance = new Modal(modalProfileEl, options);
-    modalPasswordInstance = new Modal(modalPasswordEl, options);
-
-    const UserId = {{ session('user.user_id') ?? 'null' }};
-    if (UserId) {
-        fetch(`http://127.0.0.1:5000/api/data-user/${UserId}`)
-            .then(res => {
-                if (!res.ok) throw new Error('Gagal mengambil data user.');
-                return res.json();
-            })
-            .then(response => {
-                const data = response.data || {};
-                userData = data;
-                document.getElementById('nama').textContent = data.nama || '-';
-                document.getElementById('email').textContent = data.email || '-';
-                document.getElementById('nip').textContent = data.nip || '-';
-                document.getElementById('role').textContent = (data.role && data.role.nama_role) ? data.role.nama_role : '-';
-                document.getElementById('unit_kerja').textContent = (data.unit_kerja && data.unit_kerja.nama_unit_kerja) ? data.unit_kerja.nama_unit_kerja : '-';
-            })
-            .catch(error => {
-                console.error("Fetch error:", error);
-                document.getElementById('nama').textContent = 'Gagal memuat data';
-            });
-    }
-
-    const btnEdit = document.getElementById('btnEditProfile');
-    const closeModal = modalProfileEl.querySelector('#closeModal');
-    const cancelEdit = modalProfileEl.querySelector('#cancelEdit');
-    const formEdit = document.getElementById('formEditProfile');
-
-    btnEdit.addEventListener('click', () => {
-        document.getElementById('edit_nama').value = userData.nama || '';
-        document.getElementById('edit_email').value = userData.email || '';
-        document.getElementById('edit_nip').value = userData.nip || '';
-        modalProfileInstance.show();
-    });
-
-    closeModal.addEventListener('click', () => modalProfileInstance.hide());
-    cancelEdit.addEventListener('click', () => modalProfileInstance.hide());
-
-    formEdit.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const updatedData = {
-            nama: document.getElementById('edit_nama').value,
-            email: document.getElementById('edit_email').value,
-            nip: document.getElementById('edit_nip').value,
-            role_id: userData.role ? userData.role.role_id : null,
-            unit_kerja_id: userData.unit_kerja ? userData.unit_kerja.unit_kerja_id : null,
-            password: '',
+        closeButton.onclick = () => {
+            clearTimeout(autoClose);
+            responseModal.classList.remove('opacity-100');
+            responseModal.classList.add('opacity-0');
+            setTimeout(() => responseModal.classList.add('hidden'), 300); // Tunggu transisi selesai
         };
+    }
 
-        fetch(`http://127.0.0.1:5000/api/data-user/${UserId}`, {
-            method: 'PUT',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(updatedData)
-        })
-        .then(res => res.ok ? res.json() : res.json().then(err => Promise.reject(err)))
-        .then(response => {
-            document.getElementById('nama').textContent = updatedData.nama;
-            document.getElementById('email').textContent = updatedData.email;
-            document.getElementById('nip').textContent = updatedData.nip;
-            modalProfileInstance.hide();
-            showToast('Profil berhasil diperbarui!', true);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showToast(error.message || 'Gagal menyimpan data!', false);
-        });
-    });
-
-    const btnEditPassword = document.getElementById('btnEditPassword');
-    const closeModalPassword = modalPasswordEl.querySelector('#closeModalPasswordBtn');
-    const cancelEditPassword = modalPasswordEl.querySelector('#cancelPasswordEdit');
-    const formEditPassword = document.getElementById('formEditPassword');
+    let userData = {};
+    let modalProfileInstance = null;
+    let modalPasswordInstance = null;
 
     const eyeIcon = `
         <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -317,74 +233,220 @@ document.addEventListener('DOMContentLoaded', function () {
             <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
         </svg>
     `;
+
     const eyeSlashIcon = `
         <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.243 4.243L6.228 6.228" />
         </svg>
     `;
 
-    function setupPasswordToggle(inputId, toggleId) {
-        const passwordInput = document.getElementById(inputId);
-        const toggleButton = document.getElementById(toggleId);
+    document.addEventListener('DOMContentLoaded', function () {
+        const modalProfileEl = document.getElementById('modalEditProfile'); // Assuming this exists elsewhere
+        const modalPasswordEl = document.getElementById('modalEditPassword');
 
-        toggleButton.innerHTML = eyeIcon;
+        const options = {
+            placement: 'center-center',
+            backdrop: 'dynamic',
+            backdropClasses: 'bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40',
+            closable: true,
+        };
 
-        toggleButton.addEventListener('click', function() {
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                toggleButton.innerHTML = eyeSlashIcon;
-            } else {
-                passwordInput.type = 'password';
-                toggleButton.innerHTML = eyeIcon;
+        // Initialize modal instances only if the elements exist
+        if (modalProfileEl) {
+            modalProfileInstance = new Modal(modalProfileEl, options);
+        }
+        if (modalPasswordEl) {
+            modalPasswordInstance = new Modal(modalPasswordEl, options);
+        }
+
+
+        const UserId = {{ session('user.user_id') ?? 'null' }};
+        if (UserId) {
+            fetch(`http://127.0.0.1:5000/api/data-user/${UserId}`)
+                .then(res => {
+                    if (!res.ok) throw new Error('Gagal mengambil data user.');
+                    return res.json();
+                })
+                .then(response => {
+                    const data = response.data || {};
+                    userData = data;
+                    // These elements are assumed to exist outside the modalEditPassword scope.
+                    // If they are part of modalEditProfile or other page sections, they are fine.
+                    document.getElementById('nama').textContent = data.nama || '-';
+                    document.getElementById('email').textContent = data.email || '-';
+                    document.getElementById('nip').textContent = data.nip || '-';
+                    document.getElementById('role').textContent = (data.role && data.role.nama_role) ? data.role.nama_role : '-';
+                    document.getElementById('unit_kerja').textContent = (data.unit_kerja && data.unit_kerja.nama_unit_kerja) ? data.unit_kerja.nama_unit_kerja : '-';
+                })
+                .catch(error => {
+                    console.error("Fetch error:", error);
+                    // document.getElementById('nama').textContent = 'Gagal memuat data'; // Keep this if 'nama' is guaranteed to exist
+                });
+        }
+
+        // Event listeners for modalEditProfile (assuming it exists and is part of the overall page script)
+        const btnEdit = document.getElementById('btnEditProfile');
+        if (btnEdit && modalProfileEl) {
+            const closeModal = modalProfileEl.querySelector('#closeModal');
+            const cancelEdit = modalProfileEl.querySelector('#cancelEdit');
+            const formEdit = document.getElementById('formEditProfile');
+
+            btnEdit.addEventListener('click', () => {
+                document.getElementById('edit_nama').value = userData.nama || '';
+                document.getElementById('edit_email').value = userData.email || '';
+                document.getElementById('edit_nip').value = userData.nip || '';
+                modalProfileInstance.show();
+            });
+
+            closeModal.addEventListener('click', () => modalProfileInstance.hide());
+            cancelEdit.addEventListener('click', () => modalProfileInstance.hide());
+
+            formEdit.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const updatedData = {
+                    nama: document.getElementById('edit_nama').value,
+                    email: document.getElementById('edit_email').value,
+                    nip: document.getElementById('edit_nip').value,
+                    role_id: userData.role ? userData.role.role_id : null,
+                    unit_kerja_id: userData.unit_kerja ? userData.unit_kerja.unit_kerja_id : null,
+                    password: '', // This should ideally not be sent for profile updates, only password changes
+                };
+
+                fetch(`http://127.0.0.1:5000/api/data-user/${UserId}`, {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(updatedData)
+                })
+                .then(res => res.ok ? res.json() : res.json().then(err => Promise.reject(err)))
+                .then(response => {
+                    document.getElementById('nama').textContent = updatedData.nama;
+                    document.getElementById('email').textContent = updatedData.email;
+                    document.getElementById('nip').textContent = updatedData.nip;
+                    modalProfileInstance.hide();
+                    showToast('Profil berhasil diperbarui!', true);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast(error.message || 'Gagal menyimpan data!', false);
+                });
+            });
+        }
+
+
+        // --- Password Edit Modal Logic ---
+        const btnEditPassword = document.getElementById('btnEditPassword');
+        const closeModalPassword = document.getElementById('closeModalPasswordBtn');
+        const cancelEditPassword = document.getElementById('cancelPasswordEdit');
+        const formEditPassword = document.getElementById('formEditPassword');
+
+        /**
+         * Sets up the password toggle functionality for a given input and toggle button.
+         * @param {string} inputId - The ID of the password input field.
+         * @param {string} toggleId - The ID of the button that will toggle password visibility.
+         */
+        function setupPasswordToggle(inputId, toggleId) {
+            const passwordInput = document.getElementById(inputId);
+            const toggleButton = document.getElementById(toggleId);
+
+            if (!passwordInput || !toggleButton) {
+                console.warn(`Elements with ID ${inputId} or ${toggleId} not found. Skipping password toggle setup.`);
+                return;
             }
-        });
-    }
 
-    btnEditPassword.addEventListener('click', () => {
-        formEditPassword.reset();
-        modalPasswordInstance.show();
-    });
+            // Ensure the initial state of the icon matches the input type
+            toggleButton.innerHTML = eyeIcon; // Start with the "show password" icon
 
-    closeModalPassword.addEventListener('click', () => modalPasswordInstance.hide());
-    cancelEditPassword.addEventListener('click', () => modalPasswordInstance.hide());
-
-    setupPasswordToggle('old_password', 'toggleOldPassword');
-    setupPasswordToggle('new_password', 'toggleNewPassword');
-    setupPasswordToggle('confirm_password', 'toggleConfirmPassword');
-
-    formEditPassword.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const old_password = document.getElementById('old_password').value;
-        const new_password = document.getElementById('new_password').value;
-        const confirm_password = document.getElementById('confirm_password').value;
-
-        if (!old_password || !new_password || !confirm_password) {
-            showToast('Semua field password wajib diisi!', false);
-            return;
-        }
-        if (new_password !== confirm_password) {
-            showToast('Konfirmasi password tidak cocok!', false);
-            return;
+            toggleButton.addEventListener('click', function() {
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    toggleButton.innerHTML = eyeSlashIcon; // Change to "hide password" icon
+                } else {
+                    passwordInput.type = 'password';
+                    toggleButton.innerHTML = eyeIcon; // Change back to "show password" icon
+                }
+            });
         }
 
-        fetch(`http://127.0.0.1:5000/api/data-user/${UserId}/change-password`, {
-            method: 'PUT',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                old_password,
-                new_password,
-                new_password_confirmation: confirm_password
-            })
-        })
-        .then(res => res.ok ? res.json() : res.json().then(err => Promise.reject(err)))
-        .then(response => {
-            modalPasswordInstance.hide();
-            showToast('Password berhasil diubah!', true);
-        })
-        .catch(error => {
-            showToast(error.message || 'Gagal mengubah password!', false);
-        });
+        // Attach event listener to the button that opens the password edit modal
+        if (btnEditPassword) {
+            btnEditPassword.addEventListener('click', () => {
+                formEditPassword.reset(); // Clear form fields
+                // Ensure icons are reset to initial state when modal opens
+                document.getElementById('toggleOldPassword').innerHTML = eyeIcon;
+                document.getElementById('old_password').type = 'password';
+                document.getElementById('toggleNewPassword').innerHTML = eyeIcon;
+                document.getElementById('new_password').type = 'password';
+                document.getElementById('toggleConfirmPassword').innerHTML = eyeIcon;
+                document.getElementById('confirm_password').type = 'password';
+
+                if (modalPasswordInstance) {
+                    modalPasswordInstance.show();
+                }
+            });
+        }
+
+
+        // Attach toggle functionality to all password fields in the modal
+        setupPasswordToggle('old_password', 'toggleOldPassword');
+        setupPasswordToggle('new_password', 'toggleNewPassword');
+        setupPasswordToggle('confirm_password', 'toggleConfirmPassword');
+
+
+        // Event listeners for closing the password edit modal
+        if (closeModalPassword) {
+            closeModalPassword.addEventListener('click', () => {
+                if (modalPasswordInstance) {
+                    modalPasswordInstance.hide();
+                }
+            });
+        }
+        if (cancelEditPassword) {
+            cancelEditPassword.addEventListener('click', () => {
+                if (modalPasswordInstance) {
+                    modalPasswordInstance.hide();
+                }
+            });
+        }
+
+
+        // Form submission for changing password
+        if (formEditPassword) {
+            formEditPassword.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const old_password = document.getElementById('old_password').value;
+                const new_password = document.getElementById('new_password').value;
+                const confirm_password = document.getElementById('confirm_password').value;
+
+                if (!old_password || !new_password || !confirm_password) {
+                    showToast('Semua field password wajib diisi!', false);
+                    return;
+                }
+                if (new_password !== confirm_password) {
+                    showToast('Konfirmasi password tidak cocok!', false);
+                    return;
+                }
+
+                fetch(`http://127.0.0.1:5000/api/data-user/${UserId}/change-password`, {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        old_password,
+                        new_password,
+                        new_password_confirmation: confirm_password // This might be required by your backend
+                    })
+                })
+                .then(res => res.ok ? res.json() : res.json().then(err => Promise.reject(err)))
+                .then(response => {
+                    if (modalPasswordInstance) {
+                        modalPasswordInstance.hide();
+                    }
+                    showToast('Password berhasil diubah!', true);
+                })
+                .catch(error => {
+                    showToast(error.message || 'Gagal mengubah password!', false);
+                });
+            });
+        }
     });
-});
 </script>
 @endsection
