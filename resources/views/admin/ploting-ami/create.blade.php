@@ -150,8 +150,9 @@
                 .then(res => res.json())
                 .then(data => {
                     const select = document.getElementById('periode_id');
-                    const periodeList = data.data.data;
-                    if (periodeList && periodeList.length > 0) {
+                    // Filter hanya periode dengan status 'Sedang Berjalan'
+                    const periodeList = (data.data.data || []).filter(item => item.status === "Sedang Berjalan");
+                    if (periodeList.length > 0) {
                         periodeList.forEach(item => {
                             select.innerHTML +=
                                 `<option value="${item.periode_id}">${item.nama_periode}</option>`;

@@ -26,8 +26,8 @@ class PlotingAMIController extends Controller
         $search = $request->get('search', '');
         $periodeId = $request->get('periode_id'); // Ambil periode_id dari request
 
-        // Ambil semua periode dengan status 'Sedang Berjalan' untuk dropdown
-        $periodes = PeriodeAudit::where('status', 'Sedang Berjalan')->get();
+        // Ambil semua periode untuk dropdown
+        $periodes = PeriodeAudit::all();
 
         $auditings = Auditing::with([
             'auditor1', 'auditor2',
@@ -71,8 +71,8 @@ class PlotingAMIController extends Controller
         $periodeId = $request->get('periode_id');
         $search = $request->get('search', '');
 
-        // Ambil semua periode dengan status 'Sedang Berjalan' untuk dropdown
-        $periodes = PeriodeAudit::where('status', 'Sedang Berjalan')->get();
+        // Ambil semua periode untuk dropdown
+        $periodes = PeriodeAudit::all();
 
         $query = Auditing::with([
             'auditor1', 'auditor2',
@@ -200,14 +200,14 @@ class PlotingAMIController extends Controller
     }
 
     public function create()
-{
-    $unitKerja = UnitKerja::all();
-    $periodeAudit = PeriodeAudit::all();
-    $auditors = User::where('role_id', 2)->get();
-    $auditees = User::where('role_id', 3)->get();
+    {
+        $unitKerja = UnitKerja::all();
+        $periodeAudit = PeriodeAudit::where('status', 'Sedang Berjalan')->get();
+        $auditors = User::where('role_id', 2)->get();
+        $auditees = User::where('role_id', 3)->get();
 
-    return view('admin.ploting-ami.create', compact('unitKerja', 'periodeAudit', 'auditors', 'auditees'));
-}
+        return view('admin.ploting-ami.create', compact('unitKerja', 'periodeAudit', 'auditors', 'auditees'));
+    }
 
 public function makeJadwalAudit(Request $request)
 {
