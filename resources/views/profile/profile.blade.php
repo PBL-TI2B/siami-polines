@@ -3,46 +3,69 @@
 @section('title', 'Profile')
 
 @section('content')
-<div class="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-    <div class="bg-white dark:bg-gray-800 shadow-xl rounded-2xl overflow-hidden">
-        <div class="p-8">
-            <div class="flex flex-col sm:flex-row items-start sm:items-center mb-8 pb-8 border-b border-gray-200 dark:border-gray-700">
-                <div class="flex-shrink-0 mb-4 sm:mb-0 sm:mr-6">
-                    <div class="flex items-center justify-center h-20 w-20 rounded-full bg-sky-100 dark:bg-sky-900 text-sky-600 dark:text-sky-400">
-                        <x-heroicon-o-user-circle class="h-12 w-12"/>
+<div class="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+    <div class="bg-white dark:bg-gray-900 shadow-2xl rounded-3xl overflow-hidden transition-all duration-300">
+        <div class="p-8 sm:p-10">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center mb-10 pb-8 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex-shrink-0 mb-6 sm:mb-0 sm:mr-8 relative" id="profile-badge-container">
+                    @php
+                        $userName = auth()->user()->nama ?? 'Guest';
+                        $initials = collect(explode(' ', $userName))
+                            ->map(fn($word) => strtoupper(substr($word, 0, 1)))
+                            ->take(2)
+                            ->join('');
+                        $colors = [
+                            'bg-gradient-to-br from-red-400 to-pink-500',
+                            'bg-gradient-to-br from-blue-400 to-indigo-500',
+                            'bg-gradient-to-br from-green-400 to-teal-500',
+                            'bg-gradient-to-br from-yellow-400 to-orange-500',
+                            'bg-gradient-to-br from-purple-400 to-violet-500',
+                            'bg-gradient-to-br from-pink-400 to-rose-500',
+                            'bg-gradient-to-br from-indigo-400 to-blue-500',
+                            'bg-gradient-to-br from-cyan-400 to-blue-500',
+                            'bg-gradient-to-br from-orange-400 to-red-500',
+                            'bg-gradient-to-br from-emerald-400 to-green-500',
+                        ];
+                        $colorIndex = strlen($userName) % count($colors);
+                        $profileColor = $colors[$colorIndex];
+                    @endphp
+                    <div
+                        class="{{ $profileColor }} flex h-24 w-24 items-center justify-center rounded-full text-4xl font-bold text-white"
+                        id="profile-badge">
+                        {{ $initials }}
                     </div>
                 </div>
                 <div>
-                    <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Profil Pengguna</h2>
-                    <p class="text-gray-500 dark:text-gray-400 mt-1">Kelola informasi akun, email, dan data personal Anda.</p>
+                    <h2 class="text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">Profil Pengguna</h2>
+                    <p class="text-gray-600 dark:text-gray-300 mt-2 text-lg">Kelola informasi akun, email, dan data personal Anda dengan mudah.</p>
                 </div>
             </div>
 
-            <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-8 text-gray-700 dark:text-gray-300">
+            <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-10 text-gray-700 dark:text-gray-300">
                 <div class="sm:col-span-1">
-                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Nama Lengkap</dt>
-                    <dd class="mt-1 text-lg font-semibold text-gray-900 dark:text-white" id="nama">-</dd>
+                    <dt class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Nama Lengkap</dt>
+                    <dd class="mt-2 text-xl font-bold text-gray-900 dark:text-white" id="nama">-</dd>
                 </div>
                 <div class="sm:col-span-1">
-                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Alamat Email</dt>
-                    <dd class="mt-1 text-lg font-semibold text-gray-900 dark:text-white" id="email">-</dd>
+                    <dt class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Alamat Email</dt>
+                    <dd class="mt-2 text-xl font-bold text-gray-900 dark:text-white" id="email">-</dd>
                 </div>
                 <div class="sm:col-span-1">
-                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">NIP</dt>
-                    <dd class="mt-1 text-lg font-semibold text-gray-900 dark:text-white" id="nip">-</dd>
+                    <dt class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">NIP</dt>
+                    <dd class="mt-2 text-xl font-bold text-gray-900 dark:text-white" id="nip">-</dd>
                 </div>
                 <div class="sm:col-span-1">
-                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Role</dt>
-                    <dd class="mt-1 text-lg font-semibold text-gray-900 dark:text-white" id="role">-</dd>
+                    <dt class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Role</dt>
+                    <dd class="mt-2 text-xl font-bold text-gray-900 dark:text-white" id="role">-</dd>
                 </div>
                 <div class="sm:col-span-2">
-                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Unit Kerja</dt>
-                    <dd class="mt-1 text-lg font-semibold text-gray-900 dark:text-white" id="unit_kerja">-</dd>
+                    <dt class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Unit Kerja</dt>
+                    <dd class="mt-2 text-xl font-bold text-gray-900 dark:text-white" id="unit_kerja">-</dd>
                 </div>
             </dl>
         </div>
 
-        <div class="bg-gray-50 dark:bg-gray-800/50 px-8 py-4 flex flex-col sm:flex-row items-center justify-end gap-3">
+        <div class="bg-gray-50 dark:bg-gray-800/70 px-8 py-6 flex flex-col sm:flex-row items-center justify-end gap-4">
             @php
                 $roleRoutes = [
                     1 => 'admin.dashboard.index',
@@ -53,14 +76,14 @@
                 $routeName = $roleRoutes[session('role_id')] ?? 'default.route.name';
             @endphp
 
-            <x-button color="gray" class="w-full sm:w-auto" icon="heroicon-o-arrow-left" href="{{ route($routeName) }}">
+            <x-button color="gray" class="w-full sm:w-auto transition-transform hover:scale-105" icon="heroicon-o-arrow-left" href="{{ route($routeName) }}">
                 Kembali
             </x-button>
-            <x-button id="btnEditPassword" color="light" class="w-full sm:w-auto">
+            <x-button id="btnEditPassword" color="light" class="w-full sm:w-auto transition-transform hover:scale-105">
                 <x-heroicon-o-key class="w-5 h-5 mr-2" />
                 Ubah Password
             </x-button>
-            <x-button id="btnEditProfile" color="sky" class="w-full sm:w-auto">
+            <x-button id="btnEditProfile" color="sky" class="w-full sm:w-auto transition-transform hover:scale-105">
                 <x-heroicon-o-pencil-square class="w-5 h-5 mr-2" />
                 Edit Profil
             </x-button>
@@ -69,33 +92,33 @@
 </div>
 
 <div id="modalEditProfile" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full">
-    <div class="relative p-4 w-full max-w-md h-full md:h-auto">
-        <div class="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
-            <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Edit Profil</h3>
-                <button type="button" id="closeModal" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white">
-                    <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+    <div class="relative p-4 w-full max-w-lg h-full md:h-auto">
+        <div class="relative p-6 bg-white rounded-2xl shadow-2xl dark:bg-gray-900 sm:p-8">
+            <div class="flex justify-between items-center pb-4 mb-6 rounded-t border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Edit Profil</h3>
+                <button type="button" id="closeModal" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-2 transition-colors dark:hover:bg-gray-700 dark:hover:text-white">
+                    <svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                     <span class="sr-only">Close modal</span>
                 </button>
             </div>
             <form id="formEditProfile">
-                <div class="grid gap-4 mb-4 sm:grid-cols-1">
+                <div class="grid gap-6 mb-6 sm:grid-cols-1">
                     <div>
-                        <label for="edit_nama" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama</label>
-                        <input type="text" id="edit_nama" name="nama" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-600 focus:border-sky-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
+                        <label for="edit_nama" class="block mb-2 text-sm font-semibold text-gray-900 dark:text-white">Nama</label>
+                        <input type="text" id="edit_nama" name="nama" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 block w-full p-3 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200" required>
                     </div>
                     <div>
-                        <label for="edit_email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
-                        <input type="email" id="edit_email" name="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-600 focus:border-sky-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
+                        <label for="edit_email" class="block mb-2 text-sm font-semibold text-gray-900 dark:text-white">Email</label>
+                        <input type="email" id="edit_email" name="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 block w-full p-3 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200" required>
                     </div>
                     <div>
-                        <label for="edit_nip" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">NIP</label>
-                        <input type="text" id="edit_nip" name="nip" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-600 focus:border-sky-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
+                        <label for="edit_nip" class="block mb-2 text-sm font-semibold text-gray-900 dark:text-white">NIP</label>
+                        <input type="text" id="edit_nip" name="nip" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 block w-full p-3 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200" required>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <button type="submit" class="text-white bg-sky-600 hover:bg-sky-700 focus:ring-4 focus:outline-none focus:ring-sky-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-sky-600 dark:hover:bg-sky-700 dark:focus:ring-sky-800">Simpan Perubahan</button>
-                    <button type="button" id="cancelEdit" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Batal</button>
+                    <button type="submit" class="text-white bg-sky-600 hover:bg-sky-700 focus:ring-4 focus:outline-none focus:ring-sky-300 font-semibold rounded-lg text-sm px-6 py-3 text-center dark:bg-sky-600 dark:hover:bg-sky-700 dark:focus:ring-sky-800 transition-transform hover:scale-105">Simpan Perubahan</button>
+                    <button type="button" id="cancelEdit" class="text-gray-600 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-semibold px-6 py-3 hover:text-gray-900 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-600 transition-transform hover:scale-105">Batal</button>
                 </div>
             </form>
         </div>
@@ -103,45 +126,45 @@
 </div>
 
 <div id="modalEditPassword" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full">
-    <div class="relative p-4 w-full max-w-md h-full md:h-auto">
-        <div class="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
-            <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Ubah Password</h3>
-                <button type="button" id="closeModalPasswordBtn" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white">
-                    <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+    <div class="relative p-4 w-full max-w-lg h-full md:h-auto">
+        <div class="relative p-6 bg-white rounded-2xl shadow-2xl dark:bg-gray-900 sm:p-8">
+            <div class="flex justify-between items-center pb-4 mb-6 rounded-t border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Ubah Password</h3>
+                <button type="button" id="closeModalPasswordBtn" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-2 transition-colors dark:hover:bg-gray-700 dark:hover:text-white">
+                    <svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                     <span class="sr-only">Close modal</span>
                 </button>
             </div>
             <form id="formEditPassword">
-                <div class="grid gap-4 mb-4 sm:grid-cols-1">
+                <div class="grid gap-6 mb-6 sm:grid-cols-1">
                     <div>
-                        <label for="old_password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password Lama</label>
+                        <label for="old_password" class="block mb-2 text-sm font-semibold text-gray-900 dark:text-white">Password Lama</label>
                         <div class="relative">
-                            <input type="password" id="old_password" name="old_password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-600 focus:border-sky-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
-                            <button type="button" id="toggleOldPassword" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700">
-                                </button>
+                            <input type="password" id="old_password" name="old_password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 block w-full p-3 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200" required>
+                            <button type="button" id="toggleOldPassword" class="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+                            </button>
                         </div>
                     </div>
                     <div>
-                        <label for="new_password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password Baru</label>
+                        <label for="new_password" class="block mb-2 text-sm font-semibold text-gray-900 dark:text-white">Password Baru</label>
                         <div class="relative">
-                            <input type="password" id="new_password" name="new_password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-600 focus:border-sky-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
-                            <button type="button" id="toggleNewPassword" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700">
-                                </button>
+                            <input type="password" id="new_password" name="new_password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 block w-full p-3 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200" required>
+                            <button type="button" id="toggleNewPassword" class="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+                            </button>
                         </div>
                     </div>
                     <div>
-                        <label for="confirm_password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Konfirmasi Password Baru</label>
+                        <label for="confirm_password" class="block mb-2 text-sm font-semibold text-gray-900 dark:text-white">Konfirmasi Password Baru</label>
                         <div class="relative">
-                            <input type="password" id="confirm_password" name="confirm_password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-sky-600 focus:border-sky-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
-                            <button type="button" id="toggleConfirmPassword" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700">
-                                </button>
+                            <input type="password" id="confirm_password" name="confirm_password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 block w-full p-3 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200" required>
+                            <button type="button" id="toggleConfirmPassword" class="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+                            </button>
                         </div>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <button type="submit" class="text-white bg-sky-600 hover:bg-sky-700 focus:ring-4 focus:outline-none focus:ring-sky-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-sky-600 dark:hover:bg-sky-700 dark:focus:ring-sky-800">Simpan Password</button>
-                    <button type="button" id="cancelPasswordEdit" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Batal</button>
+                    <button type="submit" class="text-white bg-sky-600 hover:bg-sky-700 focus:ring-4 focus:outline-none focus:ring-sky-300 font-semibold rounded-lg text-sm px-6 py-3 text-center dark:bg-sky-600 dark:hover:bg-sky-700 dark:focus:ring-sky-800 transition-transform hover:scale-105">Simpan Password</button>
+                    <button type="button" id="cancelPasswordEdit" class="text-gray-600 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-semibold px-6 py-3 hover:text-gray-900 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-600 transition-transform hover:scale-105">Batal</button>
                 </div>
             </form>
         </div>
@@ -149,21 +172,21 @@
 </div>
 
 <!-- Modal Toast -->
-<div id="responseModal" class="hidden fixed top-4 end-4 z-50 bg-transparent transition-opacity duration-300">
-    <div class="w-full max-w-md p-4 bg-white rounded-lg shadow-lg dark:bg-gray-800">
+<div id="responseModal" class="hidden fixed top-6 right-6 z-50 bg-transparent transition-all duration-300">
+    <div class="w-full max-w-md p-5 bg-white rounded-xl shadow-xl dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
         <div class="flex items-center">
-            <div class="inline-flex items-center justify-center shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-green-200" id="modalIcon">
-                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+            <div class="inline-flex items-center justify-center shrink-0 w-10 h-10 text-green-500 bg-green-100 rounded-full dark:bg-green-900 dark:text-green-300" id="modalIcon">
+                <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
                 </svg>
                 <span class="sr-only">Ikon Sukses</span>
             </div>
-            <div class="ms-3 text-sm font-normal text-gray-500 dark:text-gray-400" id="modalMessage">
+            <div class="ml-4 text-base font-medium text-gray-700 dark:text-gray-300" id="modalMessage">
                 Action completed successfully.
             </div>
-            <button type="button" id="closeResponseModal" class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700" aria-label="Tutup">
+            <button type="button" id="closeResponseModal" class="ml-auto -mx-1.5 -my-1.5 text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-2 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 transition-colors" aria-label="Tutup">
                 <span class="sr-only">Tutup</span>
-                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
                 </svg>
             </button>
@@ -173,10 +196,10 @@
 
 <script>
     function showToast(message, success = true) {
-        const responseModal = document.getElementById('responseModal'); // Assuming this exists elsewhere
-        const modalMessage = document.getElementById('modalMessage'); // Assuming this exists elsewhere
-        const modalIcon = document.getElementById('modalIcon'); // Assuming this exists elsewhere
-        const closeButton = document.getElementById('closeResponseModal'); // Assuming this exists elsewhere
+        const responseModal = document.getElementById('responseModal');
+        const modalMessage = document.getElementById('modalMessage');
+        const modalIcon = document.getElementById('modalIcon');
+        const closeButton = document.getElementById('closeResponseModal');
 
         if (!responseModal || !modalMessage || !modalIcon || !closeButton) {
             console.error("Toast elements not found. Please ensure 'responseModal', 'modalMessage', 'modalIcon', and 'closeResponseModal' exist in your HTML.");
@@ -185,14 +208,14 @@
 
         modalMessage.textContent = message;
 
-        const successClasses = ['text-green-500', 'bg-green-100', 'dark:bg-green-800', 'dark:text-green-200'];
-        const errorClasses = ['text-red-500', 'bg-red-100', 'dark:bg-red-800', 'dark:text-red-200'];
+        const successClasses = ['text-green-500', 'bg-green-100', 'dark:bg-green-900', 'dark:text-green-300'];
+        const errorClasses = ['text-red-500', 'bg-red-100', 'dark:bg-red-900', 'dark:text-red-300'];
         const successIcon = `
-            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+            <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
             </svg><span class="sr-only">Ikon Sukses</span>`;
         const errorIcon = `
-            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+            <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm-1-5h2v2h-2v-2Zm0-8h2v6h-2V5Z"/>
             </svg><span class="sr-only">Ikon Error</span>`;
 
@@ -212,20 +235,45 @@
         const autoClose = setTimeout(() => {
             responseModal.classList.remove('opacity-100');
             responseModal.classList.add('opacity-0');
-            setTimeout(() => responseModal.classList.add('hidden'), 300); // Tunggu transisi selesai
+            setTimeout(() => responseModal.classList.add('hidden'), 300);
         }, 3000);
 
         closeButton.onclick = () => {
             clearTimeout(autoClose);
             responseModal.classList.remove('opacity-100');
             responseModal.classList.add('opacity-0');
-            setTimeout(() => responseModal.classList.add('hidden'), 300); // Tunggu transisi selesai
+            setTimeout(() => responseModal.classList.add('hidden'), 300);
         };
     }
 
     let userData = {};
     let modalProfileInstance = null;
     let modalPasswordInstance = null;
+
+    function updateProfileBadge() {
+        const userName = userData.nama || 'Guest';
+        const initials = userName.split(' ').map(word => word.charAt(0).toUpperCase()).slice(0, 2).join('');
+        const colors = [
+            'bg-gradient-to-br from-red-400 to-pink-500',
+            'bg-gradient-to-br from-blue-400 to-indigo-500',
+            'bg-gradient-to-br from-green-400 to-teal-500',
+            'bg-gradient-to-br from-yellow-400 to-orange-500',
+            'bg-gradient-to-br from-purple-400 to-violet-500',
+            'bg-gradient-to-br from-pink-400 to-rose-500',
+            'bg-gradient-to-br from-indigo-400 to-blue-500',
+            'bg-gradient-to-br from-cyan-400 to-blue-500',
+            'bg-gradient-to-br from-orange-400 to-red-500',
+            'bg-gradient-to-br from-emerald-400 to-green-500',
+        ];
+        const colorIndex = userName.length % colors.length;
+        const profileColor = colors[colorIndex];
+
+        const badge = document.getElementById('profile-badge');
+        if (badge) {
+            badge.className = `${profileColor} flex h-24 w-24 items-center justify-center rounded-full text-4xl font-bold text-white`;
+            badge.textContent = initials;
+        }
+    }
 
     const eyeIcon = `
         <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -241,24 +289,22 @@
     `;
 
     document.addEventListener('DOMContentLoaded', function () {
-        const modalProfileEl = document.getElementById('modalEditProfile'); // Assuming this exists elsewhere
+        const modalProfileEl = document.getElementById('modalEditProfile');
         const modalPasswordEl = document.getElementById('modalEditPassword');
 
         const options = {
             placement: 'center-center',
             backdrop: 'dynamic',
-            backdropClasses: 'bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40',
+            backdropClasses: 'bg-gray-900/60 dark:bg-gray-900/80 fixed inset-0 z-40',
             closable: true,
         };
 
-        // Initialize modal instances only if the elements exist
         if (modalProfileEl) {
             modalProfileInstance = new Modal(modalProfileEl, options);
         }
         if (modalPasswordEl) {
             modalPasswordInstance = new Modal(modalPasswordEl, options);
         }
-
 
         const UserId = {{ session('user.user_id') ?? 'null' }};
         if (UserId) {
@@ -270,21 +316,18 @@
                 .then(response => {
                     const data = response.data || {};
                     userData = data;
-                    // These elements are assumed to exist outside the modalEditPassword scope.
-                    // If they are part of modalEditProfile or other page sections, they are fine.
                     document.getElementById('nama').textContent = data.nama || '-';
                     document.getElementById('email').textContent = data.email || '-';
                     document.getElementById('nip').textContent = data.nip || '-';
                     document.getElementById('role').textContent = (data.role && data.role.nama_role) ? data.role.nama_role : '-';
                     document.getElementById('unit_kerja').textContent = (data.unit_kerja && data.unit_kerja.nama_unit_kerja) ? data.unit_kerja.nama_unit_kerja : '-';
+                    updateProfileBadge(); // Update badge after fetching user data
                 })
                 .catch(error => {
                     console.error("Fetch error:", error);
-                    // document.getElementById('nama').textContent = 'Gagal memuat data'; // Keep this if 'nama' is guaranteed to exist
                 });
         }
 
-        // Event listeners for modalEditProfile (assuming it exists and is part of the overall page script)
         const btnEdit = document.getElementById('btnEditProfile');
         if (btnEdit && modalProfileEl) {
             const closeModal = modalProfileEl.querySelector('#closeModal');
@@ -309,7 +352,7 @@
                     nip: document.getElementById('edit_nip').value,
                     role_id: userData.role ? userData.role.role_id : null,
                     unit_kerja_id: userData.unit_kerja ? userData.unit_kerja.unit_kerja_id : null,
-                    password: '', // This should ideally not be sent for profile updates, only password changes
+                    password: '',
                 };
 
                 fetch(`http://127.0.0.1:5000/api/data-user/${UserId}`, {
@@ -319,10 +362,12 @@
                 })
                 .then(res => res.ok ? res.json() : res.json().then(err => Promise.reject(err)))
                 .then(response => {
+                    userData.nama = updatedData.nama; // Update userData with new name
                     document.getElementById('nama').textContent = updatedData.nama;
                     document.getElementById('email').textContent = updatedData.email;
                     document.getElementById('nip').textContent = updatedData.nip;
                     modalProfileInstance.hide();
+                    updateProfileBadge(); // Update badge after successful edit
                     showToast('Profil berhasil diperbarui!', true);
                 })
                 .catch(error => {
@@ -332,18 +377,11 @@
             });
         }
 
-
-        // --- Password Edit Modal Logic ---
         const btnEditPassword = document.getElementById('btnEditPassword');
         const closeModalPassword = document.getElementById('closeModalPasswordBtn');
         const cancelEditPassword = document.getElementById('cancelPasswordEdit');
         const formEditPassword = document.getElementById('formEditPassword');
 
-        /**
-         * Sets up the password toggle functionality for a given input and toggle button.
-         * @param {string} inputId - The ID of the password input field.
-         * @param {string} toggleId - The ID of the button that will toggle password visibility.
-         */
         function setupPasswordToggle(inputId, toggleId) {
             const passwordInput = document.getElementById(inputId);
             const toggleButton = document.getElementById(toggleId);
@@ -353,25 +391,22 @@
                 return;
             }
 
-            // Ensure the initial state of the icon matches the input type
-            toggleButton.innerHTML = eyeIcon; // Start with the "show password" icon
+            toggleButton.innerHTML = eyeIcon;
 
             toggleButton.addEventListener('click', function() {
                 if (passwordInput.type === 'password') {
                     passwordInput.type = 'text';
-                    toggleButton.innerHTML = eyeSlashIcon; // Change to "hide password" icon
+                    toggleButton.innerHTML = eyeSlashIcon;
                 } else {
                     passwordInput.type = 'password';
-                    toggleButton.innerHTML = eyeIcon; // Change back to "show password" icon
+                    toggleButton.innerHTML = eyeIcon;
                 }
             });
         }
 
-        // Attach event listener to the button that opens the password edit modal
         if (btnEditPassword) {
             btnEditPassword.addEventListener('click', () => {
-                formEditPassword.reset(); // Clear form fields
-                // Ensure icons are reset to initial state when modal opens
+                formEditPassword.reset();
                 document.getElementById('toggleOldPassword').innerHTML = eyeIcon;
                 document.getElementById('old_password').type = 'password';
                 document.getElementById('toggleNewPassword').innerHTML = eyeIcon;
@@ -385,14 +420,10 @@
             });
         }
 
-
-        // Attach toggle functionality to all password fields in the modal
         setupPasswordToggle('old_password', 'toggleOldPassword');
         setupPasswordToggle('new_password', 'toggleNewPassword');
         setupPasswordToggle('confirm_password', 'toggleConfirmPassword');
 
-
-        // Event listeners for closing the password edit modal
         if (closeModalPassword) {
             closeModalPassword.addEventListener('click', () => {
                 if (modalPasswordInstance) {
@@ -408,8 +439,6 @@
             });
         }
 
-
-        // Form submission for changing password
         if (formEditPassword) {
             formEditPassword.addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -432,7 +461,7 @@
                     body: JSON.stringify({
                         old_password,
                         new_password,
-                        new_password_confirmation: confirm_password // This might be required by your backend
+                        new_password_confirmation: confirm_password
                     })
                 })
                 .then(res => res.ok ? res.json() : res.json().then(err => Promise.reject(err)))
