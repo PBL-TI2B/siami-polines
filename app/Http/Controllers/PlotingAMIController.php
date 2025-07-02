@@ -26,8 +26,8 @@ class PlotingAMIController extends Controller
         $search = $request->get('search', '');
         $periodeId = $request->get('periode_id'); // Ambil periode_id dari request
 
-        // Ambil semua periode untuk dropdown
-        $periodes = PeriodeAudit::all();
+        // Ambil semua periode dengan status 'Sedang Berjalan' untuk dropdown
+        $periodes = PeriodeAudit::where('status', 'Sedang Berjalan')->get();
 
         $auditings = Auditing::with([
             'auditor1', 'auditor2',
@@ -71,8 +71,8 @@ class PlotingAMIController extends Controller
         $periodeId = $request->get('periode_id');
         $search = $request->get('search', '');
 
-        // Ambil semua periode untuk dropdown
-        $periodes = PeriodeAudit::all();
+        // Ambil semua periode dengan status 'Sedang Berjalan' untuk dropdown
+        $periodes = PeriodeAudit::where('status', 'Sedang Berjalan')->get();
 
         $query = Auditing::with([
             'auditor1', 'auditor2',
