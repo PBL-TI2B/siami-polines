@@ -242,15 +242,6 @@ Route::prefix('kepala-pmpp')->middleware('auth.ami:kepala-pmpp')->group(function
     Route::get('/ptpp', fn() => view('kepala-pmpp.ptpp.index'))->name('kepala-pmpp.ptpp.index');
 });
 
-Route::prefix('admin-unit')->middleware('auth.ami:admin-unit')->group(function () {
-    Route::get('/dashboard', fn() => view('admin-unit.dashboard.index'))->name('admin-unit.dashboard.index');
-    Route::get('/ploting-ami', fn() => view('admin-unit.ploting-ami.index'))->name('admin-unit.ploting-ami.index');
-    Route::get('/unit-kerja', fn() => view('admin-unit.unit-kerja.index'))->name('admin-unit.unit-kerja.index');
-    Route::get('/data-instrumen', fn() => view('admin-unit.data-instrumen.index'))->name('admin-unit.data-instrumen.index');
-    Route::get('/data-instrumen/upt', fn() => view('admin-unit.data-instrumen.upt'))->name('admin-unit.data-instrumen.instrumenupt');
-    Route::get('/data-instrumen/prodi', fn() => view('admin-unit.data-instrumen.prodi'))->name('admin-unit.data-instrumen.instrumenprodi');
-});
-
 //Route::get('/pengaturan-akun', [UserController::class, 'editpassword'])->name('pengaturan-akun');
 //Route::get('/edit-profile', [UserController::class, 'editprofile'])->name('profile.editProfile');
 Route::get('/profile', [UserController::class, 'profile'])->name('profile');
