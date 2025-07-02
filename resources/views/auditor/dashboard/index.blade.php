@@ -83,15 +83,15 @@
                     color: 'bg-sky-100 text-sky-800 dark:bg-sky-900 dark:text-sky-300'
                 },
                 2: {
-                    label: 'Desk Evaluation',
+                    label: 'Penjadwalan AL',
                     color: 'bg-sky-100 text-sky-800 dark:bg-sky-900 dark:text-sky-300'
                 },
                 3: {
-                    label: 'Penjadwalan AL',
+                    label: 'Dijadwalkan AL ',
                     color: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300'
                 },
                 4: {
-                    label: 'Dijadwalkan Tilik',
+                    label: 'Desk Evaluation',
                     color: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300'
                 },
                 5: {
