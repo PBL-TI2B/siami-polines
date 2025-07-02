@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard Auditee') {{-- Title remains 'Dashboard Auditee' --}}
+@section('title', 'Dashboard Auditee') 
 
 @php
     $user = session('user');
@@ -9,7 +9,6 @@
 @section('content')
 <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
     <div class="mb-8">
-        {{-- Breadcrumb remains the same, pointing to auditee.dashboard.index --}}
         <x-breadcrumb :items="[['label' => 'Dashboard', 'url' => route('auditee.dashboard.index')]]" />
         <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
             Selamat Datang, {{ $user['nama'] ?? 'Auditee' }}!
@@ -78,9 +77,9 @@
         // Data Maps (Now identical to Auditor's, including color definitions)
         const statusMap = {
             1: { label: 'Pengisian Instrumen', color: 'bg-sky-100 text-sky-800 dark:bg-sky-900 dark:text-sky-300' },
-            2: { label: 'Desk Evaluation', color: 'bg-sky-100 text-sky-800 dark:bg-sky-900 dark:text-sky-300' },
-            3: { label: 'Penjadwalan AL', color: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300' },
-            4: { label: 'Dijadwalkan Tilik', color: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300' },
+            2: { label: 'Penjadwalan AL', color: 'bg-sky-100 text-sky-800 dark:bg-sky-900 dark:text-sky-300' },
+            3: { label: 'Dijadwalkan Tilik', color: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300' },
+            4: { label: 'Desk Evaluation', color: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300' },
             5: { label: 'Pertanyaan Tilik', color: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300' },
             6: { label: 'Tilik Dijawab', color: 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300' },
             7: { label: 'Laporan Temuan', color: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300' },
@@ -98,7 +97,9 @@
         const formatDate = (dateString) => {
             if (!dateString) return 'N/A';
             const date = new Date(dateString);
-            return date.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+            // Options for ID locale
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString('id-ID', options);
         };
 
         // Render functions for each component (Identical logic to Auditor)
@@ -139,9 +140,9 @@
         const renderTable = (data) => {
             // Sort data by periode.tanggal_mulai in descending order (Identical)
             data.sort((a, b) => {
-                const dateA = new Date(a.periode?.tanggal_mulai ?? '2020-01-01');
-                const dateB = new Date(b.periode?.tanggal_mulai ?? '2020-01-01');
-                return dateB - dateA;
+                const dateA = new Date(a.periode?.tanggal_mulai ?? '1970-01-01'); // Use epoch for missing dates
+                const dateB = new Date(b.periode?.tanggal_mulai ?? '1970-01-01');
+                return dateB.getTime() - dateA.getTime();
             });
 
             if (!Array.isArray(data) || data.length === 0) {
@@ -155,13 +156,15 @@
             let tableRows = '';
             data.forEach(item => { // Removed idx as 'No' column is removed per Auditor's table structure
                 const status = item.status ?? 0;
-                const statusInfo = statusMap[status] || { label: 'Unknown', color: 'bg-gray-100 text-gray-800' };
+                const statusInfo = statusMap[status] || { label: 'Status Tidak Diketahui', color: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300' };
                 const progress = progressValueMap[status] ?? 0;
                 // Progress bar color is now fixed to bg-sky-600, like Auditor's
                 const progressBarColor = 'bg-sky-600';
                 const auditingId = item.auditing_id;
                 const detailUrl = auditingId ? progressDetailBaseUrl.replace('PLACEHOLDER_ID', auditingId) : '#';
-                const isButtonDisabled = !auditingId;
+                // Button disabled state
+                const isButtonDisabled = !auditingId || ![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].includes(status);
+
 
                 tableRows += `
                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
@@ -209,7 +212,7 @@
             // Filter and sort items: scheduled first (by date ASC), then unscheduled (Identical)
             const scheduledItems = data
                 .filter(item => item.jadwal_audit)
-                .sort((a, b) => new Date(a.jadwal_audit) - new Date(b.jadwal_audit));
+                .sort((a, b) => new Date(a.jadwal_audit).getTime() - new Date(b.jadwal_audit).getTime());
 
             const unscheduledItems = data.filter(item => !item.jadwal_audit);
             const allItems = [...scheduledItems, ...unscheduledItems];
@@ -268,25 +271,40 @@
             infoAmiBox.innerHTML = `<div class="text-center text-red-500 dark:text-red-400 py-8"><p>Gagal memuat jadwal asesmen.</p></div>`;
         };
 
-        // Main execution (Identical)
+        // Main execution
         (async () => {
-            try {
-                // Ensure this API endpoint is correct for the Auditee's data
-                const response = await fetch('http://127.0.0.1:5000/api/auditings');
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                const data = await response.json();
+            const userId = {{ json_encode(session('user')['user_id'] ?? null) }};
 
-                renderAlert(data);
-                renderTable(data);
-                renderTimeline(data);
-                
-                // Re-initialize Flowbite components for dynamically added content
-                if (window.initFlowbite) {
-                    window.initFlowbite();
+            // Ensure this API endpoint is correct for the Auditee’s data
+            const response = await fetch('http://127.0.0.1:5000/api/auditings/userID=' + userId, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 }
+            });
 
-            } catch (error) {
-                renderError(error);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+            // Ambil response JSON dari server
+            const responseData = await response.json();
+
+            // Ambil array data audit dari response API
+            const auditData = responseData.data || [];
+
+            // Filter data audit yang status periodenya "Sedang Berjalan"
+            const activeAudits = auditData.filter(item => {
+                // Make sure item.periode and item.periode.status exist before accessing
+                return item.periode && item.periode.status === "Sedang Berjalan";
+            });
+
+            // Render ke elemen-elemen DOM
+            renderAlert(activeAudits);
+            renderTable(activeAudits);
+            renderTimeline(activeAudits);
+
+            // Inisialisasi ulang komponen Flowbite jika diperlukan
+            if (window.initFlowbite) {
+                window.initFlowbite();
             }
         })();
     });
