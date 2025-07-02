@@ -89,6 +89,14 @@ class PeriodeAuditController extends Controller
             'nama_periode' => 'required|string|max:255',
             'tanggal_mulai' => 'required|date',
             'tanggal_berakhir' => 'required|date|after_or_equal:tanggal_mulai',
+        ], [
+            'nama_periode.required' => 'Nama periode AMI wajib diisi.',
+            'nama_periode.max' => 'Nama periode AMI maksimal 255 karakter.',
+            'tanggal_mulai.required' => 'Tanggal mulai wajib diisi.',
+            'tanggal_mulai.date' => 'Format tanggal mulai tidak valid.',
+            'tanggal_berakhir.required' => 'Tanggal berakhir wajib diisi.',
+            'tanggal_berakhir.date' => 'Format tanggal berakhir tidak valid.',
+            'tanggal_berakhir.after_or_equal' => 'Tanggal berakhir harus sama atau setelah tanggal mulai.',
         ]);
 
         try {
@@ -162,6 +170,14 @@ class PeriodeAuditController extends Controller
             'nama_periode' => 'required|string|max:255',
             'tanggal_mulai' => 'required|date_format:d-m-Y',
             'tanggal_berakhir' => 'required|date_format:d-m-Y|after_or_equal:tanggal_mulai',
+        ], [
+            'nama_periode.required' => 'Nama periode AMI wajib diisi.',
+            'nama_periode.max' => 'Nama periode AMI maksimal 255 karakter.',
+            'tanggal_mulai.required' => 'Tanggal mulai wajib diisi.',
+            'tanggal_mulai.date_format' => 'Format tanggal mulai harus dd-mm-yyyy.',
+            'tanggal_berakhir.required' => 'Tanggal berakhir wajib diisi.',
+            'tanggal_berakhir.date_format' => 'Format tanggal berakhir harus dd-mm-yyyy.',
+            'tanggal_berakhir.after_or_equal' => 'Tanggal berakhir harus sama atau setelah tanggal mulai.',
         ]);
 
         try {
@@ -213,6 +229,31 @@ class PeriodeAuditController extends Controller
     public function edit($id)
     {
         try {
+            // Cek apakah ada periode audit yang sedang berjalan
+            $checkResponse = Http::withToken(session('token'))
+                ->timeout(5)
+                ->get("{$this->apiBaseUrl}/periode-audits", [
+                    'per_page' => 1000, // ambil semua
+                ]);
+
+            if ($checkResponse->successful()) {
+                $checkData = $checkResponse->json();
+                if (isset($checkData['data']['data'])) {
+                    $aktivePeriode = collect($checkData['data']['data'])->firstWhere('status', 'Sedang Berjalan');
+                    if ($aktivePeriode && $aktivePeriode['periode_id'] != $id) {
+                        return redirect()->route('admin.periode-audit.index')
+                            ->withErrors(['error' => 'Tidak dapat mengedit periode audit. Masih ada periode audit lain yang sedang berjalan: ' . $aktivePeriode['nama_periode']]);
+                    }
+                }
+            } else {
+                Log::error('Gagal memeriksa periode audit berjalan saat edit', [
+                    'status' => $checkResponse->status(),
+                    'body' => $checkResponse->body(),
+                ]);
+                return redirect()->route('admin.periode-audit.index')
+                    ->withErrors(['error' => 'Gagal memeriksa status periode audit.']);
+            }
+
             $response = Http::withToken(session('token'))
                 ->timeout(5)
                 ->get("{$this->apiBaseUrl}/periode-audits/{$id}");
@@ -262,15 +303,55 @@ class PeriodeAuditController extends Controller
             'nama_periode' => 'required|string|max:255',
             'tanggal_mulai' => 'required|date_format:d-m-Y',
             'tanggal_berakhir' => 'required|date_format:d-m-Y|after_or_equal:tanggal_mulai',
+            'status' => 'required|in:Sedang Berjalan,Berakhir',
+        ], [
+            'nama_periode.required' => 'Nama periode AMI wajib diisi.',
+            'nama_periode.max' => 'Nama periode AMI maksimal 255 karakter.',
+            'tanggal_mulai.required' => 'Tanggal mulai wajib diisi.',
+            'tanggal_mulai.date_format' => 'Format tanggal mulai harus dd-mm-yyyy.',
+            'tanggal_berakhir.required' => 'Tanggal berakhir wajib diisi.',
+            'tanggal_berakhir.date_format' => 'Format tanggal berakhir harus dd-mm-yyyy.',
+            'tanggal_berakhir.after_or_equal' => 'Tanggal berakhir harus sama atau setelah tanggal mulai.',
+            'status.required' => 'Status periode audit wajib dipilih.',
+            'status.in' => 'Status periode audit harus "Sedang Berjalan" atau "Berakhir".',
         ]);
 
         try {
+            // Jika status akan diubah menjadi "Sedang Berjalan", cek apakah sudah ada periode aktif lain
+            if ($request->status === 'Sedang Berjalan') {
+                $checkResponse = Http::withToken(session('token'))
+                    ->timeout(5)
+                    ->get("{$this->apiBaseUrl}/periode-audits", [
+                        'per_page' => 1000, // ambil semua
+                    ]);
+
+                if ($checkResponse->successful()) {
+                    $checkData = $checkResponse->json();
+                    if (isset($checkData['data']['data'])) {
+                        $aktivePeriode = collect($checkData['data']['data'])->firstWhere('status', 'Sedang Berjalan');
+                        if ($aktivePeriode && $aktivePeriode['periode_id'] != $id) {
+                            return redirect()->back()
+                                ->withErrors(['error' => 'Tidak dapat mengubah status menjadi "Sedang Berjalan". Masih ada periode audit lain yang sedang berjalan: ' . $aktivePeriode['nama_periode']])
+                                ->withInput();
+                        }
+                    }
+                } else {
+                    Log::error('Gagal memeriksa periode audit berjalan saat update', [
+                        'status' => $checkResponse->status(),
+                        'body' => $checkResponse->body(),
+                    ]);
+                    return redirect()->back()
+                        ->withErrors(['error' => 'Gagal memeriksa status periode audit.'])
+                        ->withInput();
+                }
+            }
+
             // Konversi format tanggal ke Y-m-d untuk API
             $data = [
                 'nama_periode' => $request->nama_periode,
                 'tanggal_mulai' => \Carbon\Carbon::createFromFormat('d-m-Y', $request->tanggal_mulai)->format('Y-m-d'),
                 'tanggal_berakhir' => \Carbon\Carbon::createFromFormat('d-m-Y', $request->tanggal_berakhir)->format('Y-m-d'),
-                'status' => $request->status ?? 'Sedang Berjalan',
+                'status' => $request->status,
             ];
 
             $response = Http::withToken(session('token'))
