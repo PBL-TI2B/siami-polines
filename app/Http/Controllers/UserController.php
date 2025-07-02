@@ -44,4 +44,11 @@ class UserController extends Controller
 
         return back()->with('success', 'Akun berhasil diperbarui.');
     }
+
+    public function updateSession(Request $request)
+    {
+        $userData = $request->only(['nama', 'email', 'nip']);
+        session(['user' => array_merge(session('user', []), $userData)]);
+        return response()->json(['message' => 'Session updated successfully']);
+    }
 }

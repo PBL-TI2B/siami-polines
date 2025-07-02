@@ -29,6 +29,7 @@ Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 // Logout
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+
 // Route untuk Admin dengan prefix 'admin'
 Route::prefix('admin')->middleware('auth.ami:admin')->group(function () {
     Route::prefix('dashboard')->group(function () {
@@ -245,5 +246,12 @@ Route::prefix('kepala-pmpp')->middleware('auth.ami:kepala-pmpp')->group(function
 //Route::get('/pengaturan-akun', [UserController::class, 'editpassword'])->name('pengaturan-akun');
 //Route::get('/edit-profile', [UserController::class, 'editprofile'])->name('profile.editProfile');
 Route::get('/profile', [UserController::class, 'profile'])->name('profile');
+
+// Route to update session after profile edit
+Route::post('/update-session', function (Illuminate\Http\Request $request) {
+    $userData = $request->only(['nama', 'email', 'nip']);
+    session(['user' => array_merge(session('user', []), $userData)]);
+    return response()->json(['message' => 'Session updated successfully']);
+})->name('update-session')->middleware('auth.ami');
 
 

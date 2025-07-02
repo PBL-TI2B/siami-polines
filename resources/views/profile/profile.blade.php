@@ -9,7 +9,7 @@
             <div class="flex flex-col sm:flex-row items-start sm:items-center mb-10 pb-8 border-b border-gray-200 dark:border-gray-700">
                 <div class="flex-shrink-0 mb-6 sm:mb-0 sm:mr-8 relative" id="profile-badge-container">
                     @php
-                        $userName = auth()->user()->nama ?? 'Guest';
+                        $userName = auth()->user()->nama ?? session('user.nama', 'Guest');
                         $initials = collect(explode(' ', $userName))
                             ->map(fn($word) => strtoupper(substr($word, 0, 1)))
                             ->take(2)
@@ -44,23 +44,23 @@
             <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-10 text-gray-700 dark:text-gray-300">
                 <div class="sm:col-span-1">
                     <dt class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Nama Lengkap</dt>
-                    <dd class="mt-2 text-xl font-bold text-gray-900 dark:text-white" id="nama">-</dd>
+                    <dd class="mt-2 text-xl font-bold text-gray-900 dark:text-white" id="nama">{{ auth()->user()->nama ?? session('user.nama', '-') }}</dd>
                 </div>
                 <div class="sm:col-span-1">
                     <dt class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Alamat Email</dt>
-                    <dd class="mt-2 text-xl font-bold text-gray-900 dark:text-white" id="email">-</dd>
+                    <dd class="mt-2 text-xl font-bold text-gray-900 dark:text-white" id="email">{{ auth()->user()->email ?? session('user.email', '-') }}</dd>
                 </div>
                 <div class="sm:col-span-1">
                     <dt class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">NIP</dt>
-                    <dd class="mt-2 text-xl font-bold text-gray-900 dark:text-white" id="nip">-</dd>
+                    <dd class="mt-2 text-xl font-bold text-gray-900 dark:text-white" id="nip">{{ auth()->user()->nip ?? session('user.nip', '-') }}</dd>
                 </div>
                 <div class="sm:col-span-1">
                     <dt class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Role</dt>
-                    <dd class="mt-2 text-xl font-bold text-gray-900 dark:text-white" id="role">-</dd>
+                    <dd class="mt-2 text-xl font-bold text-gray-900 dark:text-white" id="role">{{ auth()->user()->role->nama_role ?? session('user.role', '-') }}</dd>
                 </div>
                 <div class="sm:col-span-2">
                     <dt class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Unit Kerja</dt>
-                    <dd class="mt-2 text-xl font-bold text-gray-900 dark:text-white" id="unit_kerja">-</dd>
+                    <dd class="mt-2 text-xl font-bold text-gray-900 dark:text-white" id="unit_kerja">{{ auth()->user()->unit_kerja->nama_unit_kerja ?? session('user.unit_kerja', '-') }}</dd>
                 </div>
             </dl>
         </div>
@@ -105,15 +105,15 @@
                 <div class="grid gap-6 mb-6 sm:grid-cols-1">
                     <div>
                         <label for="edit_nama" class="block mb-2 text-sm font-semibold text-gray-900 dark:text-white">Nama</label>
-                        <input type="text" id="edit_nama" name="nama" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 block w-full p-3 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200" required>
+                        <input type="text" id="edit_nama" name="nama" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 block w-full p-3 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200" value="{{ auth()->user()->nama ?? session('user.nama', '') }}" required>
                     </div>
                     <div>
                         <label for="edit_email" class="block mb-2 text-sm font-semibold text-gray-900 dark:text-white">Email</label>
-                        <input type="email" id="edit_email" name="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 block w-full p-3 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200" required>
+                        <input type="email" id="edit_email" name="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 block w-full p-3 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200" value="{{ auth()->user()->email ?? session('user.email', '') }}" required>
                     </div>
                     <div>
                         <label for="edit_nip" class="block mb-2 text-sm font-semibold text-gray-900 dark:text-white">NIP</label>
-                        <input type="text" id="edit_nip" name="nip" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 block w-full p-3 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200" required>
+                        <input type="text" id="edit_nip" name="nip" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 block w-full p-3 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200" value="{{ auth()->user()->nip ?? session('user.nip', '') }}" required>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
@@ -171,7 +171,6 @@
     </div>
 </div>
 
-<!-- Modal Toast -->
 <div id="responseModal" class="hidden fixed top-6 right-6 z-50 bg-transparent transition-all duration-300">
     <div class="w-full max-w-md p-5 bg-white rounded-xl shadow-xl dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
         <div class="flex items-center">
@@ -246,7 +245,13 @@
         };
     }
 
-    let userData = {};
+    let userData = {
+        nama: "{{ auth()->user()->nama ?? session('user.nama', 'Guest') }}",
+        email: "{{ auth()->user()->email ?? session('user.email', '-') }}",
+        nip: "{{ auth()->user()->nip ?? session('user.nip', '-') }}",
+        role: "{{ auth()->user()->role->nama_role ?? session('user.role', '-') }}",
+        unit_kerja: "{{ auth()->user()->unit_kerja->nama_unit_kerja ?? session('user.unit_kerja', '-') }}"
+    };
     let modalProfileInstance = null;
     let modalPasswordInstance = null;
 
@@ -306,7 +311,7 @@
             modalPasswordInstance = new Modal(modalPasswordEl, options);
         }
 
-        const UserId = {{ session('user.user_id') ?? 'null' }};
+        const UserId = {{ auth()->user()->user_id ?? session('user.user_id', 'null') }};
         if (UserId) {
             fetch(`http://127.0.0.1:5000/api/data-user/${UserId}`)
                 .then(res => {
@@ -362,16 +367,68 @@
                 })
                 .then(res => res.ok ? res.json() : res.json().then(err => Promise.reject(err)))
                 .then(response => {
-                    userData.nama = updatedData.nama; // Update userData with new name
+                    userData.nama = updatedData.nama;
+                    userData.email = updatedData.email;
+                    userData.nip = updatedData.nip;
                     document.getElementById('nama').textContent = updatedData.nama;
                     document.getElementById('email').textContent = updatedData.email;
                     document.getElementById('nip').textContent = updatedData.nip;
                     modalProfileInstance.hide();
                     updateProfileBadge(); // Update badge after successful edit
                     showToast('Profil berhasil diperbarui!', true);
+
+                    // Update Laravel session
+                    fetch('{{ route('update-session') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({
+                            nama: updatedData.nama,
+                            email: updatedData.email,
+                            nip: updatedData.nip
+                        })
+                    })
+                    .then(res => res.ok ? res.json() : res.json().then(err => Promise.reject(err)))
+                    .then(response => {
+                        console.log(response.message);
+                        // Update navbar initials dynamically
+                        const navbarInitials = document.querySelectorAll('#user-menu-button .rounded-full, #user-menu-button-mobile .rounded-full');
+                        const newInitials = updatedData.nama.split(' ').map(word => word.charAt(0).toUpperCase()).slice(0, 2).join('');
+                        const colors = [
+                            'bg-gradient-to-br from-red-400 to-pink-500',
+                            'bg-gradient-to-br from-blue-400 to-indigo-500',
+                            'bg-gradient-to-br from-green-400 to-teal-500',
+                            'bg-gradient-to-br from-yellow-400 to-orange-500',
+                            'bg-gradient-to-br from-purple-400 to-violet-500',
+                            'bg-gradient-to-br from-pink-400 to-rose-500',
+                            'bg-gradient-to-br from-indigo-400 to-blue-500',
+                            'bg-gradient-to-br from-cyan-400 to-blue-500',
+                            'bg-gradient-to-br from-orange-400 to-red-500',
+                            'bg-gradient-to-br from-emerald-400 to-green-500',
+                        ];
+                        const colorIndex = updatedData.nama.length % colors.length;
+                        const profileColor = colors[colorIndex];
+
+                        navbarInitials.forEach(badge => {
+                            badge.className = `${profileColor} flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold text-white`;
+                            badge.textContent = newInitials;
+                        });
+
+                        // Update dropdown user name and email
+                        const dropdownUserName = document.querySelectorAll('#dropdown .font-semibold, #dropdown-mobile .font-semibold');
+                        const dropdownUserEmail = document.querySelectorAll('#dropdown .truncate, #dropdown-mobile .truncate');
+                        dropdownUserName.forEach(el => el.textContent = updatedData.nama);
+                        dropdownUserEmail.forEach(el => el.textContent = updatedData.email);
+                    })
+                    .catch(error => {
+                        console.error('Session update error:', error);
+                        showToast('Gagal memperbarui session!', false);
+                    });
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.error('API error:', error);
                     showToast(error.message || 'Gagal menyimpan data!', false);
                 });
             });
