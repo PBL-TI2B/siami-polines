@@ -178,11 +178,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Helper function to render checklist
     const renderChecklist = (value) => {
-        return value === '1' ? `
-            <svg class="w-5 h-5 text-green-600 dark:text-green-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-            </svg>
-        ` : '-';
+        if (value === '1') {
+            return `<svg class="w-5 h-5 text-green-600 dark:text-green-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>`;
+        } else if (value === '0') {
+            return `<svg class="w-5 h-5 text-red-600 dark:text-red-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>`;
+        }
+        return '-';
     };
 
     // Initialize and render table
