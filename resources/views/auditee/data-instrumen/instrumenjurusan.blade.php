@@ -162,10 +162,13 @@
                 @endif
             </div>
         </div> {{-- End of audit-content --}}
+
+        <!-- Dynamic Toast Container -->
+        <div id="dynamic-toast-container"></div>
     </div>
 
     <div id="response-modal"
-        class="fixed inset-0 z-50 flex hidden items-center justify-center bg-gray-900/50 transition-opacity duration-300">
+        class="fixed inset-0 z-50 hidden items-center justify-center bg-gray-900/50 transition-opacity duration-300">
         <div class="relative max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white p-6 pb-6 dark:bg-gray-800">
             <button type="button" id="close-modal-btn"
                 class="absolute right-4 top-4 text-gray-400 transition-colors duration-200 hover:text-gray-600 dark:hover:text-gray-300">
@@ -281,7 +284,7 @@
             // Fungsi untuk membuka modal
             const openModal = (isEdit, setInstrumenId, response = {}, instrumen = {}) => {
                 if (auditStatus !== 1 && auditStatus !== 8) {
-                    showCustomMessage(
+                    showToast('warning',
                         'Pengisian jawaban hanya diperbolehkan pada status Pengisian Instrumen atau Revisi Jawaban.'
                     );
                     return;
@@ -300,6 +303,7 @@
                 document.getElementById('capaian-error').classList.add('hidden');
                 document.getElementById('lokasi_bukti_dukung-error').classList.add('hidden');
                 modal.classList.remove('hidden');
+                modal.classList.add('flex');
                 setTimeout(() => {
                     modal.querySelector('div').classList.remove('scale-95');
                     modal.classList.remove('opacity-0');
@@ -310,25 +314,65 @@
             const closeModal = () => {
                 modal.classList.add('opacity-0');
                 modal.querySelector('div').classList.add('scale-95');
-                setTimeout(() => modal.classList.add('hidden'), 300);
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }, 300);
             };
 
-            // Fungsi untuk menampilkan pesan kustom
-            const showCustomMessage = (message) => {
-                const messageBox = document.createElement('div');
-                messageBox.className = 'fixed inset-0 bg-gray-900/50 flex items-center justify-center z-[9999]';
-                messageBox.innerHTML = `
-                <div class="bg-white dark:bg-gray-800 rounded-lg p-8 shadow-xl border border-gray-200 dark:border-gray-600 text-center max-w-sm mx-auto">
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Pesan</h3>
-                    <p class="text-base text-gray-700 dark:text-gray-300 mb-6">${message}</p>
-                    <button id="close-message-btn-custom" class="w-24 px-6 py-2 bg-sky-800 text-white rounded-lg hover:bg-sky-900 transition-colors duration-200 font-medium">Tutup</button>
-                </div>
-            `;
-                document.body.appendChild(messageBox);
-                document.getElementById('close-message-btn-custom').addEventListener('click', () => {
-                    document.body.removeChild(messageBox);
-                });
-            };
+            // Fungsi untuk menampilkan toast notification
+            function showToast(type, message) {
+                const toastId = 'toast-' + Date.now();
+
+                // Create toast element with CSS animation classes
+                const toastElement = document.createElement('div');
+                toastElement.innerHTML = `
+                    <div id="${toastId}"
+                        class="fixed top-20 right-5 flex items-start sm:items-center w-auto max-w-xs sm:max-w-sm md:max-w-md lg:max-w-md p-4 mb-4 text-gray-500 bg-white rounded-lg shadow-sm dark:text-gray-400 dark:bg-gray-800 z-60 animate-fade-in"
+                        role="alert">
+                        <div class="flex-shrink-0 flex items-center justify-center w-8 h-8 ${type === 'success' ? 'text-green-500 bg-green-100 dark:bg-green-800 dark:text-green-200' : (type === 'warning' ? 'text-yellow-500 bg-yellow-100 dark:bg-yellow-800 dark:text-yellow-200' : 'text-red-500 bg-red-100 dark:bg-red-800 dark:text-red-200')} rounded-lg">
+                            ${type === 'success' ?
+                                '<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>' :
+                                (type === 'warning' ?
+                                    '<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>' :
+                                    '<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>'
+                                )
+                            }
+                            <span class="sr-only">Ikon ${type === 'success' ? 'Sukses' : (type === 'warning' ? 'Peringatan' : 'Error')}</span>
+                        </div>
+                        <div class="flex-1 min-w-0 ms-3 text-sm font-normal break-words">
+                            ${message}
+                        </div>
+                        <button type="button"
+                            class="ms-3 flex-shrink-0 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors duration-200"
+                            onclick="closeToast('${toastId}')" aria-label="Tutup">
+                            <span class="sr-only">Tutup</span>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        </button>
+                    </div>
+                `;
+
+                // Append to body
+                const toast = toastElement.firstElementChild;
+                document.body.appendChild(toast);
+
+                // Auto close after 5 seconds
+                setTimeout(() => {
+                    closeToast(toastId);
+                }, 5000);
+            }
+
+            // Function to close toast with CSS fade animation
+            function closeToast(toastId) {
+                const toast = document.getElementById(toastId);
+                if (toast) {
+                    toast.classList.remove('animate-fade-in');
+                    toast.classList.add('animate-fade-out');
+                    setTimeout(() => {
+                        toast.remove();
+                    }, 400);
+                }
+            }
 
             // Fungsi untuk konfirmasi kustom
             const showCustomConfirm = (message, onConfirm) => {
@@ -401,6 +445,7 @@
                     renderTable();
                 } catch (error) {
                     console.error('Gagal memuat data:', error);
+                    showToast('danger', 'Gagal memuat data instrumen. Silakan coba lagi.');
                     tableBody.innerHTML = `
                     <tr>
                         <td colspan="8" class="px-4 py-3 sm:px-6 text-center text-red-600 dark:text-red-400">
@@ -625,8 +670,8 @@
                             </td>
                             <td class="px-4 py-3 sm:px-6 border-r border-gray-200 dark:border-gray-600 text-center">
                                 ${(auditStatus != 1 && auditStatus != 8) ? `<span class="text-gray-500 dark:text-gray-400 text-sm">Jawaban Terkunci</span>` : `
-                                                <div class="flex items-center justify-center gap-2">
-                                                    ${response.response_id ? `
+                                                    <div class="flex items-center justify-center gap-2">
+                                                        ${response.response_id ? `
                                         <button type="button" class="edit-btn text-sm font-medium text-white bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:ring-yellow-300 dark:bg-yellow-500 dark:hover:bg-yellow-600 dark:focus:ring-yellow-600 rounded-lg px-3 py-1.5 flex items-center" data-id="${response.response_id}" data-capaian="${response.capaian || ''}" data-lokasi="${response.lokasi_bukti_dukung || ''}" data-sasaran="${sasaran}" data-indikator="${indikator}" data-aktivitas="${groupedItem.aktivitas}" data-satuan="${item.aktivitas.satuan || ''}" data-target="${item.aktivitas.target || ''}" data-set-instrumen-id="${item.set_instrumen_unit_kerja_id}">
                                             <svg class="w-3 h-3 mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" /></svg>
                                             Edit
@@ -641,8 +686,8 @@
                                             Jawab
                                         </button>
                                     `}
-                                                </div>
-                                            `}
+                                                    </div>
+                                                `}
                             </td>
                         `;
                         row.innerHTML = html;
@@ -738,7 +783,7 @@
                     e.preventDefault();
                     const responseId = deleteBtn.getAttribute('data-id');
                     if (auditStatus !== 1 && auditStatus !== 8) {
-                        showCustomMessage(
+                        showToast('warning',
                             'Penghapusan jawaban hanya diperbolehkan pada status Pengisian Instrumen atau Revisi Jawaban.'
                         );
                         return;
@@ -758,12 +803,12 @@
                                     return response.json();
                                 })
                                 .then(() => {
-                                    showCustomMessage('Jawaban berhasil dihapus!');
+                                    showToast('success', 'Jawaban berhasil dihapus!');
                                     initializeDataAndRenderTable();
                                 })
                                 .catch(error => {
                                     console.error('Gagal menghapus:', error);
-                                    showCustomMessage(
+                                    showToast('danger',
                                         'Gagal menghapus jawaban. Silakan coba lagi.');
                                 });
                         }
@@ -822,7 +867,7 @@
                         return response.json();
                     })
                     .then(savedResponseData => {
-                        showCustomMessage(isEdit ? 'Jawaban berhasil diperbarui!' :
+                        showToast('success', isEdit ? 'Jawaban berhasil diperbarui!' :
                             'Jawaban berhasil disimpan!');
                         closeModal();
 
@@ -846,7 +891,7 @@
                             console.error(
                                 'Error: Gagal mendapatkan response_id setelah menyimpan/memperbarui jawaban utama. Respons:',
                                 savedResponseData);
-                            showCustomMessage(
+                            showToast('danger',
                                 'Gagal mendapatkan ID jawaban untuk status instrumen. Silakan cek konsol.'
                             );
                             initializeDataAndRenderTable();
@@ -888,7 +933,7 @@
                             })
                             .catch(instrError => {
                                 console.error('Error saat mengirim status instrumen:', instrError);
-                                showCustomMessage(
+                                showToast('warning',
                                     'Jawaban utama disimpan, namun terjadi kesalahan saat mengirim status instrumen tambahan.'
                                 );
                                 initializeDataAndRenderTable();
@@ -902,7 +947,7 @@
                                 errorEl.classList.remove('hidden');
                             }
                         } else {
-                            showCustomMessage('Terjadi kesalahan: ' + (error.message ||
+                            showToast('danger', 'Terjadi kesalahan: ' + (error.message ||
                                 'Tidak dapat menyimpan jawaban'));
                         }
                         initializeDataAndRenderTable();
@@ -916,9 +961,9 @@
             submitLockBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 if (auditStatus !== 1 && auditStatus !== 8) {
-                    showCustomMessage(
-                        'Penguncian jawaban hanya diperbolehkan pada status "Pengisian Instrumen" atau "Revisi Jawaban".',
-                        'error');
+                    showToast('warning',
+                        'Penguncian jawaban hanya diperbolehkan pada status "Pengisian Instrumen" atau "Revisi Jawaban".'
+                        );
                     return;
                 }
                 // CEK: Semua instrumen harus sudah diisi responsenya
@@ -927,7 +972,7 @@
                         .set_instrumen_unit_kerja_id)
                 );
                 if (belumDiisi.length > 0) {
-                    showCustomMessage(
+                    showToast('warning',
                         `Masih ada ${belumDiisi.length} instrumen yang belum diisi. Silakan lengkapi semua jawaban sebelum mengunci.`
                     );
                     return;
@@ -967,7 +1012,7 @@
                                 .then(() => {
                                     auditStatus =
                                         2; // Update status di client-side untuk konsistensi UI langsung
-                                    showCustomMessage('Jawaban berhasil dikunci!', 'success');
+                                    showToast('success', 'Jawaban berhasil dikunci!');
                                     // Update UI secara langsung
                                     renderTable(
                                         currentPage); // Re-render tabel dengan status terkunci
@@ -992,9 +1037,9 @@
                                 })
                                 .catch(error => {
                                     console.error('Gagal mengunci jawaban:', error);
-                                    showCustomMessage(
-                                        `Gagal mengunci jawaban: ${error.message || 'Silakan coba lagi.'}`,
-                                        'error');
+                                    showToast('danger',
+                                        `Gagal mengunci jawaban: ${error.message || 'Silakan coba lagi.'}`
+                                        );
                                     submitLockBtn.disabled = false; // Aktifkan kembali jika gagal
                                     submitLockBtn.innerHTML =
                                         originalButtonHtml; // Kembalikan HTML/teks asli tombol

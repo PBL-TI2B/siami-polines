@@ -350,15 +350,14 @@ public function update(Request $request, $id)
 
     return redirect()->route('admin.ploting-ami.index')->with('success', 'Jadwal Audit berhasil diperbarui');
 }
-    public function lihatJadwal(Request $request)
+    public function lihatJadwal(Request $request, $auditingId)
     {
         $user = session('user')['user_id'];
-        $auditing = session('auditing_id');
         $response = Http::get('http://127.0.0.1:5000/api/auditings/userID=' . $user);
         $auditingUnit = $response->json()['data'] ?? [];
 
         // Find the specific auditing record by ID
-        $auditing = collect($auditingUnit)->firstWhere('auditing_id', $auditing);
+        $auditing = collect($auditingUnit)->firstWhere('auditing_id', $auditingId);
 
         if (!$auditing) {
             abort(404, 'Auditing record not found');

@@ -254,9 +254,11 @@
         </a>
         @endif
       <!-- Tombol Selesai Audit -->
+    @if ($auditing->status == 3)
     <button id="btnSelesaiAudit" data-modal-target="confirmModal" data-modal-toggle="confirmModal" class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-gray-300 text-sm font-medium rounded-lg px-4 py-2 flex items-center transition-all duration-200">
         Selesai
     </button>
+    @endif
 
     <!-- Modal Konfirmasi -->
     <div id="confirmModal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">

@@ -353,10 +353,12 @@
                         <button type="button" class="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-600" data-modal-hide="editResponseModal">
                             Batal
                         </button>
+                        @if ($auditing->status == 3)
                         <button 
                             class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-gray-300 text-sm font-medium rounded-lg px-4 py-2 flex items-center transition-all duration-200">
                             Selesai
                         </button>
+                        @endif
                     </div>
                 </form>
             </div>
