@@ -773,7 +773,8 @@
                                 auditStatus = 6;
                                 initializeDataAndRenderTable(); // Refresh table
                                 setTimeout(() => {
-                                    window.location.href = "{{ route('auditee.audit.index') }}";
+                                    window.location.href =
+                                            `/auditee/audit/detail/${auditingId}`; 
                                 }, 3000);
                             } else {
                                 lockBtn.disabled = false;

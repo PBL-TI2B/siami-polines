@@ -53,11 +53,11 @@
                 <div class="mb-6 grid grid-cols-1 gap-6">
                     <!-- Status -->
                     <div>
-                        <label for="status" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                        <label for="status" class="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-200">
                             Status Periode
                         </label>
                         <select id="status" name="status" required
-                            class="bg-gray-50 dark:bg-gray-700 border {{ $errors->has('status') ? 'border-red-500' : 'border-gray-300 dark:border-gray-600' }} text-gray-900 dark:text-gray-200 dark:placeholder-gray-400 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 transition-all duration-200">
+                            class="{{ $errors->has('status') ? 'border-red-500' : 'border-gray-300 dark:border-gray-600' }} block w-full rounded-lg border bg-gray-50 p-2.5 text-sm text-gray-900 transition-all duration-200 focus:border-sky-500 focus:ring-sky-500 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400">
                             <option value="">Pilih Status</option>
                             <option value="Sedang Berjalan"
                                 {{ old('status', $periodeAudit['status'] ?? '') == 'Sedang Berjalan' ? 'selected' : '' }}>
