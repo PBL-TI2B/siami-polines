@@ -31,42 +31,31 @@
         </div> --}}
     </div>
 
-    <!-- Table and Pagination -->
-    <div class="rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
-        <!-- Table Controls -->
-        <div class="flex flex-col items-center justify-between gap-4 rounded-t-2xl border-b border-gray-200 bg-white p-4 sm:flex-row dark:border-gray-700 dark:bg-gray-800">
-            <div class="flex items-center gap-2">
-                <span class="text-sm text-gray-700 dark:text-gray-300">Tampilkan</span>
-                <form action="#" method="GET">
-                    <select name="per_page"
-                        class="w-18 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 transition-all duration-200 focus:border-sky-500 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
-                        onchange="this.form.submit()">
-                        <option value="5" selected>5</option>
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                    </select>
-                </form>
-                <span class="text-sm text-gray-700 dark:text-gray-300">entri</span>
+        <!-- Table dan Search Tanpa Pagination -->
+        <div class="rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
+            <!-- Table Controls (Search Saja) -->
+            <div class="flex flex-col items-center justify-between gap-4 rounded-t-2xl border-b border-gray-200 bg-white p-4 sm:flex-row dark:border-gray-700 dark:bg-gray-800">
+                <div class="flex items-center gap-2">
+                    <span class="text-sm text-gray-700 dark:text-gray-300"></span>
+                </div>
+                <div class="relative w-full sm:w-auto">
+                    <form action="#" method="GET">
+                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                            <svg class="h-4 w-4 text-gray-500 dark:text-gray-400" xmlns="http://www.w3.org/2000/svg"
+                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                        <input type="search" name="search" id="searchInput" placeholder="Cari" value=""
+                            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 transition-all duration-200 focus:border-sky-500 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                    </form>
+                </div>
             </div>
-            <div class="relative w-full sm:w-auto">
-                <form action="#" method="GET">
-                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                        <svg class="h-4 w-4 text-gray-500 dark:text-gray-400" xmlns="http://www.w3.org/2000/svg"
-                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                    </div>
-                    <input type="search" name="search" placeholder="Cari" value=""
-                        class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 transition-all duration-200 focus:border-sky-500 focus:ring-sky-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
-                </form>
-            </div>
-        </div>
 
-        <!-- Table -->
-        <div class="overflow-x-auto">
-            <table class="min-w-full text-left text-sm text-gray-500 dark:text-gray-400">
+            <!-- Table -->
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-left text-sm text-gray-500 dark:text-gray-400">
                 <thead
                     class="border-b border-t border-gray-200 bg-gray-50 text-xs uppercase text-gray-700 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
                     <tr>
@@ -91,33 +80,36 @@
                 $rowspanSasaran = [];
                 $rowspanIndikator = [];
                 foreach ($instrumenData as $item) {
-                $sasaranId = $item['set_instrumen_unit_kerja']['aktivitas']['indikator_kinerja']['sasaran_strategis']['sasaran_strategis_id'] ?? null;
-                $indikatorId = $item['set_instrumen_unit_kerja']['aktivitas']['indikator_kinerja']['indikator_kinerja_id'] ?? null;
-                if ($sasaranId) {
-                if (!isset($rowspanSasaran[$sasaranId])) $rowspanSasaran[$sasaranId] = 0;
-                $rowspanSasaran[$sasaranId]++;
-                }
-                if ($indikatorId) {
-                if (!isset($rowspanIndikator[$indikatorId])) $rowspanIndikator[$indikatorId] = 0;
-                $rowspanIndikator[$indikatorId]++;
-                }
+                    $sasaranId = $item['set_instrumen_unit_kerja']['aktivitas']['indikator_kinerja']['sasaran_strategis']['sasaran_strategis_id'] ?? null;
+                    $indikatorId = $item['set_instrumen_unit_kerja']['aktivitas']['indikator_kinerja']['indikator_kinerja_id'] ?? null;
+                    if ($sasaranId) {
+                        if (!isset($rowspanSasaran[$sasaranId])) $rowspanSasaran[$sasaranId] = 0;
+                        $rowspanSasaran[$sasaranId]++;
+                    }
+                    if ($indikatorId) {
+                        if (!isset($rowspanIndikator[$indikatorId])) $rowspanIndikator[$indikatorId] = 0;
+                        $rowspanIndikator[$indikatorId]++;
+                    }
                 }
                 $printedSasaran = [];
                 $printedIndikator = [];
+                $no = 1;
                 @endphp
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700" id="instrumen-jurusan-table-body">
                     @forelse ($instrumenData as $index => $item)
                     @php
-                    $sasaran = $item['set_instrumen_unit_kerja']['aktivitas']['indikator_kinerja']['sasaran_strategis'] ?? [];
-                    $indikator = $item['set_instrumen_unit_kerja']['aktivitas']['indikator_kinerja'] ?? [];
-                    $sasaranId = $sasaran['sasaran_strategis_id'] ?? null;
-                    $indikatorId = $indikator['indikator_kinerja_id'] ?? null;
+                        $sasaran = $item['set_instrumen_unit_kerja']['aktivitas']['indikator_kinerja']['sasaran_strategis'] ?? [];
+                        $indikator = $item['set_instrumen_unit_kerja']['aktivitas']['indikator_kinerja'] ?? [];
+                        $sasaranId = $sasaran['sasaran_strategis_id'] ?? null;
+                        $indikatorId = $indikator['indikator_kinerja_id'] ?? null;
                     @endphp
-                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700" data-sasaran-id="{{ $sasaranId }}">
                         {{-- No --}}
                         @if (!isset($printedSasaran[$sasaranId]))
-                        <td rowspan="{{ $rowspanSasaran[$sasaranId] ?? 1 }}" class="whitespace-nowrap border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600 align-top">{{ $loop->iteration }}</td>
-                        @php $printedSasaran[$sasaranId] = true; @endphp
+                            <td rowspan="{{ $rowspanSasaran[$sasaranId] ?? 1 }}" class="nomor-grup whitespace-nowrap border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600 align-top">
+                                {{ $no++ }}
+                            </td>
+                            @php $printedSasaran[$sasaranId] = true; @endphp
                         @endif
 
                         {{-- Sasaran Strategis --}}
@@ -154,7 +146,7 @@
                         </td>
                         {{-- Lokasi Bukti Dukung --}}
                         <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600">
-                            <a href="{{ $item['response']['lokasi_bukti_dukung'] ?? '-' }}" target="_blank">{{ $item['response']['lokasi_bukti_dukung'] ?? '-' }}</a>
+                            <a href="{{ $item['response']['lokasi_bukti_dukung'] ?? '-' }}" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline">{{ $item['response']['lokasi_bukti_dukung'] ?? '-' }}</a>
                         </td>
                         {{-- Sesuai --}}
                         <td class="border-r border-gray-200 px-4 py-2 sm:px-6 dark:border-gray-600 text-center">
@@ -244,40 +236,12 @@
             </table>
         </div>
 
-        <!-- Pagination -->
+        <!-- Pagination-info tetap tampil, tapi tanpa tombol navigasi -->
         <div class="p-4">
             <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
-                <span class="text-sm text-gray-700 dark:text-gray-300">
+                <span id="pagination-info" class="text-sm text-gray-700 dark:text-gray-300">
                     Menampilkan <strong>1</strong> hingga <strong>{{ count($instrumenData) }}</strong> dari <strong>{{ count($instrumenData) }}</strong> hasil
                 </span>
-                <nav aria-label="Navigasi Paginasi">
-                    <ul class="inline-flex -space-x-px text-sm">
-                        <li>
-                            <a href="#"
-                                class="flex h-8 cursor-not-allowed items-center justify-center rounded-l-lg border border-gray-300 bg-white px-3 leading-tight text-gray-500 opacity-50 transition-all duration-200 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200">
-                                <x-heroicon-s-chevron-left class="mr-1 h-4 w-4" />
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#"
-                                class="flex h-8 items-center justify-center border border-sky-300 bg-sky-50 px-3 leading-tight text-sky-800 transition-all duration-200 dark:border-sky-700 dark:bg-sky-900 dark:text-sky-200">
-                                1
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#"
-                                class="flex h-8 items-center justify-center border border-gray-300 bg-white px-3 leading-tight text-gray-500 transition-all duration-200 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200">
-                                2
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#"
-                                class="flex h-8 items-center justify-center rounded-r-lg border border-gray-300 bg-white px-3 leading-tight text-gray-500 transition-all duration-200 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200">
-                                <x-heroicon-s-chevron-right class="ml-1 h-4 w-4" />
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
             </div>
         </div>
     </div>
@@ -588,95 +552,37 @@
     });
 
     document.addEventListener('DOMContentLoaded', function () {
-    // Ambil semua baris data dari tbody
-    const tableBody = document.querySelector('#instrumen-jurusan-table-body');
-    const allRows = Array.from(tableBody.querySelectorAll('tr'));
-    let pageSize = parseInt(document.querySelector('select[name="per_page"]').value) || 5;
-    let currentPage = 1;
-    let filteredRows = allRows;
+        // Search filter only (no pagination)
+        const tableBody = document.querySelector('#instrumen-jurusan-table-body');
+        const allRows = Array.from(tableBody.querySelectorAll('tr'));
+        let filteredRows = allRows;
 
-    // Fungsi untuk merender tabel berdasarkan halaman dan filter
-    function renderTable() {
-        // Sembunyikan semua baris
-        allRows.forEach(row => row.style.display = 'none');
-
-        // Hitung paginasi
-        const totalRows = filteredRows.length;
-        const totalPages = Math.ceil(totalRows / pageSize);
-        if (currentPage > totalPages) currentPage = totalPages || 1;
-        const start = (currentPage - 1) * pageSize;
-        const end = Math.min(start + pageSize, totalRows);
-
-        // Tampilkan baris sesuai halaman
-        filteredRows.slice(start, end).forEach(row => row.style.display = '');
-
-        // Update informasi paginasi
-        const pageInfo = document.querySelector('.text-sm.text-gray-700.dark\\:text-gray-300');
-        if (pageInfo) {
-            pageInfo.innerHTML = `Menampilkan <strong>${start + 1}</strong> hingga <strong>${end}</strong> dari <strong>${totalRows}</strong> hasil`;
+        function renderTable() {
+            // Hide all rows
+            allRows.forEach(row => row.style.display = 'none');
+            // Show filtered rows
+            filteredRows.forEach(row => row.style.display = '');
+            // Update pagination-info
+            const pageInfo = document.querySelector('#pagination-info');
+            if (pageInfo) {
+                let total = allRows.length;
+                let shown = filteredRows.length;
+                if (shown === 0) {
+                    pageInfo.innerHTML = `Menampilkan <strong>0</strong> hingga <strong>0</strong> dari <strong>${total}</strong> hasil`;
+                } else {
+                    pageInfo.innerHTML = `Menampilkan <strong>1</strong> hingga <strong>${shown}</strong> dari <strong>${total}</strong> hasil`;
+                }
+            }
         }
 
-        // Update tombol paginasi
-        const prevButton = document.querySelector('a[aria-label="Navigasi Paginasi"] li:first-child a');
-        const nextButton = document.querySelector('a[aria-label="Navigasi Paginasi"] li:last-child a');
-        prevButton.classList.toggle('cursor-not-allowed', currentPage === 1);
-        prevButton.classList.toggle('opacity-50', currentPage === 1);
-        nextButton.classList.toggle('cursor-not-allowed', currentPage === totalPages || totalPages === 0);
-        nextButton.classList.toggle('opacity-50', currentPage === totalPages || totalPages === 0);
-
-        // Update nomor halaman aktif
-        const pageLinks = document.querySelectorAll('a[aria-label="Navigasi Paginasi"] li a:not(:first-child):not(:last-child)');
-        pageLinks.forEach((link, index) => {
-            link.classList.toggle('bg-sky-50', index + 1 === currentPage);
-            link.classList.toggle('text-sky-800', index + 1 === currentPage);
-            link.classList.toggle('border-sky-300', index + 1 === currentPage);
-        });
-    }
-
-    // Event listener untuk perubahan jumlah entri per halaman
-    document.querySelector('select[name="per_page"]').addEventListener('change', function () {
-        pageSize = parseInt(this.value);
-        currentPage = 1;
-        renderTable();
-    });
-
-    // Event listener untuk pencarian
-    document.querySelector('input[name="search"]').addEventListener('input', function () {
-        const keyword = this.value.toLowerCase();
-        filteredRows = allRows.filter(row => row.textContent.toLowerCase().includes(keyword));
-        currentPage = 1;
-        renderTable();
-    });
-
-    // Event listener untuk tombol paginasi
-    document.querySelector('a[aria-label="Navigasi Paginasi"] li:first-child a').addEventListener('click', function (e) {
-        e.preventDefault();
-        if (currentPage > 1) {
-            currentPage--;
-            renderTable();
-        }
-    });
-
-    document.querySelector('a[aria-label="Navigasi Paginasi"] li:last-child a').addEventListener('click', function (e) {
-        e.preventDefault();
-        const totalPages = Math.ceil(filteredRows.length / pageSize);
-        if (currentPage < totalPages) {
-            currentPage++;
-            renderTable();
-        }
-    });
-
-    // Event listener untuk nomor halaman
-    document.querySelectorAll('a[aria-label="Navigasi Paginasi"] li a:not(:first-child):not(:last-child)').forEach((link, index) => {
-        link.addEventListener('click', function (e) {
-            e.preventDefault();
-            currentPage = index + 1;
+        // Search event
+        document.getElementById('searchInput').addEventListener('input', function () {
+            const keyword = this.value.toLowerCase();
+            filteredRows = allRows.filter(row => row.textContent.toLowerCase().includes(keyword));
             renderTable();
         });
-    });
 
-    // Inisialisasi tabel
-    renderTable();
-});
+        renderTable();
+    });
 </script>
 @endsection
