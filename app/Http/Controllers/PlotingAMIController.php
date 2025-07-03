@@ -256,15 +256,16 @@ public function download()
     $data = $auditings->map(function ($auditing) {
         $statusLabels = [
             1 => 'Pengisian Instrumen',
-            2 => 'Desk Evaluation',
-            3 => 'Penjadwalan AL',
-            4 => 'Pertanyaan Tilik',
-            5 => 'Tilik Dijawab',
-            6 => 'Laporan Temuan',
-            7 => 'Revisi',
-            8 => 'Sudah revisi',
-            9 => 'Closing',
-            10 => 'Selesai',
+            2 => 'Penjadwalan AL',
+            3 => 'Dijadwalkan AL',
+            4 => 'Desk Evaluation',
+            5 => 'Pertanyaan Tilik',
+            6 => 'Tilik Dijawab',
+            7 => 'Laporan Temuan',
+            8 => 'Revisi',
+            9 => 'Sudah Revisi',
+            10 => 'Closing',
+            11 => 'Selesai',
         ];
         return [
             'Unit Kerja' => $auditing->unitKerja->nama_unit_kerja ?? 'N/A',
@@ -273,7 +274,7 @@ public function download()
             'Auditee 2' => $auditing->auditee2->nama ?? '-',
             'Auditor 1' => $auditing->auditor1->nama ?? 'N/A',
             'Auditor 2' => $auditing->auditor2->nama ?? '-',
-            'Status' => $statusLabels[$auditing->status] ?? 'Menunggu',
+            'Status' => $statusLabels[$auditing->status] ?? 'N/A',
         ];
     });
 
