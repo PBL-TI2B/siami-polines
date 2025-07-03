@@ -95,9 +95,11 @@
             <x-button id="back-btn" type="button" color="red" icon="heroicon-o-arrow-left">
                 Kembali
             </x-button>
+            @if ($auditing->status == 3)
             <x-button id="complete-correction-btn" type="button" color="sky" icon="heroicon-o-check">
                 Koreksi Selesai
             </x-button>
+            @endif
         </div>
     </div>
     <!-- Modal Konfirmasi -->
