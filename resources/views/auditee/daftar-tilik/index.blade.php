@@ -199,7 +199,10 @@
                                 class="text-red-500">*</span></label>
                         <textarea required name="realisasi" id="realisasi" rows="5"
                             class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-500 dark:bg-gray-600 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                            placeholder="Masukkan Realisasi..."></textarea>
+                            placeholder="Masukkan data realisasi pencapaian target yang telah dilakukan..." aria-required="true"
+                            oninvalid="this.setCustomValidity('Mohon isi bagian realisasi')" oninput="this.setCustomValidity('')"></textarea>
+                        <span id="realisasi-error" class="mt-1 hidden text-sm font-medium text-red-600">Realisasi wajib
+                            diisi.</span>
                     </div>
 
                     <!-- Standar Nasional -->
@@ -209,7 +212,10 @@
                             <span class="text-red-500">*</span></label>
                         <textarea required name="standarNasional" id="standarNasional" rows="5"
                             class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-500 dark:bg-gray-600 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                            placeholder="Masukkan Standar Nasional..."></textarea>
+                            placeholder="Masukkan Standar Nasional..." aria-required="true"
+                            oninvalid="this.setCustomValidity('Mohon isi bagian standar nasional')" oninput="this.setCustomValidity('')"></textarea>
+                        <span id="standarNasional-error" class="mt-1 hidden text-sm font-medium text-red-600">Standar
+                            Nasional wajib diisi.</span>
                     </div>
 
                     <!-- Uraian Isian -->
@@ -219,7 +225,10 @@
                                 class="text-red-500">*</span></label>
                         <textarea required name="uraianIsian" id="uraianIsian" rows="5"
                             class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-500 dark:bg-gray-600 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                            placeholder="Masukkan Uraian Isian..."></textarea>
+                            placeholder="Masukkan penjelasan detail mengenai kondisi dan situasi aktual..." aria-required="true"
+                            oninvalid="this.setCustomValidity('Mohon isi bagian uraian isian')" oninput="this.setCustomValidity('')"></textarea>
+                        <span id="uraianIsian-error" class="mt-1 hidden text-sm font-medium text-red-600">Uraian Isian
+                            wajib diisi.</span>
                     </div>
 
                     <!-- Akar Penyebab/Penunjang -->
@@ -229,28 +238,44 @@
                             tidak tercapai)/ Akar Penunjang (Target tercapai) <span class="text-red-500">*</span></label>
                         <textarea required name="akarPenyebabPenunjang" id="akarPenyebabPenunjang" rows="5"
                             class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-500 dark:bg-gray-600 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                            placeholder="Masukkan Akar Penyebab (Target tidak tercapai)/ Akar Penunjang (Target tercapai)..."></textarea>
+                            placeholder="Masukkan analisis penyebab target tidak tercapai atau faktor penunjang keberhasilan..."
+                            aria-required="true" oninvalid="this.setCustomValidity('Mohon isi bagian akar penyebab/penunjang')"
+                            oninput="this.setCustomValidity('')"></textarea>
+                        <span id="akarPenyebabPenunjang-error" class="mt-1 hidden text-sm font-medium text-red-600">Akar
+                            Penyebab/Penunjang wajib diisi.</span>
                     </div>
 
                     <!-- Rencana Perbaikan -->
                     <div>
                         <label for="rencanaPerbaikan"
-                            class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Rencana Perbaikan & Tindak
-                            Lanjut <span class="text-red-500">*</span></label>
-                        <textarea required name="rencanaPerbaikan" id="rencanaPerbaikan" rows="5"
+                            class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+                            Rencana Perbaikan & Tindak Lanjut
+                            <span class="text-red-500" id="rencanaPerbaikan-required" style="display: none;">*</span>
+                        </label>
+                        <textarea name="rencanaPerbaikan" id="rencanaPerbaikan" rows="5"
                             class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-500 dark:bg-gray-600 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                            placeholder="Masukkan Rencana Perbaikan & Tindak Lanjut..."></textarea>
+                            placeholder="Masukkan rencana konkret untuk perbaikan dan langkah tindak lanjut yang akan dilakukan..."
+                            aria-required="false"></textarea>
+                        <span id="rencanaPerbaikan-error" class="mt-1 hidden text-sm font-medium text-red-600">Rencana
+                            Perbaikan wajib diisi jika target tidak tercapai.</span>
                     </div>
 
                     <!-- Tindakan Pencegahan -->
                     <div>
                         <label for="tindakanPencegahan"
-                            class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Tindakan Pencegahan <span
-                                class="text-red-500">*</span></label>
-                        <textarea required name="tindakanPencegahan" id="tindakanPencegahan" rows="5"
+                            class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+                            Tindakan Pencegahan
+                            <span class="text-red-500" id="tindakanPencegahan-required" style="display: none;">*</span>
+                        </label>
+                        <textarea name="tindakanPencegahan" id="tindakanPencegahan" rows="5"
                             class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-500 dark:bg-gray-600 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                            placeholder="Masukkan Tindakan Pencegahan..."></textarea>
+                            placeholder="Masukkan langkah-langkah pencegahan untuk menghindari masalah serupa di masa depan..."
+                            aria-required="false"></textarea>
+                        <span id="tindakanPencegahan-error" class="mt-1 hidden text-sm font-medium text-red-600">Tindakan
+                            Pencegahan wajib diisi jika target tidak tercapai.</span>
                     </div>
+
+
                 </form>
             </div>
             <!-- Modal footer -->
@@ -259,7 +284,8 @@
                 <x-button id="cancelFormBtn" type="button" color="gray" icon="heroicon-o-x-mark">
                     Batal
                 </x-button>
-                <x-button id="saveResponseBtn" type="button" color="sky" icon="heroicon-o-check">
+                <x-button id="saveResponseBtn" type="submit" color="sky" icon="heroicon-o-check"
+                    form="responseForm">
                     Simpan
                 </x-button>
             </div>
@@ -306,6 +332,81 @@
     </script>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const akarInput = document.getElementById('akarPenyebabPenunjang');
+            const rencanaInput = document.getElementById('rencanaPerbaikan');
+            const tindakanInput = document.getElementById('tindakanPencegahan');
+            const rencanaError = document.getElementById('rencanaPerbaikan-error');
+            const tindakanError = document.getElementById('tindakanPencegahan-error');
+            const rencanaRequired = document.getElementById('rencanaPerbaikan-required');
+            const tindakanRequired = document.getElementById('tindakanPencegahan-required');
+            const form = document.getElementById('responseForm');
+
+            // Kata kunci yang menandakan target tidak tercapai
+            const keywordsTidakTercapai = [
+                'tidak tercapai',
+                'gagal',
+                'kurang',
+                'belum tercapai',
+                'tidak terpenuhi',
+                'tidak memenuhi',
+                'tidak sesuai',
+                'tidak optimal',
+                'tidak berhasil',
+                'tidak capai',
+                'tidak terlaksana',
+                'tidak terwujud'
+            ];
+
+            function isTargetTidakTercapai(akar) {
+                const akarLower = akar.toLowerCase();
+                return keywordsTidakTercapai.some(keyword => akarLower.includes(keyword));
+            }
+
+            function checkAkar() {
+                const akar = akarInput.value;
+                const isTidakTercapai = isTargetTidakTercapai(akar);
+                // Set required attribute dynamically
+                rencanaInput.required = isTidakTercapai;
+                tindakanInput.required = isTidakTercapai;
+                rencanaRequired.style.display = isTidakTercapai ? '' : 'none';
+                tindakanRequired.style.display = isTidakTercapai ? '' : 'none';
+            }
+
+            akarInput.addEventListener('input', checkAkar);
+
+            form.addEventListener('submit', function(e) {
+                const akar = akarInput.value;
+                const isTidakTercapai = isTargetTidakTercapai(akar);
+                let valid = true;
+
+                if (isTidakTercapai) {
+                    if (!rencanaInput.value.trim()) {
+                        rencanaError.classList.remove('hidden');
+                        valid = false;
+                    } else {
+                        rencanaError.classList.add('hidden');
+                    }
+                    if (!tindakanInput.value.trim()) {
+                        tindakanError.classList.remove('hidden');
+                        valid = false;
+                    } else {
+                        tindakanError.classList.add('hidden');
+                    }
+                } else {
+                    rencanaError.classList.add('hidden');
+                    tindakanError.classList.add('hidden');
+                }
+
+                if (!valid) {
+                    e.preventDefault();
+                }
+            });
+
+            // Initial check on page load
+            checkAkar();
+        });
+
         document.addEventListener("DOMContentLoaded", function() {
             // Static mapping for kriteria_id to name
             const kriteriaMap = {
@@ -380,8 +481,7 @@
                     <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
                 </svg>
                 <span class="sr-only">Ikon Sukses</span>` :
-                    /NewLine/
-                `<svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    `<svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 11.793a1 1 0 1 1-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L8.586 10 6.293 7.707a1 1 0 0 1 1.414-1.414L10 8.586l2.293-2.293a1 1 0 0 1 1.414 1.414L11.414 10l2.293 2.293Z" />
                 </svg>
                 <span class="sr-only">Ikon Error</span>`;
@@ -548,10 +648,10 @@
                     <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600">${escapeHtml(response.tindakan_pencegahan)}</td>
                     <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">
                         ${auditStatus !== 5 ? `
-                                    <span class="text-gray-500 dark:text-gray-400">Jawaban dikunci</span>
-                                ` : `
-                                    <div class="flex items-center gap-2 justify-center">
-                                        ${response.realisasi !== '-' ? `
+                                                <span class="text-gray-500 dark:text-gray-400">Jawaban dikunci</span>
+                                            ` : `
+                                                <div class="flex items-center gap-2 justify-center">
+                                                    ${response.realisasi !== '-' ? `
                                     <button data-id="${response.response_tilik_id}" data-tilik-id="${item.tilik_id}" class="edit-btn text-sky-600 hover:text-sky-800 dark:text-sky-400 dark:hover:text-sky-200" title="Edit Jawaban">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M14 4a2.5 2.5 0 113.536 3.536L6.5 21H3v-3.5L14 4z"/>
@@ -569,8 +669,8 @@
                                         </svg>
                                     </button>
                                 `}
-                                    </div>
-                                `}
+                                                </div>
+                                            `}
                     </td>
                 `;
                     tbody.appendChild(row);
@@ -774,7 +874,7 @@
                                 initializeDataAndRenderTable(); // Refresh table
                                 setTimeout(() => {
                                     window.location.href =
-                                            `/auditee/audit/detail/${auditingId}`; 
+                                        `/auditee/audit/detail/${auditingId}`;
                                 }, 3000);
                             } else {
                                 lockBtn.disabled = false;
@@ -840,7 +940,7 @@
                             document.getElementById('rencanaPerbaikan').value = data
                                 .rencana_perbaikan_tindak_lanjut || '';
                             document.getElementById('tindakanPencegahan').value = data.tindakan_pencegahan ||
-                            '';
+                                '';
                         } else {
                             showToast('Data tidak ditemukan.', false);
                         }
@@ -862,10 +962,9 @@
             cancelFormBtn.addEventListener('click', closeResponseFormModal);
 
             // Form submission
-            saveResponseBtn.addEventListener('click', function(e) {
+            responseForm.addEventListener('submit', function(e) {
                 e.preventDefault();
 
-                const formData = new FormData(responseForm);
                 const payload = {
                     auditing_id: parseInt(document.getElementById('auditingIdInput').value),
                     tilik_id: parseInt(document.getElementById('tilikId').value),
@@ -876,14 +975,6 @@
                     rencana_perbaikan_tindak_lanjut: document.getElementById('rencanaPerbaikan').value,
                     tindakan_pencegahan: document.getElementById('tindakanPencegahan').value
                 };
-
-                // Validate required fields
-                if (!payload.realisasi || !payload.standar_nasional || !payload.uraian_isian ||
-                    !payload.akar_penyebab_penunjang || !payload.rencana_perbaikan_tindak_lanjut ||
-                    !payload.tindakan_pencegahan) {
-                    showToast('Semua field harus diisi.', false);
-                    return;
-                }
 
                 const url = isEditMode ?
                     `http://127.0.0.1:5000/api/response-tilik/${document.getElementById('responseId').value}` :
