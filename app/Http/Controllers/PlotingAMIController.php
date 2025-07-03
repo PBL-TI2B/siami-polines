@@ -139,7 +139,7 @@ class PlotingAMIController extends Controller
         $user = session('user')['user_id'];
         $response = Http::get('http://127.0.0.1:5000/api/auditings/userID=' . $user);
         $auditingUnit = $response->json()['data'] ?? [];
-        
+
         $auditing = null;
         foreach ($auditingUnit as $item) {
             if ($item['auditing_id'] == $id) {
@@ -172,7 +172,7 @@ class PlotingAMIController extends Controller
             return redirect()->back()->with('error', $errorMessage);
         }
 
-       
+
 
         // Fetch the updated auditing record
         $user = session('user')['user_id'];
@@ -184,7 +184,8 @@ class PlotingAMIController extends Controller
             return redirect()->route('auditor.assesmen-lapangan.index')->with('error', 'Auditing record not found after update');
         }
 
-        return redirect()->route('auditor.audit.index');
+        return redirect()->route('auditor.audit.audit', ['id' => $id])
+            ->with('success', 'Jadwal Audit berhasil diperbarui');
     }
 
     public function getAllJadwalAudit() {

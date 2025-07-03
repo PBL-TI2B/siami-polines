@@ -94,7 +94,14 @@
                 </tr>
                 <tr>
                     <td>Tanggal</td>
-                    <td>: {{ \Carbon\Carbon::parse($audit['jadwal_audit'])->translatedFormat('d F Y') }}</td>
+                    <td>
+                        : 
+                        @if(!empty($audit['jadwal_audit']))
+                            {{ \Carbon\Carbon::parse($audit['jadwal_audit'])->translatedFormat('d F Y') }}
+                        @else
+                            -
+                        @endif
+                    </td>
                 </tr>
                 <tr>
                     <td>Unit Kerja</td>
