@@ -420,9 +420,18 @@
                     <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600">${response.tindakan_pencegahan}</td>
                     <td class="px-4 py-3 sm:px-6 border border-gray-200 dark:border-gray-600 text-center">
                         ${auditStatus !== 4 ? `
-                            <span class="text-gray-500 dark:text-gray-400">
-                                Pertanyaan dikunci
-                            </span>
+                            <div class="flex items-center gap-2 justify-center">
+                                <span class="opacity-50 cursor-not-allowed">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L16.732 3.732z"></path>
+                                    </svg>
+                                </span>
+                                <span class="opacity-50 cursor-not-allowed">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12A2 2 0 0116.1 21H7.9a2 2 0 01-2-1.9L5 7m5-4h4m-4 0a2 2 0 00-2 2v1h8V5a2 2 0 00-2-2z"/>
+                                    </svg>
+                                </span>
+                            </div>
                         ` : `
                             <div class="flex items-center gap-2 justify-center">
                                 <a href="/auditor/audit/daftar-tilik/${auditingId}/edit/${item.tilik_id}" class="text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-200 transition-colors duration-200">
