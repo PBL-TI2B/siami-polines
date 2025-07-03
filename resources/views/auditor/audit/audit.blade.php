@@ -124,7 +124,7 @@ $periodeStatus = $auditing->periode->status ?? null;
                             </svg>
                         </a>
                         @elseif($status == 6 || $status == 9)
-                        <a href="{{ $instrumenRoute }}" class="mt-3 inline-flex items-center rounded-lg bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200 focus:outline-none focus:ring-4 focus:ring-slate-300 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600 dark:focus:ring-slate-800">
+                        <a href="{{ $instrumenRoute }}" class="mt-3 inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 focus:outline-none focus:ring-4 focus:ring-sky-300 dark:focus:ring-sky-800">
                             Lihat Jawaban
                         </a>
                         @endif

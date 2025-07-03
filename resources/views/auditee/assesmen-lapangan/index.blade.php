@@ -71,7 +71,7 @@
         </div>
 
         <div class="mt-8">
-            <x-button type="button" color="gray" icon="heroicon-o-arrow-left" onclick="history.back()">
+            <x-button type="button" color="red" icon="heroicon-o-arrow-left" onclick="history.back()">
                 Kembali
             </x-button>
         </div>
